@@ -1,5 +1,5 @@
 ---
 title: Debian
-weight: 30
+weight: 20
 ---
 
