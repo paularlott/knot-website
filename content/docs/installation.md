@@ -155,6 +155,8 @@ The configuration should be updated:
 - `mysql.*` The configuration information for the MySQL server to use
 - `nomad.*` The configuration for communicating with Nomad, the token must have permission to access any namespaces used in environment jobs
 
+The MySQL database should be empty, on first run knot will create the required tables and initialize the data.
+
 ## Creating the Initial User
 
 Once the server has been deployed point the browser at the URL defined in the configuration file, this will allow the first user to be created, this user is granted full admin rights.

@@ -19,6 +19,7 @@ To use a variable simply specify the variable e.g. `${{ .space.name }}`.
 | | template.name | The name of the template used to create the space |
 | user | | |
 | | user.id | The UUID of the user running the space |
+| | user.timezone | The timzone of the user |
 | | user.username | The username of the user running the space |
 | server | | |
 | | server.url | The URL of the knot server |
