@@ -5,7 +5,7 @@ layout: hextra-home
 
 {{< hextra/hero-badge link="https://github.com/paularlott/knot" >}}
   <div class="w-2 h-2 rounded-full bg-primary-400"></div>
-  <span>Free, open source</span>
+  <span>Free, open source, Apache 2.0 License</span>
   {{< icon name="arrow-circle-right" attributes="height=14" >}}
 {{< /hextra/hero-badge >}}
 
@@ -22,7 +22,7 @@ layout: hextra-home
 </div>
 
 <div class="mb-6">
-{{< hextra/hero-button text="Get Started" link="docs/installation/" >}}
+{{< hextra/hero-button text="Get Started" link="docs/install/" >}}
 </div>
 
 <div class="mt-6"></div>

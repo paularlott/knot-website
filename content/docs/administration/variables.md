@@ -1,11 +1,19 @@
 ---
-title: System Variables
-weight: 10
+title: Variables
+weight: 20
 ---
 
-System variable are made available to job templates as well as volume templates.
+## User Defined Variables
 
-To use a variable simply specify the variable e.g. `${{ .space.name }}`.
+User-defined variables can be created through the web interface. These variables are then made available for use in both job and volume templates.
+
+To use a user-defined variable, for example `myvariable`, it must be prefixed with `.var.`. Therefore, the correct usage within a template would be `${{ .var.myvariable }}`.
+
+## System Variables
+
+System variables are accessible for both job templates and volume templates.
+
+To make use of a system variable it simply needs to specified, for example, `${{ .space.name }}`.
 
 ## Available Variables
 
