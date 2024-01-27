@@ -9,7 +9,7 @@ From the menu select `Users` and then `Create User`:
 
 ![](/docs/administration/create-user.webp)
 
-The `Preferred Shell` is used when the user opens a web based terminal into the space, the system will attempt to open the selected shell and if not found will look for another available shell.
+The `Preferred Shell` is used when the user opens a web based terminal into the space, the system will attempt to open the selected shell and if not found will look for another available shell. This can be changed per space when creating a space.
 
 When connecting to a space via SSH and the client, the `SSH Public Key` if set will be passed to the space to allow password less logins. The user should set the `SSH Public Key` themselves by clicking their username in the top right.
 

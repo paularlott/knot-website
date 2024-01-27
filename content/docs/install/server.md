@@ -136,3 +136,28 @@ The configuration should be updated:
 - `nomad.*` The configuration for communicating with Nomad, the token must have permission to access any namespaces used in environment jobs
 
 The MySQL database should be empty as on first run knot will create the required tables and initialize the data.
+
+### Without MySQL
+
+The knot server can be run without MySQL by using the embedded BadgerDB, this isn't recommended for production by replacing knot.yml in the nomad job:
+
+```yaml {filename=knot.yml}
+log:
+  level: info
+server:
+  listen: 0.0.0.0:3000
+  download_path: /srv
+  url: "https://knot.example.com"
+  wildcard_domain: "*.knot.example.com"
+  encrypt: "knot genkey"
+
+  badgerdb:
+    enabled: true
+    path: /data/
+
+  nomad:
+      addr: "http://nomad.service.consul:4646"
+      token: ""
+```
+
+The `/data/` directory must be mounted to persistent storage or configurations are not persisted between restarts.

@@ -23,6 +23,20 @@ The `Name` and `Nomad Job` fields are required, the `Nomad Job` field takes an H
   When a change is made to a template all running spaces are marked as an update available, however the spaces are not automatically restarted. Once the spaces are restarted they will receive the updated template.
 {{< /callout >}}
 
+Template variables can be used to hold registry login information e.g.
+
+```hcl
+image = "ghcr.io/paularlott/knot-base-debian:bookworm"
+auth {
+  username = "${{ .var.registry_user }}"
+  password = "${{ .var.registry_pass }}"
+}
+```
+
+{{< callout type="warning" >}}
+  Variables are plain text within the Nomad template and can therefore be viewed via the Nomad web interface, and alternative solution such at Vault may be more applicable depending on the environment.
+{{< /callout >}}
+
 ## Deleting a Template
 
 If a template is in use then it can't be deleted.

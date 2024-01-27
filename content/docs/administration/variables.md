@@ -9,6 +9,8 @@ User-defined variables can be created through the web interface. These variables
 
 To use a user-defined variable, for example `myvariable`, it must be prefixed with `.var.`. Therefore, the correct usage within a template would be `${{ .var.myvariable }}`.
 
+When creating or editing a variable the `Protected` option can be selected. If a variable is marked as protected then when editing the variable the value isn't loaded back into the browser. Protected variables are stored encrypted in the database but are decrypted before being used in templates therefore their values my be exposed within the Nomad job definitions.
+
 ## System Variables
 
 System variables are accessible for both job templates and volume templates.
