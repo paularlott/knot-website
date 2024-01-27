@@ -1,8 +1,6 @@
 ---
 title: Installation
 weight: 1
-cascade:
-  type: docs
 ---
 
 {{< cards >}}

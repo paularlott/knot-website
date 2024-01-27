@@ -1,8 +1,6 @@
 ---
-title: Examples Environments
+title: Example Spaces
 weight: 100
-cascade:
-  type: docs
 ---
 
 {{< cards >}}

@@ -1,8 +1,6 @@
 ---
 title: Administration
 weight: 10
-cascade:
-  type: docs
 ---
 
 {{< cards >}}
