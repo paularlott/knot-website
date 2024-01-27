@@ -87,11 +87,13 @@ EOF
         # ]
 
         check {
-          name     = "alive"
-          type     = "http"
-          path     = "/health"
-          interval = "10s"
-          timeout  = "2s"
+          name            = "alive"
+          type            = "http"
+          protocol        = "https"
+          tls_skip_verify = true
+          path            = "/health"
+          interval        = "10s"
+          timeout         = "2s"
         }
       }
     }
