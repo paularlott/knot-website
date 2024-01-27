@@ -53,6 +53,8 @@ job "${{.space.name}}-${{.user.username}}" {
         KNOT_CODE_SERVER_PORT = "8080"
         KNOT_LOGLEVEL = "debug"
         KNOT_USER = "${{ .user.username }}"
+
+        TZ = "${{ user.timezone }}"
       }
 
       volume_mount {
