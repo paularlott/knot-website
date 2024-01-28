@@ -71,8 +71,8 @@ params:
     displayTitle: true
     displayLogo: true
     logo:
-      path: knot-logo.webp
-      dark: knot-logo.webp
+      path: logo.svg
+      dark: logo.svg
       # width: 40
       # height: 20
       # link: /
