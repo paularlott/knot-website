@@ -10,4 +10,5 @@ cascade:
   {{< card link="administration" title="Administration" icon="user-group" >}}
   {{< card link="working-with-spaces" title="Working with Spaces" icon="template" >}}
   {{< card link="example-spaces" title="Example Spaces" icon="cloud" >}}
+  {{< card link="utilities" title="Utilities" icon="paper-clip" >}}
 {{< /cards >}}
