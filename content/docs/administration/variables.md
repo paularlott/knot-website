@@ -33,3 +33,4 @@ To make use of a system variable it simply needs to specified, for example, `${{
 | | user.username | The username of the user running the space |
 | server | | |
 | | server.url | The URL of the knot server |
+| | server.agent_url | The URL of the knot server that agents should use |

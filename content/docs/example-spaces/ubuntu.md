@@ -68,7 +68,7 @@ job "${{.space.name}}-${{.user.username}}" {
 
       # Publish Agent Port
       service {
-        name = "${{.space.id}}"
+        name = "knot-${{.space.id}}"
         port = "knot_port"
 
         check {
