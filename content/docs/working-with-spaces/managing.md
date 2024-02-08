@@ -38,7 +38,7 @@ job "${{.space.name}}-${{.user.username}}" {
     task "debian" {
       driver = "docker"
       config {
-        image = "ghcr.io/paularlott/knot-base-debian:bookworm"
+        image = "paularlott/knot-base-debian:bookworm"
 
         ports = ["knot_port"]
       }

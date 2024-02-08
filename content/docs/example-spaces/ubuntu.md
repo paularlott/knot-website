@@ -38,7 +38,7 @@ job "${{.space.name}}-${{.user.username}}" {
     task "ubuntu" {
       driver = "docker"
       config {
-        image = "ghcr.io/paularlott/knot-base-ubuntu:22.04"
+        image = "paularlott/knot-base-ubuntu:22.04"
 
         ports = ["knot_port"]
 
