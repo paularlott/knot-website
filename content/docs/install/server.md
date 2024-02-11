@@ -142,7 +142,34 @@ The MySQL database should be empty as on first run knot will create the required
 
 ### Without MySQL
 
-The knot server can be run without MySQL by using the embedded BadgerDB, this isn't recommended for production by replacing knot.yml in the nomad job:
+#### Redis
+
+The knot server can be run using a Redis server by replacing knot.yml in the nomad job:
+
+```yaml {filename=knot.yml}
+log:
+  level: info
+server:
+  listen: 0.0.0.0:3000
+  download_path: /srv
+  url: "https://knot.example.com"
+  wildcard_domain: "*.knot.example.com"
+  encrypt: "knot genkey"
+
+  redis:
+    enabled: true
+    host: srv+redis.service.consul
+    password: ""
+    db: 0
+
+  nomad:
+      addr: "http://nomad.service.consul:4646"
+      token: ""
+```
+
+#### BadgerDB
+
+The knot server can be run without MySQL by using the embedded BadgerDB by replacing knot.yml in the nomad job:
 
 ```yaml {filename=knot.yml}
 log:
@@ -164,3 +191,7 @@ server:
 ```
 
 The `/data/` directory must be mounted to persistent storage or configurations are not persisted between restarts.
+
+{{< callout type="warning" >}}
+  When using BadgerDB only one instance of the knot server can be started and pointed at the BadgerDB data directory.
+{{< /callout >}}
