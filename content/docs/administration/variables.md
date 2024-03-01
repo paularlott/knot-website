@@ -32,7 +32,8 @@ To make use of a system variable it simply needs to specified, for example, `${{
 | | user.timezone | The timzone of the user |
 | | user.username | The username of the user running the space |
 | | user.email | The users email address |
-| | user.servicePassword | Service password for the user |
+| | user.service_password | Service password for the user |
 | server | | |
 | | server.url | The URL of the knot server |
 | | server.agent_url | The URL of the knot server that agents should use |
+| | server.wildcard_domain | The wildcard domain without the leading * |
