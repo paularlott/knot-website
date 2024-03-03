@@ -3,7 +3,7 @@ title: Web Server
 weight: 40
 ---
 
-Using a space created from the `example` template the first step is to install a web server, for this example [caddy](https://caddyserver.com/) will be used.
+Using a space created from the `mytest` template the first step is to install a web server, for this example [caddy](https://caddyserver.com/) will be used.
 
 Open a web terminal and follow the instructions at https://caddyserver.com/docs/install#debian-ubuntu-raspbian
 
@@ -30,7 +30,7 @@ Once clicked a new tab or windows will be opened showing the default welcome pag
 
 ![](/docs/working-with-spaces/caddy-server.webp)
 
-Depending on the space template caddy or another web server may already be present or require specific steps to launch the web server.
+Depending on the template caddy or another web server may already be present or require specific steps to launch the web server.
 
 {{< callout type="warning" >}}
   Ports exposed via the web interface do not require authentication to access them.

@@ -26,7 +26,7 @@ volumes:
   - id: "test_home"
     name: "test_home"
     plugin_id: "hostpath"
-    capacity_min: 1G
+    capacity_min: 10G
     capacity_max: 10G
     mount_options:
       fs_type: "ext4"

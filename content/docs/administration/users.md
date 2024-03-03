@@ -15,6 +15,10 @@ When connecting to a space via SSH and the client, the `SSH Public Key` if set w
 
 `Timezone` is used within the spaces to set their timezones, clicking or typing in the field will generate a searchable list of available timezones.
 
+`Maximum Spaces` is the maximum number of spaces that the user can create, when set to 0 there's no limit applied.
+
+`Maximum Disk Space` is the maximum disk space the user can use in GB, when set to 0 there's no limit applied. Volumes created outside the space Template are not included in the space used by the user.
+
 `Roles` is the optional list of roles to assign a user, if no roles are assigned then the user will only have the ability to start spaces and interact with their spaces.
 
 `Groups` defines the list of groups that a user will belong to, only templates that have no groups assigned or have groups overlapping those of the user will be available when creating a new space.

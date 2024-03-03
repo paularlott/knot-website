@@ -26,7 +26,7 @@ The `Name` and `Nomad Job` fields are required, the `Nomad Job` field takes an H
 Template variables can be used to hold registry login information e.g.
 
 ```hcl
-image = "paularlott/knot-base-debian:bookworm"
+image = "paularlott/knot-debian:12"
 auth {
   username = "${{ .var.registry_user }}"
   password = "${{ .var.registry_pass }}"

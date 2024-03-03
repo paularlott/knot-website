@@ -5,9 +5,9 @@ weight: 10
 
 ## Example Template
 
-This section assumes a template name `example` has been defined as follows:
+This section assumes a template name `mytest` has been defined as follows:
 
-```yaml {filename=Nomad-Job}
+```hcl {filename=Nomad-Job}
 job "${{.space.name}}-${{.user.username}}" {
   datacenters = ["dc1"]
 
@@ -38,7 +38,7 @@ job "${{.space.name}}-${{.user.username}}" {
     task "debian" {
       driver = "docker"
       config {
-        image = "paularlott/knot-base-debian:bookworm"
+        image = "paularlott/knot-debian:12"
 
         ports = ["knot_port"]
       }
@@ -50,11 +50,11 @@ job "${{.space.name}}-${{.user.username}}" {
         KNOT_SSH_PORT = "22"
         KNOT_TCP_PORT = "80"
         KNOT_HTTP_PORT = "80"
-        KNOT_CODE_SERVER_PORT = "8080"
+        KNOT_CODE_SERVER_PORT = "49374"
         KNOT_LOGLEVEL = "debug"
         KNOT_USER = "${{ .user.username }}"
 
-        TZ = "${{ user.timezone }}"
+        TZ = "${{ .user.timezone }}"
       }
 
       volume_mount {
@@ -91,8 +91,8 @@ job "${{.space.name}}-${{.user.username}}" {
 volumes:
   - id: "debian_${{.space.id}}_home"
     name: "debian_${{.space.id}}_home"
-    plugin_id: "hostpath"
-    capacity_min: 1G
+    plugin_id: "cephrbd"
+    capacity_min: 10G
     capacity_max: 10G
     mount_options:
       fs_type: "ext4"
@@ -102,19 +102,44 @@ volumes:
     capabilities:
       - access_mode: "single-node-writer"
         attachment_mode: "file-system"
+    secrets:
+      userID: "admin"
+      userKey: "FWef0320r23rmvseE+oke2CXEwiifWODSaoqp4=="
+    parameters:
+      clusterID: "3abdeec0-ae9c-477b-ab36-d4e3c20e86d0"
+      pool: "rbd"
+      imageFeatures: "deep-flatten,exclusive-lock,fast-diff,layering,object-map"
 ```
+
+## Service Password
+
+A service password can be set by going `My Profile` and entering the chosen password in the `Service Password` field, if not set the system will generate a random password.
+
+This can then be used in templates as the variable `${{ .user.service_password }}`, e.g. for a MariaDB server it can be used as the root password by setting the `MARIADB_ROOT_PASSWORD` environment variable `MARIADB_ROOT_PASSWORD = "${{.user.service_password}}"`.
+
+{{< callout type="info" >}}
+  If the password is change the new password isn't immediately made available to the spaces, however it will be used on the next start of the space.
+{{< /callout >}}
 
 ## Creating a Space
 
-From the `Spaces` page click `Create Space` this will present a form as below:
+From the `Templates` page open the menu next to the template to use and click `Create Space`:
 
 ![](/docs/working-with-spaces/create-space.webp)
 
-The available templates will depend on the groups the user belongs to and the groups that the template is in.
+{{< callout type="info" >}}
+  Depending on the permissions the user has the option `Create Space For` maybe displayed, clicking this will prompt for the user under which the space is to be created. This allows an admin to create spaces for users.
+{{< /callout >}}
 
-Enter a name for the space e.g. `mytest`, select the template `exmaple` and leave the `Terminal Shell` as `Bash`, once `Create Space` is clicked the space will be created within knot and the main spaces page loaded.
+The fllowing form will be presented:
+
+![](/docs/working-with-spaces/create-space-form.webp)
+
+Enter a name for the space e.g. `mytest` and leave the `Terminal Shell` as `Bash`, once `Create Space` is clicked the space will be created within knot and the main spaces page loaded.
 
 The space is created in a stopped state, no resources are used within the Nomad cluster at this point.
+
+The `Additional Space Names` section allows additional names to be entered against the space, this is useful when using the web proxy service and development needs to access the target software under multiple domain names.
 
 ### Manual Spaces
 
@@ -126,9 +151,9 @@ Select the `Manual-Configuration` template, then fill out the URL of the agent e
 
 From the `Spaces` page click the menu item next to the space to start, and then select `Start`, them menu will change to read "Starting" and after a few seconds the `Running` will show in the `Status` column.
 
-![](/docs/working-with-spaces/create-space.webp)
+![](/docs/working-with-spaces/start-space.webp)
 
-Once the environment will continue it's boot process during which time additional icons will start to appear next to the space, e.g. `Terminal`.
+The environment will continue its boot process during which time additional icons will appear next to the space, e.g. `Terminal`.
 
 ![](/docs/working-with-spaces/running-space.webp)
 
@@ -138,6 +163,7 @@ Not all icons will appear for all spaces as they are dependant on the agent conf
 - **Code Server** Is shown if a running instance of Visual Studio Code is found running within the space, clicking the icon opens a new tab or window showing the editor.
 - **Terminal** Is shown if a web based terminal can be opened into the space, clicking the icon opens a new window showing the terminal.
 - **Ports** Is shown if there's ports exposed that can either be connected to via the web interface or via port forwarding on the command line. Clicking the icon drops down a list of the available ports, ports shown with a solid background can be connected to by clicking the button and will open in a new tab or window, while ports with an outline are available for use with port forwarding on the command line.
+- **Desktop** Is show if a running web based VNC server such as [KasmVNC](https://github.com/kasmtech/KasmVNC) is available within the container. Clicking it will open a new window displaying the graphical desktop.
 
 ## Stopping a Space
 
@@ -156,6 +182,8 @@ If the template that a running space is using is updated then an `Update Availab
 ![](/docs/working-with-spaces/space-update.webp)
 
 To update the space, stop it and then start it again. Add volumes that have been added to the template will be created when the space starts and any volumes that have been removed from the template will be deleted along with the data they contain.
+
+A space can also be edited, this allows changing of the space name as well as updating any additional names for the space. Additional URLs are supported as soon as the space is successfully saved.
 
 ## Deleting a Space
 

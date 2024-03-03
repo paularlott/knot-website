@@ -140,6 +140,42 @@ The configuration should be updated:
 
 The MySQL database should be empty as on first run knot will create the required tables and initialize the data.
 
+### Caching
+
+A redis server can be used along side MySQL to store the state of the agents, this is more performant than storing the agent state in the database.
+
+To enable caching simply add a redis configuration e.g.:
+
+```yaml {filename=knot.yml}
+log:
+  level: info
+server:
+  listen: 0.0.0.0:3000
+  download_path: /srv
+  url: "https://knot.example.com"
+  wildcard_domain: "*.knot.example.com"
+  encrypt: "knot genkey"
+
+  mysql:
+      database: knot
+      enabled: true
+      host: ""
+      password: ""
+      user: ""
+
+  redis:
+    enabled: true
+    host: srv+redis.service.consul
+    password: ""
+    db: 0
+
+  nomad:
+      addr: "http://nomad.service.consul:4646"
+      token: ""
+```
+
+In this mode all data is stored in MySQL only the agent states are stored in redis.
+
 ### Without MySQL
 
 #### Redis

@@ -50,10 +50,10 @@ job "${{.space.name}}-${{.user.username}}" {
         KNOT_SERVER = "${{.server.url}}"
         KNOT_SPACEID = "${{.space.id}}"
         KNOT_SSH_PORT = "22"
-        KNOT_CODE_SERVER_PORT = "8080"
+        KNOT_CODE_SERVER_PORT = "49374"
         KNOT_USER = "${{.user.username}}"
 
-        TZ = "${{ user.timezone }}"
+        TZ = "${{ .user.timezone }}"
       }
 
       volume_mount {
@@ -90,8 +90,8 @@ job "${{.space.name}}-${{.user.username}}" {
 volumes:
   - id: "ubuntu_${{.space.id}}_home"
     name: "ubuntu_${{.space.id}}_home"
-    plugin_id: "hostpath"
-    capacity_min: 1G
+    plugin_id: "cephrbd"
+    capacity_min: 10G
     capacity_max: 10G
     mount_options:
       fs_type: "ext4"
@@ -101,6 +101,13 @@ volumes:
     capabilities:
       - access_mode: "single-node-writer"
         attachment_mode: "file-system"
+    secrets:
+      userID: "admin"
+      userKey: "FWef0320r23rmvseE+oke2CXEwiifWODSaoqp4=="
+    parameters:
+      clusterID: "3abdeec0-ae9c-477b-ab36-d4e3c20e86d0"
+      pool: "rbd"
+      imageFeatures: "deep-flatten,exclusive-lock,fast-diff,layering,object-map"
 ```
 
 If the namespace is set on the job e.g. to `${{.user.username}}` then all the spaces would be placed into a namespace of the username, with the correct nomad configuration this would allow users to access nomad but only interact with their jobs.
