@@ -10,4 +10,5 @@ weight: 20
   {{< card link="web-server" title="Web Server" icon="globe-alt" >}}
   {{< card link="port-forwarding" title="Port Forwarding" icon="wifi" >}}
   {{< card link="ssh" title="SSH Access" icon="terminal" >}}
+  {{< card link="vnc-desktop" title="Desktop" icon="desktop-computer" >}}
 {{< /cards >}}
