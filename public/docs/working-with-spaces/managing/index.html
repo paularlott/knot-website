@@ -12,28 +12,32 @@
 <link fetchpriority="low" href="/site.webmanifest" rel="manifest" />
 
   <title>Managing a Space – knot</title>
-  <meta name="description" content="Example Template This section assumes a template name mytest has been defined as follows:
-Nomad-Jobjob &#34;${{.space.name}}-${{.user.username}}&#34; { datacenters = [&#34;dc1&#34;] update { max_parallel = 1 min_healthy_time = &#34;30s&#34; healthy_deadline = &#34;1m&#34; auto_revert = false } group &#34;debian&#34; { count = 1 network { port &#34;knot_port&#34; { to = 3000 } } volume &#34;home_volume&#34; { type = &#34;csi&#34; source = &#34;debian_${{.space.id}}_home&#34; read_only = false attachment_mode = &#34;file-system&#34; access_mode = &#34;single-node-writer&#34; } task &#34;debian&#34; { driver = &#34;docker&#34; config { image = &#34;paularlott/knot-debian:12&#34; ports = [&#34;knot_port&#34;] } env { # Define environment variables for agent KNOT_SERVER = &#34;${{ ." />
+  <meta name="description" content="Service Password A service password can be set by going My Profile and entering the chosen password in the Service Password field, if not set the system will generate a random password.
+This can then be used in templates as the variable ${{ .user.service_password }}, e.g. for a MariaDB server it can be used as the root password by setting the MARIADB_ROOT_PASSWORD environment variable MARIADB_ROOT_PASSWORD = &#34;${{.user.service_password}}&#34;.
+ℹ️ If the password is change the new password isn’t immediately made available to the spaces, however it will be used on the next start of the space." />
   <link rel="canonical" href="http://localhost:1313/docs/working-with-spaces/managing/">
 
   
 
 <meta property="og:title" content="Managing a Space" />
-<meta property="og:description" content="Example Template This section assumes a template name mytest has been defined as follows:
-Nomad-Jobjob &#34;${{.space.name}}-${{.user.username}}&#34; { datacenters = [&#34;dc1&#34;] update { max_parallel = 1 min_healthy_time = &#34;30s&#34; healthy_deadline = &#34;1m&#34; auto_revert = false } group &#34;debian&#34; { count = 1 network { port &#34;knot_port&#34; { to = 3000 } } volume &#34;home_volume&#34; { type = &#34;csi&#34; source = &#34;debian_${{.space.id}}_home&#34; read_only = false attachment_mode = &#34;file-system&#34; access_mode = &#34;single-node-writer&#34; } task &#34;debian&#34; { driver = &#34;docker&#34; config { image = &#34;paularlott/knot-debian:12&#34; ports = [&#34;knot_port&#34;] } env { # Define environment variables for agent KNOT_SERVER = &#34;${{ ." />
+<meta property="og:description" content="Service Password A service password can be set by going My Profile and entering the chosen password in the Service Password field, if not set the system will generate a random password.
+This can then be used in templates as the variable ${{ .user.service_password }}, e.g. for a MariaDB server it can be used as the root password by setting the MARIADB_ROOT_PASSWORD environment variable MARIADB_ROOT_PASSWORD = &quot;${{.user.service_password}}&quot;.
+ℹ️ If the password is change the new password isn&rsquo;t immediately made available to the spaces, however it will be used on the next start of the space." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://localhost:1313/docs/working-with-spaces/managing/" /><meta property="article:section" content="docs" />
 
 
 
   <meta itemprop="name" content="Managing a Space">
-<meta itemprop="description" content="Example Template This section assumes a template name mytest has been defined as follows:
-Nomad-Jobjob &#34;${{.space.name}}-${{.user.username}}&#34; { datacenters = [&#34;dc1&#34;] update { max_parallel = 1 min_healthy_time = &#34;30s&#34; healthy_deadline = &#34;1m&#34; auto_revert = false } group &#34;debian&#34; { count = 1 network { port &#34;knot_port&#34; { to = 3000 } } volume &#34;home_volume&#34; { type = &#34;csi&#34; source = &#34;debian_${{.space.id}}_home&#34; read_only = false attachment_mode = &#34;file-system&#34; access_mode = &#34;single-node-writer&#34; } task &#34;debian&#34; { driver = &#34;docker&#34; config { image = &#34;paularlott/knot-debian:12&#34; ports = [&#34;knot_port&#34;] } env { # Define environment variables for agent KNOT_SERVER = &#34;${{ .">
+<meta itemprop="description" content="Service Password A service password can be set by going My Profile and entering the chosen password in the Service Password field, if not set the system will generate a random password.
+This can then be used in templates as the variable ${{ .user.service_password }}, e.g. for a MariaDB server it can be used as the root password by setting the MARIADB_ROOT_PASSWORD environment variable MARIADB_ROOT_PASSWORD = &quot;${{.user.service_password}}&quot;.
+ℹ️ If the password is change the new password isn&rsquo;t immediately made available to the spaces, however it will be used on the next start of the space.">
 
-<meta itemprop="wordCount" content="1009">
+<meta itemprop="wordCount" content="782">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Managing a Space"/>
-<meta name="twitter:description" content="Example Template This section assumes a template name mytest has been defined as follows:
-Nomad-Jobjob &#34;${{.space.name}}-${{.user.username}}&#34; { datacenters = [&#34;dc1&#34;] update { max_parallel = 1 min_healthy_time = &#34;30s&#34; healthy_deadline = &#34;1m&#34; auto_revert = false } group &#34;debian&#34; { count = 1 network { port &#34;knot_port&#34; { to = 3000 } } volume &#34;home_volume&#34; { type = &#34;csi&#34; source = &#34;debian_${{.space.id}}_home&#34; read_only = false attachment_mode = &#34;file-system&#34; access_mode = &#34;single-node-writer&#34; } task &#34;debian&#34; { driver = &#34;docker&#34; config { image = &#34;paularlott/knot-debian:12&#34; ports = [&#34;knot_port&#34;] } env { # Define environment variables for agent KNOT_SERVER = &#34;${{ ."/>
+<meta name="twitter:description" content="Service Password A service password can be set by going My Profile and entering the chosen password in the Service Password field, if not set the system will generate a random password.
+This can then be used in templates as the variable ${{ .user.service_password }}, e.g. for a MariaDB server it can be used as the root password by setting the MARIADB_ROOT_PASSWORD environment variable MARIADB_ROOT_PASSWORD = &quot;${{.user.service_password}}&quot;.
+ℹ️ If the password is change the new password isn&rsquo;t immediately made available to the spaces, however it will be used on the next start of the space."/>
 
     <link href="/css/compiled/main.css" rel="stylesheet" />
 
@@ -280,12 +284,6 @@ Nomad-Jobjob &#34;${{.space.name}}-${{.user.username}}&#34; { datacenters = [&#3
     </a>
   
     <ul class='flex flex-col gap-1 relative before:absolute before:inset-y-1 before:w-px before:bg-gray-200 before:content-[""] dark:before:bg-neutral-800 ltr:pl-3 ltr:before:left-0 rtl:pr-3 rtl:before:right-0 ltr:ml-3 rtl:mr-3'><li>
-              <a
-                href="#example-template"
-                class="flex rounded px-2 py-1.5 text-sm transition-colors [word-break:break-word] cursor-pointer [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] contrast-more:border gap-2 before:opacity-25 before:content-['#'] text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-primary-100/5 dark:hover:text-gray-50 contrast-more:text-gray-900 contrast-more:dark:text-gray-50 contrast-more:border-transparent contrast-more:hover:border-gray-900 contrast-more:dark:hover:border-gray-50"
-              >Example Template</a>
-            </li>
-          <li>
               <a
                 href="#service-password"
                 class="flex rounded px-2 py-1.5 text-sm transition-colors [word-break:break-word] cursor-pointer [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] contrast-more:border gap-2 before:opacity-25 before:content-['#'] text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-primary-100/5 dark:hover:text-gray-50 contrast-more:text-gray-900 contrast-more:dark:text-gray-50 contrast-more:border-transparent contrast-more:hover:border-gray-900 contrast-more:dark:hover:border-gray-50"
@@ -655,10 +653,6 @@ Nomad-Jobjob &#34;${{.space.name}}-${{.user.username}}&#34; { datacenters = [&#3
 <nav class="hextra-toc order-last hidden w-64 shrink-0 xl:block print:hidden px-4" aria-label="table of contents">
     <div class="hextra-scrollbar sticky top-16 overflow-y-auto pr-4 pt-6 text-sm [hyphens:auto] max-h-[calc(100vh-var(--navbar-height)-env(safe-area-inset-bottom))] ltr:-mr-4 rtl:-ml-4"><p class="mb-4 font-semibold tracking-tight">On this page</p><ul>
       <li class="my-2 scroll-my-6 scroll-py-6">
-        <a class="font-semibold inline-block text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300 contrast-more:text-gray-900 contrast-more:underline contrast-more:dark:text-gray-50 w-full break-words" href="#example-template">Example Template
-        </a>
-      </li>
-      <li class="my-2 scroll-my-6 scroll-py-6">
         <a class="font-semibold inline-block text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300 contrast-more:text-gray-900 contrast-more:underline contrast-more:dark:text-gray-50 w-full break-words" href="#service-password">Service Password
         </a>
       </li>
@@ -711,125 +705,7 @@ Nomad-Jobjob &#34;${{.space.name}}-${{.user.username}}&#34; { datacenters = [&#3
 
         <div class="content">
           <h1>Managing a Space</h1>
-          <h2>Example Template<span class="absolute -mt-20" id="example-template"></span>
-    <a href="#example-template" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><p>This section assumes a template name <code>mytest</code> has been defined as follows:</p>
-<div class="code-block relative mt-6 first:mt-0 group/code"><div class="filename">Nomad-Job</div><div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hcl" data-lang="hcl"><span class="line"><span class="cl"><span class="k">job</span> <span class="s2">&#34;${{.space.name}}-${{.user.username}}&#34;</span> {
-</span></span><span class="line"><span class="cl"><span class="n">  datacenters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;dc1&#34;</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  <span class="k">update</span> {
-</span></span><span class="line"><span class="cl"><span class="n">    max_parallel</span> <span class="o">=</span> <span class="m">1</span>
-</span></span><span class="line"><span class="cl"><span class="n">    min_healthy_time</span> <span class="o">=</span> <span class="s2">&#34;30s&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">    healthy_deadline</span> <span class="o">=</span> <span class="s2">&#34;1m&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">    auto_revert</span> <span class="o">=</span> <span class="kt">false</span>
-</span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  <span class="k">group</span> <span class="s2">&#34;debian&#34;</span> {
-</span></span><span class="line"><span class="cl"><span class="n">    count</span> <span class="o">=</span> <span class="m">1</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">network</span> {
-</span></span><span class="line"><span class="cl">      <span class="k">port</span> <span class="s2">&#34;knot_port&#34;</span> {
-</span></span><span class="line"><span class="cl"><span class="n">        to</span> <span class="o">=</span> <span class="m">3000</span>
-</span></span><span class="line"><span class="cl">      }
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">volume</span> <span class="s2">&#34;home_volume&#34;</span> {
-</span></span><span class="line"><span class="cl"><span class="n">      type</span>   <span class="o">=</span> <span class="s2">&#34;csi&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">      source</span> <span class="o">=</span> <span class="s2">&#34;debian_${{.space.id}}_home&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">      read_only</span> <span class="o">=</span> <span class="kt">false</span>
-</span></span><span class="line"><span class="cl"><span class="n">      attachment_mode</span> <span class="o">=</span> <span class="s2">&#34;file-system&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">      access_mode</span>     <span class="o">=</span> <span class="s2">&#34;single-node-writer&#34;</span>
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">task</span> <span class="s2">&#34;debian&#34;</span> {
-</span></span><span class="line"><span class="cl"><span class="n">      driver</span> <span class="o">=</span> <span class="s2">&#34;docker&#34;</span>
-</span></span><span class="line"><span class="cl">      <span class="k">config</span> {
-</span></span><span class="line"><span class="cl"><span class="n">        image</span> <span class="o">=</span> <span class="s2">&#34;paularlott/knot-debian:12&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">        ports</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;knot_port&#34;</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">      }
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">      <span class="k">env</span> {<span class="c1">
-</span></span></span><span class="line"><span class="cl"><span class="c1">        # Define environment variables for agent
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">        KNOT_SERVER</span> <span class="o">=</span> <span class="s2">&#34;${{ .server.url }}&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">        KNOT_SPACEID</span> <span class="o">=</span> <span class="s2">&#34;${{ .space.id }}&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">        KNOT_SSH_PORT</span> <span class="o">=</span> <span class="s2">&#34;22&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">        KNOT_TCP_PORT</span> <span class="o">=</span> <span class="s2">&#34;80&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">        KNOT_HTTP_PORT</span> <span class="o">=</span> <span class="s2">&#34;80&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">        KNOT_CODE_SERVER_PORT</span> <span class="o">=</span> <span class="s2">&#34;49374&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">        KNOT_LOGLEVEL</span> <span class="o">=</span> <span class="s2">&#34;debug&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">        KNOT_USER</span> <span class="o">=</span> <span class="s2">&#34;${{ .user.username }}&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">        TZ</span> <span class="o">=</span> <span class="s2">&#34;${{ .user.timezone }}&#34;</span>
-</span></span><span class="line"><span class="cl">      }
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">      <span class="k">volume_mount</span> {
-</span></span><span class="line"><span class="cl"><span class="n">        volume</span>      <span class="o">=</span> <span class="s2">&#34;home_volume&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">        destination</span> <span class="o">=</span> <span class="s2">&#34;/home&#34;</span>
-</span></span><span class="line"><span class="cl">      }
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">      <span class="k">resources</span> {
-</span></span><span class="line"><span class="cl"><span class="n">        cpu</span> <span class="o">=</span> <span class="m">300</span>
-</span></span><span class="line"><span class="cl"><span class="n">        memory</span> <span class="o">=</span> <span class="m">512</span>
-</span></span><span class="line"><span class="cl">      }<span class="c1">
-</span></span></span><span class="line"><span class="cl"><span class="c1">
-</span></span></span><span class="line"><span class="cl"><span class="c1">      # Knot Agent Port
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">service</span> {
-</span></span><span class="line"><span class="cl"><span class="n">        name</span> <span class="o">=</span> <span class="s2">&#34;knot-${{ .space.id }}&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">        port</span> <span class="o">=</span> <span class="s2">&#34;knot_port&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="k">check</span> {
-</span></span><span class="line"><span class="cl"><span class="n">          name</span>            <span class="o">=</span> <span class="s2">&#34;alive&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">          type</span>            <span class="o">=</span> <span class="s2">&#34;http&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">          protocol</span>        <span class="o">=</span> <span class="s2">&#34;https&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">          tls_skip_verify</span> <span class="o">=</span> <span class="kt">true</span>
-</span></span><span class="line"><span class="cl"><span class="n">          path</span>            <span class="o">=</span> <span class="s2">&#34;/ping&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">          interval</span>        <span class="o">=</span> <span class="s2">&#34;10s&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">          timeout</span>         <span class="o">=</span> <span class="s2">&#34;2s&#34;</span>
-</span></span><span class="line"><span class="cl">        }
-</span></span><span class="line"><span class="cl">      }
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}</span></span></code></pre></div></div><div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-8">
-    <button
-      class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-      title="Copy code"
-    >
-      <div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4"></div>
-      <div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4"></div>
-    </button>
-  </div>
-</div>
-<div class="code-block relative mt-6 first:mt-0 group/code"><div class="filename">Volume-Definition</div><div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">volumes</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;debian_${{.space.id}}_home&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;debian_${{.space.id}}_home&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">plugin_id</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;cephrbd&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">capacity_min</span><span class="p">:</span><span class="w"> </span><span class="l">10G</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">capacity_max</span><span class="p">:</span><span class="w"> </span><span class="l">10G</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">mount_options</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">fs_type</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;ext4&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">mount_flags</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="l">rw</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="l">noatime</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">access_mode</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;single-node-writer&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">attachment_mode</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;file-system&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">secrets</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">userID</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;admin&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">userKey</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;FWef0320r23rmvseE+oke2CXEwiifWODSaoqp4==&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">parameters</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">clusterID</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;3abdeec0-ae9c-477b-ab36-d4e3c20e86d0&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">pool</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;rbd&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">imageFeatures</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;deep-flatten,exclusive-lock,fast-diff,layering,object-map&#34;</span></span></span></code></pre></div></div><div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-8">
-    <button
-      class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-      title="Copy code"
-    >
-      <div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4"></div>
-      <div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4"></div>
-    </button>
-  </div>
-</div>
-<h2>Service Password<span class="absolute -mt-20" id="service-password"></span>
+          <h2>Service Password<span class="absolute -mt-20" id="service-password"></span>
     <a href="#service-password" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><p>A service password can be set by going <code>My Profile</code> and entering the chosen password in the <code>Service Password</code> field, if not set the system will generate a random password.</p>
 <p>This can then be used in templates as the variable <code>${{ .user.service_password }}</code>, e.g. for a MariaDB server it can be used as the root password by setting the <code>MARIADB_ROOT_PASSWORD</code> environment variable <code>MARIADB_ROOT_PASSWORD = &quot;${{.user.service_password}}&quot;</code>.</p>
 
