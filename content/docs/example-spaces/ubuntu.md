@@ -12,10 +12,10 @@ job "${{.space.name}}-${{.user.username}}" {
   datacenters = ["dc1"]
 
   update {
-    max_parallel = 1
+    max_parallel     = 1
     min_healthy_time = "30s"
     healthy_deadline = "1m"
-    auto_revert = true
+    auto_revert      = true
   }
 
   group "ubuntu" {
@@ -28,9 +28,9 @@ job "${{.space.name}}-${{.user.username}}" {
     }
 
     volume "home_volume" {
-      type   = "csi"
-      source = "ubuntu_${{.space.id}}_home"
-      read_only = false
+      type            = "csi"
+      source          = "ubuntu_${{.space.id}}_home"
+      read_only       = false
       attachment_mode = "file-system"
       access_mode     = "single-node-writer"
     }
@@ -38,7 +38,7 @@ job "${{.space.name}}-${{.user.username}}" {
     task "ubuntu" {
       driver = "docker"
       config {
-        image = "paularlott/knot-base-ubuntu:22.04"
+        image = "paularlott/knot-ubuntu:22.04"
 
         ports = ["knot_port"]
 
@@ -47,11 +47,11 @@ job "${{.space.name}}-${{.user.username}}" {
 
       env {
         # Define environment variables for agent
-        KNOT_SERVER = "${{.server.url}}"
-        KNOT_SPACEID = "${{.space.id}}"
-        KNOT_SSH_PORT = "22"
+        KNOT_SERVER           = "${{.server.url}}"
+        KNOT_SPACEID          = "${{.space.id}}"
+        KNOT_SSH_PORT         = "22"
         KNOT_CODE_SERVER_PORT = "49374"
-        KNOT_USER = "${{.user.username}}"
+        KNOT_USER             = "${{.user.username}}"
 
         TZ = "${{ .user.timezone }}"
       }
@@ -62,7 +62,7 @@ job "${{.space.name}}-${{.user.username}}" {
       }
 
       resources {
-        cores = 4
+        cores  = 4
         memory = 4096
       }
 
@@ -104,6 +104,8 @@ volumes:
 ```
 
 If the namespace is set on the job e.g. to `${{.user.username}}` then all the spaces would be placed into a namespace of the username, with the correct nomad configuration this would allow users to access nomad but only interact with their jobs.
+
+The space exposes a SSH server to the agent on port 22 which can be connected to via the [SSH proxy](/docs/working-with-spaces/ssh), it also exposes VSCode Server which will be available via the [web interface](/docs/working-with-spaces/code-server).
 
 ## Startup Scripts
 

@@ -78,7 +78,7 @@ EOF
 
       # Knot Agent Port
       service {
-        name = "knot-${NOMAD_JOB_NAME}"
+        name = "${NOMAD_JOB_NAME}"
         port = "knot_port"
 
         # Expose the port on a domain name

@@ -1,11 +1,9 @@
 ---
-title: Debian
-weight: 20
+title: Ubuntu Desktop
+weight: 40
 ---
 
-The following defines a simple Debian space with a volume attached to the home directory, the volume uses hostpath CSI driver which is assumes has been configured within the nomad cluster.
-
-The space provides an instance of code-server which can be accessed in the browser via the knot web interface.
+The following defines a simple Ubuntu 22.04 space which runs a XFCE based desktop environment using the excellent [KasmVNC](https://github.com/kasmtech/KasmVNC). The home directory makes use of a volume using the hostpath CSI driver which is assumes has been configured within the nomad cluster.
 
 ```hcl {filename=Nomad-Job}
 job "${{.space.name}}-${{.user.username}}" {
@@ -29,7 +27,7 @@ job "${{.space.name}}-${{.user.username}}" {
 
     volume "home_volume" {
       type            = "csi"
-      source          = "debian_${{.space.id}}_home"
+      source          = "ubuntu_${{.space.id}}_home"
       read_only       = false
       attachment_mode = "file-system"
       access_mode     = "single-node-writer"
@@ -38,10 +36,10 @@ job "${{.space.name}}-${{.user.username}}" {
     task "debian" {
       driver = "docker"
       config {
-        image = "paularlott/knot-debian:12"
+        image = "paularlott/knot-desktop:ubuntu-22.04"
 
+        privileged = true
         ports = ["knot_port"]
-
         hostname = "${{ .space.name }}"
       }
 
@@ -50,7 +48,9 @@ job "${{.space.name}}-${{.user.username}}" {
         KNOT_SERVER           = "${{.server.url}}"
         KNOT_SPACEID          = "${{.space.id}}"
         KNOT_SSH_PORT         = "22"
+        KNOT_HTTP_PORT        = "80"
         KNOT_CODE_SERVER_PORT = "49374"
+        KNOT_VNC_HTTP_PORT    = "5680"
         KNOT_USER             = "${{.user.username}}"
 
         TZ = "${{ .user.timezone }}"
@@ -62,11 +62,11 @@ job "${{.space.name}}-${{.user.username}}" {
       }
 
       resources {
-        cores  = 4
+        cpu = 300
         memory = 4096
       }
 
-      # Publish Agent Port
+      # Knot Agent Port
       service {
         name = "knot-${{.space.id}}"
         port = "knot_port"
@@ -88,8 +88,8 @@ job "${{.space.name}}-${{.user.username}}" {
 
 ```yaml {filename=Volume-Definition}
 volumes:
-  - id: "debian_${{.space.id}}_home"
-    name: "debian_${{.space.id}}_home"
+  - id: "ubuntu_${{.space.id}}_home"
+    name: "ubuntu_${{.space.id}}_home"
     plugin_id: "hostpath"
     capacity_min: 10G
     capacity_max: 10G
@@ -106,6 +106,8 @@ volumes:
 If the namespace is set on the job e.g. to `${{.user.username}}` then all the spaces would be placed into a namespace of the username, with the correct nomad configuration this would allow users to access nomad but only interact with their jobs.
 
 The space exposes a SSH server to the agent on port 22 which can be connected to via the [SSH proxy](/docs/working-with-spaces/ssh), it also exposes VSCode Server which will be available via the [web interface](/docs/working-with-spaces/code-server).
+
+The space also exposes port 80 via the web interface, assuming a web server such as Caddy or Apache is running on port 80 then it can be accessed from the spaces [web interface](/docs/working-with-spaces/web-server).
 
 ## Startup Scripts
 
