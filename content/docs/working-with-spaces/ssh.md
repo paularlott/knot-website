@@ -37,6 +37,7 @@ To shorten the command for connecting to the remote space the following can be a
 Host mytest
   HostName mytest
   StrictHostKeyChecking = no
+  UserKnownHostsFile=/dev/null
   ProxyCommand knot forward ssh %h
 ```
 
