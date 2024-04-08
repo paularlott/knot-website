@@ -17,7 +17,7 @@ On the client machine connect to the knot server, replacing the URL with the add
 knot connect https://knot.example.com
 ```
 
-When the command runs the browser is opened and if not logged in you will need to login, copy the generated token and paste into terminal.
+When the command runs it prompts for the username and password to connect with, the generated acess key is stored in `~/.knot.yml`.
 
 Next forward port 9010 on the local host to port 80 on the space called `mytest` by running the command:
 

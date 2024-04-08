@@ -33,8 +33,8 @@ layout: hextra-home
     subtitle="Define the developer environment once and deploy as many times as needed."
   >}}
   {{< hextra/feature-card
-    title="Scale"
-    subtitle="Add additional servers to your Nomad cluster to allow scaling to support developer needs."
+    title="Scale / Remote Servers"
+    subtitle="Deploy additional clusters close to developers and manage from a central location for maximum performance."
   >}}
   {{< hextra/feature-card
     title="Roles and Permissions"
