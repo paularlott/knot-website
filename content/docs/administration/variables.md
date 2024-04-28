@@ -41,3 +41,7 @@ To make use of a system variable it simply needs to specified, for example, `${{
 | | server.url | The URL of the knot server |
 | | server.agent_url | The URL of the knot server that agents should use |
 | | server.wildcard_domain | The wildcard domain without the leading * |
+| | server.location | The server location string |
+| nomad | | |
+| | nomad.dc | The nomad datacenter the server is running in, read from the environment variable `NOMAD_DC` |
+| | nomad.region | The nomad region the server is running in, read from the environment variable `NOMAD_REGION` |
