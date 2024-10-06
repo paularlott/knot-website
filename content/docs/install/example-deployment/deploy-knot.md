@@ -49,7 +49,8 @@ server:
 
   redis:
     enabled: true
-    host: redis.service.consul:6379
+    hosts:
+      - redis.service.consul:6379
     password: ""
     db: 0
 
