@@ -194,7 +194,65 @@ server:
 
   redis:
     enabled: true
-    host: srv+redis.service.consul
+    hosts:
+      - srv+redis.service.consul
+    password: ""
+    db: 0
+
+  nomad:
+      addr: "http://nomad.service.consul:4646"
+      token: ""
+```
+
+#### Redis Sentinel
+
+When using Redis Sentinel the `hosts` should be a list of sentinels and the `master_name` should given and set to the name of the master.
+
+```yaml {filename=knot.yml}
+log:
+  level: info
+server:
+  listen: 0.0.0.0:3000
+  download_path: /srv
+  url: "https://knot.example.com"
+  wildcard_domain: "*.knot.example.com"
+  encrypt: "knot genkey"
+
+  redis:
+    enabled: true
+    hosts:
+      - 192.168.0.10:5000
+      - 192.168.0.11:5000
+      - 192.168.0.12:5000
+    master_name: "mymaster"
+    password: ""
+    db: 0
+
+  nomad:
+      addr: "http://nomad.service.consul:4646"
+      token: ""
+```
+
+#### Redis Cluster
+
+When using Redis Cluster the `hosts` should be a list of master nodes in the cluster.
+
+```yaml {filename=knot.yml}
+log:
+  level: info
+server:
+  listen: 0.0.0.0:3000
+  download_path: /srv
+  url: "https://knot.example.com"
+  wildcard_domain: "*.knot.example.com"
+  encrypt: "knot genkey"
+
+  redis:
+    enabled: true
+    hosts:
+      - 192.168.0.10:6379
+      - 192.168.0.11:6379
+      - 192.168.0.12:6379
     password: ""
     db: 0
 
