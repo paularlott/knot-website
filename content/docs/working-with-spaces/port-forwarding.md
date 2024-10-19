@@ -7,7 +7,7 @@ Port forwarding requires the [knot client](/docs/install/client) be installed on
 
 Clicking the `Ports` icon next to a running space will show the list of ports that are exposed for forwarding, they are shown as outlined numbers.
 
-![](/docs/working-with-spaces/ports.webp)
+![](/docs/working-with-spaces/running-space-ports.webp)
 
 This example expects to follow on from the [Web Server](../web-server) example where caddy was installed and started on port 80.
 

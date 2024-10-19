@@ -3,7 +3,7 @@ title: Web Based Terminal
 weight: 20
 ---
 
-![](/docs/working-with-spaces/running-space.webp)
+![](/docs/working-with-spaces/running-space-ports.webp)
 
 From the `Spaces` page click the `Terminal` icon next to the space to connect to this will open a terminal in a new browser window.
 
