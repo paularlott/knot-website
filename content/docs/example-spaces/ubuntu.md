@@ -48,6 +48,7 @@ job "${{.space.name}}-${{.user.username}}" {
       env {
         # Define environment variables for agent
         KNOT_SERVER           = "${{.server.url}}"
+        KNOT_AGENT_ENDPOINT   = "${{.server.agent_endpoint}}"
         KNOT_SPACEID          = "${{.space.id}}"
         KNOT_SSH_PORT         = "22"
         KNOT_CODE_SERVER_PORT = "49374"
