@@ -55,10 +55,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
-  agent-endpoint: "srv+knot-server-agent.service.consul"
+  agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   mysql:
@@ -134,9 +135,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   mysql:
@@ -155,6 +158,7 @@ The configuration should be updated:
 
 - `url` The host the server will be accessed as
 - `wildcard_domain` The wildcard domain used to provide web access to the containers web server
+- `agent_endpoint` The endpoint agents should connect to
 - `encrypt` The encryption key for encrypting variables, this is generated with `knot genkey`
 - `mysql.*` The configuration information for the MySQL server to use
 - `nomad.*` The configuration for communicating with Nomad, the token must have permission to access any namespaces used in environment jobs
@@ -172,9 +176,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   mysql:
@@ -208,9 +214,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   redis:
@@ -234,9 +242,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   redis:
@@ -263,9 +273,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   redis:
@@ -291,9 +303,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   badgerdb:
