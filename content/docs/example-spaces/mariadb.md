@@ -41,10 +41,11 @@ job "${{.user.username}}-${{.space.name}}" {
     task "mariadb" {
       env {
         # Define environment variables for agent
-        KNOT_SERVER   = "${{.server.url}}"
-        KNOT_SPACEID  = "${{.space.id}}"
-        KNOT_TCP_PORT = "3306"
-        KNOT_USER     = "mysql"
+        KNOT_SERVER         = "${{.server.url}}"
+        KNOT_AGENT_ENDPOINT = "${{.server.agent_endpoint}}"
+        KNOT_SPACEID        = "${{.space.id}}"
+        KNOT_TCP_PORT       = "3306"
+        KNOT_USER           = "mysql"
 
         MARIADB_ROOT_PASSWORD = "${{.user.service_password}}"
       }

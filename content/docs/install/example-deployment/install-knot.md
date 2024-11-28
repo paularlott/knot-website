@@ -30,14 +30,15 @@ job "${{.user.username}}-${{.space.name}}" {
     task "debian" {
       env {
         # Define environment variables for agent
-        KNOT_SERVER = "${{.server.url}}"
-        KNOT_SPACEID = "${{.space.id}}"
-        KNOT_LOGLEVEL = "warn"
-        KNOT_USER = "${{.user.username}}"
+        KNOT_SERVER         = "${{.server.url}}"
+        KNOT_AGENT_ENDPOINT = "${{.server.agent_endpoint}}"
+        KNOT_SPACEID        = "${{.space.id}}"
+        KNOT_LOGLEVEL       = "warn"
+        KNOT_USER           = "${{.user.username}}"
 
-        KNOT_DNS_LISTEN = "127.0.0.1:53"
+        KNOT_DNS_LISTEN     = "127.0.0.1:53"
         KNOT_CONSUL_SERVERS = "${attr.unique.network.ip-address}:8600"
-        KNOT_NAMESERVERS = "1.1.1.1 1.0.0.1"
+        KNOT_NAMESERVERS    = "1.1.1.1 1.0.0.1"
       }
 
       driver = "docker"

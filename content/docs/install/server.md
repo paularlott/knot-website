@@ -33,13 +33,16 @@ job "knot-server" {
       port "knot_port" {
         to = 3000
       }
+      port "knot_agent_port" {
+        to = 3010
+      }
     }
 
     task "knot-server" {
       driver = "docker"
       config {
         image = "paularlott/knot:latest"
-        ports = ["knot_port"]
+        ports = ["knot_port", "knot_agent_port"]
       }
 
       env {
@@ -52,9 +55,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+  agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   mysql:
@@ -97,6 +102,23 @@ EOF
           timeout         = "2s"
         }
       }
+
+      service {
+        name = "${NOMAD_JOB_NAME}-agent"
+        port = "knot_agent_port"
+        address = "${attr.unique.network.ip-address}"
+
+        check {
+          name            = "alive"
+          port            = "knot_port"
+          type            = "http"
+          protocol        = "https"
+          tls_skip_verify = true
+          path            = "/health"
+          interval        = "10s"
+          timeout         = "2s"
+        }
+      }
     }
   }
 }
@@ -113,9 +135,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   mysql:
@@ -134,6 +158,7 @@ The configuration should be updated:
 
 - `url` The host the server will be accessed as
 - `wildcard_domain` The wildcard domain used to provide web access to the containers web server
+- `agent_endpoint` The endpoint agents should connect to
 - `encrypt` The encryption key for encrypting variables, this is generated with `knot genkey`
 - `mysql.*` The configuration information for the MySQL server to use
 - `nomad.*` The configuration for communicating with Nomad, the token must have permission to access any namespaces used in environment jobs
@@ -142,7 +167,9 @@ The MySQL database should be empty as on first run knot will create the required
 
 ### Caching
 
-A redis server can be used along side MySQL to store the state of the agents, this is more performant than storing the agent state in the database.
+#### Redis / Valkey
+
+A Redis or Valkey server or cluster can be used along side MySQL to store session information, this is more performant than storing the sessions in the database.
 
 To enable caching simply add a redis configuration e.g.:
 
@@ -151,9 +178,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   mysql:
@@ -174,22 +203,60 @@ server:
       token: ""
 ```
 
-In this mode all data is stored in MySQL only the agent states are stored in redis.
+In this mode all data is stored in MySQL only the sessions are stored in redis.
 
-### Without MySQL
 
-#### Redis
+#### MemoryDb
 
-The knot server can be run using a Redis server by replacing knot.yml in the nomad job:
+The session data can be stored in a memory database, this is the most performant option, however restarting the server will loose the current sessions.
+
+To enable  memory basedcaching simply add a `memorydb` configuration e.g.:
 
 ```yaml {filename=knot.yml}
 log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
+  encrypt: "knot genkey"
+
+  mysql:
+      database: knot
+      enabled: true
+      host: ""
+      password: ""
+      user: ""
+
+  memorydb:
+    enabled: true
+
+  nomad:
+      addr: "http://nomad.service.consul:4646"
+      token: ""
+```
+
+In this mode all data is stored in MySQL only the sessions are stored in memory.
+
+### Without MySQL
+
+#### Redis / Valkey
+
+The knot server can be run using a Redis / Valkey server by replacing knot.yml in the nomad job:
+
+```yaml {filename=knot.yml}
+log:
+  level: info
+server:
+  listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
+  download_path: /srv
+  url: "https://knot.example.com"
+  wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   redis:
@@ -204,18 +271,20 @@ server:
       token: ""
 ```
 
-#### Redis Sentinel
+#### Redis / Valkey Sentinel
 
-When using Redis Sentinel the `hosts` should be a list of sentinels and the `master_name` should given and set to the name of the master.
+When using Redis / Valkey Sentinel the `hosts` should be a list of sentinels and the `master_name` should given and set to the name of the master.
 
 ```yaml {filename=knot.yml}
 log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   redis:
@@ -233,7 +302,7 @@ server:
       token: ""
 ```
 
-#### Redis Cluster
+#### Redis / Valkey Cluster
 
 When using Redis Cluster the `hosts` should be a list of master nodes in the cluster.
 
@@ -242,9 +311,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   redis:
@@ -270,9 +341,11 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
+	listen_agent: 0.0.0.0:3010
   download_path: /srv
   url: "https://knot.example.com"
   wildcard_domain: "*.knot.example.com"
+	agent_endpoint: "srv+knot-server-agent.service.consul"
   encrypt: "knot genkey"
 
   badgerdb:
@@ -285,7 +358,3 @@ server:
 ```
 
 The `/data/` directory must be mounted to persistent storage or configurations are not persisted between restarts.
-
-{{< callout type="warning" >}}
-  When using BadgerDB only one instance of the knot server can be started and pointed at the BadgerDB data directory.
-{{< /callout >}}
