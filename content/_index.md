@@ -46,7 +46,7 @@ layout: hextra-home
   >}}
   {{< hextra/feature-card
     title="Web Based Editor"
-    subtitle="Access Visual Studio Code through your web browser."
+    subtitle="Use Code Server or Visual Studio Code Tunnels through your web browser."
   >}}
   {{< hextra/feature-card
     title="And Much More..."

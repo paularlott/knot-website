@@ -51,17 +51,18 @@ The environment will continue its boot process during which time additional icon
 
 Not all icons will appear for all spaces as they are dependant on the agent configuration within the space.
 
-- **SSH** Is shown when it's possible to create a SSH connection to the space, clicking the icon will show the command line information for connecting to the space.
-- **Code Server** Is shown if a running instance of Visual Studio Code is found running within the space, clicking the icon opens a new tab or window showing the editor.
+- **Desktop** Is show if a running web based VNC server such as [KasmVNC](https://github.com/kasmtech/KasmVNC) is available within the container. Clicking it will open a new window displaying the graphical desktop.
+- **Code Server** Is shown if a running instance of Code Server is found running within the space, clicking the icon opens a new tab or window showing the editor.
+- **Visual Studio Code** Is shown if a running instance of Visual Studio Code is found running within the space, clicking the icon opens a new tab or window showing the editor. If the Visual Studio Code tunnel hasn't been created then a terminal is opened allowing the tunnel to be created.
 - **Terminal** Is shown if a web based terminal can be opened into the space, clicking the icon opens a new window showing the terminal.
 - **Ports** Is shown if there's ports exposed that can either be connected to via the web interface or via port forwarding on the command line. Clicking the icon drops down a list of the available ports, ports shown with a solid background can be connected to by clicking the button and will open in a new tab or window, while ports with an outline are available for use with port forwarding on the command line.
-- **Desktop** Is show if a running web based VNC server such as [KasmVNC](https://github.com/kasmtech/KasmVNC) is available within the container. Clicking it will open a new window displaying the graphical desktop.
+- **SSH Info** Is shown when it's possible to create a SSH connection to the space, clicking the icon will show the command line information for connecting to the space.
 
 ## Stopping a Space
 
 Clicking the menu item next to the running space will show the Stop button.
 
-![](/docs/working-with-spaces/stopping-space.webp)
+![](/docs/working-with-spaces/running-space.webp)
 
 {{< callout type="warning" >}}
   When stopping a space all data in memory and not on a persistent volume will be lost. However any volumes used by the space will not be deleted.

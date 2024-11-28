@@ -39,7 +39,7 @@ To make use of a system variable it simply needs to specified, for example, `${{
 | | user.service_password | Service password for the user |
 | server | | |
 | | server.url | The URL of the knot server |
-| | server.agent_url | The URL of the knot server that agents should use |
+| | server.agent_endpoint | The endpoint agents should use to connect to the server |
 | | server.wildcard_domain | The wildcard domain without the leading * |
 | | server.location | The server location string |
 | nomad | | |
