@@ -37,6 +37,10 @@ layout: hextra-home
     subtitle="Deploy additional clusters close to developers and manage from a central location for maximum performance."
   >}}
   {{< hextra/feature-card
+    title="Local Docker / Podman"
+    subtitle="Deploy local Docker and Podman containers and manage from from a central location."
+  >}}
+  {{< hextra/feature-card
     title="Roles and Permissions"
     subtitle="Control access to the system with roles and permissions."
   >}}
