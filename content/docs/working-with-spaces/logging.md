@@ -98,4 +98,6 @@ curl -X POST http://localhost:12201/loki/api/v1/push \
 
 {{< callout type="note" >}}
   The interface is designed to accept a Loki message but doesn't do validation on the message, so it's possible to send a message that doesn't conform to the Loki specification.
+
+  Only JSON formatted log messages are supported.
 {{< /callout >}}
