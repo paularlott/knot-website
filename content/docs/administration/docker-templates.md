@@ -30,8 +30,8 @@ volumes:
   - /home/example:/myhome
   - volume1:/volume1
 
-cap_add:
-  - CAP_AUDIT_WRITE
+#cap_add:
+#  - CAP_AUDIT_WRITE
 
 #command: [
 #  "./knot",
