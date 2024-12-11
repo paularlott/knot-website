@@ -36,6 +36,9 @@ volumes:
 #cap_drop:
 #  - CAP_MKNOD
 
+#devices:
+#  - "/dev/ttyUSB0:/dev/ttyUSB0"
+
 #command: [
 #  "./knot",
 #  "server"
