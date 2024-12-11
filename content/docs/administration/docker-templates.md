@@ -33,6 +33,9 @@ volumes:
 #cap_add:
 #  - CAP_AUDIT_WRITE
 
+#cap_drop:
+#  - CAP_MKNOD
+
 #command: [
 #  "./knot",
 #  "server"
