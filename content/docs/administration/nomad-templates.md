@@ -1,5 +1,5 @@
 ---
-title: Templates
+title: Nomad Templates
 weight: 40
 ---
 
