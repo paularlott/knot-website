@@ -42,6 +42,7 @@ To make use of a system variable it simply needs to specified, for example, `${{
 | | server.agent_endpoint | The endpoint agents should use to connect to the server |
 | | server.wildcard_domain | The wildcard domain without the leading * |
 | | server.location | The server location string |
+| | server.timezone | The server timezone |
 | nomad | | |
 | | nomad.dc | The nomad datacenter the server is running in, read from the environment variable `NOMAD_DC` |
 | | nomad.region | The nomad region the server is running in, read from the environment variable `NOMAD_REGION` |
