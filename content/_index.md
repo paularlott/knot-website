@@ -17,7 +17,7 @@ layout: hextra-home
 
 <div class="hx-mb-12">
 {{< hextra/hero-subtitle >}}
-  Your Key to Effortless&nbsp;<br class="sm:block hidden" />Development Environment Management
+  Your Key to Effortless&nbsp;<br class="sm:block hidden" />Cloud Development Environment Management
 {{< /hextra/hero-subtitle >}}
 </div>
 
