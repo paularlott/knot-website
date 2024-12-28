@@ -15,54 +15,50 @@ This can then be used in templates as the variable `${{ .user.service_password }
 
 ## Creating a Space
 
-From the `Templates` page open the menu next to the template to use and click `Create Space`:
+From the `Templates` page open the menu for the template to use and click `Create Space`:
 
-![](/docs/working-with-spaces/create-space.webp)
+![Create Space](create-space.webp)
 
 {{< callout type="info" >}}
   Depending on the permissions the user has the option `Create Space For` maybe displayed, clicking this will prompt for the user under which the space is to be created. This allows an admin to create spaces for users.
 {{< /callout >}}
 
-The fllowing form will be presented:
+The following form will be presented:
 
-![](/docs/working-with-spaces/create-space-form.webp)
+![Create Space Form](create-space-form.webp)
 
 Enter a name for the space e.g. `mytest` and leave the `Terminal Shell` as `Bash`, once `Create Space` is clicked the space will be created within knot and the main spaces page loaded.
 
-The space is created in a stopped state, no resources are used within the Nomad cluster at this point.
+The space is created in a stopped state, no resources are used until the space is started.
 
 The `Additional Space Names` section allows additional names to be entered against the space, this is useful when using the web proxy service and development needs to access the target software under multiple domain names.
 
-### Manual Spaces
-
-It's possible to run the agent manually on a virtual machine or even a physical server and connect to it from the knot web interface.
-
-Select the `Manual-Configuration` template, then fill out the URL of the agent e.g. `http://192.168.0.1:3000` if the address can be found via a DNS SRV lookup then the URL can be given in the form `srv+http://vm.service.consul`.
-
 ## Starting a Space
 
-From the `Spaces` page click the menu item next to the space to start, and then select `Start`, them menu will change to read "Starting" and after a few seconds the `Running` will show in the `Status` column.
+From the `Spaces` page click the menu item next to the space to start, and then select `Start`, them menu will change to read "Starting" and after a few seconds `Running` will show next to `Status`.
 
-![](/docs/working-with-spaces/start-space.webp)
+![Start Space](start-space.webp)
+
+Spaces created from manual templates don't have a `Start` option, they are started automatically when their agent connects to the server.
 
 The environment will continue its boot process during which time additional icons will appear next to the space, e.g. `Terminal`.
 
-![](/docs/working-with-spaces/running-space.webp)
+![Running Space](running-space.webp)
 
 Not all icons will appear for all spaces as they are dependant on the agent configuration within the space.
 
-- **Desktop** Is show if a running web based VNC server such as [KasmVNC](https://github.com/kasmtech/KasmVNC) is available within the container. Clicking it will open a new window displaying the graphical desktop.
+- **Desktop** Is shown if a running web based VNC server such as [KasmVNC](https://github.com/kasmtech/KasmVNC) is available within the container. Clicking it will open a new window displaying the graphical desktop.
 - **Code Server** Is shown if a running instance of Code Server is found running within the space, clicking the icon opens a new tab or window showing the editor.
-- **Visual Studio Code** Is shown if a running instance of Visual Studio Code is found running within the space, clicking the icon opens a new tab or window showing the editor. If the Visual Studio Code tunnel hasn't been created then a terminal is opened allowing the tunnel to be created.
+- **Visual Studio Code** Is shown if a running instance of Visual Studio Code tunnels is found running within the space, clicking the icon opens a new tab or window showing the editor. If the Visual Studio Code tunnel hasn't been created then a terminal is opened allowing the tunnel to be created.
 - **Terminal** Is shown if a web based terminal can be opened into the space, clicking the icon opens a new window showing the terminal.
 - **Ports** Is shown if there's ports exposed that can either be connected to via the web interface or via port forwarding on the command line. Clicking the icon drops down a list of the available ports, ports shown with a solid background can be connected to by clicking the button and will open in a new tab or window, while ports with an outline are available for use with port forwarding on the command line.
-- **SSH Info** Is shown when it's possible to create a SSH connection to the space, clicking the icon will show the command line information for connecting to the space.
+- **SSH Info** Is shown in the space menu when it's possible to create a SSH connection to the space, clicking the icon will show the command line information for connecting to the space.
 
 ## Stopping a Space
 
 Clicking the menu item next to the running space will show the Stop button.
 
-![](/docs/working-with-spaces/running-space.webp)
+![Stopping a Space](stopping-a-space.webp)
 
 {{< callout type="warning" >}}
   When stopping a space all data in memory and not on a persistent volume will be lost. However any volumes used by the space will not be deleted.
@@ -72,9 +68,11 @@ Clicking the menu item next to the running space will show the Stop button.
 
 If the template that a running space is using is updated then an `Update Available` badge is displayed:
 
-![](/docs/working-with-spaces/space-update.webp)
+![Update Pending](update-pending.webp)
 
-To update the space, stop it and then start it again. Add volumes that have been added to the template will be created when the space starts and any volumes that have been removed from the template will be deleted along with the data they contain.
+To update the space, stop it and then start it again.
+
+Volumes that have been added to the template will be created when the space starts and any volumes that have been removed from the template will be deleted along with the data they contain.
 
 A space can also be edited, this allows changing of the space name as well as updating any additional names for the space. Additional URLs are supported as soon as the space is successfully saved.
 
@@ -86,4 +84,4 @@ A space can also be edited, this allows changing of the space name as well as up
 
 Only stopped spaces can be deleted.
 
-From the menu next to the stopped space select the `Delete` item and confirm deletion. When the space is deleted all resources are freed from the Nomad cluster and all volumes and their associated data are removed.
+From the menu next to the stopped space select the `Delete` item and confirm deletion. When the space is deleted all resources are freed and all volumes and their associated data are removed.

@@ -1,6 +1,6 @@
 ---
 title: Web Server
-weight: 40
+weight: 60
 ---
 
 Using a space created from the `mytest` template the first step is to install a web server, for this example [caddy](https://caddyserver.com/) will be used.
@@ -22,15 +22,17 @@ Start caddy with the defaults:
 sudo caddy start --config /etc/caddy/Caddyfile
 ```
 
-Click the `Ports` icon next to the running space and click the port 80 on the solid background, this is the port that is exposed via the web interface of knot.
+Click the `Ports` icon against the running space and click the port 80, this is the port that is exposed via the web interface of knot.
 
-![](/docs/working-with-spaces/running-space-ports.webp)
+![Ports](ports.webp)
 
-Once clicked a new tab or windows will be opened showing the default welcome page for caddy.
+Once clicked a new tab or window will be opened showing the default welcome page for caddy.
 
-![](/docs/working-with-spaces/caddy-server.webp)
+![Caddy Welcome Page](caddy-server.webp)
 
 Depending on the template caddy or another web server may already be present or require specific steps to launch the web server.
+
+Where the Ports menu is divided into two groups the top group are clickable and will open in a new tab or window, the bottom group are for use with port forwarding on the command line.
 
 {{< callout type="warning" >}}
   Ports exposed via the web interface do not require authentication to access them.

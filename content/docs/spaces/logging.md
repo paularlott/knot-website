@@ -1,13 +1,13 @@
 ---
 title: Logging
-weight: 100
+weight: 90
 ---
 
-The spaces using or built from the knot base images use rsyslog to collect logs from the services running within the space. The logs are then sent to the knot agent which forwards them to the origin server for storage and viewing.
+The spaces using or built from the knot base images use rsyslog to collect logs from the services running within the space. The logs are then sent to the knot agent which forwards them to the knot server for storage and viewing.
 
 ## Viewing Logs
 
-Once a space is running, the logs can be viewed by clicking the `Logs` button on the `Spaces` page next to the space whose logs are to be viewed.
+Once a space is running, the logs can be viewed by clicking the `Logs` button on the `Spaces` page against the space whose logs are to be viewed.
 
 ## Sending Logs
 

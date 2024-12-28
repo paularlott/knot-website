@@ -1,13 +1,13 @@
 ---
 title: Web Based Terminal
-weight: 20
+weight: 30
 ---
 
-![](/docs/working-with-spaces/running-space-ports.webp)
+![Terminal Icon](terminal-icon.webp)
 
-From the `Spaces` page click the `Terminal` icon next to the space to connect to this will open a terminal in a new browser window.
+From the `Spaces` page click the `Terminal` icon next on the space to connect to this will open a terminal in a new browser window.
 
-![](/docs/working-with-spaces/web-terminal.webp)
+![Web Base Terminal](web-terminal.webp)
 
 When the terminal opens it will attempt to use the shell specified in the space configuration, however if that shell isn't available within the container then the knot agent will attempt to find an alternative client, the search order is bash, zsh, fish and sh.
 
