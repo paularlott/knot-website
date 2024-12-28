@@ -1,21 +1,21 @@
 ---
-title: Docker Templates
-weight: 45
+title: Docker / Podman
+weight: 50
 ---
 
-## Overview
+Local spaces can be defined using Docker `Templates`, these templates are used to define the environment that the user will work within and can have an optional volume definition.
 
-Local spaces can be defined using Docker `Templates`, these templates are used to define the environment that a developer will work within and can have an optional volume definition.
-
-When a developer creates an instance of the `Template`, a `Space`, and starts it, knot automatically creates any required volumes and launches the job in the local machine.
+When a user creates an instance of the `Template`, a `Space`, and starts it, knot automatically creates any required volumes and launches the job in the local machine.
 
 Local containers work with Docker or Podman running on the same machine as the knot server.
 
-## Creating a Template
+## Container Specification
 
-From the menu select `Templates` then `Create Template`, then check the Local Container (Docker / Podman) box.
+From the menu select `Templates` then `New Template`, then check the Local Container (Docker / Podman) box:
 
-Example docker template:
+![Create a Local Template](create-local-template.webp)
+
+Example docker / podman template:
 
 ```yaml
 container_name: ${{ .user.username }}-${{ .space.name }}
@@ -49,7 +49,6 @@ privileged: true
 
 environment:
   - "TZ=${{.user.timezone}}"
-  - "MARIADB_ROOT_PASSWORD=testing"
   - "KNOT_LOGLEVEL=debug"
   - "KNOT_SERVER=${{.server.url}}"
   - "KNOT_AGENT_ENDPOINT=${{.server.agent_endpoint}}"
@@ -62,7 +61,9 @@ environment:
   - "KNOT_VSCODE_TUNNEL=vscodetunnel"
 ```
 
-The ports section is not required if the ports will only be accessed via knot, they are only required if the ports are to be accessed directly.
+The ports section is not required if the ports will only be accessed via knot, it is only required if the ports are to be accessed directly.
+
+## Volumes
 
 Example volume definition:
 
@@ -70,7 +71,3 @@ Example volume definition:
 volumes:
   volume1:
 ```
-
-## Deleting a Template
-
-If a template is in use then it can't be deleted.
