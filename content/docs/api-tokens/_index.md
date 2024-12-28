@@ -7,9 +7,9 @@ API tokens are created automatically when logging in with the knot client. Token
 
 ## Creating a Token
 
-From the menu select `API Tokens`, then click `Create Token`.
+From the menu select `API Tokens`, then click `New Token`.
 
-![](/docs/administration/create-api-token.webp)
+![Create API Token](create-api-token.webp)
 
 Complete the `Name` field and click `Create Token`, a new token is generated and the list of available tokens is displayed.
 
@@ -23,4 +23,4 @@ Deleting a token instantly stops further API calls being made using the token.
 
 From the API token list click `Delete` next to the token to delete, and confirm the operation when prompted.
 
-![](/docs/administration/list-api-tokens.webp)
+![List of API Tokens](list-api-tokens.webp)
