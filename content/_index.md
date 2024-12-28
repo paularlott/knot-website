@@ -11,7 +11,7 @@ layout: hextra-home
 
 <div class="hx-mt-6 hx-mb-6">
 {{< hextra/hero-headline >}}
-  Simplify Deployment of&nbsp;<br class="sm:block hidden" />Developer Environments
+  Simplify Deployment of&nbsp;<br class="sm:block hidden" />Cloud Developer Environments
 {{< /hextra/hero-headline >}}
 </div>
 

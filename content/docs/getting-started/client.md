@@ -1,6 +1,6 @@
 ---
 title: Client Install
-weight: 10
+weight: 200
 ---
 
 While the client software is not mandatory - given that spaces are easily accessible through the web interface - installing it unlocks a range of enhanced functionalities. Once installed, the client facilitates SSH access into active spaces, enables port forwarding, and offers an array of additional features.
