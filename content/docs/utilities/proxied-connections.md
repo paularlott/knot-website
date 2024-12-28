@@ -5,7 +5,7 @@ weight: 40
 
 ## Overview
 
-If the [knot client](/docs/install/client) is installed and the knot server is started with the option `--enable-proxy` then it provides functionality to allow connections to services running within a Nomad cluster to be proxied via knot, this can allow connection to services without the local machine having direct access to the cluster network.
+If the [knot client](/docs/getting-started/client/) is installed and the knot server is started with the option `--enable-proxy` then it provides functionality to allow connections to services running within a Nomad cluster to be proxied via knot, this can allow connection to services without the local machine having direct access to the cluster network.
 
 ## Lookup
 
