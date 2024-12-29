@@ -4,28 +4,28 @@ layout: hextra-home
 ---
 
 {{< hextra/hero-badge link="https://github.com/paularlott/knot" >}}
-  <div class="w-2 h-2 rounded-full bg-primary-400"></div>
+  <div class="hx-w-2 hx-h-2 hx-rounded-full hx-bg-primary-400"></div>
   <span>Free, open source, Apache 2.0 License</span>
   {{< icon name="arrow-circle-right" attributes="height=14" >}}
 {{< /hextra/hero-badge >}}
 
-<div class="mt-6 mb-6">
+<div class="hx-mt-6 hx-mb-6">
 {{< hextra/hero-headline >}}
   Simplify Deployment of&nbsp;<br class="sm:block hidden" />Developer Environments
 {{< /hextra/hero-headline >}}
 </div>
 
-<div class="mb-12">
+<div class="hx-mb-12">
 {{< hextra/hero-subtitle >}}
   Your Key to Effortless&nbsp;<br class="sm:block hidden" />Development Environment Management
 {{< /hextra/hero-subtitle >}}
 </div>
 
-<div class="mb-6">
+<div class="hx-mb-6">
 {{< hextra/hero-button text="Get Started" link="docs/install/" >}}
 </div>
 
-<div class="mt-6"></div>
+<div class="hx-mt-6"></div>
 
 {{< hextra/feature-grid >}}
   {{< hextra/feature-card
@@ -37,6 +37,10 @@ layout: hextra-home
     subtitle="Deploy additional clusters close to developers and manage from a central location for maximum performance."
   >}}
   {{< hextra/feature-card
+    title="Local Docker / Podman"
+    subtitle="Deploy local Docker and Podman containers and manage from from a central location."
+  >}}
+  {{< hextra/feature-card
     title="Roles and Permissions"
     subtitle="Control access to the system with roles and permissions."
   >}}
@@ -46,7 +50,7 @@ layout: hextra-home
   >}}
   {{< hextra/feature-card
     title="Web Based Editor"
-    subtitle="Access Visual Studio Code through your web browser."
+    subtitle="Use Code Server or Visual Studio Code Tunnels through your web browser."
   >}}
   {{< hextra/feature-card
     title="And Much More..."
@@ -55,6 +59,6 @@ layout: hextra-home
   >}}
 {{< /hextra/feature-grid >}}
 
-<div class="mt-12">
+<div class="hx-mt-6">
 knot is a management tool for developer environments running within a Nomad cluster. It offers both a user-friendly web interface and a command line interface to streamline the deployment and access to development environments. With knot, managing your development environments becomes an effortless task.
 </div>
