@@ -60,5 +60,5 @@ layout: hextra-home
 {{< /hextra/feature-grid >}}
 
 <div class="hx-mt-6">
-knot is a management tool for developer environments running within a Nomad cluster. It offers both a user-friendly web interface and a command line interface to streamline the deployment and access to development environments. With knot, managing your development environments becomes an effortless task.
+knot is a management tool for creating and running environments within a Nomad cluster. It offers both a user-friendly web interface and a command line interface to streamline the deployment and access to environments. With knot, managing your cloud based development environments becomes an effortless task.
 </div>
