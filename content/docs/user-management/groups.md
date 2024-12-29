@@ -11,7 +11,7 @@ Groups can also be used to set the limits for Compute and Storage Units that a u
 
 From the menu select `Groups` and then `New Group`, the following form will be presented:
 
-![Create a Group](create-groups.webp)
+{{< image src="../create-groups.webp" alt="Create a Group" >}}
 
 The `Name` is the name of the group, this is used to identify the group in the system.
 

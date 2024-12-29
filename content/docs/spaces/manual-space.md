@@ -9,7 +9,7 @@ First a template needs to be created with the `Manually Created Space` option ch
 
 Manual spaces show the Space Id, this is required for the agent to connect to the knot server.
 
-![Manual Space](manual-space.webp)
+{{< image src="../manual-space.webp" alt="Manual Space" >}}
 
 On the machine where the agent will run create a `knot.yaml` file with the following content:
 

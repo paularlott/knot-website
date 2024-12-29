@@ -17,7 +17,7 @@ This can then be used in templates as the variable `${{ .user.service_password }
 
 From the `Templates` page open the menu for the template to use and click `Create Space`:
 
-![Create Space](create-space.webp)
+{{< image src="../create-space.webp" alt="Create Space" >}}
 
 {{< callout type="info" >}}
   Depending on the permissions the user has the option `Create Space For` maybe displayed, clicking this will prompt for the user under which the space is to be created. This allows an admin to create spaces for users.
@@ -25,7 +25,7 @@ From the `Templates` page open the menu for the template to use and click `Creat
 
 The following form will be presented:
 
-![Create Space Form](create-space-form.webp)
+{{< image src="../create-space-form.webp" alt="Create Space Form" >}}
 
 Enter a name for the space e.g. `mytest` and leave the `Terminal Shell` as `Bash`, once `Create Space` is clicked the space will be created within knot and the main spaces page loaded.
 
@@ -37,13 +37,13 @@ The `Additional Space Names` section allows additional names to be entered again
 
 From the `Spaces` page click the menu item next to the space to start, and then select `Start`, them menu will change to read "Starting" and after a few seconds `Running` will show next to `Status`.
 
-![Start Space](start-space.webp)
+{{< image src="../start-space.webp" alt="Start Space" >}}
 
 Spaces created from manual templates don't have a `Start` option, they are started automatically when their agent connects to the server.
 
 The environment will continue its boot process during which time additional icons will appear next to the space, e.g. `Terminal`.
 
-![Running Space](running-space.webp)
+{{< image src="../running-space.webp" alt="Running Space" >}}
 
 Not all icons will appear for all spaces as they are dependant on the agent configuration within the space.
 
@@ -58,7 +58,7 @@ Not all icons will appear for all spaces as they are dependant on the agent conf
 
 Clicking the menu item next to the running space will show the Stop button.
 
-![Stopping a Space](stopping-a-space.webp)
+{{< image src="../stopping-a-space.webp" alt="Stopping a Space" >}}
 
 {{< callout type="warning" >}}
   When stopping a space all data in memory and not on a persistent volume will be lost. However any volumes used by the space will not be deleted.
@@ -68,7 +68,7 @@ Clicking the menu item next to the running space will show the Stop button.
 
 If the template that a running space is using is updated then an `Update Available` badge is displayed:
 
-![Update Pending](update-pending.webp)
+{{< image src="../update-pending.webp" alt="Update Pending" >}}
 
 To update the space, stop it and then start it again.
 

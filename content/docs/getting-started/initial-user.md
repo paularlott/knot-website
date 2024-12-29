@@ -5,7 +5,7 @@ weight: 50
 
 Once the server has been deployed point the browser at the URL defined in the configuration file, the following form will be presented:
 
-![Initial User Setup](create-admin-user.webp)
+{{< image src="../create-admin-user.webp" alt="Initial User Setup" >}}
 
 NOTE: In multiple server mode the Origin Server must be used to initialize the admin user.
 

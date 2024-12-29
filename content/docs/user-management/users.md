@@ -7,7 +7,7 @@ weight: 10
 
 From the menu select `Users` and then `New User` and the following form will be presented:
 
-![Creating a New User](create-user.webp)
+{{< image src="../create-user.webp" alt="Creating a New User" >}}
 
 The `Preferred Shell` is used when the user opens a web based terminal into the space, the system will attempt to open the selected shell and if not found will look for another available shell. This can be changed per space when creating a space.
 
@@ -33,7 +33,7 @@ When connecting to a space via SSH and the client, the `SSH Public Key` if set w
 
 Select the menu item for the user to delete, click `Delete` and confirm the action.
 
-![Delete User](user-menu.webp)
+{{< image src="../user-menu.webp" alt="Delete User" >}}
 
 ## Editing a User
 
