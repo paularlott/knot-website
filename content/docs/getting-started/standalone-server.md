@@ -1,5 +1,5 @@
 ---
-title: Installing a Server
+title: Standalone Server
 weight: 20
 cascade:
   type: docs

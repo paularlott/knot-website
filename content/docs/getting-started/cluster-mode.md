@@ -1,11 +1,11 @@
 ---
-title: Installing a Leaf Server
+title: Cluster Mode
 weight: 30
 cascade:
   type: docs
 ---
 
-Once you have a single server running, you can add more servers. These additional servers, Leaf Servers, can be used to improve performance by placing clusters close to the users, to provide additional capacity within a location or to provide separation between different teams.
+Once you have a single server running, you can add more servers to form a distributed cluster. These additional servers, Leaf Servers, can be used to improve performance by placing clusters close to the users, to provide additional capacity within a location or to provide separation between different teams.
 
 ## Origin Server
 
