@@ -1,0 +1,79 @@
+direction: up
+
+Origin Server {
+
+}
+
+Origin Server <- Australia.Leaf Server: HTTPS / WebSocket
+Origin Server <- United Kingdom.Leaf Server: HTTPS / WebSocket
+Origin Server <-> Developer Local.Leaf Server: HTTPS / WebSocket (User API Key) {
+  style: {
+    stroke-dash: 10
+    animated: true
+  }
+}
+
+
+Developer Local {
+  Leaf Server
+  Podman {
+    Container {
+      Agent
+    }
+  }
+  Docker {
+    Container {
+      Agent
+    }
+  }
+  User
+
+  User -> Leaf Server: HTTPS / WebSocket
+
+  Leaf Server <-> Podman.Container.Agent: TCP
+  Leaf Server <-> Docker.Container.Agent: TCP
+}
+
+Australia {
+	Leaf Server
+	Nomad Cluster {
+		Container 1 {
+			Agent
+		}
+		Container 2 {
+			Agent
+		}
+	}
+	Users {
+		User 1
+		User 2
+	}
+
+  Leaf Server <-> Nomad Cluster.Container 1.Agent: TCP
+  Leaf Server <-> Nomad Cluster.Container 2.Agent: TCP
+
+  Users.User 1 -> Leaf Server: HTTPS / WebSocket
+  Users.User 2 -> Leaf Server: HTTPS / WebSocket
+}
+
+United Kingdom {
+	Leaf Server
+	Nomad Cluster {
+		Container 1 {
+			Agent
+		}
+		Container 2 {
+			Agent
+		}
+	}
+	Users {
+		User 1
+		User 2
+	}
+
+  Leaf Server <-> Nomad Cluster.Container 1.Agent: TCP
+  Leaf Server <-> Nomad Cluster.Container 2.Agent: TCP
+
+  Users.User 1 -> Leaf Server: HTTPS / WebSocket
+  Users.User 2 -> Leaf Server: HTTPS / WebSocket
+}

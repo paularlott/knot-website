@@ -11,13 +11,13 @@ layout: hextra-home
 
 <div class="hx-mt-6 hx-mb-6">
 {{< hextra/hero-headline >}}
-  Simplify Deployment of&nbsp;<br class="sm:block hidden" />Developer Environments
+  Simplify Deployment of&nbsp;<br class="sm:block hidden" />Cloud Developer Environments
 {{< /hextra/hero-headline >}}
 </div>
 
 <div class="hx-mb-12">
 {{< hextra/hero-subtitle >}}
-  Your Key to Effortless&nbsp;<br class="sm:block hidden" />Development Environment Management
+  Your Key to Effortless&nbsp;<br class="sm:block hidden" />Cloud Development Environment Management
 {{< /hextra/hero-subtitle >}}
 </div>
 
