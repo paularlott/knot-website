@@ -22,13 +22,17 @@ job "knot-server" {
         to = 3000
         static = 3000
       }
+      port "knot_agent_port" {
+        to = 3010
+        static = 3010
+      }
     }
 
     task "knot-server" {
       driver = "docker"
       config {
         image = "paularlott/knot:latest"
-        ports = ["knot_port"]
+        ports = ["knot_port", "knot_agent_port"]
       }
 
       env {
@@ -41,7 +45,8 @@ log:
   level: info
 server:
   listen: 0.0.0.0:3000
-  download_path: /srv
+  listen_agent: 0.0.0.0:3010
+  agent_endpoint: "srv+knot-server-agent.service.consul"
   url: "https://knot.getknot.dev"
   wildcard_domain: "*.knot.getknot.dev"
   encrypt: "knot genkey"
@@ -74,7 +79,6 @@ EOF
         memory = 512
       }
 
-      # Knot Agent Port
       service {
         name = "${NOMAD_JOB_NAME}"
         port = "knot_port"
@@ -84,6 +88,23 @@ EOF
           name            = "alive"
           type            = "http"
           protocol        = "https"
+          tls_skip_verify = true
+          path            = "/health"
+          interval        = "10s"
+          timeout         = "2s"
+        }
+      }
+
+      service {
+        name = "${NOMAD_JOB_NAME}-agent"
+        port = "knot_agent_port"
+        address = "${attr.unique.network.ip-address}"
+
+        check {
+          name            = "alive"
+          type            = "http"
+          protocol        = "https"
+          port            = "knot_port"
           tls_skip_verify = true
           path            = "/health"
           interval        = "10s"

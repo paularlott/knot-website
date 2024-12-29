@@ -59,6 +59,7 @@ environment:
   - "KNOT_VNC_HTTP_PORT=5680"
   - "KNOT_CODE_SERVER_PORT=49374"
   - "KNOT_VSCODE_TUNNEL=vscodetunnel"
+  - "KNOT_USER=${{.user.username}}"
 ```
 
 The ports section is not required if the ports will only be accessed via knot, it is only required if the ports are to be accessed directly.

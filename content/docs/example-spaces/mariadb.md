@@ -22,9 +22,6 @@ job "${{.user.username}}-${{.space.name}}" {
     count = 1
 
     network {
-      port "knot_port" {
-        to = 3000
-      }
       port "mysql_port" {
         to = 3306
       }
@@ -54,7 +51,7 @@ job "${{.user.username}}-${{.space.name}}" {
       config {
         image = "paularlott/knot-mariadb:10.11"
 
-        ports = ["knot_port", "mysql_port"]
+        ports = ["mysql_port"]
         hostname = "${{ .space.name }}"
 
         mount {
@@ -72,22 +69,6 @@ job "${{.user.username}}-${{.space.name}}" {
       resources {
         cpu = 300
         memory = 1024
-      }
-
-      # Knot Agent Port
-      service {
-        name = "knot-${{.space.id}}"
-        port = "knot_port"
-
-        check {
-          name            = "alive"
-          type            = "http"
-          protocol        = "https"
-          tls_skip_verify = true
-          path            = "/ping"
-          interval        = "10s"
-          timeout         = "2s"
-        }
       }
 
       # MySQL Port
@@ -162,7 +143,7 @@ EOF
       # Generate with: openssl rand -hex 32
       template {
         data = <<EOF
-1;4404e5c0d8f7ffe6b7ef1eeaa1abc1dfb57681e5124cb819404df424739ef5fd
+1;abb971c10b3a3498bd3ed1df6b633f50958b6e52e053782de34b8cfbf7de5724
 EOF
         destination   = "local/keyfile"
         change_mode   = "noop"
@@ -189,3 +170,13 @@ volumes:
       - access_mode: "single-node-writer"
         attachment_mode: "file-system"
 ```
+
+The MariaDB port 3306 is exported via Nomad so that it can be accessed via the public IP address of the space.
+
+The space also exports the port 3306 via the TCP proxy so that it can be connected to via [port forwarding](/docs/spaces/port-forwarding) within the desktop client e.g.
+
+```shell
+knot forward port 127.0.0.1:3306 user-db 3306
+```
+
+Once the above command is running any desktop MySQL / MariaDB client should be able to connect to port 3306 on the localhost, knot will take care of forwarding the data to the MariaDB server running within the space.

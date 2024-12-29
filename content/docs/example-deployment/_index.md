@@ -1,6 +1,6 @@
 ---
 title: Example Deployment
-weight: 140
+weight: 80
 cascade:
   type: docs
 ---

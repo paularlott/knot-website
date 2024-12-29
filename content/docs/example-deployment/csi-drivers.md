@@ -57,7 +57,7 @@ job "csi-hostpath" {
 
 ### Example Usage
 
-Example usage of the hostpath driver:
+Example usage of the hostpath driver, this should be added to the `Volumes` section of a template or a standalone Volume:
 
 ```yaml
 volumes:
@@ -231,6 +231,8 @@ EOF
 ```
 
 ### Example Usage
+
+This can be added to the `Volumes` section of a template or a standalone Volume
 
 ```yaml
 volumes:
@@ -414,6 +416,8 @@ EOF
 ```
 
 ### Example Usage
+
+This can be added to the `Volumes` section of a template or a standalone Volume
 
 ```yaml
 volumes:
