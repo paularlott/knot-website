@@ -78,10 +78,7 @@ The Loki compatible endpoint can accept logs in the Loki format, the message is 
         "label": "my-app",
       },
       "values": [
-        {
-          "timestamp": 1620000000,
-          "line": "Logging a test message"
-        }
+        [ 1620000000, "Logging a test message" ]
       ]
     }
   ]
@@ -93,7 +90,7 @@ The message can be sent to the agent using the following curl command:
 ```bash
 curl -X POST http://localhost:12201/loki/api/v1/push \
   -H "Content-Type: application/json" \
-  -d '{"streams":[{"stream":{"label":"my-app"},"values":[{"timestamp":1620000000,"line":"Logging a test message"}]}'
+  -d '{"streams": [{"stream": {"label": "my-app"}, "values": [[ "1620000000", "Logging a test message" ]]}]}'
 ```
 
 {{< callout type="note" >}}
