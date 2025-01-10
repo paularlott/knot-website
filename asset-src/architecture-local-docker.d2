@@ -1,0 +1,23 @@
+direction: down
+
+Server {
+  knot Server
+
+  Docker: "Docker / Podman" {
+    Container 1
+    Container 2
+  }
+
+  knot Server -> Docker
+}
+
+Users {
+  icon: https://icons.terrastruct.com/essentials%2F359-users.svg
+}
+Users -> Server.knot Server
+Users -> Server.Docker.Container 1 {
+  style.stroke-dash: 3
+}
+Users -> Server.Docker.Container 2 {
+  style.stroke-dash: 3
+}

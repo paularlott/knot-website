@@ -1,0 +1,47 @@
+direction: down
+
+Origin Server {
+}
+
+Origin Server <- Australia.Leaf Server: "HTTPS / WebSocket\n(Shared Secret)"
+Origin Server <- United Kingdom.Leaf Server: "HTTPS / WebSocket\n(Shared Secret)"
+
+Australia {
+	Leaf Server
+	Nomad Cluster {
+    Container 1
+    Container 2
+	}
+  Users {
+    icon: https://icons.terrastruct.com/essentials%2F359-users.svg
+  }
+
+  Leaf Server -> Nomad Cluster
+  Users -> Leaf Server
+  Users -> Nomad Cluster.Container 1 {
+    style.stroke-dash: 3
+  }
+  Users -> Nomad Cluster.Container 2 {
+    style.stroke-dash: 3
+  }
+}
+
+United Kingdom {
+	Leaf Server
+	Nomad Cluster {
+    Container 1
+    Container 2
+	}
+  Users {
+    icon: https://icons.terrastruct.com/essentials%2F359-users.svg
+  }
+
+  Leaf Server -> Nomad Cluster
+  Users -> Leaf Server
+  Users -> Nomad Cluster.Container 1 {
+    style.stroke-dash: 3
+  }
+  Users -> Nomad Cluster.Container 2 {
+    style.stroke-dash: 3
+  }
+}

@@ -19,12 +19,6 @@ job "${{.user.username}}-${{.space.name}}" {
   group "debian" {
     count = 1
 
-    network {
-      port "knot_port" {
-        to = 3000
-      }
-    }
-
     volume "home_volume" {
       type            = "csi"
       source          = "ubuntu_${{.space.id}}_home"
@@ -36,9 +30,8 @@ job "${{.user.username}}-${{.space.name}}" {
     task "debian" {
       driver = "docker"
       config {
-        image = "paularlott/knot-php:8.2-ubuntu"
+        image = "paularlott/knot-php:8.4-ubuntu"
 
-        ports = ["knot_port"]
         hostname = "${{ .space.name }}"
       }
 
@@ -48,9 +41,7 @@ job "${{.user.username}}-${{.space.name}}" {
         KNOT_SERVER           = "${{.server.url}}"
         KNOT_AGENT_ENDPOINT   = "${{.server.agent_endpoint}}"
         KNOT_SPACEID          = "${{.space.id}}"
-        KNOT_SSH_PORT         = "22"
-        KNOT_HTTP_PORT        = "80"
-        KNOT_CODE_SERVER_PORT = "49374"
+        KNOT_HTTP_PORT        = "Web=80"
         KNOT_USER             = "${{.user.username}}"
       }
 
@@ -62,22 +53,6 @@ job "${{.user.username}}-${{.space.name}}" {
       resources {
         cpu    = 300
         memory = 4096
-      }
-
-      # Knot Agent Port
-      service {
-        name = "knot-${{.space.id}}"
-        port = "knot_port"
-
-        check {
-          name            = "alive"
-          type            = "http"
-          protocol        = "https"
-          tls_skip_verify = true
-          path            = "/ping"
-          interval        = "10s"
-          timeout         = "2s"
-        }
       }
     }
   }
@@ -101,9 +76,7 @@ volumes:
         attachment_mode: "file-system"
 ```
 
-The space exposes a SSH server to the agent on port 22 which can be connected to via the [SSH proxy](/docs/working-with-spaces/ssh), it also exposes VSCode Server which will be available via the [web interface](/docs/working-with-spaces/code-server).
-
-The space also exposes port 80 via the web interface, assuming a web server such as Caddy or Apache is running on port 80 then it can be accessed from the spaces [web interface](/docs/working-with-spaces/web-server).
+The space also exposes port 80 via the web interface, assuming a web server such as Caddy or Apache is running on port 80 then it can be accessed from the spaces [web interface](/docs/spaces/web-server).
 
 Once the space is running any HTML or PHP placed within the `~/public_html` folder will be processed by Caddy.
 
@@ -111,23 +84,22 @@ Once the space is running any HTML or PHP placed within the `~/public_html` fold
 
 During the startup of the container any scripts found in the `/etc/knot-startup.d/` directory are executed as root, then any scripts in the `.knot-startup.d/` directory within the users home directory are executed as the user.
 
-This allows for both system level scripts to be started and user specific scripts.
+This allows for both system level scripts and user specific scripts to be executed when the container starts.
 
 ## Using a Custom Registry
 
 It's expected that development images are modified by the system owners and hosted in custom registries, in which case authentication maybe required.
 
-The built in [variables](/docs/administration/variables) system can be used by changing the `config` section slightly:
+The built in [variables](/docs/templates/variables) system can be used by changing the `config` section slightly:
 
 ```hcl
 config {
-  image = "${{.var.registry_url}}/knot-php:8.2-ubuntu"
+  image = "${{.var.registry_url}}/knot-php:8.4-ubuntu"
   auth {
     username = "${{.var.registry_user}}"
     password = "${{.var.registry_pass}}"
   }
 
-  ports = ["knot_port"]
   hostname = "${{ .space.name }}"
 }
 ```

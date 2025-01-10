@@ -37,7 +37,7 @@ menu:
   main:
     - identifier: documentation
       name: Documentation
-      pageRef: /docs
+      pageRef: /docs/getting-started/
       weight: 1
     - name: Search
       weight: 5
@@ -84,7 +84,7 @@ params:
 
   theme:
     # light | dark | system
-    default: system
+    default: light
     displayToggle: true
 
   footer:

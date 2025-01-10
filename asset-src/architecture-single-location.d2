@@ -1,0 +1,19 @@
+direction: down
+
+knot Server
+Nomad Cluster {
+  Container 1
+  Container 2
+}
+Users {
+  icon: https://icons.terrastruct.com/essentials%2F359-users.svg
+}
+
+knot Server -> Nomad Cluster
+Users -> knot Server
+Users -> Nomad Cluster.Container 1 {
+  style.stroke-dash: 3
+}
+Users -> Nomad Cluster.Container 2 {
+  style.stroke-dash: 3
+}

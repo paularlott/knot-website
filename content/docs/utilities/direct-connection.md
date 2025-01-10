@@ -5,7 +5,7 @@ weight: 30
 
 ## Overview
 
-If the [knot client](/docs/install/client) is installed then it provides functionality to allow connection to services running within a Nomad cluster using the service names.
+If the [knot client](/docs/getting-started/client/) is installed then it provides functionality to allow connection to services running within a Nomad cluster using the service names.
 
 All subcommands can accept the `--nameserver` parameter, if given then the specified nameserver will be queried for the service name.
 

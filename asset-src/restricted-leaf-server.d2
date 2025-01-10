@@ -1,0 +1,29 @@
+direction: up
+
+Origin Server {
+}
+
+Laptop {
+  Leaf Server
+
+  Podman: "Docker / Podman" {
+    Container 1
+    Container 2
+  }
+
+  Leaf Server -> Podman
+}
+
+User {
+  icon: https://icons.terrastruct.com/essentials%2F365-user.svg
+}
+
+User -> Laptop.Leaf Server
+User -> Laptop.Podman.Container 1 {
+  style.stroke-dash: 3
+}
+User -> Laptop.Podman.Container 2 {
+  style.stroke-dash: 3
+}
+
+Laptop.Leaf Server -> Origin Server: "HTTPS / WebSocket\n(API Token)"
