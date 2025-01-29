@@ -42,6 +42,9 @@ job "${{.user.username}}-${{.space.name}}" {
         ports = ["valkey_port"]
 
         hostname = "${{ .space.name }}"
+
+        # Only required if we're exposing the redis port to the outside world
+        args = ["--bind", "0.0.0.0"]
       }
 
       resources {
