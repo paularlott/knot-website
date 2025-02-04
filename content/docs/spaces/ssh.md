@@ -69,3 +69,7 @@ ssh-add -L
 SSH keys can be added with `ssh-add YOUR-KEY`
 
 On macOS the ssh-agent will forget the key once it is restarted, e.g. the machine is rebooted, however the key can be added to the keychain with the `--apple-use-keychain` option, `ssh-add --apple-use-keychain YOUR-KEY`.
+
+```shell
+ssh-add --apple-use-keychain ~/.ssh/id_rsa
+```
