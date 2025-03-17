@@ -10,7 +10,7 @@ Spaces allow a description to be set when creating or editing them. The descript
 The description can also be set from within the space using the command line tool:
 
 ```shell
-knot-agent set-description "My Space Description"
+knot-agent agent set-description "My Space Description"
 ```
 
 ## Via the API
