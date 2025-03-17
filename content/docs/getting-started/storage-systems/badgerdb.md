@@ -65,10 +65,6 @@ server:
     password: ""
     db: 0
 
-  # Memory database (only used for session storage if enabled)
-  memorydb:
-    enabled: false
-
   nomad:
     addr: http://127.0.0.1:4646
     token: ""
@@ -85,20 +81,6 @@ log:
 ```
 
 The `/badgerdb/` directory must be mounted to persistent storage or configurations will not be persisted between restarts.
-
-## Sessions in MemoryDB
-
-By default, the BadgerDB is used for storing all data including sessions information. Setting `memorydb.enabled` to `true` in the configuration file will make knot use the in-memory database for storing session information:
-
-```yaml {filename=knot.yml}
-server:
-  memorydb:
-    enabled: true
-```
-
-{{< callout type="warning" >}}
-  When using the in-memory database, all session information will be lost when the server is restarted.
-{{< /callout >}}
 
 ## Sessions in Redis / Valkey
 

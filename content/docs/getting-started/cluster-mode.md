@@ -87,10 +87,6 @@ server:
     password: ""
     db: 0
 
-  # Memory database (only used for session storage if enabled)
-  memorydb:
-    enabled: false
-
   nomad:
     addr: http://127.0.0.1:4646
     token: ""
