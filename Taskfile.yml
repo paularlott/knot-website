@@ -1,0 +1,61 @@
+version: "3"
+
+tasks:
+  default:
+    desc: "Show available tasks"
+    cmd: task --list
+
+  architecture_single_location:
+    desc: "Generate architecture diagram for single location"
+    deps:
+      - check_d2
+    sources:
+      - asset-src/architecture-single-location.d2
+    generates:
+      - content/docs/getting-started/architecture-single-location.svg
+    cmd: "d2 --sketch --bundle --layout elk asset-src/architecture-single-location.d2 content/docs/getting-started/architecture-single-location.svg"
+
+  architecture_local_docker:
+    desc: "Generate architecture diagram for local docker"
+    deps:
+      - check_d2
+    sources:
+      - asset-src/architecture-local-docker.d2
+    generates:
+      - content/docs/getting-started/architecture-local-docker.svg
+    cmd: "d2 --sketch --bundle --layout elk asset-src/architecture-local-docker.d2 content/docs/getting-started/architecture-local-docker.svg"
+
+  architecture_distributed:
+    desc: "Generate distributed architecture diagram"
+    deps:
+      - check_d2
+    sources:
+      - asset-src/distributed-architecture.d2
+    generates:
+      - content/docs/getting-started/distributed-architecture.svg
+    cmd: "d2 --sketch --bundle --layout elk asset-src/distributed-architecture.d2 content/docs/getting-started/distributed-architecture.svg"
+
+  architecture_restricted_leaf:
+    desc: "Generate restricted leaf server diagram"
+    deps:
+      - check_d2
+    sources:
+      - asset-src/restricted-leaf-server.d2
+    generates:
+      - content/docs/getting-started/restricted-leaf-server.svg
+    cmd: "d2 --sketch --bundle --layout elk asset-src/restricted-leaf-server.d2 content/docs/getting-started/restricted-leaf-server.svg"
+
+  architecture:
+    desc: "Generate all architecture diagrams"
+    deps:
+      - architecture_single_location
+      - architecture_local_docker
+      - architecture_distributed
+      - architecture_restricted_leaf
+
+  check_d2:
+    desc: "Check if d2 is installed"
+    silent: true
+    preconditions:
+      - sh: which d2
+        msg: "d2 is not installed. Please install it."
