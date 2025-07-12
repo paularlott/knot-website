@@ -70,6 +70,13 @@ menu:
 params:
   description: knot is a management tool for developer environments running within a Nomad cluster. It offers both a user-friendly web interface and a command line interface to streamline the deployment process and simplify access control. With knot, managing your development environments becomes an effortless task.
 
+  # currentVersion: "v0.17.x"
+  # versions:
+  #   - version: "v0.17.x"
+  #     url: "/"
+  #   - version: "v0.18.x"
+  #     url: "/v0.18/"
+
   navbar:
     displayTitle: true
     displayLogo: true

@@ -1,0 +1,49 @@
+{{ $versions := site.Params.versions }}
+{{ if $versions }}
+{{ $currentPath := .RelPermalink }}
+{{ $displayVersion := site.Params.currentVersion }}
+
+{{ range $versions }}
+  {{ if or (eq .url $currentPath) (and (ne .url "/") (hasPrefix $currentPath .url)) }}
+    {{ $displayVersion = .version }}
+  {{ else if and (eq .url "/") (not (hasPrefix $currentPath "/v")) }}
+    {{ $displayVersion = .version }}
+  {{ end }}
+{{ end }}
+
+<div class="hx-relative hx-inline-block">
+  <button id="version-button" class="hx-flex hx-items-center hx-block hx-appearance-none hx-bg-white dark:hx-bg-neutral-800 hx-border hx-border-gray-300 dark:hx-border-neutral-700 hx-text-gray-700 dark:hx-text-gray-300 hx-py-2 hx-px-4 hx-rounded-lg hx-leading-tight focus:hx-outline-none focus:hx-border-blue-500">
+    {{ $displayVersion }}
+    <span class="hx-ml-4">{{ partial "utils/icon" (dict "name" "chevron-down" "attributes" "width=1em") }}</span>
+  </button>
+  <div id="version-popup" class="hx-w-full hx-mt-1 hx-absolute hx-hidden hx-top-full hx-right-0 hx-z-50 hx-bg-white dark:hx-bg-neutral-800 hx-border hx-border-gray-300 dark:hx-border-neutral-700 hx-rounded hx-shadow-lg hx-p-2">
+    {{ range $versions }}
+      <a href="{{ .url }}" class="hx-block hx-px-4 hx-py-1 hx-text-gray-700 dark:hx-text-gray-300 hover:hx-bg-gray-100 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 hx-rounded" data-version="{{ .url }}">{{ .version }}</a>
+    {{ end }}
+  </div>
+</div>
+
+<script>
+  document.getElementById('version-button').addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('version-popup').classList.toggle('hx-hidden');
+  });
+
+  // Close popup on outside click or ESC key
+  document.addEventListener('click', function(e) {
+    var versionButton = document.getElementById('version-button');
+    var versionPopup = document.getElementById('version-popup');
+
+    if (!versionButton.contains(e.target) && !versionPopup.contains(e.target)) {
+      versionPopup.classList.add('hx-hidden');
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.getElementById('version-popup').classList.add('hx-hidden');
+    }
+  });
+</script>
+{{ end }}
