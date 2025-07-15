@@ -53,8 +53,8 @@ job "${{.user.username}}-${{.space.name}}" {
 }
 ```
 
-{{< callout type="info" >}}
+{{< tip >}}
   If your domain is accessed via internal name servers rather than public nameservers then the environment variable `KNOT_NAMESERVERS` will need to be updated to list the IPs of the internal nameservers.
-{{< /callout >}}
+{{< /tip >}}
 
 At this point a space can be created from the template as described in the [Working with Spaces](../../spaces/) guide.

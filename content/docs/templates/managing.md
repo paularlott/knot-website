@@ -29,7 +29,7 @@ If `Manually Created Space` is checked then the template will expect the user to
 
 `Schedule` if this is set then the days and times that the space is allowed to run can be defined. Running spaces are automatically stopped when they are outside of the schedule.
 
-{{< image src="../schedule.webp" alt="Template Schedule" >}}
+{{< picture src="../schedule.webp" caption="Template Schedule" >}}
 
 `Features` is the list of features that will be available to the space e.g. Visual Studio Code Tunnels.
 
@@ -39,7 +39,7 @@ If `Manually Created Space` is checked then the template will expect the user to
 
 Select the menu item for the template to delete, click `Delete` and confirm the action.
 
-{{< image src="../template-menu.webp" alt="Delete Template" >}}
+{{< picture src="../template-menu.webp" caption="Delete Template" >}}
 
 If a template is in use then it can't be deleted.
 

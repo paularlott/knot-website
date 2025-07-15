@@ -62,9 +62,9 @@ curl -X POST http://localhost:12201/gelf \
   -d '{"version":"1.1", "host":"example.org", "short_message":"A short message", "full_message":"Backtrace here\n\nmore stuff", "timestamp":1291899928.412, "level":3}'
 ```
 
-{{< callout type="note" >}}
+{{< tip >}}
   The interface is designed to accept a GELF message but doesn't do validation on the message, so it's possible to send a message that doesn't conform to the GELF specification.
-{{< /callout >}}
+{{< /tip >}}
 
 ### Loki
 
@@ -93,8 +93,8 @@ curl -X POST http://localhost:12201/loki/api/v1/push \
   -d '{"streams": [{"stream": {"label": "my-app"}, "values": [[ "1620000000", "Logging a test message" ]]}]}'
 ```
 
-{{< callout type="note" >}}
+{{< tip >}}
   The interface is designed to accept a Loki message but doesn't do validation on the message, so it's possible to send a message that doesn't conform to the Loki specification.
 
   Only JSON formatted log messages are supported.
-{{< /callout >}}
+{{< /tip >}}

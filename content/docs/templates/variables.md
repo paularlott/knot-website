@@ -11,9 +11,9 @@ To use a user-defined variable, for example `myvariable`, it must be prefixed wi
 
 When creating or editing a variable the `Protected` option can be selected. If a variable is marked as protected then when editing the variable the value isn't loaded back into the browser.
 
-{{< callout type="warning" >}}
+{{< tip "warning" >}}
   Protected variables are stored encrypted in the database but are decrypted before being used in templates therefore their values may be exposed within the Nomad job definitions.
-{{< /callout >}}
+{{< /tip >}}
 
 ## System Variables
 

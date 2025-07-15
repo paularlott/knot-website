@@ -3,3 +3,5 @@
 /public
 /themes/
 /.task/
+/node_modules/
+_gen/

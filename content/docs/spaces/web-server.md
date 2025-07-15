@@ -24,7 +24,7 @@ sudo caddy start --config /etc/caddy/Caddyfile
 
 Click the `Ports` icon against the running space and click the port 80, this is the port that is exposed via the web interface of knot.
 
-{{< image src="../ports.webp" alt="Ports" >}}
+{{< picture src="../ports.webp" caption="Ports" >}}
 
 Once clicked a new tab or window will be opened showing the default welcome page for caddy.
 
@@ -34,6 +34,6 @@ Depending on the template caddy or another web server may already be present or 
 
 Where the Ports menu is divided into two groups the top group are clickable and will open in a new tab or window, the bottom group are for use with port forwarding on the command line.
 
-{{< callout type="warning" >}}
+{{< tip "warning" >}}
   Ports exposed via the web interface do not require authentication to access them.
-{{< /callout >}}
+{{< /tip >}}

@@ -3,7 +3,7 @@ title: Web Based Terminal
 weight: 30
 ---
 
-{{< image src="../terminal-icon.webp" alt="Terminal Icon" >}}
+{{< picture src="../terminal-icon.webp" caption="Terminal Icon" >}}
 
 From the `Spaces` page click the `Terminal` icon next on the space to connect to this will open a terminal in a new browser window.
 

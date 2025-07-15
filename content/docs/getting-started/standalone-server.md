@@ -103,9 +103,9 @@ To run a standalone server download the latest release from the [releases page](
 ./knot server --config knot.yml
 ```
 
-{{< callout type="info" >}}
+{{< tip >}}
   For macOS and Linux knot can be installed via brew with `brew install paularlott/tap/knot`
-{{< /callout >}}
+{{< /tip >}}
 
 ```shell
 

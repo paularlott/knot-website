@@ -5,9 +5,8 @@ cascade:
   type: docs
 ---
 
-{{< callout type="warning" >}}
-  This example is the minimum required to deploy nomad and consul and not suitable for production environments.
-{{< /callout >}}
+{{< tip "warning" >}}  This example is the minimum required to deploy nomad and consul and not suitable for production environments.
+{{< /tip >}}
 
 The following assumes:
 

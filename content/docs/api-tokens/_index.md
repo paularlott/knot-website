@@ -13,9 +13,9 @@ From the menu select `API Tokens`, then click `New Token`.
 
 Complete the `Name` field and click `Create Token`, a new token is generated and the list of available tokens is displayed.
 
-{{< callout type="warning" >}}
+{{< tip "warning" >}}
   Tokens expire after a week of inactivity, any API call will reset the lifespan of the tokens.
-{{< /callout >}}
+{{< /tip >}}
 
 ## Deleting a Token
 

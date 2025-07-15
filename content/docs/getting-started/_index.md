@@ -15,9 +15,9 @@ It is built to work with Nomad and Consul for scheduling containers and volumes 
 
 Environments, templates, are defined within the knot web interface and developers can create spaces from these templates as required.
 
-{{< callout type="warning" >}}
+{{< tip "warning" >}}
   Communication between server and users is must occur over secure networks, where traffic is required to pass over the public internet then a Virtual Private Network (VPN) or mesh network such as [netbird.io](https://netbird.io/) should be used.
-{{< /callout >}}
+{{< /tip >}}
 
 ### Single Location or Single Server
 

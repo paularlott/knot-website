@@ -11,12 +11,12 @@ To share a space with another user, from the `Spaces` page select the space to b
 
 A dialog will be displayed allowing the target user to be selected.
 
-{{< image src="../share-space.webp" alt="Share Space" >}}
+{{< picture src="../share-space.webp" caption="Share Space" >}}
 
 Once the user has been selected, click the `Share` button to complete the sharing process. Once the space has been shared with the user, both the new user and the original user will have the same access.
 
-{{< callout type="note" >}}
+{{< tip >}}
   The target user name must be clicked in the dropdown list of available users.
-{{< /callout >}}
+{{< /tip >}}
 
 Either party can cancel the sharing at any time, once cancelled the space will no longer be available to the user it was shared with, SSH keys belonging to the shared with user will be removed from the space.

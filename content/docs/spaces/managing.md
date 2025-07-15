@@ -9,23 +9,23 @@ A service password can be set by going `My Profile` and entering the chosen pass
 
 This can then be used in templates as the variable `${{ .user.service_password }}`, e.g. for a MariaDB server it can be used as the root password by setting the `MARIADB_ROOT_PASSWORD` environment variable `MARIADB_ROOT_PASSWORD = "${{.user.service_password}}"`.
 
-{{< callout type="info" >}}
+{{< tip >}}
   If the password is change the new password isn't immediately made available to the spaces, however it will be used on the next start of the space.
-{{< /callout >}}
+{{< /tip >}}
 
 ## Creating a Space
 
 From the `Templates` page open the menu for the template to use and click `Create Space`:
 
-{{< image src="../create-space.webp" alt="Create Space" >}}
+{{< picture src="../create-space.webp" caption="Create Space" >}}
 
-{{< callout type="info" >}}
+{{< tip >}}
   Depending on the permissions the user has the option `Create Space For` maybe displayed, clicking this will prompt for the user under which the space is to be created. This allows an admin to create spaces for users.
-{{< /callout >}}
+{{< /tip >}}
 
 The following form will be presented:
 
-{{< image src="../create-space-form.webp" alt="Create Space Form" >}}
+{{< picture src="../create-space-form.webp" caption="Create Space Form" >}}
 
 Enter a name for the space e.g. `mytest` and leave the `Terminal Shell` as `Bash`, once `Create Space` is clicked the space will be created within knot and the main spaces page loaded.
 
@@ -37,13 +37,13 @@ The `Additional Space Names` section allows additional names to be entered again
 
 From the `Spaces` page click the menu item next to the space to start, and then select `Start`, them menu will change to read "Starting" and after a few seconds `Running` will show next to `Status`.
 
-{{< image src="../start-space.webp" alt="Start Space" >}}
+{{< picture src="../start-space.webp" caption="Start Space" >}}
 
 Spaces created from manual templates don't have a `Start` option, they are started automatically when their agent connects to the server.
 
 The environment will continue its boot process during which time additional icons will appear next to the space, e.g. `Terminal`.
 
-{{< image src="../running-space.webp" alt="Running Space" >}}
+{{< picture src="../running-space.webp" caption="Running Space" >}}
 
 Not all icons will appear for all spaces as they are dependant on the agent configuration within the space.
 
@@ -58,17 +58,17 @@ Not all icons will appear for all spaces as they are dependant on the agent conf
 
 Clicking the menu item next to the running space will show the Stop button.
 
-{{< image src="../stopping-a-space.webp" alt="Stopping a Space" >}}
+{{< picture src="../stopping-a-space.webp" caption="Stopping a Space" >}}
 
-{{< callout type="warning" >}}
+{{< tip "warning" >}}
   When stopping a space all data in memory and not on a persistent volume will be lost. However any volumes used by the space will not be deleted.
-{{< /callout >}}
+{{< /tip >}}
 
 ## Updating a Space
 
 If the template that a running space is using is updated then an `Update Available` badge is displayed:
 
-{{< image src="../update-pending.webp" alt="Update Pending" >}}
+{{< picture src="../update-pending.webp" caption="Update Pending" >}}
 
 To update the space, stop it and then start it again.
 
@@ -78,9 +78,9 @@ A space can also be edited, this allows changing of the space name as well as up
 
 ## Deleting a Space
 
-{{< callout type="error" >}}
+{{< tip "warning" >}}
   Deleting a space will delete the volumes and any data they contain.
-{{< /callout >}}
+{{< /tip >}}
 
 Only stopped spaces can be deleted.
 

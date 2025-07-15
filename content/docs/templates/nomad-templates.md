@@ -17,9 +17,9 @@ From the menu select `Templates` then `New Template`, the following form is disp
 
 The `Name` and `Nomad Job` fields are required, the `Nomad Job` field takes an HCL job specification, see [example environments](/docs/examples-environments/).
 
-{{< callout type="info" >}}
+{{< tip >}}
   When a change is made to a template all running spaces are marked as an update available, however the spaces are not automatically restarted. Once the spaces are restarted they will receive the updated template.
-{{< /callout >}}
+{{< /tip >}}
 
 Template variables can be used to hold registry login information e.g.
 
@@ -31,9 +31,9 @@ auth {
 }
 ```
 
-{{< callout type="warning" >}}
+{{< tip "warning" >}}
   Variables are plain text within the Nomad template and can therefore be viewed via the Nomad web interface, and alternative solution such at Vault may be more applicable depending on the environment.
-{{< /callout >}}
+{{< /tip >}}
 
 ### Example Nomad Job
 
@@ -134,9 +134,9 @@ job "${{.space.name}}-${{.user.username}}" {
 
 Each template can define one or more volumes, if volumes are defined then they are created when the environment is deployed and destroyed when the environment is destroyed, starting and stopping the space will have no effect on the volumes.
 
-{{< callout type="warning" >}}
+{{< tip "warning" >}}
   Deleting the space will destroy the volumes and all data on them.
-{{< /callout >}}
+{{< /tip >}}
 
 An example volume definition that allocates block storage for two volumes `home` and `data` would look like:
 

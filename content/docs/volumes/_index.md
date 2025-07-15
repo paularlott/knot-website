@@ -67,9 +67,9 @@ From the `Volumes` page click the menu next to the volume to start and select `S
 
 ## Stopping a Volume
 
-{{< callout type="warning" >}}
+{{< tip "warning" >}}
   Stopping a volume will destroy all data on the volume.
-{{< /callout >}}
+{{< /tip >}}
 
 Stopping a volume will free the resources that it is using, this will destroy all data on the volume.
 

@@ -9,7 +9,7 @@ Within knot roles are used to control access to the features of knot. Roles are 
 
 From the menu select `Roles` and then `New Role`, the following form will be presented:
 
-{{< image src="../create-role.webp" alt="Create a Role" >}}
+{{< picture src="../create-role.webp" caption="Create a Role" >}}
 
 The `Name` is the name of the role, this is used to identify the role in the system.
 

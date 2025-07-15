@@ -7,7 +7,7 @@ Port forwarding requires the [knot client](/docs/getting-started/client/) be ins
 
 Clicking the `Ports` icon next to a running space will show the list of ports that are exposed for forwarding, they are shown below the dividing line and can't be clicked.
 
-{{< image src="../ports.webp" alt="Ports" >}}
+{{< picture src="../ports.webp" caption="Ports" >}}
 
 This example expects to follow on from the [Web Server](../web-server) example where caddy was installed and started on port 80.
 
@@ -27,6 +27,6 @@ knot forward port 127.0.0.1:9010 mytest 80
 
 Point a web browser to `http://127.0.0.1:9010` if everything works correctly the caddy welcome page will open in the browser.
 
-{{< callout type="info" >}}
+{{< tip >}}
   Ports forwarded in this way require authentication and are not publicly available.
-{{< /callout >}}
+{{< /tip >}}

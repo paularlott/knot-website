@@ -106,7 +106,7 @@ config {
 
 For the above the variables `registry_url`, `registry_user` and `registry_pass` will need to be created.
 
-{{< callout type="warning" >}}
+{{< tip "warning" >}}
   The values of variables are exposed within the Nomad templates, if this is a problem then Vault may be a better solution.
-{{< /callout >}}
+{{< /tip >}}
 
