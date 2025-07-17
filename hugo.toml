@@ -1,6 +1,6 @@
 baseURL = 'https://example.org/'
 languageCode = 'en-US'
-title = 'Knot'
+title = 'knot'
 
 [outputs]
   home = ['HTML', 'JSON']
@@ -8,15 +8,6 @@ title = 'Knot'
 [params]
   githubURL = "https://github.com/paularlott/knot"
   copyright = "Paul Arlott"
-
-  currentVersion = "v0.17.x"
-  [[params.versions]]
-    version = "v0.17.x"
-    url = "/"
-
-  [[params.versions]]
-    version = "v0.18.x"
-    url = "/v0.18/"
 
   [params.navigation]
     [[params.navigation.header]]

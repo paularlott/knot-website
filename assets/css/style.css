@@ -5,8 +5,29 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-hbg:         var(--color-slate-50);
-  --color-hbg-dark:    var(--color-slate-200);
+  --color-hbg:        var(--color-slate-50);
+  --color-hbg-dark:   var(--color-slate-200);
+  --font-nunito:      Nunito, sans-serif;
+  --font-open-sans:   "Open Sans", sans-serif;
+}
+
+@layer base {
+  @font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: swap;
+    src: url(../fonts/nunito.woff2) format('woff2');
+  }
+
+  @font-face {
+    font-family: "Open Sans";
+    font-style: normal;
+    font-weight: 300 800;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(../fonts/open-sans.woff2) format('woff2');
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,6 +35,31 @@
     --color-hbg:         #1c2b33;
     --color-hbg-dark:    #152027;
   }
+}
+
+/* Make headings use Nunito */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-nunito);
+}
+
+h1 {
+  @apply text-3xl font-bold mb-6;
+}
+
+h2 {
+  @apply text-2xl font-bold mb-4;
+}
+
+h3 {
+  @apply text-xl font-bold mb-2;
+}
+
+h4 {
+  @apply text-lg font-bold mb-1;
+}
+
+h5, h6 {
+  @apply text-base font-bold mb-1;
 }
 
 /* Changelog specific styles */
@@ -107,4 +153,9 @@ tr:nth-child(odd) {
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Webkit browsers */
+}
+
+/* Hero */
+.gradientHero {
+  background: linear-gradient(135deg, #3b82f6, #9333ea);
 }

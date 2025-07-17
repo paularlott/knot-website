@@ -290,7 +290,7 @@ class ThemeToggle {
   }
 
   updateTheme() {
-    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    if (localStorage.getItem('theme') === 'dark' || !localStorage.getItem('theme')) {
       document.documentElement.classList.add('dark');
       this.darkIcon.classList.remove('hidden');
       this.lightIcon.classList.add('hidden');
@@ -394,12 +394,34 @@ function openImageModal(src, alt, caption) {
 window.copyCode = copyCode;
 window.openImageModal = openImageModal;
 
+function scrollToActiveItem() {
+  const sidebarScrollbar = document.querySelector("aside .nav-container");
+  const activeItems = document.querySelectorAll(".active-nav-item");
+  const visibleActiveItem = Array.from(activeItems).find(function (activeItem) {
+    return activeItem.getBoundingClientRect().height > 0;
+  });
+
+  if (!visibleActiveItem) {
+    return;
+  }
+
+  const yOffset = visibleActiveItem.clientHeight;
+  const yDistance = visibleActiveItem.getBoundingClientRect().top - sidebarScrollbar.getBoundingClientRect().top;
+  sidebarScrollbar.scrollTo({
+    behavior: "instant",
+    top: yDistance - yOffset
+  });
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   new SiteSearch();
   new MobileMenu();
   new ThemeToggle();
   imageModalInstance = new ImageModal();
+
+  // Make sure the active menu item is visible
+  scrollToActiveItem();
 
   // Add line numbers to code blocks that have data-linenos="true"
   document.querySelectorAll('code[data-linenos="true"]').forEach(function(code) {
@@ -428,11 +450,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function showTab(tabsId, activeIndex, totalTabs) {
   const wrapper = document.querySelector(`[data-tabs-id="${tabsId}"]`);
   const buttons = wrapper.querySelectorAll('.tab-btn');
-  
+
   for (let i = 0; i < totalTabs; i++) {
     const tabContent = document.getElementById(`${tabsId}-${i}`);
     const tabButton = buttons[i];
-    
+
     if (i === activeIndex) {
       tabContent.classList.remove('hidden');
       tabButton.classList.remove('text-gray-600', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-gray-200', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');

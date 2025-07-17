@@ -3,25 +3,20 @@ title: knot
 layout: index
 ---
 
-  <div class="hx-w-2 hx-h-2 hx-rounded-full hx-bg-primary-400"></div>
+{{< hero
+  title="Simplify Deployment of Cloud Developer Environments"
+  subtitle="Your Key to Effortless Cloud Development Environment Management"
+  btn1="Get Started"
+  btn1-link="docs/getting-started/"
+  btn2="Learn More"
+  btn2-link="/about"
+  img="/docs/spaces/create-space.webp"
+  alt="Managing Spaces"
+>}}
+
   <span>Free, open source, Apache 2.0 License</span>
 
-
-<div class="hx-mt-6 hx-mb-6">
-  Simplify Deployment of&nbsp;<br class="sm:block hidden" />Cloud Developer Environments
-</div>
-
-<div class="hx-mb-12">
-  Your Key to Effortless&nbsp;<br class="sm:block hidden" />Cloud Development Environment Management
-</div>
-
-<div class="hx-mb-6">
-{ {< hextra/hero-button text="Get Started" link="docs/getting-started/" >}}
-</div>
-
-<div class="hx-mt-6"></div>
-
-<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+{{< feature-grid >}}
   {{< feature-card
     title="Define Once"
     subtitle="Define the developer environment once and deploy as many times as needed."
@@ -51,6 +46,6 @@ layout: index
     icon="sparkles"
     subtitle="User Management / Volume Management / Web Terminal / and more..."
   >}}
-</div>
+{{< end-feature-grid >}}
 
 knot is a management tool for creating and running environments within a Nomad cluster. It offers both a user-friendly web interface and a command line interface to streamline the deployment and access to environments. With knot, managing your cloud based development environments becomes an effortless task.
