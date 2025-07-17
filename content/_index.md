@@ -5,7 +5,7 @@ layout: index
 
 {{< hero
   title="Simplify Deployment of Cloud Developer Environments"
-  subtitle="Your Key to Effortless Cloud Development Environment Management"
+  subtitle="Effortlessly manage cloud-based development environments with a tool designed for developers and teams."
   btn1="Get Started"
   btn1-link="docs/getting-started/"
   btn2="Learn More"
@@ -14,38 +14,48 @@ layout: index
   alt="Managing Spaces"
 >}}
 
-  <span>Free, open source, Apache 2.0 License</span>
+## Key Features
 
 {{< feature-grid >}}
   {{< feature-card
-    title="Define Once"
-    subtitle="Define the developer environment once and deploy as many times as needed."
+    title="Define Once, Deploy Anytime"
+    subtitle="Set up your developer environment once and reuse it as needed."
   >}}
   {{< feature-card
-    title="Scale / Remote Servers"
-    subtitle="Deploy additional clusters close to developers and manage from a central location for maximum performance."
+    title="Leaderless Cluster Management"
+    subtitle="Manage environments from anywhere, without relying on a central location."
   >}}
   {{< feature-card
-    title="Local Docker / Podman"
-    subtitle="Deploy local Docker and Podman containers and manage from from a central location."
+    title="Scale with Remote Servers"
+    subtitle="Add clusters near developers for better performance, all seamlessly connected."
+  >}}
+  {{< feature-card
+    title="Local Docker/Podman Support"
+    subtitle="Manage local containers with ease, no matter where you are."
   >}}
   {{< feature-card
     title="Roles and Permissions"
-    subtitle="Control access to the system with roles and permissions."
+    subtitle="Control system access with customizable roles."
   >}}
   {{< feature-card
-    title="Groups"
-    subtitle="Assign users and environment templates to groups to control what each user has access to."
+    title="Group Management"
+    subtitle="Organize users and templates into groups for tailored access."
   >}}
   {{< feature-card
-    title="Web Based Editor"
-    subtitle="Use Code Server or Visual Studio Code Tunnels through your web browser."
+    title="Web-Based Editor"
+    subtitle="Work directly in your browser with Code Server or Visual Studio Code Tunnels."
   >}}
   {{< feature-card
-    title="And Much More..."
-    icon="sparkles"
-    subtitle="User Management / Volume Management / Web Terminal / and more..."
+    title="Additional Tools"
+    subtitle="Includes user management, volume management, web terminal, and more."
   >}}
 {{< end-feature-grid >}}
 
-knot is a management tool for creating and running environments within a Nomad cluster. It offers both a user-friendly web interface and a command line interface to streamline the deployment and access to environments. With knot, managing your cloud based development environments becomes an effortless task.
+### Why Choose knot?
+
+knot is an open-source tool (Apache 2.0 License) for managing environments within a Nomad cluster. With its leaderless architecture, you can manage your development environments from anywhere, ensuring flexibility and reliability. Whether you're working locally or scaling across remote servers, knot simplifies the process, so you can focus on development.
+
+#### Get Started Today
+
+- [Get Started](/docs)
+- [Learn More](/about)

@@ -420,6 +420,7 @@
       "example-usage-2",
       "from-the-command-line",
       "generating-an-api-token",
+      "get-started-today",
       "getting-started-with-ssh",
       "graylog-gelf",
       "groups",
@@ -432,6 +433,7 @@
       "installing-knot",
       "installing-the-knot-client",
       "july-updates",
+      "key-features",
       "leaf-server",
       "local-hostpath-driver",
       "loki",
@@ -493,7 +495,8 @@
       "via-the-api",
       "viewing-logs",
       "volumes",
-      "what-youll-need"
+      "what-youll-need",
+      "why-choose-knot"
     ]
   }
 }
