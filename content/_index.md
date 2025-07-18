@@ -22,8 +22,8 @@ layout: index
     subtitle="Set up your developer environment once and reuse it as needed."
   >}}
   {{< feature-card
-    title="Leaderless Cluster Management"
-    subtitle="Manage environments from anywhere, without relying on a central location."
+    title="Self Hosted"
+    subtitle="Self hosted on your infrastructure, everything under your control."
   >}}
   {{< feature-card
     title="Scale with Remote Servers"
@@ -50,14 +50,14 @@ layout: index
     subtitle="Includes user management, volume management, web terminal, and more."
   >}}
   {{< feature-card
-    title="Self Hosted"
-    subtitle="Self hosted on your infrastructure, everything under your control."
+    title="Leaderless Cluster Management"
+    subtitle="Manage environments from anywhere, without relying on a central location."
   >}}
 {{< end-feature-grid >}}
 
 ### Why Choose knot?
 
-knot is an open-source tool (Apache 2.0 License) for managing environments within a Nomad cluster. With its leaderless architecture, you can manage your development environments from anywhere, ensuring flexibility and reliability. Whether you're working locally or scaling across remote servers, knot simplifies the process, so you can focus on development.
+knot is an open-source tool (Apache 2.0 License) for managing environments within a Nomad cluster or standalone using Docker or Podman. With its leaderless architecture, you can manage your development environments from anywhere, ensuring flexibility and reliability. Whether you're working locally or scaling across remote servers, knot simplifies the process, so you can focus on development.
 
 #### Get Started Today
 
