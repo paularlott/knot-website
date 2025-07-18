@@ -1,4 +1,5 @@
 import FlexSearch from 'flexsearch';
+import MeshAnimation from './mesh-animation.js';
 
 class SiteSearch {
   constructor() {
@@ -413,6 +414,23 @@ function scrollToActiveItem() {
   });
 }
 
+// Mesh animation initialization
+let heroMeshAnimation = null;
+
+function initHeroMesh() {
+  const heroCanvas = document.getElementById('heroMesh');
+  if (heroCanvas && window.MeshAnimation) {
+    heroMeshAnimation = new window.MeshAnimation('heroMesh');
+  }
+}
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  if (heroMeshAnimation) {
+    heroMeshAnimation.destroy();
+  }
+});
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   new SiteSearch();
@@ -422,6 +440,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Make sure the active menu item is visible
   scrollToActiveItem();
+
+  // Start the mesh animation
+  initHeroMesh();
 
   // Add line numbers to code blocks that have data-linenos="true"
   document.querySelectorAll('code[data-linenos="true"]').forEach(function(code) {

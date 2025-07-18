@@ -10,7 +10,7 @@ layout: index
   btn1-link="docs/getting-started/"
   btn2="Learn More"
   btn2-link="/about"
-  img="/docs/spaces/create-space.webp"
+  img="/images/hero.webp"
   alt="Managing Spaces"
 >}}
 
@@ -48,6 +48,10 @@ layout: index
   {{< feature-card
     title="Additional Tools"
     subtitle="Includes user management, volume management, web terminal, and more."
+  >}}
+  {{< feature-card
+    title="Self Hosted"
+    subtitle="Self hosted on your infrastructure, everything under your control."
   >}}
 {{< end-feature-grid >}}
 
