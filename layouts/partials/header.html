@@ -11,7 +11,7 @@
       <nav class="hidden md:flex space-x-8">
         {{ if .Site.Params.navigation.header }}
           {{ range .Site.Params.navigation.header }}
-            <a href="{{ .url }}" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white {{ if eq $.RelPermalink .url }}text-red-600 dark:text-red-400{{ end }}">{{ .name }}</a>
+            <a href="{{ .url }}" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">{{ .name }}</a>
           {{ end }}
         {{ end }}
       </nav>

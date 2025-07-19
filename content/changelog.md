@@ -6,7 +6,7 @@ draft: false
 weight: 100
 ---
 
-## July Updates
+## July 2025
 
 {{< version "v0.18.0" >}}
 

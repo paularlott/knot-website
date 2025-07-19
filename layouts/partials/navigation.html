@@ -45,8 +45,9 @@
         {{- /* Check if this section has content or should be skipped */ -}}
         {{- $hasContent := or .Content .Summary (not (eq .Kind "section")) -}}
         {{- $skipTopLevel := and (not $hasContent) $hasChildren -}}
+        {{- $isCurrentSection := eq $context.Section .Section -}}
 
-        {{- if $skipTopLevel -}}
+        {{- if or $skipTopLevel $isCurrentSection -}}
           {{- /* Render children directly without the parent wrapper */ -}}
           {{ template "page-tree" (dict "context" $context "pages" $childPages "mobile" $mobile "level" 1 "maxDepth" $maxDepth) }}
         {{- else -}}

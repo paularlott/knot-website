@@ -37,4 +37,4 @@ With **knot**, environments are defined using `Templates`. These templates speci
 
 ## What's Next
 
-- [Get Started](getting-started/)
+- [Quick Start](quick-start/)

@@ -1,6 +1,6 @@
 ---
 title: System Requirements
-weight: 5
+weight: 10
 ---
 
 - Running Nomad cluster
