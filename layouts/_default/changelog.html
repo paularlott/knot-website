@@ -2,14 +2,10 @@
 <article class="prose prose-lg dark:prose-invert max-w-none mt-6">
   <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">{{ .Title }}</h1>
 
-  {{ if .Params.description }}
-  <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">{{ .Params.description }}</p>
-  {{ end }}
-
   <div class="text-gray-700 dark:text-gray-300 text-base">{{ .Content }}</div>
 
   <!-- Archive Links -->
-  {{ if eq .File.BaseFileName "changelog" }}
+  {{ if and (eq .File.BaseFileName "changelog") (where .Site.RegularPages "Section" "changelog-archive") }}
   <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
     <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Archived Changelogs</h2>
     <ul class="space-y-2">

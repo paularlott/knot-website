@@ -1,6 +1,7 @@
 ---
 title: knot
 layout: index
+description: Self hosted solution for managing cloud development environments.
 ---
 
 {{< hero

@@ -51,7 +51,7 @@
           {{ template "page-tree" (dict "context" $context "pages" $childPages "mobile" $mobile "level" 1 "maxDepth" $maxDepth) }}
         {{- else -}}
           <li class="{{ if $mobile }}mt-3{{ else }}mt-4{{ end }}">
-            <a href="{{ .RelPermalink }}" class="group flex items-center justify-between px-2 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider rounded-md hover:bg-gray-100 dark:hover:bg-gray-500/20 hover:text-gray-800 dark:hover:text-white {{ if $isActive }}bg-gray-100 dark:bg-gray-500/20 text-gray-800 dark:text-gray-300 active-nav-item{{ end }}">
+            <a href="{{ .RelPermalink }}" class="group flex items-center justify-between px-2 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 tracking-wider rounded-md hover:bg-gray-100 dark:hover:bg-gray-500/20 hover:text-gray-800 dark:hover:text-white {{ if $isActive }}bg-gray-100 dark:bg-gray-500/20 text-gray-800 dark:text-gray-300 active-nav-item{{ end }}">
               <span>{{ .Title }}</span>
               {{ if $hasChildren }}
                 {{ if $showChildren }}
