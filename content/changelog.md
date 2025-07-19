@@ -10,13 +10,13 @@ weight: 100
 
 {{< version "v0.18.0" >}}
 
-This release sees significant changes from the previous release, the most significant is that the cluster mode has been totally rewritten, it now doesn't require an instance of knot be used as a leader but rather all servers are now equal within the cluster. This provides significantly better availability and performance, if connections between nodes is lost everything can continue working.
+This release introduces significant updates, with the most notable being a complete rewrite of the cluster mode. The new leaderless architecture ensures that all servers in the cluster are equal, eliminating the need for a designated leader. This change improves both availability and performance, allowing the system to continue functioning seamlessly even if connections between nodes are interrupted.
 
 {{< changelog-item "changed" >}}
-- Rewrite of cluster support, now works in a leaderless cluster
+- **Cluster Support**: The cluster mode has been rewritten to operate in a leaderless configuration, enhancing availability and performance.
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
-- Variables, templates can define a set of variables which are made available when creating a space
-- Tunnels, the tunnel functionality has been enhanced to allow creation of tunnels from a port within a space to a port on the local machine
+- **Variables in Templates**: Templates can now define a set of variables, which are made available when creating a space.
+- **Enhanced Tunneling**: Tunnel functionality has been improved, enabling the creation of tunnels from a port within a space to a port on the local machine.
 {{< /changelog-item >}}

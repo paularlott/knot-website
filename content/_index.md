@@ -8,9 +8,9 @@ description: Self hosted solution for managing cloud development environments.
   title="Simplify Deployment of Cloud Developer Environments"
   subtitle="Effortlessly manage cloud-based development environments with a tool designed for developers and teams."
   btn1="Get Started"
-  btn1-link="docs/getting-started/"
+  btn1Link="docs/getting-started/"
   btn2="Learn More"
-  btn2-link="/about"
+  btn2Link="docs"
   img="/images/hero.webp"
   alt="Managing Spaces"
 >}}

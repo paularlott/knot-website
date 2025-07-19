@@ -8,6 +8,7 @@ title = 'knot'
 [params]
   githubURL = "https://github.com/paularlott/knot"
   copyright = "Paul Arlott"
+  defaultTheme = "light"  # Options: "light" or "dark"
 
   [params.navigation]
     [[params.navigation.header]]

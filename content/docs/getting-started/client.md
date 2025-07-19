@@ -24,7 +24,14 @@ Opting for the install of the client maximize your capabilities and streamlines 
   ```
 
   Alternatively the latest binary can be downloaded from [GitHub releases](https://github.com/paularlott/knot/releases).
+
+  If you are unable to launch the application after downloading it from GitHub then try the following command:
+
+  ```shell
+  sudo xattr -d com.apple.quarantine <path to binary>/knot
+  ```
   {{< /tab >}}
+
   {{< tab >}}
   The latest binary can be downloaded from [GitHub releases](https://github.com/paularlott/knot/releases)
   {{< /tab >}}

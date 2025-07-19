@@ -291,7 +291,13 @@ class ThemeToggle {
   }
 
   updateTheme() {
-    if (localStorage.getItem('theme') === 'dark' || !localStorage.getItem('theme')) {
+    // Get the default theme from the window object (will be set by Hugo)
+    const defaultTheme = window.siteConfig?.defaultTheme || 'light';
+
+    // Check localStorage first, fall back to default theme if not set
+    const theme = localStorage.getItem('theme') || defaultTheme;
+
+    if (theme === 'dark') {
       document.documentElement.classList.add('dark');
       this.darkIcon.classList.remove('hidden');
       this.lightIcon.classList.add('hidden');
