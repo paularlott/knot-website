@@ -62,5 +62,5 @@ knot is an open-source tool (Apache 2.0 License) for managing environments withi
 
 #### Get Started Today
 
-- [Get Started](/docs)
-- [Learn More](/about)
+- [Get Started](docs/quick-start)
+- [Learn More](docs)
