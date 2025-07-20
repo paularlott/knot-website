@@ -8,12 +8,16 @@ In this section, you'll learn how to set up knot and get started quickly. We'll 
 
 Once your space is up and running, this guide will introduce you to key features of knot, helping you explore its capabilities and understand how it can streamline your development workflows.
 
+---
+
 ## System Requirements
 
 To complete this tutorial, ensure you have the following:
 
 - A machine with Docker or Podman installed and properly configured.
 - The **knot** binary available for your operating system.
+
+---
 
 ## Install the Binary
 
