@@ -5,11 +5,17 @@ weight: 20
 
 To create the initial admin user, follow these steps:
 
+---
+
 ### Step 1: Access the Setup Page
 
-Open your web browser and navigate to `http://127.0.0.1:3000`. If the server is running correctly, you'll see the setup form prompting you to create the initial user.
+Open your web browser and navigate to `https://knot.internal:3000`. Since knot uses a self-signed certificate by default, your browser may display a security warning. You'll need to accept the certificate to proceed. Look for an option like "Advanced" or "Proceed to knot.internal (unsafe)" depending on your browser.
+
+If the server is running correctly, you'll see the setup form prompting you to create the initial user.
 
 {{< picture src="../images/create-admin-user.webp" caption="Initial User Setup" >}}
+
+---
 
 ### Step 2: Create the Admin Account
 
@@ -17,11 +23,15 @@ Complete the form with the required information and click `Create User`. This wi
 
 {{< picture src="../images/sign-in.webp" caption="Login" >}}
 
+---
+
 ### Step 3: Log In
 
 Enter your username and password to log in. After logging in, click your name in the top-right corner of the screen to open the profile menu.
 
 {{< picture src="../images/profile-menu.webp" caption="Profile Menu" >}}
+
+---
 
 ### Step 4: Update Profile and Timezone
 

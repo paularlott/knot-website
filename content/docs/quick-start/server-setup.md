@@ -3,24 +3,26 @@ title: Server Setup
 weight: 10
 ---
 
-The **knot** server requires a configuration file, environment variables, or command-line parameters for setup. In this tutorial, we'll use a configuration file and run **knot** via a Docker container.
+The **knot** server requires a configuration file, environment variables, or command-line parameters for setup. In this tutorial, we'll use a configuration file and run the **knot** binary from the command line.
+
+---
 
 ### Step 1: Generate the Configuration File and Encryption Key
 
 First, generate a configuration file using the `knot scaffold --server` command, and then create an encryption key:
 
 ```shell
-docker run --rm paularlott/knot knot scaffold --server > knot.toml
-docker run --rm paularlott/knot knot genkey
+knot scaffold --server > knot.toml
+knot genkey
 ```
 
 This will generate a stub configuration file. You'll need to edit the file as follows:
 
 - **`server.agent_endpoint`**: Update this to the host IP and the port from `listen_agent`. For this tutorial, the host IP is `192.168.1.100`, so `agent_endpoint` should be `192.168.1.100:3010`.
-- **`server.wildcard_domain`**: Update this to `*.knot.internal` for the tutorial.
+- **`server.url`**: Update this to `https://knot.internal:3000` for the tutorial i.e. use http rather than https.
+- **`server.wildcard_domain`**: Update this to `*.knot.internal:3000` for the tutorial.
 - **`server.encrypt`**: Replace this with the output of the `knot genkey` command above.
 - **`server.badgerdb.enabled`**: Set this to `true` to use BadgerDB for data storage.
-- **`server.tls.use_tls`**: Add this setting and set it to `false` to disable HTTPS.
 
 ### Example Configuration File
 
@@ -39,8 +41,11 @@ listen_agent = "0.0.0.0:3010"
 # Address and port for the agents to connect to
 agent_endpoint = "192.168.1.100:3010"
 
+# The URL to the Knot server (used for the web interface)
+url = "https://knot.internal:3000"
+
 # The wildcard domain to expose the web interface of spaces on
-wildcard_domain = "*.knot.internal"
+wildcard_domain = "*.knot.internal:3000"
 
 [server.tls]
 use_tls = false
@@ -99,12 +104,97 @@ token = ""
 level = "info"
 ```
 
+#### DNS Resolution
+
+To allow access to websites hosted within spaces, **knot** uses a wildcard DNS. Spaces are created with URLs in the format `<user>--<space>--<port>.<wildcard_domain>`.
+
+Depending on your network setup, you may be able to point the domain names (`knot.internal` and `*.knot.internal`) to your computer's IP address. If not, you can enable the internal DNS server by adding the following to `knot.toml` and forwarding DNS requests to knot for resolution:
+
+```toml {filename=knot.toml}
+[server.dns]
+  enabled = true
+  listen = "0.0.0.0:3053"
+  records = ["A|knot.internal|127.0.0.1", "A|*.knot.internal|127.0.0.1"]
+
+# Use CloudFlare DNS servers for any unknown record
+[resolver]
+  nameservers = ["1.1.1.1", "1.0.0.1"]
+```
+
+{{< tabs items="Linux,macOS,Windows" >}}
+
+  {{< tab >}}
+  ##### systemd-resolved
+
+  For systemd 246 or newer, create the following file to forward `.internal` requests to the **knot** server:
+
+  ```text {filename="/etc/systemd/resolved.conf.d/knot.internal.conf"}
+  [Resolve]
+  DNS=127.0.0.1:3053
+  DNSSEC=false
+  Domains=~internal
+  ```
+
+  Then restart `systemd-resolved`:
+
+  ```shell
+  systemctl restart systemd-resolved
+  ```
+
+  ##### Dnsmasq
+
+  Add a configuration file for the `.internal` domain:
+
+  ```text {filename="/etc/dnsmasq.conf.d/knot.internal.conf"}
+  server=127.0.0.1:3053
+  domain=knot.internal
+  ```
+
+  Then restart `dnsmasq`:
+
+  ```shell
+  systemctl restart dnsmasq
+  ```
+  {{< /tab >}}
+
+  {{< tab >}}
+  To forward `.internal` requests to **knot**, create the following file:
+
+  ```text {filename="/etc/resolver/knot.internal"}
+  nameserver 127.0.0.1
+  port 3053
+  ```
+
+  **Note:** You may need create the `/etc/resolver` folder first. Use `sudo` to access and modify these files.
+  {{< /tab >}}
+
+  {{< tab >}}
+  Adjust the `knot.toml` configuration file to use port 53 instead of 3053:
+
+  ```toml
+  [server.dns]
+    enabled = true
+    listen = "0.0.0.0:3053"
+    records = ["A|knot.internal|127.0.0.1", "A|*.knot.internal|127.0.0.1"]
+  ```
+
+  Then run the following powershell commands:
+
+  ```powershell
+  Add-DnsClientNrptRule -Namespace ".knot.internal" -NameServers "127.0.0.1"
+  Clear-DnsClientCache
+  ```
+  {{< /tab >}}
+{{< /tabs >}}
+
+---
+
 ### Step 2: Start the Server
 
 Run the server using the following command:
 
 ```shell
-docker run --rm -v "$PWD"/knot.toml:/etc/knot/knot.toml -p 3000:3000 -p 3010:3010 paularlott/knot
+knot server --config knot.toml
 ```
 
 Any errors will be displayed in the terminal.
