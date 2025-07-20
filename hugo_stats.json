@@ -450,6 +450,7 @@
       "origin-server",
       "overview",
       "port-forwarding",
+      "quick-start",
       "redis--valkey-cluster",
       "redis--valkey-sentinel",
       "roles",
