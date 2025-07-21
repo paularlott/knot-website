@@ -70,4 +70,4 @@ echo "<?php phpinfo();" > public_html/index.php
 
 ## What's Next
 
-- TODO
+- [Advanced Configuration](../../../configuration)
