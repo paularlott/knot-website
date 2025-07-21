@@ -11,7 +11,7 @@ The **knot** server can be configured to use the embedded BadgerDB for its datab
 
 To use BadgerDB, set `badgerdb.enabled` to `true` in the configuration file and specify the storage path:
 
-```toml
+```toml {{filename="knot.toml"}}
 [server.badgerdb]
   enabled = true
   path = "/badgerdb/"

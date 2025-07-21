@@ -1,6 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full dark">
+<html lang="en" class="h-full{{ if eq .Site.Params.defaultTheme "dark" }} dark{{ end }}">
 <head>
+  <script>
+    (function() {
+      const defaultTheme = {{ .Site.Params.defaultTheme | default "light" | printf "%q" }};
+      const storedTheme = localStorage.getItem('theme');
+      const theme = storedTheme || defaultTheme;
+
+      // Apply theme class immediately
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ if ne .Title .Site.Title }}{{ .Title }} - {{ end }}{{ .Site.Title }}</title>

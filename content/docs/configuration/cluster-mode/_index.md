@@ -29,7 +29,7 @@ In this mode, **knot** servers communicate over `https`. All servers must be abl
 
 To enable cluster mode over `https`, add the following configuration to your `knot.toml` file and adjust as needed:
 
-```toml
+```toml {{filename="knot.toml"}}
 [server]
 zone = 'au'
 
@@ -57,7 +57,7 @@ In this mode, **knot** servers communicate over `TCP` or `UDP`. The protocol is 
 
 To enable cluster mode over `TCP / UDP`, add the following configuration to your `knot.toml` file and adjust as needed:
 
-```toml
+```toml {{filename="knot.toml"}}
 [server]
 zone = 'au'
 

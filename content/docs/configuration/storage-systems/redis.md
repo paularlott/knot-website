@@ -15,7 +15,7 @@ Redis / Valkey can be enabled alongside another storage system (e.g., MySQL). In
 
 To configure the **knot** server with a single Redis / Valkey server, set `redis.enabled` to `true` in the configuration file:
 
-```toml
+```toml {{filename="knot.toml"}}
 [server.redis]
   enabled = true
   hosts = [
@@ -38,7 +38,7 @@ To configure the **knot** server with a single Redis / Valkey server, set `redis
 
 When using Redis / Valkey Sentinel, the `hosts` should include a list of Sentinel nodes, and the `master_name` must be set to the name of the master.
 
-```toml
+```toml {{filename="knot.toml"}}
 [server.redis]
   enabled = true
   hosts = [
@@ -65,7 +65,7 @@ When using Redis / Valkey Sentinel, the `hosts` should include a list of Sentine
 
 For Redis / Valkey Cluster, the `hosts` should include a list of master nodes in the cluster.
 
-```toml
+```toml {{filename="knot.toml"}}
 [server.redis]
   enabled = true
   hosts = [

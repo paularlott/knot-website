@@ -11,7 +11,7 @@ The **knot** server can be configured to use either a standalone MySQL / MariaDB
 
 To use MySQL / MariaDB, set `mysql.enabled` to `true` in the configuration file and specify the connection details as shown below:
 
-```toml
+```toml {{filename="knot.toml"}}
 [server.mysql]
   database = "knot"
   enabled = true
