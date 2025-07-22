@@ -1,21 +1,25 @@
 ---
 title: Docker / Podman
-weight: 50
+weight: 30
 ---
 
-Local spaces can be defined using Docker `Templates`, these templates are used to define the environment that the user will work within and can have an optional volume definition.
+Local spaces in **knot** can be defined using Docker or Podman templates. These templates specify the environment users will work within and can include optional volume definitions.
 
-When a user creates an instance of the `Template`, a `Space`, and starts it, knot automatically creates any required volumes and launches the job in the local machine.
+When a user creates an instance of a `Template` (a `Space`) and starts it, **knot** automatically provisions any required volumes and launches the container on the local machine. Local containers operate with Docker or Podman running on the same machine as the **knot** server.
 
-Local containers work with Docker or Podman running on the same machine as the knot server.
+---
 
-## Container Specification
+### Container Specification
 
-From the menu select `Templates` then `New Template`, then check the Local Container (Docker / Podman) box:
+To create a Docker or Podman template:
 
-![Create a Local Template](create-local-template.webp)
+1. Navigate to `Templates` and select `New Template`.
+2. Complete the form, selecting `Docker` or `Podman` under the `Platform` option.
+3. Fill out the `Container Specification` field with the container configuration.
 
-Example docker / podman template:
+{{< picture src="../images/template-docker.webp" caption="Docker Template" >}}
+
+#### Example Container Specification
 
 ```yaml
 container_name: ${{ .user.username }}-${{ .space.name }}
@@ -62,11 +66,21 @@ environment:
   - "KNOT_USER=${{.user.username}}"
 ```
 
-The ports section is not required if the ports will only be accessed via knot, it is only required if the ports are to be accessed directly.
+#### Notes:
 
-## Volumes
+- **Ports**:
+  The `ports` section is optional. It is only required if the ports need to be accessed directly, rather than through **knot**.
 
-Example volume definition:
+- **Environment Variables**:
+  Environment variables can be used to pass dynamic information, such as user details, server URLs, and space-specific configurations.
+
+---
+
+### Volumes
+
+Templates can define volumes to persist data for spaces. These volumes are created when the space is deployed and destroyed when the space is deleted. Starting and stopping the space does not affect the contents of the volumes unless the template is modified to remove a volume.
+
+#### Example Volume Definition
 
 ```yaml
 volumes:

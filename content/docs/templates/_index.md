@@ -3,8 +3,26 @@ title: Templates
 weight: 50
 ---
 
-Templates are used to define both Nomad and Docker / Podman based environments. As part of the definition one or more volumes can be defined.
+Templates in **knot** are used to define environments based on either Nomad or Docker/Podman. These templates can include one or more volumes as part of their definition, providing flexibility and persistence for your spaces.
 
-When a space is first started all the volumes that are defined in the template are created, starting and stopping a space will not destroy the volumes only deleting the space will remove the volumes. The exception to this rule is that if the volumes are removed from the template then when the space is started again the removed volumes will be deleted.
+---
 
-When defining Nomad based templates the volumes are allocated using storage systems provided by CSI plugins. When defining Docker / Podman based templates the volumes are allocated using the storage system provided by Docker / Podman.
+### Volumes and Space Lifecycle
+
+- When a space is first started, all volumes defined in the template are created.
+- **Starting and stopping a space**:
+  Volumes are not destroyed when a space is stopped and restarted.
+- **Deleting a space**:
+  Volumes are removed only when the space is deleted.
+- **Template changes**:
+  If volumes are removed from the template, they will be deleted the next time the space is started.
+
+---
+
+### Storage Systems
+
+- **Nomad-based templates**:
+  Volumes are allocated using storage systems provided by Container Storage Interface (CSI) plugins.
+
+- **Docker/Podman-based templates**:
+  Volumes are allocated using the storage system provided by Docker or Podman.
