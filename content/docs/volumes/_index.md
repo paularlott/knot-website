@@ -1,6 +1,6 @@
 ---
 title: Volumes
-weight: 40
+weight: 80
 ---
 
 Standalone volumes can be created and managed independently of spaces. This flexibility allows for a volume to be created and then attached to multiple spaces, such as providing storage for `/home`.

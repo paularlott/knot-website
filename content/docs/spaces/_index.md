@@ -1,6 +1,6 @@
 ---
 title: Spaces
-weight: 50
+weight: 70
 ---
 
 Spaces are instances of templates, they are private to the user creating and owning them.

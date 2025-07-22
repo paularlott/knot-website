@@ -1,6 +1,6 @@
 ---
 title: Templates
-weight: 30
+weight: 50
 ---
 
 Templates are used to define both Nomad and Docker / Podman based environments. As part of the definition one or more volumes can be defined.
