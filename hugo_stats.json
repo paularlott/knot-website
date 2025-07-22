@@ -379,6 +379,7 @@
       "cephfs-controller",
       "cephfs-driver",
       "cephfs-node",
+      "compute-units-and-space-limits",
       "configuration",
       "configuration-parameters",
       "configuration-parameters-1",
