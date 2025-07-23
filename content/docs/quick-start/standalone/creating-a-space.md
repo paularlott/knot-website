@@ -10,8 +10,7 @@ Now that we have a usable template, we can create a space from it. You can creat
 ### Step 1: Create a Space
 
 1. From the `Templates` page, click the menu icon (three dots) next to the template you want to use, then select `Create Space`.
-
-{{< picture src="../images/create-space.webp" caption="Create a Space" >}}
+  {{< picture src="../images/create-space.webp" caption="Create a Space" >}}
 
 2. Fill out the form with the following details:
    - **Name**: Enter `phptest`.

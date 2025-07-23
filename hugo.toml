@@ -26,12 +26,12 @@ title = 'knot'
       url = '/changelog'
 
     # Static navigation links
-    [[params.navigation.static]]
-      name = 'Test Page'
-      url = '/testing'
-    [[params.navigation.static]]
-      name = 'Changelog'
-      url = '/changelog'
+    # [[params.navigation.static]]
+    #   name = 'Test Page'
+    #   url = '/testing'
+    # [[params.navigation.static]]
+    #   name = 'Changelog'
+    #   url = '/changelog'
 
 [build]
   [build.buildStats]

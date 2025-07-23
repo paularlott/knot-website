@@ -64,7 +64,7 @@ echo "<?php phpinfo();" > public_html/index.php
 
 {{< picture src="../images/stop-space.webp" caption="Stop Space" >}}
 
-1. Since the template was created with a persistent volume, restarting the space from the menu will restore it to the state it was in when it was stopped.
+2. Since the template was created with a persistent volume, restarting the space from the menu will restore it to the state it was in when it was stopped.
 
 ---
 
