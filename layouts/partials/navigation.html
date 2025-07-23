@@ -15,16 +15,33 @@
 {{ end }}
 
 <!-- Main Navigation Tree -->
-{{- $includeSections := $.context.Site.Params.navigation.includeSections | default (slice) -}}
+{{- $includeSections := $.context.Site.Params.includeSections | default (slice) -}}
 {{- $filteredSections := slice -}}
+{{- $currentSection := $.context.Section -}}
+
 {{- if $includeSections -}}
   {{- range $.context.Site.Sections -}}
     {{- if in $includeSections .Section -}}
-      {{- $filteredSections = $filteredSections | append . -}}
+      {{- /* If we're in a specific section, only show that section */ -}}
+      {{- if and $currentSection (eq .Section $currentSection) -}}
+        {{- $filteredSections = $filteredSections | append . -}}
+      {{- else if not $currentSection -}}
+        {{- /* If we're not in any section (e.g., home page), show all included sections */ -}}
+        {{- $filteredSections = $filteredSections | append . -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
 {{- else -}}
-  {{- $filteredSections = $.context.Site.Sections -}}
+  {{- /* If no includeSections specified, use the same logic with all sections */ -}}
+  {{- if $currentSection -}}
+    {{- range $.context.Site.Sections -}}
+      {{- if eq .Section $currentSection -}}
+        {{- $filteredSections = $filteredSections | append . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{- $filteredSections = $.context.Site.Sections -}}
+  {{- end -}}
 {{- end -}}
 {{ template "nav-tree" (dict "context" $.context "sections" $filteredSections "mobile" $.mobile "level" 0) }}
 
