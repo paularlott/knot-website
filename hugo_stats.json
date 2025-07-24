@@ -445,6 +445,7 @@
       "enabling-ssh-in-the-template",
       "example-agent-command",
       "example-caddy-file-browser",
+      "example-configuration",
       "example-configuration-file",
       "example-container-specification",
       "example-nomad-job",
