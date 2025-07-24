@@ -3,12 +3,37 @@ title: Code Server
 weight: 50
 ---
 
-To start the web based Code Server click the `Code Server` icon against the running space, if this icon isn't available then the agent isn't detecting code-server running within the container. When the icon is clicked a new window is opened the the code-server.
+**knot** provides access to the web-based Code Server, offering a browser-accessible development environment similar to Visual Studio Code.
 
-{{< picture src="../code-server-icon.webp" caption="Code Server Icon" >}}
+---
 
-Initially code-server is started without any configuration or plugins, however these can all be added as they would be in the desktop version. For more information on code-server please see the [code-server project page](https://github.com/coder/code-server).
+## Starting Code Server
 
-Assuming the space template uses a volume for `/home/` then changes to code-server are persistent across restarts.
+1. Ensure the space is running.
+2. Click the **`Code Server`** icon (#2) next to the running space.
+   {{< picture src="../images/running-space.webp" caption="Running Space" >}}
 
-![Code Server](code-server.webp)
+3. A new window will open, launching the Code Server interface.
+
+---
+
+## Code Server Configuration
+
+- By default, Code Server starts without any pre-installed configuration or plugins.
+- Users can customize Code Server by adding extensions, themes, and settings, just as they would in the desktop version of Visual Studio Code.
+- For more details on Code Server, visit the [code-server project page](https://github.com/coder/code-server).
+
+---
+
+## Persistence Across Restarts
+
+If the space template includes a volume for `/home/`, all changes made to Code Server, including installed plugins and configurations, will persist across space restarts.
+
+---
+
+## Permissions and Template Requirements
+
+- To use Code Server, the user must have a role with the **`Use Code Server`** permission.
+- Code Server must be enabled in the space template for the feature to be available.
+
+{{< picture src="../images/code-server.webp" caption="Code Server" >}}

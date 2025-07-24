@@ -7,7 +7,7 @@ The web-based terminal in **knot** provides users with shell access to their spa
 
 ---
 
-### Accessing the Web Terminal
+## Accessing the Web Terminal
 
 1. Navigate to the `Spaces` page.
 2. Click the **`Terminal`** icon (#1) next to the running space.
@@ -18,7 +18,7 @@ The web-based terminal in **knot** provides users with shell access to their spa
 
 ---
 
-### Terminal Behavior
+## Terminal Behavior
 
 - The terminal will attempt to use the shell specified in the space configuration.
 - If the specified shell is unavailable within the container, the **knot** agent will search for an alternative shell in the following order:
@@ -31,10 +31,6 @@ The web-based terminal in **knot** provides users with shell access to their spa
 
 ---
 
-### Permissions
+## Permissions
 
 To use the web terminal, the user must have a role with the `Use Web Terminal` permission.
-
-{{< tip >}}
-Ensure the appropriate permissions are assigned to the user's role to enable access to the web terminal.
-{{< /tip >}}
