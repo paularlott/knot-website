@@ -31,23 +31,23 @@ description: Self hosted solution for managing cloud development environments.
     subtitle="Add clusters near developers for better performance, all seamlessly connected."
   >}}
   {{< feature-card
-    title="Local Docker/Podman Support"
-    subtitle="Manage local containers with ease, no matter where you are."
+    title="Manage Containers—Anywhere"
+    subtitle="Manage local containers (Docker / Podman) with ease, no matter where you are."
   >}}
   {{< feature-card
-    title="Roles and Permissions"
+    title="Fine-Grained Access Control"
     subtitle="Control system access with customizable roles."
   >}}
   {{< feature-card
-    title="Group Management"
+    title="Smart Team & Template Organization"
     subtitle="Organize users and templates into groups for tailored access."
   >}}
   {{< feature-card
-    title="Web-Based Editor"
+    title="Code in the Cloud"
     subtitle="Work directly in your browser with Code Server or Visual Studio Code Tunnels."
   >}}
   {{< feature-card
-    title="Additional Tools"
+    title="Powerful Dev Utilities, Built In"
     subtitle="Includes user management, volume management, web terminal, and more."
   >}}
   {{< feature-card

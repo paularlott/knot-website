@@ -1,39 +1,42 @@
 ---
-title: Web Server
+title: Accessing Web Pages in a Space
 weight: 60
 ---
 
-Using a space created from the `mytest` template the first step is to install a web server, for this example [caddy](https://caddyserver.com/) will be used.
+When a space is configured to expose web ports (e.g., for a web server), the **`Ports`** icon provides access to these ports. This feature allows users to view web pages or services running within the space directly from their browser.
 
-Open a web terminal and follow the instructions at https://caddyserver.com/docs/install#debian-ubuntu-raspbian
+---
 
-```bash
-sudo apt update -y
-sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-sudo apt update -y
-sudo apt install caddy
-```
+### Viewing Exposed Ports
 
-Start caddy with the defaults:
+1. Ensure the space is running.
+2. Click the **`Ports`** icon next to the running space.
+   {{< picture src="../images/space-ports.webp" caption="Ports" >}}
 
-```bash
-sudo caddy start --config /etc/caddy/Caddyfile
-```
+3. A list of available ports will be displayed:
+   - **Clickable Ports**: The top group of ports in the menu are clickable. Clicking a port name or number will open a new browser tab pointing to that port.
+   - **Informational Ports**: The bottom group of ports is for use with command-line port forwarding and is shown for informational purposes only.
 
-Click the `Ports` icon against the running space and click the port 80, this is the port that is exposed via the web interface of knot.
+4. For example, clicking **port 80** will open the web interface exposed by the space.
 
-{{< picture src="../ports.webp" caption="Ports" >}}
+---
 
-Once clicked a new tab or window will be opened showing the default welcome page for caddy.
+### Example: Caddy File Browser
 
-![Caddy Welcome Page](caddy-server.webp)
+If the space is running the **knot** PHP image, clicking **port 80** will open the Caddy file browser:
+{{< picture src="../images/caddy-file-browser.webp" caption="Caddy Server" >}}
 
-Depending on the template caddy or another web server may already be present or require specific steps to launch the web server.
+Other container images may display different content depending on their configuration.
 
-Where the Ports menu is divided into two groups the top group are clickable and will open in a new tab or window, the bottom group are for use with port forwarding on the command line.
+---
+
+### Important Notes
+
+- **Authentication**: Ports exposed via the web interface do not require authentication to access them.
+- **Port Groups**:
+  - The **top group** in the Ports menu is interactive and allows direct access to web pages or services.
+  - The **bottom group** is for advanced users who need to forward ports via the command line.
 
 {{< tip "warning" >}}
-  Ports exposed via the web interface do not require authentication to access them.
+Be cautious when exposing ports via the web interface, as they are accessible without authentication.
 {{< /tip >}}

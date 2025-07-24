@@ -1,4 +1,4 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://knot.alphasite.anaconda.ovh/'
 languageCode = 'en-US'
 title = 'knot'
 
@@ -8,7 +8,7 @@ title = 'knot'
 [params]
   githubURL = "https://github.com/paularlott/knot"
   copyright = "Paul Arlott"
-  defaultTheme = "light"  # Options: "light" or "dark"
+  defaultTheme = "dark"  # Options: "light" or "dark"
   includeSections = ["docs", "tutorials"]
 
   [params.navigation]
