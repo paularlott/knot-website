@@ -1,6 +1,6 @@
 ---
 title: SSH Access
-weight: 80
+weight: 100
 ---
 
 SSH access allows you to securely connect to your spaces for advanced management and development. This guide explains how to set up SSH keys, connect via SSH, and simplify connections using `.ssh/config`.

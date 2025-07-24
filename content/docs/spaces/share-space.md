@@ -1,6 +1,6 @@
 ---
 title: Sharing Spaces
-weight: 110
+weight: 80
 ---
 
 Spaces can be shared between users on the same **knot** server, allowing both users to access and manage the space collaboratively. Shared spaces enable both users to:
@@ -10,14 +10,14 @@ Spaces can be shared between users on the same **knot** server, allowing both us
 
 ---
 
-### Key Details
+## Key Details
 
 - A space can only be shared with **one user at a time**.
 - Both the original user and the shared user will have equal access to the space.
 
 ---
 
-### How to Share a Space
+## How to Share a Space
 
 1. Navigate to the **`Spaces`** page.
 2. Select the space you want to share.
@@ -31,7 +31,7 @@ Spaces can be shared between users on the same **knot** server, allowing both us
 
 ---
 
-### Cancelling a Shared Space
+## Cancelling a Shared Space
 
 - Either user can cancel the sharing at any time by selecting the `Stop Sharing` menu item.
 - Once cancelled:
@@ -40,7 +40,7 @@ Spaces can be shared between users on the same **knot** server, allowing both us
 
 ---
 
-### Important Notes
+## Important Notes
 
 {{< tip >}}
 Ensure the target user's name is clicked in the dropdown list to confirm the selection.

@@ -1,6 +1,6 @@
 ---
 title: Port Forwarding
-weight: 70
+weight: 120
 ---
 
 Port forwarding allows you to securely access ports within a remote space from your local machine. This requires the **knot** [client](/docs/quick-start/client/) to be installed on your computer, as it handles forwarding a local port to a port within the remote container.

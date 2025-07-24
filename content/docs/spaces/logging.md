@@ -1,6 +1,6 @@
 ---
 title: Logging
-weight: 90
+weight: 110
 ---
 
 Spaces built using the **knot** base images utilize `rsyslog` to collect logs from services running within the space. These logs are forwarded by the **knot** agent to the **knot** server for storage and viewing.

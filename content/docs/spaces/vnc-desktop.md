@@ -1,13 +1,13 @@
 ---
 title: Desktop
-weight: 200
+weight: 90
 ---
 
 If a space exposes a web-based VNC server, such as [KasmVNC](https://github.com/kasmtech/KasmVNC), a **`Desktop`** button (#1) will be displayed on the **`Spaces`** page for the running space.
 
 ---
 
-### Accessing the Desktop
+## Accessing the Desktop
 
 1. Navigate to the **`Spaces`** page.
 2. Locate the running space with the **`Desktop`** button (#1).

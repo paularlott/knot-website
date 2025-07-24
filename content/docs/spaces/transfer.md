@@ -1,13 +1,13 @@
 ---
 title: Transfer Spaces
-weight: 100
+weight: 70
 ---
 
 Spaces can be transferred between users on the same **knot** server. This feature allows ownership of a space to be reassigned to another user.
 
 ---
 
-### How to Transfer a Space
+## How to Transfer a Space
 
 1. Navigate to the **`Spaces`** page.
 2. Select the space you want to transfer.
@@ -21,7 +21,7 @@ Spaces can be transferred between users on the same **knot** server. This featur
 
 ---
 
-### Important Notes
+## Important Notes
 
 - Once the space is transferred, it will no longer be available to the original user.
 - Only **stopped spaces** can be transferred. If the space is running, the transfer option will not be available.

@@ -7,7 +7,7 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
 
 ---
 
-### Creating a Space
+## Creating a Space
 
 1. Navigate to the `Templates` page, click the menu icon (three dots) next to the desired template, and select `Create Space`.
    {{< picture src="../../quick-start/standalone/images/create-space.webp" caption="Create Space" >}}
@@ -29,7 +29,7 @@ Admins may see the `Create Space For` option, allowing them to create spaces on 
 
 ---
 
-### Starting a Space
+## Starting a Space
 
 1. Navigate to the `Spaces` page.
 2. Click the menu icon next to the space and select `Start`.
@@ -40,7 +40,7 @@ Admins may see the `Create Space For` option, allowing them to create spaces on 
 
    {{< picture src="../images/running-space.webp" caption="Running Space" >}}
 
-#### Service Icons:
+### Service Icons:
 
 1. **`VNC`**: Opens a new window connecting to a VNC server running within the space.
 2. **`Code Server`**: Opens a new window running Code Server.
@@ -55,7 +55,7 @@ Admins may see the `Create Space For` option, allowing them to create spaces on 
 
 ---
 
-### Stopping a Space
+## Stopping a Space
 
 1. Click the menu icon next to the running space.
 2. Select `Stop`.
@@ -71,7 +71,7 @@ Stopping a space will result in the loss of all data in memory that is not store
 
 ---
 
-### Updates
+## Updates
 
 If the template used by a running space is updated, an `Update Available` badge will appear:
 {{< picture src="../images/space-update.webp" caption="Pending Update" >}}
@@ -86,7 +86,7 @@ To apply the update:
 
 ---
 
-### Editing a Space
+## Editing a Space
 
 1. Select `Edit` from the space's menu.
 2. Update the space's details, such as its name, icon, or additional names.
@@ -95,7 +95,7 @@ To apply the update:
 
 ---
 
-### Deleting a Space
+## Deleting a Space
 
 {{< tip "warning" >}}
 Deleting a space will permanently delete its volumes and all associated data.

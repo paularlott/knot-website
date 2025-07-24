@@ -7,7 +7,7 @@ Manual spaces allow you to run the **knot** agent manually on a virtual machine 
 
 ---
 
-### Creating a Manual Template
+## Creating a Manual Template
 
 1. Create a new template with the `Platform` set to `Manual`.
 2. Use this template to create a space.
@@ -16,13 +16,13 @@ Manual spaces allow you to run the **knot** agent manually on a virtual machine 
 
 ---
 
-### Connecting the Agent to the Server
+## Connecting the Agent to the Server
 
 Once the manual space is created, the **Space ID** will be displayed. This ID is required for the agent to connect to the **knot** server. Clicking the ID will copy it to the clipboard.
 
 {{< picture src="../images/manual-space.webp" caption="Manual Space" >}}
 
-#### Example Agent Command
+### Example Agent Command
 
 Assuming the **knot** server is running on `192.168.1.100` with the agent interface on port `3010`, use the following command to start the agent and connect it to the server:
 
@@ -38,7 +38,7 @@ This is the minimum configuration required for the agent to connect to the **kno
 
 ---
 
-### Monitoring and Using the Manual Space
+## Monitoring and Using the Manual Space
 
 Once the agent is successfully started:
 
