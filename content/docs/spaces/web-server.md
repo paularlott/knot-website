@@ -1,5 +1,5 @@
 ---
-title: Accessing Web Pages in a Space
+title: Accessing Web Pages
 weight: 60
 ---
 
@@ -7,7 +7,7 @@ When a space is configured to expose web ports (e.g., for a web server), the **`
 
 ---
 
-### Viewing Exposed Ports
+## Viewing Exposed Ports
 
 1. Ensure the space is running.
 2. Click the **`Ports`** icon next to the running space.
@@ -21,7 +21,7 @@ When a space is configured to expose web ports (e.g., for a web server), the **`
 
 ---
 
-### Example: Caddy File Browser
+## Example: Caddy File Browser
 
 If the space is running the **knot** PHP image, clicking **port 80** will open the Caddy file browser:
 {{< picture src="../images/caddy-file-browser.webp" caption="Caddy Server" >}}
@@ -30,7 +30,7 @@ Other container images may display different content depending on their configur
 
 ---
 
-### Important Notes
+## Important Notes
 
 - **Authentication**: Ports exposed via the web interface do not require authentication to access them.
 - **Port Groups**:

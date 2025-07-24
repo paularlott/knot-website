@@ -3,21 +3,50 @@ title: Logging
 weight: 90
 ---
 
-The spaces using or built from the knot base images use rsyslog to collect logs from the services running within the space. The logs are then sent to the knot agent which forwards them to the knot server for storage and viewing.
+Spaces built using the **knot** base images utilize `rsyslog` to collect logs from services running within the space. These logs are forwarded by the **knot** agent to the **knot** server for storage and viewing.
+
+---
 
 ## Viewing Logs
 
-Once a space is running, the logs can be viewed by clicking the `Logs` button on the `Spaces` page against the space whose logs are to be viewed.
+Once a space is running, logs can be accessed directly from the **Spaces** page:
+
+1. Click the **`Logs`** button next to the space whose logs you want to view.
+   {{< picture src="../images/logs-option.webp" caption="Logs Icon" >}}
+
+2. A window will open, tailing the logs in real-time.
+
+---
 
 ## Sending Logs
 
-The `knot` agent supports a syslog interface along with a HTTP API. The HTTP API interface supports a native JSON or msgpack format, a Greylog GELF format endpoint and a Loki compatible endpoint.
+The **knot** agent supports two interfaces for sending logs:
+- **Syslog Interface**
+- **HTTP API** (supports native JSON, msgpack, Graylog GELF, and Loki formats)
 
-The default port for the HTTP API is `12201` and the syslog interface is `514`.
+### Default Ports:
+- **HTTP API**: `12201`
+- **Syslog Interface**: `514`
+
+---
+
+### Sending Logs via `logger`
+
+You can send messages to the syslog interface using the `logger` command:
+
+```shell
+logger test message
+```
+
+{{< picture src="../images/log-message.webp" caption="Output from Logger Command" >}}
+
+---
+
+## HTTP API Formats
 
 ### Native JSON or Msgpack
 
-The native JSON or msgpack format is a simple JSON object with the following fields:
+The native JSON or msgpack format uses a simple JSON object with the following fields:
 
 ```json
 {
@@ -27,11 +56,11 @@ The native JSON or msgpack format is a simple JSON object with the following fie
 }
 ```
 
-- `service` - The name of the service sending the log message.
-- `level` - The log level of the message, one of `debug`, `info`, `error`.
-- `message` - The log message to be sent.
+- **`service`**: The name of the service sending the log message.
+- **`level`**: The log level (`debug`, `info`, or `error`).
+- **`message`**: The log message content.
 
-The message can be sent to the agent using the following curl command:
+Send the message using `curl`:
 
 ```bash
 curl -X POST http://localhost:12201/logs \
@@ -39,9 +68,11 @@ curl -X POST http://localhost:12201/logs \
   -d '{"service":"my-app", "level":"info", "message":"Logging a test message"}'
 ```
 
+---
+
 ### Graylog GELF
 
-The Graylog GELF format is a JSON object with the following fields:
+The Graylog GELF format uses the following JSON structure:
 
 ```json
 {
@@ -50,11 +81,11 @@ The Graylog GELF format is a JSON object with the following fields:
   "short_message": "A short message",
   "full_message": "Backtrace here\n\nmore stuff",
   "timestamp": 1291899928.412,
-  "level": 3,
+  "level": 3
 }
 ```
 
-The message can be sent to the agent using the following curl command:
+Send the message using `curl`:
 
 ```bash
 curl -X POST http://localhost:12201/gelf \
@@ -63,29 +94,31 @@ curl -X POST http://localhost:12201/gelf \
 ```
 
 {{< tip >}}
-  The interface is designed to accept a GELF message but doesn't do validation on the message, so it's possible to send a message that doesn't conform to the GELF specification.
+The interface accepts GELF messages but does not validate them, so non-conforming messages may still be sent.
 {{< /tip >}}
+
+---
 
 ### Loki
 
-The Loki compatible endpoint can accept logs in the Loki format, the message is a JSON object with the following fields:
+The Loki-compatible endpoint accepts logs in the following JSON format:
 
 ```json
 {
   "streams": [
     {
       "stream": {
-        "label": "my-app",
+        "label": "my-app"
       },
       "values": [
-        [ 1620000000, "Logging a test message" ]
+        [ "1620000000", "Logging a test message" ]
       ]
     }
   ]
 }
 ```
 
-The message can be sent to the agent using the following curl command:
+Send the message using `curl`:
 
 ```bash
 curl -X POST http://localhost:12201/loki/api/v1/push \
@@ -94,7 +127,6 @@ curl -X POST http://localhost:12201/loki/api/v1/push \
 ```
 
 {{< tip >}}
-  The interface is designed to accept a Loki message but doesn't do validation on the message, so it's possible to send a message that doesn't conform to the Loki specification.
-
-  Only JSON formatted log messages are supported.
+- The interface accepts Loki messages but does not validate them, so non-conforming messages may still be sent.
+- Only JSON-formatted log messages are supported.
 {{< /tip >}}

@@ -3,30 +3,59 @@ title: Port Forwarding
 weight: 70
 ---
 
-Port forwarding requires the [knot client](/docs/getting-started/client/) be installed on the local computer as it will forward a local port to the port within the remote container.
+Port forwarding allows you to securely access ports within a remote space from your local machine. This requires the **knot** [client](/docs/quick-start/client/) to be installed on your computer, as it handles forwarding a local port to a port within the remote container.
 
-Clicking the `Ports` icon next to a running space will show the list of ports that are exposed for forwarding, they are shown below the dividing line and can't be clicked.
+---
 
-{{< picture src="../ports.webp" caption="Ports" >}}
+## Viewing Advertised Ports
 
-This example expects to follow on from the [Web Server](../web-server) example where caddy was installed and started on port 80.
+1. Ensure the space is running.
+2. Click the **`Ports`** icon next to the running space.
+   {{< picture src="../images/space-ports.webp" caption="Ports" >}}
 
-On the client machine connect to the knot server, replacing the URL with the address of the real server, first open a terminal and run:
+3. The list of advertised ports will appear below the dividing line. These ports cannot be clicked but are available for port forwarding.
+   - For example, **port 80** may be exposed for web access, and **port 22** (SSH) may also be advertised.
 
-```shell
-knot connect https://knot.example.com
-```
+---
 
-When the command runs it prompts for the username and password to connect with, the generated access key is stored in `~/.knot.yml`.
+## Setting Up Port Forwarding
 
-Next forward port 9010 on the local host to port 80 on the space called `mytest` by running the command:
+### Step 1: Connect to the **knot** Server
 
-```shell
-knot forward port 127.0.0.1:9010 mytest 80
-```
+1. Open a terminal on your local machine.
+2. Run the following command, replacing the URL with the address of your **knot** server:
 
-Point a web browser to `http://127.0.0.1:9010` if everything works correctly the caddy welcome page will open in the browser.
+   ```shell
+   knot connect https://knot.internal:3000
+   ```
+
+3. Enter your username and password when prompted.
+4. The generated access key will be stored in `~/.config/knot/knot.yml` for future use.
+
+---
+
+### Step 2: Forward a Local Port to the Space
+
+1. Forward a local port (e.g., `9010`) to a port within the space (e.g., `80`) by running the following command:
+
+   ```shell
+   knot forward port 127.0.0.1:9010 phptest 80
+   ```
+
+   - **`127.0.0.1:9010`**: The local port to forward.
+   - **`phptest`**: The name of the space.
+   - **`80`**: The port within the space to forward to.
+
+2. Open a web browser and navigate to `http://127.0.0.1:9010`.
+   - If everything is set up correctly, the Caddy file browser (or the service running on port 80) will open in your browser.
+
+---
+
+## Important Notes
+
+- **Authentication**: Ports forwarded in this way require authentication and are not publicly accessible.
+- **Security**: The **knot** client ensures secure communication between your local machine and the remote space.
 
 {{< tip >}}
-  Ports forwarded in this way require authentication and are not publicly available.
+Port forwarding is a secure way to access services within a space without exposing them publicly.
 {{< /tip >}}
