@@ -432,6 +432,7 @@
       "dns-resolution",
       "dnsmasq",
       "docker--podman-volume",
+      "domain-routing",
       "editing-a-group",
       "editing-a-role",
       "editing-a-space",

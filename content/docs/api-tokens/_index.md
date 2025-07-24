@@ -3,24 +3,30 @@ title: API Tokens
 weight: 90
 ---
 
-API tokens are created automatically when logging in with the knot client. Tokens can also be created manually and used to access the API from external applications.
+API tokens are automatically created when logging in with the **knot** client. Additionally, tokens can be manually created and used to access the API from external applications.
+
+---
 
 ## Creating a Token
 
-From the menu select `API Tokens`, then click `New Token`.
+1. From the menu, select **`API Tokens`**, then click **`New Token`**.
+   {{< picture src="images/create-token.webp" caption="Create API Token" >}}
 
-![Create API Token](create-api-token.webp)
+2. Complete the **`Name`** field to identify the token.
+3. Click **`Create Token`** to generate a new token.
+4. The list of available tokens will be displayed.
 
-Complete the `Name` field and click `Create Token`, a new token is generated and the list of available tokens is displayed.
+   - **Tip**: Clicking on a token will copy it to the clipboard for easy use.
 
 {{< tip "warning" >}}
-  Tokens expire after a week of inactivity, any API call will reset the lifespan of the tokens.
+Tokens expire after two weeks of inactivity. Any API call made with the token will reset its lifespan.
 {{< /tip >}}
+
+---
 
 ## Deleting a Token
 
-Deleting a token instantly stops further API calls being made using the token.
+Deleting a token immediately prevents further API calls from being made using that token.
 
-From the API token list click `Delete` next to the token to delete, and confirm the operation when prompted.
-
-![List of API Tokens](list-api-tokens.webp)
+1. From the **API Tokens** list, click **`Delete`** next to the token you want to remove.
+2. Confirm the operation when prompted.
