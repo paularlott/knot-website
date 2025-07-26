@@ -37,7 +37,7 @@ job "knot-server" {
     task "knot-server" {
       driver = "podman"
       config {
-        image = "paularlott/knot:latest"
+        image = "registry-1.docker.io/paularlott/knot:latest"
         ports = ["knot_port", "knot_agent_port", "knot_tunnel_port"]
       }
 

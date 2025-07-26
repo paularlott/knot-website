@@ -1,5 +1,5 @@
 ---
-title: Example Nomad Spaces
+title: Example Templates
 weight: 30
 ---
 

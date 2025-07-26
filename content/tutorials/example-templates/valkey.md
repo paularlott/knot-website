@@ -1,6 +1,6 @@
 ---
 title: Valkey
-weight: 50
+weight: 30
 ---
 
 The following defines a template and when deployed runs an instance of a Valkey server, the space has no persistent storage so restarting it will destroy the current data.

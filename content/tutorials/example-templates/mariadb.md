@@ -1,6 +1,6 @@
 ---
 title: MariaDB
-weight: 60
+weight: 40
 ---
 
 The following example runs a copy of MariaDB within a space, storage is provided by a volume using the hostpath CSI driver.

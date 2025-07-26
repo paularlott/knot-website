@@ -1,12 +1,12 @@
 ---
-title: Ubuntu Desktop
-weight: 40
+title: PHP with Caddy
+weight: 50
 ---
 
-The following defines a simple Ubuntu 24.04 space which runs a XFCE based desktop environment using the excellent [KasmVNC](https://github.com/kasmtech/KasmVNC). The home directory makes use of a volume using the hostpath CSI driver which is assumes has been configured within the nomad cluster.
+The following example is for a PHP development space where the `~/public_html` folder is served via an instance of Caddy.
 
 ```hcl {filename=Nomad-Job}
-job "${{.space.name}}-${{.user.username}}" {
+job "${{.user.username}}-${{.space.name}}" {
   datacenters = ["dc1"]
 
   update {
@@ -30,22 +30,19 @@ job "${{.space.name}}-${{.user.username}}" {
     task "debian" {
       driver = "docker"
       config {
-        image = "paularlott/knot-desktop:ubuntu-24.04"
+        image = "paularlott/knot-php:8.4-ubuntu"
 
-        privileged = true
         hostname = "${{ .space.name }}"
       }
 
       env {
         # Define environment variables for agent
+        KNOT_WILDCARD_DOMAIN  = "${{.server.wildcard_domain}}"
         KNOT_SERVER           = "${{.server.url}}"
         KNOT_AGENT_ENDPOINT   = "${{.server.agent_endpoint}}"
         KNOT_SPACEID          = "${{.space.id}}"
         KNOT_HTTP_PORT        = "Web=80"
-        KNOT_VNC_HTTP_PORT    = "5680"
         KNOT_USER             = "${{.user.username}}"
-
-        TZ = "${{ .user.timezone }}"
       }
 
       volume_mount {
@@ -54,7 +51,7 @@ job "${{.space.name}}-${{.user.username}}" {
       }
 
       resources {
-        cpu = 300
+        cpu    = 300
         memory = 4096
       }
     }
@@ -79,12 +76,37 @@ volumes:
         attachment_mode: "file-system"
 ```
 
-If the namespace is set on the job e.g. to `${{.user.username}}` then all the spaces would be placed into a namespace of the username, with the correct nomad configuration this would allow users to access nomad but only interact with their jobs.
+The space also exposes port 80 via the web interface, assuming a web server such as Caddy or Apache is running on port 80 then it can be accessed from the spaces [web interface](/docs/spaces/web-server).
 
-The space also exposes port 80 via the web interface with a label of `Web`. Assuming a web server such as Caddy or Apache is running on port 80 then it can be accessed from the spaces [web interface](/docs/spaces/web-server).
+Once the space is running any HTML or PHP placed within the `~/public_html` folder will be processed by Caddy.
 
 ## Startup Scripts
 
 During the startup of the container any scripts found in the `/etc/knot-startup.d/` directory are executed as root, then any scripts in the `.knot-startup.d/` directory within the users home directory are executed as the user.
 
-This allows for both system level scripts and user specific scripts during container startup.
+This allows for both system level scripts and user specific scripts to be executed when the container starts.
+
+## Using a Custom Registry
+
+It's expected that development images are modified by the system owners and hosted in custom registries, in which case authentication maybe required.
+
+The built in [variables](/docs/templates/variables) system can be used by changing the `config` section slightly:
+
+```hcl
+config {
+  image = "${{.var.registry_url}}/knot-php:8.4-ubuntu"
+  auth {
+    username = "${{.var.registry_user}}"
+    password = "${{.var.registry_pass}}"
+  }
+
+  hostname = "${{ .space.name }}"
+}
+```
+
+For the above the variables `registry_url`, `registry_user` and `registry_pass` will need to be created.
+
+{{< tip "warning" >}}
+  The values of variables are exposed within the Nomad templates, if this is a problem then Vault may be a better solution.
+{{< /tip >}}
+
