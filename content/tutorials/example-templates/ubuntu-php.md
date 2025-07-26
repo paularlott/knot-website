@@ -3,9 +3,19 @@ title: PHP with Caddy
 weight: 50
 ---
 
-The following example is for a PHP development space where the `~/public_html` folder is served via an instance of Caddy.
+The following example sets up a **PHP development space** where the `~/public_html` folder is served via an instance of **Caddy**.
 
-```hcl {filename=Nomad-Job}
+---
+
+## Nomad Cluster
+
+This job assumes **Docker** is being used for container management. If **Podman** is being used, change the `driver` to `podman` and update the `image` to `registry-1.docker.io/paularlott/knot-php:8.4` to enable spaces to be created using Podman.
+
+---
+
+### Nomad Job
+
+```hcl
 job "${{.user.username}}-${{.space.name}}" {
   datacenters = ["dc1"]
 
@@ -30,19 +40,19 @@ job "${{.user.username}}-${{.space.name}}" {
     task "debian" {
       driver = "docker"
       config {
-        image = "paularlott/knot-php:8.4-ubuntu"
+        image = "paularlott/knot-php:8.4"
 
         hostname = "${{ .space.name }}"
       }
 
       env {
         # Define environment variables for agent
-        KNOT_WILDCARD_DOMAIN  = "${{.server.wildcard_domain}}"
         KNOT_SERVER           = "${{.server.url}}"
         KNOT_AGENT_ENDPOINT   = "${{.server.agent_endpoint}}"
         KNOT_SPACEID          = "${{.space.id}}"
         KNOT_HTTP_PORT        = "Web=80"
         KNOT_USER             = "${{.user.username}}"
+        TZ                    = "${{ .user.timezone }}"
       }
 
       volume_mount {
@@ -59,7 +69,11 @@ job "${{.user.username}}-${{.space.name}}" {
 }
 ```
 
-```yaml {filename=Volume-Definition}
+---
+
+### Volume Definition
+
+```yaml
 volumes:
   - id: "ubuntu_${{.space.id}}_home"
     name: "ubuntu_${{.space.id}}_home"
@@ -76,37 +90,48 @@ volumes:
         attachment_mode: "file-system"
 ```
 
-The space also exposes port 80 via the web interface, assuming a web server such as Caddy or Apache is running on port 80 then it can be accessed from the spaces [web interface](/docs/spaces/web-server).
+---
 
-Once the space is running any HTML or PHP placed within the `~/public_html` folder will be processed by Caddy.
+### Accessing the Web Interface
 
-## Startup Scripts
+The space exposes **port 80** via the web interface, which can be accessed from the space's [web interface](../../../docs/spaces/web-server).
 
-During the startup of the container any scripts found in the `/etc/knot-startup.d/` directory are executed as root, then any scripts in the `.knot-startup.d/` directory within the users home directory are executed as the user.
+Once the space is running, any **HTML** or **PHP** files placed within the `~/public_html` folder will be processed and served by **Caddy**.
 
-This allows for both system level scripts and user specific scripts to be executed when the container starts.
+---
 
-## Using a Custom Registry
+## Docker / Podman
 
-It's expected that development images are modified by the system owners and hosted in custom registries, in which case authentication maybe required.
+The following defines the same **PHP with Caddy template** for deployment using **Docker** or **Podman**.
 
-The built in [variables](/docs/templates/variables) system can be used by changing the `config` section slightly:
+---
 
-```hcl
-config {
-  image = "${{.var.registry_url}}/knot-php:8.4-ubuntu"
-  auth {
-    username = "${{.var.registry_user}}"
-    password = "${{.var.registry_pass}}"
-  }
+### Container Specification
 
-  hostname = "${{ .space.name }}"
-}
+> **Note**: If using **Podman**, the `image` must be fully qualified as `registry-1.docker.io/paularlott/knot-php:8.4`.
+
+```yaml
+container_name: ${{ .user.username }}-${{ .space.name }}
+hostname: "${{ .space.name }}"
+image: paularlott/knot-php:8.4
+volumes:
+  - php_${{.space.id}}_home:/home/
+
+environment:
+  - "TZ=${{.user.timezone}}"
+  - "KNOT_LOGLEVEL=info"
+  - "KNOT_SERVER=${{.server.url}}"
+  - "KNOT_AGENT_ENDPOINT=${{.server.agent_endpoint}}"
+  - "KNOT_SPACEID=${{.space.id}}"
+  - "KNOT_USER=${{.user.username}}"
+  - "KNOT_HTTP_PORT=80=Site"
 ```
 
-For the above the variables `registry_url`, `registry_user` and `registry_pass` will need to be created.
+---
 
-{{< tip "warning" >}}
-  The values of variables are exposed within the Nomad templates, if this is a problem then Vault may be a better solution.
-{{< /tip >}}
+### Volume Definition
 
+```yaml {filename="Volume-Definition"}
+volumes:
+  php_${{.space.id}}_home:
+```
