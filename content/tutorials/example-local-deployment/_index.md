@@ -3,22 +3,24 @@ title: Single Server
 weight: 20
 ---
 
-Rather than deploying **knot** within a Nomad cluster, it can be deployed on a single server either by running the binary directly as done in the quick start guide or by using Docker or Podman. In this example deployment we're going to use Docker and Docker Compose, we're also going to use Cloudflare to provide valid SSL certificates.
+Rather than deploying **knot** within a Nomad cluster, it can be deployed on a single server by running the binary directly (as shown in the quick start guide) or by using **Docker** or **Podman**. In this example, we’ll use **Docker** and **Docker Compose**, along with **Cloudflare** to provide valid SSL certificates.
 
-While this guide is using Cloudflare other providers can be used with Caddy to achieve the same results.
+While this guide uses Cloudflare, other providers can also be used with **Caddy** to achieve the same results.
 
-The installation will use BadgerDB for storing users, space data, templates etc, however any of the supported storage backend could be used.
+The installation will use **BadgerDB** for storing users, space data, templates, etc. However, any of the supported storage backends can be used.
 
-## What You’ll Need
+---
+
+### What You’ll Need
 
 To follow this guide, ensure you have the following:
 
 - A **Cloudflare account** (other similar providers might work, but this guide focuses on Cloudflare).
 - A **registered domain name** set up with Cloudflare's name servers.
-- The **IP** address of the server you are installing to.
-- A machine with a clean install of **Ubuntu 22.04** and Docker and Docker Compose installed.
+- The **IP address** of the server you are installing to.
+- A machine with a clean install of **Ubuntu 22.04**, with **Docker** and **Docker Compose** installed.
 
-For this guide we're going to assume
+For this guide, we’ll assume:
 
 - The virtual machine has an IP address of `192.168.0.10`.
 - The following domain names will be used:
@@ -58,23 +60,26 @@ To configure the required DNS records, go to your Cloudflare dashboard, select y
 
 ## Configuring Your Server
 
-You'll need access to the terminal of the machine you’ll use as your development server. Here's how to set up the environment.
+You’ll need access to the terminal of the machine you’ll use as your development server. Here’s how to set up the environment:
 
 ### 1. Setting Up a Project Directory
 
 First, create a folder to store everything related to your configuration and data:
 
-```
+```shell
 mkdir knot
 cd knot
 ```
+
+---
 
 ### 2. Required Files
 
 Inside the `knot` directory, create the following files with these exact contents (make adjustments where specified):
 
 #### Environment Variables
-This file will hold necessary environment configurations. Replace placeholders like `<your key>`, `<your domain>`, and `<host ip>` with your actual values.
+
+This file will hold necessary environment configurations. Replace placeholders like `<your key>`, domain names, and IP address with your actual values.
 
 ```env {filename="env"}
 CLOUDFLARE_KEY=<your key>
@@ -94,11 +99,13 @@ KNOT_BADGERDB_ENABLED=true
 KNOT_BADGERDB_PATH=/database
 ```
 
-NOTE: If you are installing this on an internet connected machine with a public IP address then please change `KNOT_ENABLE_TOTP=false` to `KNOT_ENABLE_TOTP=true`. Also ensure that none of the ports are directly accessible from the internet.
+> **Note**: If you are installing this on an internet-connected machine with a public IP address, change `KNOT_ENABLE_TOTP=false` to `KNOT_ENABLE_TOTP=true`. Also, ensure that none of the ports are directly accessible from the internet.
+
+---
 
 #### Docker Compose Configuration
 
-This file defines the services, their environment variables, and the networks they'll use:
+This file defines the services, their environment variables, and the networks they’ll use:
 
 ```yaml {filename="docker-compose.yml"}
 services:
@@ -133,7 +140,10 @@ networks:
   caddy_network:
 ```
 
+---
+
 #### Caddy Configuration
+
 This file handles certificates and proxies requests between the front end and your services. Use the following template:
 
 ```Caddyfile {filename="Caddyfile"}
@@ -189,17 +199,26 @@ This file handles certificates and proxies requests between the front end and yo
 }
 ```
 
+---
+
 ### 3. Starting the Environment
-With everything in place, the server can be started, the `-d` option keeps the server running in the backgound.
 
-Run this command from inside the project directory to start the services in the background:
+With everything in place, the server can be started. The `-d` option keeps the server running in the background.
 
-```
+Run this command from inside the project directory:
+
+```shell
 docker compose up -d
 ```
 
-Access the web interface at `https://knot.getknot.dev`. If everything works as expected, you should see the setup screen for **knot**
+---
+
+### Accessing Knot
+
+Access the web interface at `https://knot.getknot.dev`. If everything works as expected, you should see the setup screen for **knot**.
+
+---
 
 ## Installing Knot
 
-Follow the quick start guide to [Create the Admin User](../../docs/quick-start/standalone/create-admin-user/)
+Follow the quick start guide to [Create the Admin User](../../docs/quick-start/standalone/create-admin-user/).
