@@ -47,17 +47,14 @@ url = "https://knot.internal:3000"
 # The wildcard domain to expose the web interface of spaces on
 wildcard_domain = "*.knot.internal:3000"
 
-[server.tls]
-use_tls = false
-
-[server.terminal]
-webgl = true
-
 # Encryption key for protected variables (knot genkey)
 encrypt = "2gJcpKPGqDK8JWUCdgCeQQx1uZwP8fhe"
 
 # Optional server zone, defaults to the hostname
 #zone = "myservers"
+
+[server.terminal]
+webgl = true
 
 # MySQL storage
 [server.mysql]

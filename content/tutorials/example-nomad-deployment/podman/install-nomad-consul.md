@@ -1,12 +1,14 @@
 ---
-title: Install Nomad & Consul
+title: Nomad & Consul
 weight: 10
 ---
 
-As root run:
+## Install the Software
+
+To install Nomad and Consul, run the following commands as **root**:
 
 ```shell
-# Install nomad and consul
+# Install Nomad and Consul
 wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
 
@@ -14,35 +16,25 @@ apt-get update -y
 apt-get install -y nomad consul
 ```
 
-```shell
-# Install docker
-apt-get update
-apt-get install ca-certificates curl
-install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
-chmod a+r /etc/apt/keyrings/docker.asc
+---
 
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+### Podman Installation
 
-apt-get update -y
-apt-get install -y nomad consul docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-```
+Install both **Podman** and the **Podman task driver** for Nomad:
 
 ```shell
 # Install Podman
 apt-get update -y
-apt-get install -y podman
-mkdir -p /opt/nomad/plugins
-cd /opt/nomad/plugins
-wget https://releases.hashicorp.com/nomad-driver-podman/0.5.2/nomad-driver-podman_0.5.2_linux_amd64.zip
-unzip nomad-driver-podman_0.5.2_linux_amd64.zip
-rm nomad-driver-podman_0.5.2_linux_amd64.zip
+apt-get install -y podman nomad-driver-podman
 ```
 
+For more information on the Podman driver, visit the [Nomad Podman Driver Documentation](https://developer.hashicorp.com/nomad/plugins/drivers/podman).
+
+---
+
 ## Configure and Start Consul
+
+Create the Consul configuration file at `/etc/consul.d/consul.hcl` with the following content:
 
 ```hcl {filename="/etc/consul.d/consul.hcl"}
 datacenter = "dc1"
@@ -63,14 +55,21 @@ ui_config {
 }
 ```
 
+Start and enable Consul:
+
 ```shell
 systemctl enable consul
 systemctl start consul
 ```
 
-Check consul is running by going to http://knot.getknot.dev:8500
+Verify Consul is running by visiting:
+**http://knot.getknot.dev:8500**
+
+---
 
 ## Configure and Start Nomad
+
+Create the Nomad configuration file at `/etc/nomad.d/nomad.hcl` with the following content:
 
 ```hcl {filename="/etc/nomad.d/nomad.hcl"}
 datacenter = "dc1"
@@ -78,7 +77,7 @@ datacenter = "dc1"
 data_dir  = "/opt/nomad/data"
 bind_addr = "0.0.0.0"
 
-plugin_dir = "/opt/nomad/plugins/"
+plugin_dir = "/opt/nomad/data/plugins/"
 
 consul {
   address = "127.0.0.1:8500"
@@ -91,22 +90,24 @@ server {
 
 client {
   enabled = true
+
+  options = {
+    "driver.allowlist" = "podman,exec"
+  }
 }
 
-plugin "docker" {
+plugin "nomad-driver-podman" {
   config {
-    allow_privileged = true
-    allow_caps = [ "ALL" ]
-    volumes {
-      enabled = true
-    }
   }
 }
 ```
+
+Start and enable Nomad:
 
 ```shell
 systemctl enable nomad
 systemctl start nomad
 ```
 
-Check nomad is running by going to http://knot.getknot.dev:4646
+Verify Nomad is running by visiting:
+**http://knot.getknot.dev:4646**

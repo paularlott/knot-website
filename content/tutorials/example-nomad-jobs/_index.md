@@ -1,6 +1,6 @@
 ---
-title: Example Spaces
-weight: 90
+title: Example Nomad Spaces
+weight: 30
 ---
 
 This section covers some example templates.

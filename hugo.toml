@@ -56,7 +56,7 @@ title = 'knot'
     #style = 'catppuccin-frappe'
     noClasses = false
     lineNoStart = 1
-    lineNos = true
+    lineNos = false
     lineNumbersInTable = false
     tabWidth = 2
 
