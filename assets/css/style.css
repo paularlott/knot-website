@@ -182,3 +182,7 @@ tr:nth-child(odd) {
   position: relative;
   z-index: 2;
 }
+
+.feature-row h2 {
+  margin-top: 0;
+}
