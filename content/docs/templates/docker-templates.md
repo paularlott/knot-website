@@ -66,6 +66,17 @@ environment:
   - "KNOT_USER=${{.user.username}}"
 ```
 
+#### Using Template Variables
+
+Template variables can store sensitive information or information that may need to be updated in all templates, such as registry login credentials. For example:
+
+```yaml
+image: ${{.var.registry_url}}/knot-ubuntu:24.04
+auth:
+  username: "${{.var.registry_user}}"
+  password: "${{.var.registry_pass}}"
+```
+
 #### Notes:
 
 - **Ports**:
