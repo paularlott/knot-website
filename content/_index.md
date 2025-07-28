@@ -4,9 +4,13 @@ layout: index
 description: Self hosted solution for managing cloud development environments.
 ---
 
+{{< big-title
+  title="Cloud Development Environment Manager"
+>}}
+
 {{< hero
-  title="Simplify Deployment of Cloud Developer Environments"
-  subtitle="Effortlessly manage cloud-based development environments with a tool designed for developers and teams."
+  title="Your Code, Your Tools, Your Team - Everywhere, Anytime"
+  subtitle="Ditch setup woes and version conflicts. Our Cloud Development Environment Manager spins up scalable, secure workspaces in seconds, perfect for coding, data projects, or machine learning. Fast, team-friendly, and always cloud-ready."
   btn1="Get Started"
   btn1Link="docs/quick-start/"
   btn2="Learn More"
