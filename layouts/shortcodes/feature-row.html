@@ -1,0 +1,13 @@
+{{- $reverse :=.Get "reverse" -}}
+{{- $img := .Get "img" -}}
+{{- $alt := .Get "alt" -}}
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg feature-row">
+  <div class="px-8 pt-8 md:pt-0 col-span-3 flex flex-col justify-center{{ if $reverse }} md:order-last{{ end }}">
+    {{ $content := .Inner | markdownify }}
+    {{ $content }}
+  </div>
+  <div class="px-8 pb-4 md:pb-0 flex {{ if $reverse }}md:justify-start{{ else }}md:justify-end{{ end }} items-center perspective-normal{{ if $reverse }} md:order-first{{ end }}">
+    <img src="{{ $img }}" alt="{{ $alt }}" class="rounded-lg">
+  </div>
+</div>
