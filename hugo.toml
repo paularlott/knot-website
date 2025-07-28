@@ -1,4 +1,4 @@
-baseURL = 'https://knot.alphasite.anaconda.ovh/'
+baseURL = 'https://getknot.dev/'
 languageCode = 'en-US'
 title = 'knot'
 
