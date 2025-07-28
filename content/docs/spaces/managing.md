@@ -3,85 +3,106 @@ title: Managing a Space
 weight: 10
 ---
 
-## Service Password
+This guide explains how to create, start, stop, update, edit, and delete spaces in **knot**.
 
-A service password can be set by going `My Profile` and entering the chosen password in the `Service Password` field, if not set the system will generate a random password.
-
-This can then be used in templates as the variable `${{ .user.service_password }}`, e.g. for a MariaDB server it can be used as the root password by setting the `MARIADB_ROOT_PASSWORD` environment variable `MARIADB_ROOT_PASSWORD = "${{.user.service_password}}"`.
-
-{{< callout type="info" >}}
-  If the password is change the new password isn't immediately made available to the spaces, however it will be used on the next start of the space.
-{{< /callout >}}
+---
 
 ## Creating a Space
 
-From the `Templates` page open the menu for the template to use and click `Create Space`:
+1. Navigate to the `Templates` page, click the menu icon (three dots) next to the desired template, and select `Create Space`.
+   {{< picture src="../../quick-start/standalone/images/create-space.webp" caption="Create Space" >}}
 
-{{< image src="../create-space.webp" alt="Create Space" >}}
+2. Complete the form for the new space:
+   - **`Name`**: The name of the space.
+   - **`Description`**: (Optional) A description for the space.
+   - **`Icon`**: (Optional) An icon for the space. By default, the template's icon will be used if one is set.
+   - **`Additional Space Names`**: Add additional names for the space by clicking the `+` icon. This is useful for accessing the space under multiple domain names when using the web proxy service.
+   - **`Terminal Shell`**: The shell to use for the terminal. By default, the user's profile shell is used.
+   - **`Custom Fields`**: If the template includes custom fields, they will appear here. Set values for each field as needed.
+   - **`Start Space on Create`**: If checked, the space will start automatically after creation.
 
-{{< callout type="info" >}}
-  Depending on the permissions the user has the option `Create Space For` maybe displayed, clicking this will prompt for the user under which the space is to be created. This allows an admin to create spaces for users.
-{{< /callout >}}
+3. Click `Create Space` to finalize the process.
 
-The following form will be presented:
+{{< tip >}}
+Admins may see the `Create Space For` option, allowing them to create spaces on behalf of other users. Selecting this option will prompt for the user under whom the space will be created.
+{{< /tip >}}
 
-{{< image src="../create-space-form.webp" alt="Create Space Form" >}}
-
-Enter a name for the space e.g. `mytest` and leave the `Terminal Shell` as `Bash`, once `Create Space` is clicked the space will be created within knot and the main spaces page loaded.
-
-The space is created in a stopped state, no resources are used until the space is started.
-
-The `Additional Space Names` section allows additional names to be entered against the space, this is useful when using the web proxy service and development needs to access the target software under multiple domain names.
+---
 
 ## Starting a Space
 
-From the `Spaces` page click the menu item next to the space to start, and then select `Start`, them menu will change to read "Starting" and after a few seconds `Running` will show next to `Status`.
+1. Navigate to the `Spaces` page.
+2. Click the menu icon next to the space and select `Start`.
+   {{< picture src="../images/start-space.webp" caption="Start Space" >}}
 
-{{< image src="../start-space.webp" alt="Start Space" >}}
+- The space's status will change to `Starting`, and once running, it will display as `Running`.
+- Icons will appear in the services column, providing access to features such as the web terminal.
 
-Spaces created from manual templates don't have a `Start` option, they are started automatically when their agent connects to the server.
+   {{< picture src="../images/running-space.webp" caption="Running Space" >}}
 
-The environment will continue its boot process during which time additional icons will appear next to the space, e.g. `Terminal`.
+### Service Icons:
 
-{{< image src="../running-space.webp" alt="Running Space" >}}
+1. **`VNC`**: Opens a new window connecting to a VNC server running within the space.
+2. **`Code Server`**: Opens a new window running Code Server.
+3. **`VSCode Tunnel`**: Displays a red icon if the VSCode tunnel is not configured. When functioning, it matches the other icons. Clicking it opens a web terminal connected to the VSCode tunnel service.
+4. **`Web Terminal`**: Provides shell access to the space via a web-based terminal.
+5. **`Ports`**: Displays a menu of web interfaces and exposed ports for the space.
 
-Not all icons will appear for all spaces as they are dependant on the agent configuration within the space.
+{{< tip >}}
+- Not all icons will be present. Their availability depends on the features enabled in the template and the user's permissions.
+- Spaces created from manual templates do not have a `Start` option. They start automatically when their agent connects to the server.
+{{< /tip >}}
 
-- **Desktop** Is shown if a running web based VNC server such as [KasmVNC](https://github.com/kasmtech/KasmVNC) is available within the container. Clicking it will open a new window displaying the graphical desktop.
-- **Code Server** Is shown if a running instance of Code Server is found running within the space, clicking the icon opens a new tab or window showing the editor.
-- **Visual Studio Code** Is shown if a running instance of Visual Studio Code tunnels is found running within the space, clicking the icon opens a new tab or window showing the editor. If the Visual Studio Code tunnel hasn't been created then a terminal is opened allowing the tunnel to be created.
-- **Terminal** Is shown if a web based terminal can be opened into the space, clicking the icon opens a new window showing the terminal.
-- **Ports** Is shown if there's ports exposed that can either be connected to via the web interface or via port forwarding on the command line. Clicking the icon drops down a list of the available ports, ports shown with a solid background can be connected to by clicking the button and will open in a new tab or window, while ports with an outline are available for use with port forwarding on the command line.
-- **SSH Info** Is shown in the space menu when it's possible to create a SSH connection to the space, clicking the icon will show the command line information for connecting to the space.
+---
 
 ## Stopping a Space
 
-Clicking the menu item next to the running space will show the Stop button.
+1. Click the menu icon next to the running space.
+2. Select `Stop`.
+   {{< picture src="../images/stop-space.webp" caption="Stopping a Space" >}}
 
-{{< image src="../stopping-a-space.webp" alt="Stopping a Space" >}}
+- The `Stop` button is a split button:
+  - **`Stop`**: Stops the space.
+  - **`Restart`**: Stops and then restarts the space.
 
-{{< callout type="warning" >}}
-  When stopping a space all data in memory and not on a persistent volume will be lost. However any volumes used by the space will not be deleted.
-{{< /callout >}}
+{{< tip "warning" >}}
+Stopping a space will result in the loss of all data in memory that is not stored on a persistent volume. However, volumes used by the space will not be deleted.
+{{< /tip >}}
 
-## Updating a Space
+---
 
-If the template that a running space is using is updated then an `Update Available` badge is displayed:
+## Updates
 
-{{< image src="../update-pending.webp" alt="Update Pending" >}}
+If the template used by a running space is updated, an `Update Available` badge will appear:
+{{< picture src="../images/space-update.webp" caption="Pending Update" >}}
 
-To update the space, stop it and then start it again.
+To apply the update:
 
-Volumes that have been added to the template will be created when the space starts and any volumes that have been removed from the template will be deleted along with the data they contain.
+1. Stop the space.
+2. Start it again.
 
-A space can also be edited, this allows changing of the space name as well as updating any additional names for the space. Additional URLs are supported as soon as the space is successfully saved.
+- Any volumes added to the template will be created when the space starts.
+- Any volumes removed from the template will be deleted, along with their data.
+
+---
+
+## Editing a Space
+
+1. Select `Edit` from the space's menu.
+2. Update the space's details, such as its name, icon, or additional names.
+
+- Additional URLs are supported immediately after the space is successfully saved.
+
+---
 
 ## Deleting a Space
 
-{{< callout type="error" >}}
-  Deleting a space will delete the volumes and any data they contain.
-{{< /callout >}}
+{{< tip "warning" >}}
+Deleting a space will permanently delete its volumes and all associated data.
+{{< /tip >}}
 
-Only stopped spaces can be deleted.
+1. Ensure the space is stopped. Only stopped spaces can be deleted.
+2. Select `Delete` from the space's menu.
+3. Confirm the action in the dialog that appears.
 
-From the menu next to the stopped space select the `Delete` item and confirm deletion. When the space is deleted all resources are freed and all volumes and their associated data are removed.
+- When a space is deleted, all resources are freed, and all volumes and their data are removed.

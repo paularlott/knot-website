@@ -1,3 +1,7 @@
 /.hugo_build.lock
 .DS_Store
 /public
+/themes/
+/.task/
+/node_modules/
+_gen/

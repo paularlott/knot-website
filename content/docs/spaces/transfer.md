@@ -1,22 +1,35 @@
 ---
 title: Transfer Spaces
-weight: 100
+weight: 70
 ---
 
-Spaces can be transferred between users on the same server.
+Spaces can be transferred between users on the same **knot** server. This feature allows ownership of a space to be reassigned to another user.
 
-To transfer a space to another user, from the `Spaces` page select the space to be transferred and click the `Transfer To..` button.
+---
 
-A dialog will be displayed allowing the target user to be selected.
+## How to Transfer a Space
 
-{{< image src="../transfer.webp" alt="Transfer Space" >}}
+1. Navigate to the **`Spaces`** page.
+2. Select the space you want to transfer.
+3. Click the **`Transfer To...`** button from the space's menu.
+   {{< picture src="../images/transfer.webp" caption="Transfer Space" >}}
 
-Once the user has been selected, click the `Transfer` button to complete the transfer. One the space has been transferred to the new user it will no longer be available to the original user.
+4. A dialog will appear, allowing you to select the target user from a dropdown list.
+   - Click the target user's name in the dropdown to select them.
 
-{{< callout type="note" >}}
-  The target user name must be clicked in the dropdown list of available users.
-{{< /callout >}}
+5. Click the **`Transfer Space to`** button to complete the transfer.
 
-{{< callout type="warning" >}}
-  If the space is running then the transfer option will not be available, only stopped spaces can be transferred.
-{{< /callout >}}
+---
+
+## Important Notes
+
+- Once the space is transferred, it will no longer be available to the original user.
+- Only **stopped spaces** can be transferred. If the space is running, the transfer option will not be available.
+
+{{< tip >}}
+To give another user access to a running space without stopping it, use the **`Share`** space option instead.
+{{< /tip >}}
+
+{{< tip "warning" >}}
+Ensure the target user's name is clicked in the dropdown list to confirm the selection.
+{{< /tip >}}

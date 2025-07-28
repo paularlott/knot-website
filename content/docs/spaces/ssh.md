@@ -1,74 +1,109 @@
 ---
 title: SSH Access
-weight: 80
+weight: 100
+---
+
+SSH access allows you to securely connect to your spaces for advanced management and development. This guide explains how to set up SSH keys, connect via SSH, and simplify connections using `.ssh/config`.
+
 ---
 
 ## Adding a Public SSH Key
 
-Click your username in the top right of the web interface and paste your public SSH key into the field `SSH Public Key`, then click `Update User`. This will set the public key to be used by all your containers when connecting via SSH to allow authentication without passwords.
+1. Click your username in the top-right corner of the web interface and select **`My Profile`**.
+2. Paste your public SSH key into the **`SSH Public Key`** field and click **`Update`**.
+   - This key will be used for all your containers, enabling passwordless authentication.
+   {{< picture src="../images/profile-sshkey.webp" caption="SSH Public Key" >}}
 
-![SSH Key Field](ssh-key.webp)
+3. Alternatively, automatically fetch your public keys from GitHub by entering your GitHub username in the **`GitHub Username`** field.
 
-Alternatively the keys can be fetched from GitHub if the username is entered in the `GitHub Username` field.
+---
 
 ## Connecting via SSH
 
-SSH access requires the [knot client](/docs/getting-started/client/) be installed on the local computer as it will forward the SSH session to the remote container.
+### Step 1: Connect to the **knot** Server
 
-If not already done, on the client machine connect to the knot server, replacing the URL with the address of the real server, first open a terminal and run:
+1. Ensure the **knot** [client](/docs/quick-start/client/) is installed on your local machine.
+2. Open a terminal and run the following command, replacing the URL with your **knot** server's address:
 
-```shell
-knot connect https://knot.example.com
-```
+   ```shell
+   knot connect https://knot.internal:3000
+   ```
 
-When the command runs it prompts for the username and password to connect with, the generated acess key is stored in `~/.knot.yml`.
+3. Enter your username and password when prompted.
+4. The generated access key will be stored in `~/.config/knot/knot.yml` for future use.
 
-Next open a SSH connection to the space called `mytest` by running the command below (adjust the username as required):
+---
 
-```shell
-ssh -o ProxyCommand='knot forward ssh %h' -o StrictHostKeyChecking=no user@mytest
-```
+### Step 2: Open an SSH Connection
 
-The SSH session will be opened to the container and can be used in the same way as any other SSH connection.
+1. Use the following command to connect to a space (e.g., `phptest`), replacing `user` with your username:
 
-## Using .ssh/config
+   ```shell
+   ssh -o ProxyCommand='knot forward ssh %h' -o StrictHostKeyChecking=no user@phptest
+   ```
 
-To shorten the command and simplify connecting to the remote space the following can be added to the `.ssh/config` file of the local computer:
+2. This will open an SSH session to the space, functioning like any other SSH connection.
+
+---
+
+## Simplifying Connections with `.ssh/config`
+
+To streamline SSH connections, add the following configuration to your local machine's `.ssh/config` file:
 
 ```text {filename=".ssh/config"}
-Host mytest
-  HostName mytest
-  StrictHostKeyChecking = no
+Host knot.phptest
+  HostName knot.phptest
+  StrictHostKeyChecking=no
   LogLevel ERROR
   UserKnownHostsFile=/dev/null
-  ProxyCommand knot forward ssh %h
+  ProxyCommand knot forward ssh phptest
 ```
 
-Once this is done a SSH connection can be opened with:
+Once added, you can connect to the space with a shorter command:
 
 ```bash
-ssh user@mytest
+ssh user@phptest
 ```
 
-The knot client includes a helper function to add entries to the `.ssh/config` file for all spaces owned by the user, this can be done by running:
+### Automating `.ssh/config` Updates
 
-```shell
-knot ssh-config update
-```
+The **knot** client includes a helper function to manage `.ssh/config` entries for all your spaces:
 
-## Agent Forwarding
+- **Add entries for all spaces**:
+  ```shell
+  knot ssh-config update
+  ```
 
-Adding the `-A` option to the ssh command will enable agent forwarding which allows SSH keys from the local machine to be used within the space.
+- **Remove all entries**:
+  ```shell
+  knot ssh-config remove
+  ```
 
-The current list of keys exported can be found by running the following on the local machine:
+---
+
+## Enabling Agent Forwarding
+
+Agent forwarding allows you to use SSH keys from your local machine within the space. To enable it, add the `-A` option to your SSH command:
 
 ```bash
-ssh-add -L
+ssh -A user@phptest
 ```
 
-SSH keys can be added with `ssh-add YOUR-KEY`
+### Managing SSH Keys
 
-On macOS the ssh-agent will forget the key once it is restarted, e.g. the machine is rebooted, however the key can be added to the keychain with the `--apple-use-keychain` option, `ssh-add --apple-use-keychain YOUR-KEY`.
+- **View exported keys**:
+  ```bash
+  ssh-add -L
+  ```
+
+- **Add a key**:
+  ```bash
+  ssh-add YOUR-KEY
+  ```
+
+### Persistent Keys on macOS
+
+On macOS, the `ssh-agent` forgets keys after a restart. To persist keys in the keychain, use the `--apple-use-keychain` option:
 
 ```shell
 ssh-add --apple-use-keychain ~/.ssh/id_rsa

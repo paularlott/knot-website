@@ -3,20 +3,40 @@ title: VSCode Tunnel
 weight: 40
 ---
 
-Knot allows the management of Visual Studio Code Tunnels from it's web interface.
+**knot** enables the management of Visual Studio Code Tunnels directly from its web interface, providing seamless access to a fully-featured VSCode editor for your spaces.
 
-After starting a new space the `Visual Studio Code` icon will be shown against to the space.
+---
 
-If the tunnel hasn't been created then it will be red, clicking the icon will open a terminal window allowing completion of tunnel registration with the users GitHub or Microsoft account. Simply follow the instructions in the terminal window to complete the registration, once the URL of the new tunnel appears close the terminal window.
+## Accessing the VSCode Tunnel
 
-{{< image src="../connect-tunnel-icon.webp" alt="Connect VSCode Tunnel" >}}
+1. Start a space from the `Spaces` page.
+2. Once the space is running, the **`VSCode Tunnel`** icon (#3) will appear.
+   {{< picture src="../images/running-space.webp" caption="Running Space" >}}
 
-![Register Tunnel](vscode-tunnel-connect.webp)
+---
 
-When the tunnel is established the icon will no longer be red and clicking it will open a new tab or window with the Visual Studio Code editor.
+## Configuring the VSCode Tunnel
 
-{{< image src="../vscode-tunnel-connected.webp" alt="VSCode Tunnel Connected" >}}
+- If the tunnel has not been configured, the icon will appear **red**.
+- Click the red **`VSCode Tunnel`** icon to open a terminal window.
+- Follow the instructions in the terminal to complete the tunnel registration using your **GitHub** or **Microsoft** account.
+- Once the URL of the new tunnel is displayed, close the terminal window.
 
-Assuming the space template uses a volume for `/home/` then the tunnel configuration and changes made to Visual Studio Code including themes and extensions are persistent across restarts of the space.
+{{< picture src="../images/vscode-tunnel-connect.webp" caption="Connect VSCode Tunnel" >}}
 
-![VSCode via Tunnel](vscode.webp)
+---
+
+## Using the VSCode Tunnel
+
+- After the tunnel is successfully established, the **`VSCode Tunnel`** icon will no longer be red.
+- Click the icon to open a new tab or window with the Visual Studio Code editor.
+
+{{< picture src="../images/vscode.webp" caption="VSCode via a Tunnel" >}}
+
+---
+
+## Persistence Across Restarts
+
+If the space template includes a volume for `/home/`, the following configurations will persist across space restarts:
+- Tunnel configuration.
+- Changes made to Visual Studio Code, including themes and extensions.

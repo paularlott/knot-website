@@ -1,12 +1,18 @@
 ---
 title: Desktop
-weight: 200
+weight: 90
 ---
 
-If a space exposes a web based VNC server such as [KasmVNC](https://github.com/kasmtech/KasmVNC) then on the `Spaces` page a `Desktop` button is displayed against the running space.
+If a space exposes a web-based VNC server, such as [KasmVNC](https://github.com/kasmtech/KasmVNC), a **`Desktop`** button (#1) will be displayed on the **`Spaces`** page for the running space.
 
-{{< image src="../desktop-icon.webp" alt="VNC Desktop Icon" >}}
+---
 
-Clicking the `Desktop` button opens a new browser tab displaying the graphical desktop.
+## Accessing the Desktop
 
-![XFCE Desktop](xfce-desktop.webp)
+1. Navigate to the **`Spaces`** page.
+2. Locate the running space with the **`Desktop`** button (#1).
+   {{< picture src="../images/running-space.webp" caption="Running Space" >}}
+
+3. Click the **`Desktop`** button to open a new browser tab displaying the graphical desktop.
+
+   {{< picture src="../images/xfce-desktop.webp" caption="XFCE Desktop" >}}

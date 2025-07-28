@@ -1,64 +1,80 @@
 ---
 title: knot
-layout: hextra-home
+layout: index
+description: Self hosted solution for managing cloud development environments.
 ---
 
-{{< hextra/hero-badge link="https://github.com/paularlott/knot" >}}
-  <div class="hx-w-2 hx-h-2 hx-rounded-full hx-bg-primary-400"></div>
-  <span>Free, open source, Apache 2.0 License</span>
-  {{< icon name="arrow-circle-right" attributes="height=14" >}}
-{{< /hextra/hero-badge >}}
+{{< big-title
+  title="Cloud Development Environment Manager"
+>}}
 
-<div class="hx-mt-6 hx-mb-6">
-{{< hextra/hero-headline >}}
-  Simplify Deployment of&nbsp;<br class="sm:block hidden" />Cloud Developer Environments
-{{< /hextra/hero-headline >}}
-</div>
+{{< hero
+  title="Your Code, Your Tools, Your Team - Everywhere, Anytime"
+  subtitle="Ditch setup woes and version conflicts. Our Cloud Development Environment Manager spins up scalable, secure workspaces in seconds, perfect for coding, data projects, or machine learning. Fast, team-friendly, and always cloud-ready."
+  btn1="Get Started"
+  btn1Link="docs/quick-start/"
+  btn2="Learn More"
+  btn2Link="docs"
+  img="/images/hero.webp"
+  alt="Managing Spaces"
+>}}
 
-<div class="hx-mb-12">
-{{< hextra/hero-subtitle >}}
-  Your Key to Effortless&nbsp;<br class="sm:block hidden" />Cloud Development Environment Management
-{{< /hextra/hero-subtitle >}}
-</div>
+{{< feature-grid >}}
 
-<div class="hx-mb-6">
-{{< hextra/hero-button text="Get Started" link="docs/getting-started/" >}}
-</div>
+  {{< feature-row
+    reverse=true
+    img="/images/setup.webp"
+    alt="Scale With Remote Clusters"
+    is4=true
+  >}}
+  ## Effortless Setup & Scalability
+  Set up your developer environment once and reuse it anytime. Seamlessly scale with remote clusters for optimal performance near your team.
+  {{< /feature-row >}}
 
-<div class="hx-mt-6"></div>
+  {{< feature-row
+    reverse=true
+    img="/images/anywhere.webp"
+    alt="Self Hosted"
+    is4=true
+  >}}
+  ## Complete Control, Anywhere
+  Self-hosted on your infrastructure with fine-grained access control. Manage containers, users, and environments from anywhere.
+  {{< /feature-row >}}
+{{< /feature-grid >}}
 
-{{< hextra/feature-grid >}}
-  {{< hextra/feature-card
-    title="Define Once"
-    subtitle="Define the developer environment once and deploy as many times as needed."
+{{< feature-grid >}}
+  {{< feature-row
+    reverse=false
+    img="/images/cloud.webp"
+    alt="Cloud Development"
+    is4=true
   >}}
-  {{< hextra/feature-card
-    title="Scale / Remote Servers"
-    subtitle="Deploy additional clusters close to developers and manage from a central location for maximum performance."
-  >}}
-  {{< hextra/feature-card
-    title="Local Docker / Podman"
-    subtitle="Deploy local Docker and Podman containers and manage from from a central location."
-  >}}
-  {{< hextra/feature-card
-    title="Roles and Permissions"
-    subtitle="Control access to the system with roles and permissions."
-  >}}
-  {{< hextra/feature-card
-    title="Groups"
-    subtitle="Assign users and environment templates to groups to control what each user has access to."
-  >}}
-  {{< hextra/feature-card
-    title="Web Based Editor"
-    subtitle="Use Code Server or Visual Studio Code Tunnels through your web browser."
-  >}}
-  {{< hextra/feature-card
-    title="And Much More..."
-    icon="sparkles"
-    subtitle="User Management / Volume Management / Web Terminal / and more..."
-  >}}
-{{< /hextra/feature-grid >}}
+  ## Cloud-Ready Development
+  Code directly in your browser with tools like Code Server or Visual Studio Code Tunnels, supported by built-in dev utilities.
+  {{< /feature-row >}}
 
-<div class="hx-mt-6">
-knot is a management tool for creating and running environments within a Nomad cluster. It offers both a user-friendly web interface and a command line interface to streamline the deployment and access to environments. With knot, managing your cloud based development environments becomes an effortless task.
-</div>
+  {{< feature-row
+    reverse=false
+    img="/images/team.webp"
+    alt="Roles and Groups"
+    is4=true
+  >}}
+  ## Smart Team Collaboration
+  Organize users and templates into groups for tailored access, ensuring efficient and secure teamwork.
+  {{< /feature-row >}}
+{{< /feature-grid >}}
+
+{{< feature-row
+  reverse=true
+  img="/images/cluster.webp"
+  alt="Leaderless Cluster"
+>}}
+## Decentralized Management
+Leaderless cluster management eliminates single point of failure, ensuring greater reliability and resilience. By supporting remote clusters or servers located near your team, this approach minimizes latency, delivering faster and more responsive performance for users.
+{{< /feature-row >}}
+
+---
+
+## Why Choose knot?
+
+knot is an open-source tool (Apache 2.0 License) for managing environments within a Nomad cluster or standalone using Docker or Podman. With its leaderless architecture, you can manage your development environments from anywhere, ensuring flexibility and reliability. Whether you're working locally or scaling across remote servers, knot simplifies the process, so you can focus on development.

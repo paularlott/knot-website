@@ -1,41 +1,51 @@
 ---
 title: Nomad Templates
-weight: 40
+weight: 20
 ---
 
-Each environment or `Template`, is defined by a Nomad job and optional volume definition.
+Nomad templates in **knot** define environments using a Nomad job specification and optional volume definitions. When a developer creates and starts a space from a template, **knot** automatically provisions the required volumes and launches the job within the Nomad cluster.
 
-When a developer creates an instance of the `Template`, a space, and starts it, knot automatically creates any required volumes and launches the job within the Nomad cluster.
+For enhanced isolation, namespaces can be set within the job specification. For example:
+`namespace="${{ .user.username }}"`
+This ensures that jobs for each developer are placed in their own namespaces.
 
-For additional isolation between developers the namespace can be set within the job specification, e.g. `namespace="${{ .user.username }}"`, if this is done then jobs for each developer are placed within their own namespaces.
+---
 
-## Nomad Job
+### Nomad Job
 
-From the menu select `Templates` then `New Template`, the following form is displayed:
+To create a Nomad template:
 
-![Create a Template](create-template.webp)
+1. Navigate to `Templates` and select `New Template`.
+2. Complete the form, ensuring the `Name` and `Nomad Job` fields are filled.
+   {{< picture src="../images/template-platform.webp" caption="Template Platform" >}}
+   - `Nomad` must be selected under `Platform`.
+   - The `Nomad Job` field requires an HCL job specification. See [example environments](/docs/examples-environments/) for reference.
 
-The `Name` and `Nomad Job` fields are required, the `Nomad Job` field takes an HCL job specification, see [example environments](/docs/examples-environments/).
+{{< tip >}}
+When a template is updated, all running spaces are marked as having an update available. However, spaces are not automatically restarted. Restarting a space applies the updated template.
+{{< /tip >}}
 
-{{< callout type="info" >}}
-  When a change is made to a template all running spaces are marked as an update available, however the spaces are not automatically restarted. Once the spaces are restarted they will receive the updated template.
-{{< /callout >}}
+#### Using Template Variables
 
-Template variables can be used to hold registry login information e.g.
+Template variables can store sensitive information, such as registry login credentials. For example:
 
 ```hcl
-image = "paularlott/knot-debian:12"
+image = "paularlott/knot-ubuntu:24.04"
 auth {
   username = "${{ .var.registry_user }}"
   password = "${{ .var.registry_pass }}"
 }
 ```
 
-{{< callout type="warning" >}}
-  Variables are plain text within the Nomad template and can therefore be viewed via the Nomad web interface, and alternative solution such at Vault may be more applicable depending on the environment.
-{{< /callout >}}
+{{< tip "warning" >}}
+Variables are stored as plain text within the Nomad template and can be viewed via the Nomad web interface. For sensitive environments, consider using a solution like Vault for compliance and security.
+{{< /tip >}}
+
+---
 
 ### Example Nomad Job
+
+Below is an example of a Nomad job specification:
 
 ```hcl {filename=Nomad-Job}
 job "${{.space.name}}-${{.user.username}}" {
@@ -50,12 +60,6 @@ job "${{.space.name}}-${{.user.username}}" {
 
   group "ubuntu" {
     count = 1
-
-    network {
-      port "knot_port" {
-        to = 3000
-      }
-    }
 
     volume "home_volume" {
       type            = "csi"
@@ -77,22 +81,17 @@ job "${{.space.name}}-${{.user.username}}" {
       driver = "docker"
       config {
         image = "paularlott/knot-ubuntu:24.04"
-
-        ports = ["knot_port"]
-
         hostname = "${{ .space.name }}"
       }
 
       env {
-        # Define environment variables for agent
         KNOT_SERVER           = "${{.server.url}}"
         KNOT_AGENT_ENDPOINT   = "${{.server.agent_endpoint}}"
         KNOT_SPACEID          = "${{.space.id}}"
         KNOT_SSH_PORT         = "22"
         KNOT_CODE_SERVER_PORT = "49374"
         KNOT_USER             = "${{.user.username}}"
-
-        TZ = "${{ .user.timezone }}"
+        TZ                    = "${{ .user.timezone }}"
       }
 
       volume_mount {
@@ -101,7 +100,7 @@ job "${{.space.name}}-${{.user.username}}" {
       }
 
       volume_mount {
-        volume      = "dada_volume"
+        volume      = "data_volume"
         destination = "/data"
       }
 
@@ -109,36 +108,28 @@ job "${{.space.name}}-${{.user.username}}" {
         cores  = 4
         memory = 4096
       }
-
-      # Publish Agent Port
-      service {
-        name = "knot-${{.space.id}}"
-        port = "knot_port"
-
-        check {
-          name            = "alive"
-          type            = "http"
-          protocol        = "https"
-          tls_skip_verify = true
-          path            = "/ping"
-          interval        = "10s"
-          timeout         = "2s"
-        }
-      }
     }
   }
 }
 ```
 
-## Volumes
+---
 
-Each template can define one or more volumes, if volumes are defined then they are created when the environment is deployed and destroyed when the environment is destroyed, starting and stopping the space will have no effect on the volumes.
+### Volumes
 
-{{< callout type="warning" >}}
-  Deleting the space will destroy the volumes and all data on them.
-{{< /callout >}}
+Templates can define one or more volumes. These volumes are:
 
-An example volume definition that allocates block storage for two volumes `home` and `data` would look like:
+- **Created**: When the space is deployed.
+- **Destroyed**: When the space is deleted.
+- **Persistent**: Starting and stopping the space does not affect the contents of the volumes unless the template is modified to remove a volume.
+
+{{< tip "warning" >}}
+Deleting a space will destroy its volumes and all data stored on them.
+{{< /tip >}}
+
+#### Example Volume Definition
+
+Below is an example YAML configuration for defining block storage volumes:
 
 ```yaml
 volumes:
@@ -171,6 +162,8 @@ volumes:
         attachment_mode: "file-system"
 ```
 
-In the example the ID of the volume is given as `ubuntu_${{.space.id}}_home`, `.space.id` is replaced with the unique ID of the space using the volume.
+In this example, the volume ID `ubuntu_${{.space.id}}_home` dynamically incorporates the unique space ID.
 
-If volume definitions are added or removed from the space template then those volumes are created or destroyed the next time the space is started. Any data in a volume being deleted will be lost.
+{{< tip "warning" >}}
+If volume definitions are added or removed from a template, the changes will take effect the next time the space is started. Any data in a deleted volume will be permanently lost.
+{{< /tip >}}

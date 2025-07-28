@@ -3,12 +3,34 @@ title: Web Based Terminal
 weight: 30
 ---
 
-{{< image src="../terminal-icon.webp" alt="Terminal Icon" >}}
+The web-based terminal in **knot** provides users with shell access to their spaces directly from a browser. This feature is accessible from the `Spaces` page and offers a seamless way to interact with running spaces.
 
-From the `Spaces` page click the `Terminal` icon next on the space to connect to this will open a terminal in a new browser window.
+---
 
-![Web Base Terminal](web-terminal.webp)
+## Accessing the Web Terminal
 
-When the terminal opens it will attempt to use the shell specified in the space configuration, however if that shell isn't available within the container then the knot agent will attempt to find an alternative client, the search order is bash, zsh, fish and sh.
+1. Navigate to the `Spaces` page.
+2. Click the **`Terminal`** icon (#1) next to the running space.
+   {{< picture src="../images/running-space.webp" caption="Running Space" >}}
 
-Closing the window closes the terminal.
+3. A new browser window will open, displaying the web-based terminal.
+   {{< picture src="../images/web-terminal.webp" caption="Web Based Terminal" >}}
+
+---
+
+## Terminal Behavior
+
+- The terminal will attempt to use the shell specified in the space configuration.
+- If the specified shell is unavailable within the container, the **knot** agent will search for an alternative shell in the following order:
+  1. `bash`
+  2. `zsh`
+  3. `fish`
+  4. `sh`
+
+- Closing the browser window will close the terminal session.
+
+---
+
+## Permissions
+
+To use the web terminal, the user must have a role with the `Use Web Terminal` permission.

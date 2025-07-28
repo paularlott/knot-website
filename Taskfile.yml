@@ -1,0 +1,28 @@
+version: "3"
+
+tasks:
+  default:
+    desc: "Show available tasks"
+    cmd: task --list
+
+  architecture_leaf_node:
+    desc: "Generate architecture diagram for leaf node"
+    deps:
+      - check_d2
+    sources:
+      - asset-src/leaf-node.d2
+    generates:
+      - content/docs/configuration/leaf-mode/images/leaf-node.svg
+    cmd: "d2 --theme 5 --sketch --bundle --layout elk asset-src/leaf-node.d2 content/docs/configuration/leaf-mode/images/leaf-node.svg"
+
+  architecture:
+    desc: "Generate all architecture diagrams"
+    deps:
+      - architecture_leaf_node
+
+  check_d2:
+    desc: "Check if d2 is installed"
+    silent: true
+    preconditions:
+      - sh: which d2
+        msg: "d2 is not installed. Please install it."
