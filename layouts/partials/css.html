@@ -16,4 +16,4 @@
   {{ end }}
 {{ end }}
 {{ $syntax := resources.Get "scss/syntax.scss" | toCSS | fingerprint }}
-<link rel="stylesheet" href="{{ $syntax.Permalink }}" integrity="{{ $syntax.Data.Integrity }}">
+<link rel="stylesheet" href="{{ $syntax.Permalink }}">
