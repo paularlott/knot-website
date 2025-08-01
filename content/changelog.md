@@ -8,7 +8,7 @@ weight: 100
 
 ## July 2025
 
-{{< version "v0.18.0" >}}
+{{< version "v0.18.2" >}}
 
 This release introduces significant updates, with the most notable being a complete rewrite of the cluster mode. The new leaderless architecture ensures that all servers in the cluster are equal, eliminating the need for a designated leader. This change improves both availability and performance, allowing the system to continue functioning seamlessly even if connections between nodes are interrupted.
 
