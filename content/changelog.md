@@ -6,6 +6,15 @@ draft: false
 weight: 100
 ---
 
+## August 2025
+
+{{< version "v0.19.0" >}}
+
+{{< changelog-item "added" >}}
+- **Run In Space**:
+  Run commands within a space via the command line client.
+{{< /changelog-item >}}
+
 ## July 2025
 
 {{< version "v0.18.2" >}}
