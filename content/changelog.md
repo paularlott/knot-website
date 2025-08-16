@@ -13,6 +13,10 @@ weight: 100
 {{< changelog-item "added" >}}
 - **Run In Space**:
   Run commands within a space via the command line client.
+- **Copy Files**:
+  Copy files between the local machine and the space.
+- **Tunnel Server**:
+  Allow running the tunnel server on the same port as the main web interface.
 {{< /changelog-item >}}
 
 ## July 2025
