@@ -56,6 +56,32 @@ Once the name and definition are entered, click **`Create Volume`** to define th
 
 ---
 
+### Nomad Host Volume
+
+For Nomad host volumes:
+- **`Name`**: A descriptive name to identify the volume.
+- The **`Volume Definition`** field must contain YAML defining a single volume. If more than one volume is defined, the volume cannot be started.
+- Set the **`Platform`** to **`Nomad`**.
+
+Example YAML for a volume named `test_home`:
+
+```yaml
+volumes:
+  - name: "test_home"
+    type: "host"
+    plugin_id: "mkdir"
+    parameters:
+      mode: "0755"
+      uid: 1000
+      gid: 1000
+```
+
+For detailed descriptions of the fields, refer to the Nomad [Host Volume Specification](https://developer.hashicorp.com/nomad/docs/other-specifications/volume/host).
+
+Once the name and definition are entered, click **`Create Volume`** to define the volume.
+
+---
+
 ### Docker / Podman Volume
 
 For Docker or Podman volumes:

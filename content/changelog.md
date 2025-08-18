@@ -10,13 +10,24 @@ weight: 100
 
 {{< version "v0.19.0" >}}
 
+This release brings Artificial Intelligence to knot, with both a built in assistant and connectivity to use with editors and applications that support MCP.
+
 {{< changelog-item "added" >}}
+- **Model Content Protocol (MCP)**:
+  Added ability to use knot servers as MCP servers exporting tools for creating and managing spaces and templates.
+- **AI Assistant**:
+  Added web based AI assistant allowing control of spaces and templates including assistance in writing new templates (requires OpenAI compatible LLM).
 - **Run In Space**:
   Run commands within a space via the command line client.
 - **Copy Files**:
   Copy files between the local machine and the space.
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
 - **Tunnel Server**:
   Allow running the tunnel server on the same port as the main web interface.
+- **Nomad Volumes**:
+  Added support for Nomads builtin `mkdir` storage plugin.
 {{< /changelog-item >}}
 
 ## July 2025

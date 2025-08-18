@@ -77,6 +77,12 @@ job "${{.space.name}}-${{.user.username}}" {
       access_mode     = "single-node-writer"
     }
 
+    volume "host_volume" {
+      type   = "host"
+      source = "vol-${{.space.id}}"
+      read_only = false
+    }
+
     task "ubuntu" {
       driver = "docker"
       config {
@@ -102,6 +108,12 @@ job "${{.space.name}}-${{.user.username}}" {
       volume_mount {
         volume      = "data_volume"
         destination = "/data"
+      }
+
+      volume_mount {
+        volume      = "host_volume"
+        destination = "/host-volume"
+        propagation_mode = "private"
       }
 
       resources {
@@ -160,6 +172,14 @@ volumes:
     capabilities:
       - access_mode: "single-node-writer"
         attachment_mode: "file-system"
+
+  - name: "vol-${{.space.id}}"
+    type: "host"
+    plugin_id: "mkdir"
+    parameters:
+      mode: "0755"
+      uid: 999
+      gid: 999
 ```
 
 In this example, the volume ID `ubuntu_${{.space.id}}_home` dynamically incorporates the unique space ID.
