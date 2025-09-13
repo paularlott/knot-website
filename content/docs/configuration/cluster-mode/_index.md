@@ -34,9 +34,9 @@ To enable cluster mode over `https`, add the following configuration to your `kn
 zone = 'au'
 
 [server.cluster]
-advertise_addr = 'wss://knot1.internal/'
+advertise_addr = 'https://knot1.internal/'
 key = 'NDJuIFxrRbWLp6tKhVzyqNs5H5fCK1Cl'
-peers = ['wss://knot1.internal', 'wss://knot2.internal', 'wss://knot3.internal']
+peers = ['https://knot1.internal', 'https://knot2.internal', 'https://knot3.internal']
 ```
 
 #### Configuration Parameters
