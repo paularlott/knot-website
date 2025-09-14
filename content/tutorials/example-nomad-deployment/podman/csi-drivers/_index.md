@@ -9,6 +9,7 @@ To address this, **knot** supports requesting volumes from **CSI drivers**. Thes
 
 Here are the supported CSI drivers:
 
-- [Hostpath Driver](hostpath/)
-- [CephFS Driver](cephfs/)
-- [Ceph RBD](cephrbd/)
+- **[Dynamic Host Volumes](dynamic-host-volume/)**
+- **[Hostpath Driver](hostpath/)**
+- **[CephFS Driver](cephfs/)**
+- **[Ceph RBD](cephrbd/)**

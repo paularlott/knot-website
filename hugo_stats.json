@@ -529,6 +529,7 @@
       "native-json-or-msgpack",
       "network",
       "nomad-cluster",
+      "nomad-configuration",
       "nomad-csi-volume",
       "nomad-host-volume",
       "nomad-job",
