@@ -21,6 +21,8 @@ This release brings Artificial Intelligence to **knot**, with both a built in as
   Run commands within a space via the command line client.
 - **Copy Files**:
   Copy files between the local machine and the space.
+- **Soft Keyboard**:
+  When accessing **knot** from a tablet the terminal window now has a soft keyboard which provides cursor keys, control key and other keys that are not generally available on the keyboard.
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
