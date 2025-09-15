@@ -6,11 +6,11 @@ draft: false
 weight: 100
 ---
 
-## August 2025
+## September 2025
 
 {{< version "v0.19.0" >}}
 
-This release brings Artificial Intelligence to knot, with both a built in assistant and connectivity to use with editors and applications that support MCP.
+This release brings Artificial Intelligence to **knot**, with both a built in assistant and connectivity to use with editors and applications that support MCP.
 
 {{< changelog-item "added" >}}
 - **Model Content Protocol (MCP)**:
