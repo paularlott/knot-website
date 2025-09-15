@@ -16,6 +16,10 @@ SSH access allows you to securely connect to your spaces for advanced management
 
 3. Alternatively, automatically fetch your public keys from GitHub by entering your GitHub username in the **`GitHub Username`** field.
 
+{{< tip >}}
+When using the SSH server built into the **knot** agent the keys are stored in the agents memory, when using a SSH server within the space the keys are updated in `~/.ssh/authorized_keys`.
+{{< /tip >}}
+
 ---
 
 ## Connecting via SSH
