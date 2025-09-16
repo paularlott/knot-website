@@ -30,11 +30,9 @@ job "${{.user.username}}-${{.space.name}}" {
     count = 1
 
     volume "home_volume" {
-      type            = "csi"
+      type            = "host"
       source          = "ubuntu_${{.space.id}}_home"
       read_only       = false
-      attachment_mode = "file-system"
-      access_mode     = "single-node-writer"
     }
 
     task "debian" {
@@ -75,19 +73,13 @@ job "${{.user.username}}-${{.space.name}}" {
 
 ```yaml
 volumes:
-  - id: "ubuntu_${{.space.id}}_home"
-    name: "ubuntu_${{.space.id}}_home"
-    plugin_id: "hostpath"
-    capacity_min: 10G
-    capacity_max: 10G
-    mount_options:
-      fs_type: "ext4"
-      mount_flags:
-        - rw
-        - noatime
-    capabilities:
-      - access_mode: "single-node-writer"
-        attachment_mode: "file-system"
+  - name: "ubuntu_${{.space.id}}_home"
+    type: "host"
+    plugin_id: "mkdir"
+    parameters:
+      mode: "0755"
+      uid: 1000
+      gid: 1000
 ```
 
 ---

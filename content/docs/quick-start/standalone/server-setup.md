@@ -84,12 +84,12 @@ addr = "http://127.0.0.1:4646"
 token = ""
 
 # [server.cluster]
-# advertise_addr = "wss://knot.example.com/"
+# advertise_addr = "https://knot.example.com/"
 # key = "VF9hmdXZyzNF3rcP6M0P" # knot genkey
 # peers = [
-#   "wss://knot.example.com",
-#   "wss://knot1.example.com",
-#   "wss://knot2.example.com"
+#   "https://knot.example.com",
+#   "https://knot1.example.com",
+#   "https://knot2.example.com"
 # ]
 
 # Optional nameservers to use for SRV lookups

@@ -3,11 +3,11 @@ title: MariaDB
 weight: 40
 ---
 
-The following example runs a **MariaDB server** within a space. Storage is provided by a volume configured with the **hostpath CSI driver**.
+The following example runs a **MariaDB server** within a space. Storage is provided by a volume configured with the **dynamic host volume** driver.
 
 MariaDB is initialized with the root password set to the user's **Service Password** as defined in their user profile.
 
-The job assumes **Docker** is being used for container management. If **Podman** is being used, change the `driver` to `podman` and update the `image` to `registry-1.docker.io/paularlott/knot-mariadb:11.04` to enable spaces to be created using Podman.
+The job assumes **Docker** is being used for container management. If **Podman** is being used, change the `driver` to `podman` and update the `image` to `registry-1.docker.io/paularlott/knot-mariadb:11.4` to enable spaces to be created using Podman.
 
 ---
 
@@ -30,11 +30,9 @@ job "${{.user.username}}-${{.space.name}}" {
     count = 1
 
     volume "data_volume" {
-      type            = "csi"
+      type            = "host"
       source          = "mariadb_${{.space.id}}"
       read_only       = false
-      attachment_mode = "file-system"
-      access_mode     = "single-node-writer"
     }
 
     task "mariadb" {
@@ -50,7 +48,7 @@ job "${{.user.username}}-${{.space.name}}" {
 
       driver = "docker"
       config {
-        image = "paularlott/knot-mariadb:11.04"
+        image = "paularlott/knot-mariadb:11.4"
 
         hostname = "${{ .space.name }}"
 
@@ -124,19 +122,13 @@ EOF
 
 ```yaml
 volumes:
-  - id: "mariadb_${{.space.id}}"
-    name: "mariadb_${{.space.id}}"
-    plugin_id: "hostpath"
-    capacity_min: 10G
-    capacity_max: 10G
-    mount_options:
-      fs_type: "xfs"
-      mount_flags:
-        - rw
-        - noatime
-    capabilities:
-      - access_mode: "single-node-writer"
-        attachment_mode: "file-system"
+  - name: "mariadb_${{.space.id}}"
+    type: "host"
+    plugin_id: "mkdir"
+    parameters:
+      mode: "0755"
+      uid: 999
+      gid: 999
 ```
 
 ---

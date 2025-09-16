@@ -9,7 +9,7 @@ The following template defines an **Ubuntu 24.04 space**. Below are configuratio
 
 ## Nomad Cluster
 
-The following defines a simple **Ubuntu 24.04 space** with a volume attached to the home directory. The volume uses the **hostpath CSI driver**, which is assumed to have been configured within the Nomad cluster.
+The following defines a simple **Ubuntu 24.04 space** with a volume attached to the home directory, the volume uses a **dynamic host volume**.
 
 This job assumes **Docker** is being used for container management. If **Podman** is being used, change the `driver` to `podman` and update the `image` to `registry-1.docker.io/paularlott/knot-ubuntu:24.04` to enable spaces to be created using Podman.
 
@@ -32,11 +32,9 @@ job "${{.space.name}}-${{.user.username}}" {
     count = 1
 
     volume "home_volume" {
-      type            = "csi"
+      type            = "host"
       source          = "ubuntu_${{.space.id}}_home"
       read_only       = false
-      attachment_mode = "file-system"
-      access_mode     = "single-node-writer"
     }
 
     task "ubuntu" {
@@ -75,19 +73,13 @@ job "${{.space.name}}-${{.user.username}}" {
 
 ```yaml
 volumes:
-  - id: "ubuntu_${{.space.id}}_home"
-    name: "ubuntu_${{.space.id}}_home"
-    plugin_id: "hostpath"
-    capacity_min: 10G
-    capacity_max: 10G
-    mount_options:
-      fs_type: "ext4"
-      mount_flags:
-        - rw
-        - noatime
-    capabilities:
-      - access_mode: "single-node-writer"
-        attachment_mode: "file-system"
+  - name: "ubuntu_${{.space.id}}_home"
+    type: "host"
+    plugin_id: "mkdir"
+    parameters:
+      mode: "0755"
+      uid: 1000
+      gid: 1000
 ```
 
 > **Note**: If the namespace is set on the job (e.g., `${{.user.username}}`), spaces created from this template will be placed into a namespace of the username. With the correct Nomad configuration, this allows users to access Nomad but only interact with their jobs.
