@@ -38,6 +38,10 @@ reasoning_effort = "low"
   - `medium`
   - `high`
 
+{{< tip >}}
+If you are using a non-thinking model then do not set `reasoning_effort` in the configuration as usually this will stop the model from working.
+{{< /tip >}}
+
 ---
 
 ## Supported Models
