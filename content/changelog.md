@@ -8,6 +8,12 @@ weight: 100
 
 ## September 2025
 
+{{< version "v0.19.1" >}}
+
+{{< changelog-item "changed" >}}
+- **Message History UX**:
+  Improvements to the usability of the message history.
+
 {{< version "v0.19.0" >}}
 
 This release brings Artificial Intelligence to **knot**, with both a built in assistant and connectivity to use with editors and applications that support MCP.
