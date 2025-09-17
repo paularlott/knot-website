@@ -13,6 +13,7 @@ weight: 100
 {{< changelog-item "changed" >}}
 - **Message History UX**:
   Improvements to the usability of the message history.
+{{< /changelog-item >}}
 
 {{< version "v0.19.0" >}}
 
