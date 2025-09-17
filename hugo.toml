@@ -46,7 +46,7 @@ title = 'knot'
 [module]
   [module.hugoVersion]
     extended = true
-    min = '0.146.0'
+    min = '0.150.0'
 
   [markup.goldmark]
     [markup.goldmark.renderer]
