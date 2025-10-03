@@ -3,7 +3,7 @@ title: Templates
 weight: 50
 ---
 
-Templates in **knot** are used to define environments based on either Nomad or Docker/Podman. These templates can include one or more volumes as part of their definition, providing flexibility and persistence for your spaces.
+Templates in **knot** are used to define environments based on either Nomad or Local Containers (Docker, Podman, or Apple Container). These templates can include one or more volumes as part of their definition, providing flexibility and persistence for your spaces.
 
 ---
 
@@ -24,5 +24,5 @@ Templates in **knot** are used to define environments based on either Nomad or D
 - **Nomad-based templates**:
   Volumes are allocated using storage systems provided by Container Storage Interface (CSI) plugins.
 
-- **Docker/Podman-based templates**:
-  Volumes are allocated using the storage system provided by Docker or Podman.
+- **Local Container-based templates**:
+  Volumes are allocated using the storage system provided by the selected container runtime (Docker, Podman, or Apple Container).
