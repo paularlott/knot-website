@@ -3,7 +3,7 @@ title: Job Specification
 weight: 20
 ---
 
-Below is an outline of a Docker/Podman job specification, showcasing all available options:
+Below is an outline of a Local Container specification, showcasing all available options:
 
 ```yaml
 container_name: <container name>
@@ -40,7 +40,7 @@ dns_search:
 
 ---
 
-## Job Specification Details
+## Container Specification Details
 
 ### **container_name**
 The unique name assigned to the container. Ensure it does not conflict with other containers on the host.
@@ -51,10 +51,14 @@ The hostname to set inside the container.
 ### **image**
 The container image to use. This can be pulled from public registries like Docker Hub or private registries.
 
+**Note**: When using Podman or Apple Container with images from Docker Hub, use fully qualified names (e.g., `registry-1.docker.io/image:tag`).
+
 ### **auth**
 Authentication credentials for private registries:
 - **username**: The registry username.
 - **password**: The registry password.
+
+**Note**: Not supported by Apple Container.
 
 ### **ports**
 Defines port mappings between the host and container in the format `<host port>:<container port>/<transport>`. The transport protocol (`tcp` or `udp`) is optional.
@@ -68,9 +72,11 @@ Overrides the default command specified in the container image. Provide commands
 ### **privileged**
 When set to `true`, grants the container extended privileges on the host. Use cautiously due to potential security risks.
 
+**Note**: Not supported by Apple Container.
+
 ### **network**
 Specifies the network mode for the container. Options include:
-- `bridge`: Default Docker network.
+- `bridge`: Default network.
 - `host`: Shares the host's network stack.
 - `none`: Disables networking.
 - `container:<name|id>`: Shares the network stack of another container.
@@ -81,14 +87,20 @@ Defines environment variables in the format `<variable>=<value>`.
 ### **cap_add / cap_drop**
 Adds or removes Linux capabilities for the container, controlling privileged operations.
 
+**Note**: Not supported by Apple Container.
+
 ### **devices**
 Maps devices from the host to the container in the format `<host path>:<container path>`.
+
+**Note**: Not supported by Apple Container.
 
 ### **dns**
 Specifies custom DNS servers for the container.
 
 ### **add_host**
 Adds custom host-to-IP mappings to the container's `/etc/hosts` file.
+
+**Note**: Not supported by Apple Container.
 
 ### **dns_search**
 Defines custom DNS search domains for the container.
