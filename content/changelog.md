@@ -12,7 +12,7 @@ weight: 100
 
 {{< changelog-item "added" >}}
 - **Apple Container Support**:
-  Added support for Apple Container templates using the macOS container CLI. Apple containers work the same as Podman/Docker.
+  Added support for Apple Container templates using the macOS container CLI.
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
@@ -20,6 +20,8 @@ weight: 100
   Improved the web interface compatibility with Safari.
 - **HTTP/2 Errors**:
   HTTP/2 errors and no longer fatal, they are logged and knot continues operation.
+- **UI**:
+  Minor UI improvements.
 {{< /changelog-item >}}
 
 ## September 2025
