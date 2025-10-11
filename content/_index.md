@@ -5,12 +5,12 @@ description: Self hosted solution for managing cloud development environments.
 ---
 
 {{< big-title
-  title="Cloud Development Environment Manager"
+  title="Cloud Development Environment Orchestrator"
 >}}
 
 {{< hero
-  title="Your Code, Your Tools, Your Team - Everywhere, Anytime"
-  subtitle="Ditch setup woes and version conflicts. Our Cloud Development Environment Manager spins up scalable, secure workspaces in seconds, perfect for coding, data projects, or machine learning. Fast, team-friendly, and always cloud-ready."
+  title="Local Speed. Global Consistency"
+  subtitle="Spin up secure and governed environments in seconds. Knot brings together cloud and local runtimes including Nomad, Docker, Podman and Apple Containers. Roles, groups and templates scale across regions so developers work close to home for low latency while teams everywhere share the same consistent workflows."
   btn1="Get Started"
   btn1Link="docs/quick-start/"
   btn2="Learn More"

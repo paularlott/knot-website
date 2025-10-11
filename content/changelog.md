@@ -8,7 +8,7 @@ weight: 100
 
 ## October 2025
 
-{{< version "v0.20.0" >}}
+{{< version "v0.20.x" >}}
 
 {{< changelog-item "added" >}}
 - **Apple Container Support**:
@@ -22,6 +22,8 @@ weight: 100
   HTTP/2 errors and no longer fatal, they are logged and knot continues operation.
 - **UI**:
   Minor UI improvements.
+- **Cluster**:
+  Improvements to data synchronization.
 {{< /changelog-item >}}
 
 ## September 2025
