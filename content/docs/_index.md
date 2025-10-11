@@ -4,9 +4,25 @@ linkTitle: Documentation
 description: Getting started and working with knot for the management of cloud based development environments.
 ---
 
-**knot** is a lightweight, single-binary tool designed to simplify the management of development environments. It can operate as a standalone application or within a Nomad cluster, offering flexibility for both cloud-based and local setups.
+**knot** is a lightweight, single-binary tool that simplifies managing development environments. Whether you need a single local setup or a globally distributed cluster, knot provides consistent, on-demand environments for your team.
 
-With **knot**, environments are defined using `Templates`. These templates specify storage, compute, and other requirements, enabling developers and users to launch new environments with a single click. Storage needs can be met using CSI drivers in a Nomad cluster or local volumes when running on Docker or Podman.
+## The Problem knot Solves
+
+Development teams face common challenges:
+
+- Developers waste time configuring local environments
+- "Works on my machine" issues slow down collaboration
+- Remote teams experience high latency to centralized resources
+- QA teams need quick, isolated test environments
+- Onboarding new developers takes days instead of minutes
+
+**knot** solves these by providing instant, consistent environments that can run anywhere.
+
+## How It Works
+
+Environments are defined using templates that specify everything needed: container images, storage, resources, and features. Users create spaces from templates with a single click. Each space is isolated, persistent, and accessible via web terminal, SSH, or IDE integrations.
+
+knot runs as a standalone application on Docker/Podman or scales across Nomad clusters with a leaderless architecture for high availability.
 
 ## Key Benefits
 

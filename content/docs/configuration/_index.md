@@ -3,29 +3,159 @@ title: Configuration
 weight: 20
 ---
 
-This section provides an overview of additional configuration options available for the **knot** server. These options allow you to customize and optimize your deployment based on your specific requirements.
+This section covers server configuration options for customizing your **knot** deployment.
 
 ---
 
-### Topics Covered
+## Choosing Your Setup
 
-- **[Storage Systems](storage-systems)**
-  Learn about the supported storage backends, including **MySQL / MariaDB**, **BadgerDB**, and **Redis / Valkey**, and how to configure them for your setup.
+### Single Server (Standalone)
 
-- **[Cluster Mode](cluster-mode)**
-  Configure **knot** to run in **cluster mode**, enabling data replication and high availability across multiple servers, even across multiple geographic regions.
+Best for:
+- Individual developers
+- Small teams (< 10 users)
+- Development and testing
+- Simple deployments
 
-- **[Leaf Mode](leaf-mode)**
-  Set up **knot** in **leaf mode** for lightweight deployments that connect to a central cluster.
+Use:
+- BadgerDB for storage
+- Docker or Podman for containers
+- No cluster configuration needed
 
-- **[Tunnel Server](tunnel-server)**
-  Deploy a **tunnel server** to expose a local port to the internet, enabling secure and accessible connections.
+### Cluster Mode
 
-- **[Docker & Podman](local-containers)**
-  Configure **Docker** and **Podman** for containerized deployments.
+Best for:
+- Production deployments
+- Distributed teams
+- High availability requirements
+- Multiple geographic locations
 
-- **[Two Factor Authentication](2fa)**
-  Enable **Two-Factor Authentication (2FA)** using a time-based one-time password (TOTP) for enhanced security.
+Use:
+- MySQL/MariaDB or Redis for storage
+- Nomad for container orchestration
+- Multiple servers with cluster configuration
 
-- **[User Interface](ui)**
-  Learn how to customize the **knot** user interface, including Gravatar support and custom logos.
+### Leaf Mode
+
+Best for:
+- Remote developers
+- Local development with central management
+- Bandwidth-constrained locations
+- Hybrid deployments
+
+Use:
+- Local containers (Docker/Podman)
+- Connection to central cluster
+- Personal access token
+
+---
+
+## Storage Backend Selection
+
+**BadgerDB**
+- Embedded database
+- No external dependencies
+- Single server only
+- Simple setup
+- Good for < 50 users
+
+**MySQL/MariaDB**
+- External database
+- Supports clustering
+- High availability
+- Proven reliability
+- Best for production
+
+**Redis/Valkey**
+- In-memory database
+- Highest performance
+- Supports clustering
+- Requires more memory
+- Good for high-traffic deployments
+
+---
+
+## Configuration Topics
+
+### [Storage Systems](storage-systems)
+Configure BadgerDB, MySQL/MariaDB, or Redis/Valkey for data storage.
+
+### [Cluster Mode](cluster-mode)
+Set up multiple servers for high availability and geographic distribution.
+
+### [Leaf Mode](leaf-mode)
+Connect local instances to a central cluster for hybrid deployments.
+
+### [Tunnel Server](tunnel-server)
+Expose services to the internet securely through tunnels.
+
+### [Local Containers](local-containers)
+Configure Docker, Podman, or Apple Container for local execution.
+
+### [Two Factor Authentication](2fa)
+Enable TOTP-based 2FA for enhanced security.
+
+### [User Interface](ui)
+Customize the web interface with logos and Gravatar support.
+
+---
+
+## Quick Configuration Examples
+
+### Minimal Standalone
+
+```toml
+[server]
+listen = "0.0.0.0:3000"
+listen_agent = "0.0.0.0:3010"
+agent_endpoint = "192.168.1.100:3010"
+url = "http://knot.local:3000"
+wildcard_domain = "*.knot.local:3000"
+encrypt = "<generate with: knot genkey>"
+
+[server.badgerdb]
+enabled = true
+path = "./badgerdb/"
+```
+
+### Production Cluster
+
+```toml
+[server]
+listen = "0.0.0.0:3000"
+listen_agent = "0.0.0.0:3010"
+agent_endpoint = "knot1.example.com:3010"
+url = "https://knot1.example.com"
+wildcard_domain = "*.knot1.example.com"
+encrypt = "<generate with: knot genkey>"
+
+[server.mysql]
+enabled = true
+host = "mysql.example.com"
+port = 3306
+user = "knot"
+password = "<strong-password>"
+database = "knot"
+
+[server.cluster]
+advertise_addr = "https://knot1.example.com"
+key = "<generate with: knot genkey>"
+peers = [
+  "https://knot1.example.com",
+  "https://knot2.example.com",
+  "https://knot3.example.com"
+]
+```
+
+---
+
+## Security Considerations
+
+- Always use HTTPS in production
+- Generate strong encryption keys
+- Enable 2FA for all users
+- Run on private networks or behind VPN
+- Regular backups of database
+- Keep knot updated
+
+See [Security](../security/) for detailed guidance.

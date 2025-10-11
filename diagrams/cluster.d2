@@ -1,0 +1,23 @@
+direction: down
+
+serverA: Knot Server A\n(Zone A) {
+  dbA: MySQL/Redis {
+    shape: cylinder
+  }
+}
+
+serverB: Knot Server B\n(Zone B) {
+  dbB: MySQL/Redis {
+    shape: cylinder
+  }
+}
+
+serverC: Knot Server C\n(Zone C) {
+  dbC: MySQL/Redis {
+    shape: cylinder
+  }
+}
+
+serverA <-> serverB: Gossip Protocol
+serverB <-> serverC: Gossip Protocol
+serverA <-> serverC: Gossip Protocol

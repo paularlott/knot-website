@@ -5,6 +5,6 @@ description: Tutorials on using knot.
 
 In this section we'll cover various tutorials.
 
-- Guides on how to install a Nomad cluster to run **knot**, example-nomad-deployment/
-- Example Nomad job specifications, example-nomad-jobs/
-- Example Local spaces using Docker and Podman, example-local-spaces/
+- [Example Nomad Deployment](example-nomad-deployment/): Guides on how to install a Nomad cluster to run **knot**
+- [Example Templates](example-templates/): Ready-to-use template examples for common use cases
+- [Example Local Deployment](example-local-deployment/): Setting up **knot** with Docker and Podman

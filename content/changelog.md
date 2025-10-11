@@ -19,7 +19,7 @@ weight: 100
 - **Safari**:
   Improved the web interface compatibility with Safari.
 - **HTTP/2 Errors**:
-  HTTP/2 errors and no longer fatal, they are logged and knot continues operation.
+  HTTP/2 errors are no longer fatal, they are logged and knot continues operation.
 - **UI**:
   Minor UI improvements.
 - **Cluster**:

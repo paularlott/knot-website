@@ -15,10 +15,48 @@ tasks:
       - content/docs/configuration/leaf-mode/images/leaf-node.svg
     cmd: "d2 --theme 5 --sketch --bundle --layout elk asset-src/leaf-node.d2 content/docs/configuration/leaf-mode/images/leaf-node.svg"
 
+  diagrams_standalone:
+    desc: "Generate standalone architecture diagram"
+    deps:
+      - check_d2
+    sources:
+      - diagrams/standalone.d2
+    generates:
+      - static/images/diagrams/standalone.svg
+    cmd: "d2 --theme 5 --sketch --bundle --layout elk diagrams/standalone.d2 static/images/diagrams/standalone.svg"
+
+  diagrams_cluster:
+    desc: "Generate cluster architecture diagram"
+    deps:
+      - check_d2
+    sources:
+      - diagrams/cluster.d2
+    generates:
+      - static/images/diagrams/cluster.svg
+    cmd: "d2 --theme 5 --sketch --bundle --layout elk diagrams/cluster.d2 static/images/diagrams/cluster.svg"
+
+  diagrams_leaf:
+    desc: "Generate leaf mode architecture diagram"
+    deps:
+      - check_d2
+    sources:
+      - diagrams/leaf.d2
+    generates:
+      - static/images/diagrams/leaf.svg
+    cmd: "d2 --theme 5 --sketch --bundle --layout elk diagrams/leaf.d2 static/images/diagrams/leaf.svg"
+
+  diagrams:
+    desc: "Generate all new architecture diagrams"
+    deps:
+      - diagrams_standalone
+      - diagrams_cluster
+      - diagrams_leaf
+
   architecture:
     desc: "Generate all architecture diagrams"
     deps:
       - architecture_leaf_node
+      - diagrams
 
   check_d2:
     desc: "Check if d2 is installed"
@@ -26,3 +64,8 @@ tasks:
     preconditions:
       - sh: which d2
         msg: "d2 is not installed. Please install it."
+
+  build:
+    desc: "Build diagrams and site"
+    deps:
+      - diagrams

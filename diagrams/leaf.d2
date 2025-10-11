@@ -1,0 +1,19 @@
+direction: down
+
+cluster: Central Cluster {
+  server1: Server 1
+  server2: Server 2
+  server3: Server 3
+}
+
+leaf: Leaf Node {
+  storage: BadgerDB {
+    shape: cylinder
+  }
+  
+  runtime: Docker/Podman {
+    space: Space
+  }
+}
+
+cluster -> leaf: Gossip sync

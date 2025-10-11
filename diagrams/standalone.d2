@@ -1,0 +1,13 @@
+direction: down
+
+server: Knot Server {
+  badgerdb: BadgerDB {
+    shape: cylinder
+  }
+  
+  runtime: Docker/Podman {
+    space: Space {
+      agent: Agent
+    }
+  }
+}
