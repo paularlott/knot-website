@@ -19,5 +19,5 @@ Starting with version 0.19.0, **knot** introduces AI support through two key fea
 
 - [Model Context Protocol](mcp/)
 - [Web Assistant](ai-assistant/)
-- [Recipes](recipes/)
+- [Skills](skiils/)
 - [System Prompt](system-prompt/)
