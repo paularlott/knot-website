@@ -69,6 +69,6 @@ The following tools are available on the MCP server. The specific tools and oper
 - **list_users**: List details of all users (e.g., ID, username, email, active status, groups).
 - **list_groups**: List all user groups.
 
-### Icons and Recipes
+### Icons and Skills
 - **list_icons**: List all available icons with descriptions and URLs.
-- **recipes**: Access the knowledge base for guides and best practices. Call without a filename to list all recipes, or with a filename for specific content.
+- **skills**: Access the knowledge base for guides and best practices. Call without a filename to list all skills, or with a filename for specific content.
