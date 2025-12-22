@@ -31,7 +31,7 @@ Native macOS container runtime available on Apple Silicon machines. This uses th
 The detected runtimes are used for:
 - **Node Selection**: Determining which servers can run a given space
 - **Template Defaults**: Selecting the appropriate runtime when not specified
-- **Cluster Operations**: Exposing runtime capabilities across the cluster
+- **[Cluster Operations](../cluster-mode/)**: Exposing runtime capabilities across the cluster
 
 {{< tip "warning" >}}
 **Important**: Container runtime daemons must be running for detection to work. If a runtime daemon is not running or is unresponsive, **knot** will not detect it as available.

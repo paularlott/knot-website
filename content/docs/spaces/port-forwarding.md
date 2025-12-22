@@ -59,3 +59,7 @@ Port forwarding allows you to securely access ports within a remote space from y
 {{< tip >}}
 Port forwarding is a secure way to access services within a space without exposing them publicly.
 {{< /tip >}}
+
+{{< tip >}}
+For port forwarding between spaces within the same zone, see [Agent-to-Agent Port Forwarding](agent-agent-port-forwarding.md).
+{{< /tip >}}
