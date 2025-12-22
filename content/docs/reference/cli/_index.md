@@ -210,6 +210,51 @@ knot agent set-note "Deployment completed"
 
 ---
 
+### `knot port`
+
+Agent port management for forwarding ports between spaces.
+
+#### Forward Port
+
+Forward a local port in the current space to a port in another space.
+
+```shell
+knot port forward LOCAL_PORT SPACE_NAME REMOTE_PORT
+```
+
+Example:
+```shell
+knot port forward 8080 backend-api 3000
+```
+
+**Requirements**:
+- Both spaces must be running with active agents
+- Spaces must be in the same zone
+- Spaces must be owned by the same user
+
+#### List Active Port Forwards
+
+View all active port forwards from the current space.
+
+```shell
+knot port list
+```
+
+#### Stop Port Forward
+
+Stop an active port forward.
+
+```shell
+knot port stop LOCAL_PORT
+```
+
+Example:
+```shell
+knot port stop 8080
+```
+
+---
+
 ## Space Management
 
 ### List Spaces
