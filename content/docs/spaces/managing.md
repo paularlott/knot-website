@@ -10,7 +10,7 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
 ## Creating a Space
 
 1. Navigate to the `Templates` page, click the menu icon (three dots) next to the desired template, and select `Create Space`.
-   {{< picture src="../../quick-start/standalone/images/create-space.webp" caption="Create Space" >}}
+   {{< picture src="../../quick-start/local-containers/images/create-space.webp" caption="Create Space" >}}
 
 2. Complete the form for the new space:
    - **`Name`**: The name of the space.

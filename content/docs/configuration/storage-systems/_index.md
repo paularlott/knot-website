@@ -17,9 +17,9 @@ The **knot** server supports multiple storage systems for managing data. Each st
 
 ### 2. BadgerDB
 
-- **Description**: An embedded database with no external dependencies. Data is stored locally, making it a simple and lightweight option.
+- **Description**: An embedded database with no external dependencies. Data is stored locally, making it a simple and lightweight option that's production-ready.
 
-- **Use Case**: When running **knot** in cluster mode, where internal data is replicated between servers, BadgerDB becomes a great choice. It is also suitable for smaller setups or standalone deployments where simplicity and ease of use are priorities.
+- **Use Case**: Ideal for most deployments, including multi-server clusters where data is replicated between servers via gossip protocol. Perfect for teams wanting simplicity without external database infrastructure.
 
 ---
 

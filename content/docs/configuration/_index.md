@@ -31,8 +31,8 @@ Best for:
 - Multiple geographic locations
 
 Use:
-- MySQL/MariaDB or Redis for storage
-- Nomad for container orchestration
+- BadgerDB, MySQL/MariaDB, or Redis for storage
+- Nomad for container orchestration (optional - can use Local Containers)
 - Multiple servers with cluster configuration
 
 ### Leaf Mode
@@ -55,21 +55,19 @@ Use:
 **BadgerDB**
 - Embedded database
 - No external dependencies
-- Single server only
+- Production-ready
 - Simple setup
-- Good for < 50 users
+- Works in multi-server clusters (data synced via gossip)
 
 **MySQL/MariaDB**
 - External database
-- Supports clustering
-- High availability
 - Proven reliability
-- Best for production
+- Supports large-scale deployments
+- Good for existing database infrastructure
 
 **Redis/Valkey**
 - In-memory database
 - Highest performance
-- Supports clustering
 - Requires more memory
 - Good for high-traffic deployments
 
