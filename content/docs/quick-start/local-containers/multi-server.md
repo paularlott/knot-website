@@ -22,24 +22,7 @@ Multi-server deployments let you:
 
 In a multi-server Local Container deployment:
 
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   Server 1      │     │   Server 2      │     │   Server 3      │
-│   (Primary)     │     │   (Secondary)   │     │   (Secondary)   │
-│                 │     │                 │     │                 │
-│ ┌─────────────┐ │     │ ┌─────────────┐ │     │ ┌─────────────┐ │
-│ │   Docker    │ │     │ │   Podman    │ │     │ │   Docker    │ │
-│ └─────────────┘ │     │ └─────────────┘ │     │ └─────────────┘ │
-│ ┌─────────────┐ │     │ ┌─────────────┐ │     │ ┌─────────────┐ │
-│ │   MySQL     │ │     │ │   MySQL     │ │     │ │   MySQL     │ │
-│ └─────────────┘ │     │ └─────────────┘ │     │ └─────────────┘ │
-│                 │     │                 │     │                 │
-└────────┬────────┘     └────────┬────────┘     └────────┬────────┘
-         │                       │                       │
-         └───────────────────────┼───────────────────────┘
-                                 │
-                    Gossip Protocol (Cluster Sync)
-```
+{{< picture src="/docs/quick-start/local-containers/multi-server-cluster.svg" alt="Multi-Server Cluster Architecture" >}}
 
 ### Key Components
 
@@ -259,6 +242,10 @@ Check logs on each server. You should see messages like:
 
 Zones let you group servers geographically or logically. Spaces can then be assigned to specific servers within zones and traffic load balanced over the members of the zone.
 
+Servers within the same zone can share access to local containers, allowing spaces to be accessed from any server in the zone. However, containers do not automatically migrate to another server if one fails; manual intervention or external orchestration is required for failover.
+
+Note: For Nomad-based deployments, servers in the same zone provide high availability through Nomad's built-in failover mechanisms.
+
 ### Configure Zones
 
 Add a `zone` setting to each server's `knot.toml`:
@@ -280,18 +267,7 @@ Users access spaces through the load balancer or any server's URL.
 
 Place a load balancer in front of all servers:
 
-```
-                ┌────-──────────┐
-                │ Load Balancer │
-                │ knot.example  │
-                └───────┬───────┘
-                        │
-          ┌─────────────┼─────────────┐
-          │             │             │
-    ┌─────▼─────┐ ┌─────▼─────┐ ┌─────▼─────┐
-    │ Server 1  │ │ Server 2  │ │ Server 3  │
-    └───────────┘ └───────────┘ └───────────┘
-```
+{{< picture src="/docs/quick-start/local-containers/multi-server-load-balancer.svg" alt="Load Balancer Setup" >}}
 
 The load balancer can use any strategy (round-robin, least connections, etc.).
 
