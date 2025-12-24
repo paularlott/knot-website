@@ -1,7 +1,7 @@
 ---
 title: Multi-Server Setup
 description: Configure knot to run across multiple servers with Local Containers.
-weight: 60
+weight: 15
 ---
 
 Run knot across multiple servers using Docker, Podman, or Apple Containers. No Nomad required.

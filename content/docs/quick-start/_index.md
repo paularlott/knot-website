@@ -39,16 +39,19 @@ Get **knot** running in minutes. Choose the deployment path that matches your ne
 - Organizations with existing Nomad infrastructure
 
 ### [Desktop Client](client/)
-**For connecting to existing servers**
+**Run locally or connect to servers**
 
+- Run containers on your desktop
+- Connect to existing servers for shared templates
 - SSH access to spaces
 - Port forwarding and tunnel creation
 - File transfers
 - **Setup time**: 2 minutes
 
 **Best for**:
+- Individual developers working locally
 - Remote developers connecting to shared servers
-- Users who don't need to run their own knot instance
+- Quick testing without server setup
 
 ---
 
@@ -61,22 +64,6 @@ Get **knot** running in minutes. Choose the deployment path that matches your ne
 | Dependencies | Docker/Podman/Apple | Nomad, Consul, CSI | None |
 | Setup Time | 5-10 min | 30+ min | 2 min |
 | Complexity | Low | High | Very Low |
-
----
-
-## Choosing Your Deployment
-
-### Choose Local Containers if you:
-- Want the quickest setup path
-- Don't have (or want) Nomad infrastructure
-- Need multi-server capacity without orchestrator complexity
-- Prefer simpler operations and maintenance
-
-### Choose Nomad if you:
-- Already have a Nomad cluster
-- Need advanced scheduling features
-- Require CSI storage integration
-- Have enterprise infrastructure requirements
 
 ---
 
@@ -100,7 +87,7 @@ Get **knot** running in minutes. Choose the deployment path that matches your ne
 
 **Client Path**:
 1. Install client binary
-2. Connect to server
+2. Run locally or connect to server
 3. Configure SSH
 4. Access spaces
 

@@ -10,7 +10,7 @@ description: Self hosted solution for managing cloud development environments.
 
 {{< hero
   title="Local Speed. Global Consistency"
-  subtitle="Spin up secure and governed environments in seconds. Knot runs as a single server or scales across multiple servers using Docker, Podman, or Apple Containers with no additional dependencies. Or deploy to Nomad clusters for enterprise scale. Roles, groups and templates scale across regions so developers work close to home for low latency while teams everywhere share the same consistent workflows."
+  subtitle="Spin up secure managed environments in seconds. Knot runs as a single server or scales across multiple servers using Docker, Podman, or Apple Containers with no additional dependencies. For enterprise scale, deploy to Nomad clusters. Roles, groups and templates scale across regions so developers work close to home for low latency while teams everywhere share the same consistent workflows."
   btn1="Get Started"
   btn1Link="docs/quick-start/"
   btn2="Learn More"
