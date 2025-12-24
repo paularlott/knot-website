@@ -22,7 +22,7 @@ Multi-server deployments let you:
 
 In a multi-server Local Container deployment:
 
-{{< picture src="/docs/quick-start/local-containers/multi-server-cluster.svg" alt="Multi-Server Cluster Architecture" >}}
+{{< picture src="../images/multi-server-cluster.svg" alt="Multi-Server Cluster Architecture" >}}
 
 ### Key Components
 
@@ -267,7 +267,7 @@ Users access spaces through the load balancer or any server's URL.
 
 Place a load balancer in front of all servers:
 
-{{< picture src="/docs/quick-start/local-containers/multi-server-load-balancer.svg" alt="Load Balancer Setup" >}}
+{{< picture src="../images/multi-server-load-balancer.svg" alt="Load Balancer Setup" >}}
 
 The load balancer can use any strategy (round-robin, least connections, etc.).
 

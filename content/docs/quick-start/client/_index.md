@@ -1,7 +1,7 @@
 ---
 title: Desktop Client
 description: Covers the installation of the desktop client.
-weight: 30
+weight: 5
 ---
 
 While not required to use the **knot** web interface, the desktop client provides additional functionality, including:

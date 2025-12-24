@@ -1,7 +1,7 @@
 ---
 title: Node Selection
 description: How knot selects servers for space deployment in multi-server setups.
-weight: 30
+weight: 50
 ---
 
 Node selection determines which server will host a space when multiple servers are available. Knot can automatically select the best server based on availability and runtime requirements, or you can manually specify a server during space creation.
@@ -28,7 +28,7 @@ Knot evaluates servers in the zone and selects based on the following priorities
 
 1. **Runtime Requirements**
    - If the template specifies a container runtime, only servers with that runtime are considered
-   - If no runtime is specified, Knot uses the configured preference order: Docker > Podman > Apple Containers
+   - If no runtime is specified, Knot uses the configured preference order (defaults to Docker, Podman, Apple Containers)
 
 2. **Zone Affinity** (optional)
    - If configured, only servers in the same zone as the request are considered
@@ -46,20 +46,21 @@ Each server in the zone exposes which container runtimes it supports:
 - **Podman**: Detected via `podman info`
 - **Apple Containers**: Detected via `container system status`
 
-The runtime preference order is defined in your `knot.toml` configuration:
+The runtime preference order is configured in your `knot.toml` configuration:
 
 ```toml {filename="knot.toml"}
-[server.docker]
-  host = "unix:///var/run/docker.sock"
-
-[server.podman]
-  host = "unix:///var/run/podman.sock"
+[server.local_containers]
+  runtime_pref = ["podman", "apple"]
 ```
 
-Knot automatically detects available runtimes. The preference order is:
-1. Docker
-2. Podman
-3. Apple Containers (macOS only)
+This defaults to `["docker", "podman", "apple"]`. If a runtime isn't listed, it won't be used.
+
+Each server in the zone exposes which container runtimes it supports:
+- **Docker**: Detected via `docker info`
+- **Podman**: Detected via `podman info`
+- **Apple Containers**: Detected via `container system status`
+
+Knot automatically detects available runtimes on each server.
 
 {{< tip >}}
 If a template specifies a container runtime, only that runtime is used regardless of the global preference order.
@@ -84,16 +85,9 @@ To manually select a server for your space:
 - You have affinity requirements (e.g., database and application on the same server)
 - A server has specialized hardware or configurations
 
-
-
-## Node Affinity
-
-Spaces can be configured with node affinity for persistent placement:
-
-- **Automatic** (default): No specific server preference; Knot chooses based on current load
-- **Manual**: Space is assigned to a specific server and will prefer that server on restart
-
-Node affinity is stored with the space configuration and persists across space restarts.
+{{< tip >}}
+The space will always use the same server and can't be migrated to a different server.
+{{< /tip >}}
 
 ---
 
@@ -118,12 +112,11 @@ For high availability, consider:
 If no servers appear in the selection dropdown:
 - Verify servers are online and part of the cluster
 - Check that the required container runtime is available on at least one server
-- Ensure your user has permissions to create spaces on the servers
 
 ### Server Not Listed
 
 If an expected server doesn't appear:
-- Confirm the server is part of the cluster (check logs)
+- Confirm the server is part of the zone (check logs)
 - Verify the container runtime matches the template requirements
 - Check the server's connectivity and agent status
 
@@ -132,4 +125,3 @@ If an expected server doesn't appear:
 If automatic selection chooses an unexpected server:
 - Review the runtime preference order in `knot.toml`
 - Check current space allocation across servers
-- Use manual selection to override automatic behavior
