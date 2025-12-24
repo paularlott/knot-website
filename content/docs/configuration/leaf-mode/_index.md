@@ -63,6 +63,17 @@ Once the server is running, open the web interface of the local instance at `htt
 
 ---
 
+## Controlling Template Availability
+
+Templates can be configured to be available only on leaf nodes or excluded from leaf nodes using the reserved **`<leaf-node>`** zone name. For more information, see [Limit to Zones](../../templates/managing/#zones-and-access-control) in the Managing Templates documentation.
+
+{{< tip >}}
+- **`<leaf-node>`**: The template is only shown on leaf node servers
+- **`!<leaf-node>`**: The template is excluded from leaf node servers (available only on the cluster)
+{{< /tip >}}
+
+---
+
 {{< tip "warning" >}}
 Tokens that have not been used for access in over two weeks are automatically removed from the system.
 {{< /tip >}}
