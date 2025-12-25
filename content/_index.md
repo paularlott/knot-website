@@ -10,7 +10,7 @@ description: Self hosted solution for managing cloud development environments.
 
 {{< hero
   title="Local Speed. Global Consistency"
-  subtitle="Spin up secure and governed environments in seconds. Knot brings together cloud and local runtimes including Nomad, Docker, Podman and Apple Containers. Roles, groups and templates scale across regions so developers work close to home for low latency while teams everywhere share the same consistent workflows."
+  subtitle="Spin up secure managed environments in seconds. Knot runs as a single server or scales across multiple servers using Docker, Podman, or Apple Containers with no additional dependencies. For enterprise scale, deploy to Nomad clusters. Roles, groups and templates scale across regions so developers work close to home for low latency while teams everywhere share the same consistent workflows."
   btn1="Get Started"
   btn1Link="docs/quick-start/"
   btn2="Learn More"
@@ -64,17 +64,30 @@ description: Self hosted solution for managing cloud development environments.
   {{< /feature-row >}}
 {{< /feature-grid >}}
 
-{{< feature-row
-  reverse=true
-  img="/images/cluster.webp"
-  alt="Leaderless Cluster"
->}}
-## Decentralized Management
-Leaderless cluster management eliminates single point of failure, ensuring greater reliability and resilience. By supporting remote clusters or servers located near your team, this approach minimizes latency, delivering faster and more responsive performance for users.
-{{< /feature-row >}}
+{{< feature-grid >}}
+  {{< feature-row
+    reverse=true
+    img="/images/cloud.webp"
+    alt="Multi-Server Container Orchestration"
+    is4=true
+  >}}
+  ## Multi-Server Container Orchestration
+  Run Docker, Podman, or Apple Containers across multiple servers with automatic load balancing and node selection. No additional dependencies required for powerful, distributed development environments.
+  {{< /feature-row >}}
+
+  {{< feature-row
+    reverse=true
+    img="/images/cluster.webp"
+    alt="Leaderless Cluster"
+    is4=true
+  >}}
+  ## Decentralized Management
+  Leaderless cluster management eliminates single point of failure, ensuring greater reliability and resilience. By supporting remote clusters or servers located near your team, this approach minimizes latency, delivering faster and more responsive performance for users.
+  {{< /feature-row >}}
+{{< /feature-grid >}}
 
 ---
 
 ## Why Choose knot?
 
-knot is an open-source tool (Apache 2.0 License) for managing environments within a Nomad cluster or standalone using Local Containers (Docker, Podman, or Apple Container). With its leaderless architecture, you can manage your development environments from anywhere, ensuring flexibility and reliability. Whether you're working locally or scaling across remote servers, knot simplifies the process, so you can focus on development.
+knot is an open-source tool (Apache 2.0 License) that runs as a single server or scales across multiple servers using Docker, Podman, or Apple Containers with no additional dependencies. For enterprise scale, deploy to Nomad clusters. With its leaderless architecture, you can manage your development environments from anywhere, ensuring flexibility and reliability. Whether you're working locally or scaling across remote servers, knot simplifies the process, so you can focus on development.

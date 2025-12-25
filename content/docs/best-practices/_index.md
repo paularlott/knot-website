@@ -147,9 +147,9 @@ Reduce latency by deploying servers in regions close to your teams.
 
 ### Use Appropriate Storage Backend
 
-- **BadgerDB**: Single server, simple setup
-- **MySQL/MariaDB**: Cluster mode, high availability
-- **Redis/Valkey**: High performance, cluster mode
+- **BadgerDB**: Production-ready, works in single-server and multi-server clusters
+- **MySQL/MariaDB**: Large-scale deployments, existing database infrastructure
+- **Redis/Valkey**: High performance deployments
 
 ### Monitor Resource Usage
 

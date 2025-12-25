@@ -6,6 +6,59 @@ draft: false
 weight: 100
 ---
 
+## December 2025
+
+{{< version "v0.22.0" >}}
+
+This release introduces agent-to-agent port forwarding capabilities, enhanced MCP support, significant UI/UX improvements, and a more robust container runtime detection system.
+
+- **Database Migration**: Database schema changes requires `migrate.sql` to be applied to all MySQL databases
+
+{{< changelog-item "added" >}}
+- **Agent-to-Agent Port Forwarding**:
+  - Added complete port management CLI with `forward`, `list`, and `stop` subcommands
+  - Enables secure port forwarding between agents in spaces within the same zone owned by the same user
+  - Implemented proper authentication and validation for port forwarding requests
+  - Added tracking and management of active port forwards with automatic cleanup
+- **Node Selection Service**:
+  - Added node selection for automatic or manual placement of containers within a zone
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- **MCP (Model Context Protocol) Support**:
+  - Added support for on-demand tool discovery alongside native MCP tools
+  - Enhanced tool discovery mechanism for better MCP integration
+  - Refactored MCP handling to support multiple tool discovery approaches
+- **Container Runtime Detection**:
+  - Improved detection with enhanced logging and error handling
+  - Refactored architecture for better maintainability
+  - Enhanced Apple Silicon container support
+- **UI/UX Improvements**:
+  - Improved mobile responsiveness and UI components
+  - Fixed popup closing behavior - forms no longer close accidentally when clicking outside
+  - Enhanced template node management UI
+- **API & Backend Enhancements**:
+  - Enhanced cluster information endpoints with better data structure
+  - Improved space API with additional fields and validation
+  - Enhanced Server-Sent Events reconnection logic for better reliability
+  - Added new query utilities for cluster operations
+- **Transport Layer**:
+  - Improved transport service for better inter-service communication
+- **Security Enhancements**:
+  - Enhanced authentication for port forwarding operations
+  - Improved token validation for API clients
+  - Better error handling for sensitive operations
+- **Dependencies**:
+  - Updated Go modules with latest security patches
+  - Refreshed frontend dependencies for better compatibility
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- Improved error handling in container operations
+- Fixed form popup auto-close issues
+- Fixed popup closing behavior
+{{< /changelog-item >}}
+
 ## October 2025
 
 {{< version "v0.20.x" >}}

@@ -79,6 +79,10 @@ To create a new template:
 - **`Limit to Zones`**:
   Specify the zones where the template is available. Prefix a zone name with `!` to make the template available in all zones except the specified one.
 
+  A reserved zone name **`<leaf-node>`** is available for controlling template availability on leaf node servers:
+  - **`<leaf-node>`**: The template is only shown on leaf node servers
+  - **`!<leaf-node>`**: The template is excluded from leaf node servers (available only on the cluster)
+
 ---
 
 ### Custom Fields and Features

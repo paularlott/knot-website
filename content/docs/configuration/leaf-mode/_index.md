@@ -17,7 +17,7 @@ To configure a leaf server, follow these steps:
 
 ### 1. Set Up the Local Server
 
-Begin by setting up a standalone **knot** server on the local workstation. Follow the [Standalone Server Setup Guide](../../quick-start/standalone/server-setup/), but **do not start the server yet**. Once the setup is complete, return to this guide.
+Begin by setting up a **knot** server on the local workstation. Follow the [Local Containers Server Setup Guide](../../quick-start/local-containers/server-setup/), but **do not start the server yet**. Once the setup is complete, return to this guide.
 
 ---
 
@@ -59,7 +59,18 @@ Start the **knot** server on the local machine using the following command:
 knot server --config knot.toml
 ```
 
-Once the server is running, open the web interface of the local instance at `https://knot.internal:3000` (as per the standalone guide). Log in using your email address and password from the cluster.
+Once the server is running, open the web interface of the local instance at `https://knot.internal:3000` (as per the Local Containers guide). Log in using your email address and password from the cluster.
+
+---
+
+## Controlling Template Availability
+
+Templates can be configured to be available only on leaf nodes or excluded from leaf nodes using the reserved **`<leaf-node>`** zone name. For more information, see [Limit to Zones](../../templates/managing/#zones-and-access-control) in the Managing Templates documentation.
+
+{{< tip >}}
+- **`<leaf-node>`**: The template is only shown on leaf node servers
+- **`!<leaf-node>`**: The template is excluded from leaf node servers (available only on the cluster)
+{{< /tip >}}
 
 ---
 

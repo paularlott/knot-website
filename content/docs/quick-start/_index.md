@@ -1,6 +1,6 @@
 ---
 title: Quick Start
-description: Quick start guide to getting knot up and running.
+description: Choose your deployment path and get knot running in minutes.
 weight: 10
 ---
 
@@ -8,65 +8,68 @@ Get **knot** running in minutes. Choose the deployment path that matches your ne
 
 ---
 
-## Which Path Should I Choose?
+## Deployment Options
 
-### Standalone Mode
+### [Local Containers](local-containers/)
+**Recommended for most users**
+
+- **Single Server**: Quick setup on one machine with Docker, Podman, or Apple Containers
+- **Multi-Server**: Scale across multiple servers with automatic node selection and load balancing
+- **No orchestrator required**: No Nomad, Kubernetes, or other dependencies needed
+- **Setup time**: 5-10 minutes
 
 **Best for**:
 - Individual developers
-- Learning knot
-- Small teams (< 10 users)
-- Local development
-- Quick testing
+- Small to medium teams
+- Quick testing and evaluation
+- Multi-server setups without Nomad complexity
 
-**Requirements**:
-- Docker or Podman installed
-- Single machine
-- 5 minutes setup time
+### [Nomad Cluster](nomad/)
+**For enterprise-scale deployments**
 
-**Start here**: [Standalone Setup](standalone/)
-
----
-
-### Nomad Cluster
+- Leverage existing Nomad infrastructure
+- CSI storage drivers and ingress controllers
+- Advanced job constraints and scheduling
+- **Setup time**: 30+ minutes
 
 **Best for**:
 - Production deployments
 - Large teams
 - High availability needs
-- Distributed teams
-- Scalable infrastructure
+- Organizations with existing Nomad infrastructure
 
-**Requirements**:
-- Existing Nomad cluster
-- CSI storage drivers
-- Ingress controller
-- 30 minutes setup time
+### [Desktop Client](client/)
+**Run locally or connect to servers**
 
-**Start here**: [Nomad Setup](nomad/)
+- Run containers on your desktop
+- Connect to existing servers for shared templates
+- SSH access to spaces
+- Port forwarding and tunnel creation
+- File transfers
+- **Setup time**: 2 minutes
+
+**Best for**:
+- Individual developers working locally
+- Remote developers connecting to shared servers
+- Quick testing without server setup
 
 ---
 
-### Desktop Client
+## Quick Comparison
 
-**Best for**:
-- Connecting to existing knot server
-- SSH access to spaces
-- Port forwarding
-- Tunnel creation
-- File transfers
-
-**Requirements**:
-- Access to knot server
-- 2 minutes install time
-
-**Start here**: [Client Installation](client/)
+| Feature | Local Containers | Nomad | Client |
+|---------|------------------|-------|--------|
+| Single Server | ✅ | ✅ | ✅ |
+| Multi-Server | ✅ | ✅ | N/A |
+| Dependencies | Docker/Podman/Apple | Nomad, Consul, CSI | None |
+| Setup Time | 5-10 min | 30+ min | 2 min |
+| Complexity | Low | High | Very Low |
 
 ---
 
 ## What You'll Learn
 
-**Standalone Path**:
+**Local Containers Path**:
 1. Install knot binary
 2. Configure server
 3. Create admin user
@@ -84,16 +87,16 @@ Get **knot** running in minutes. Choose the deployment path that matches your ne
 
 **Client Path**:
 1. Install client binary
-2. Connect to server
+2. Run locally or connect to server
 3. Configure SSH
 4. Access spaces
 
 ---
 
-## Next Steps
+## What's Next
 
 After completing quick start:
 - [Configure access control](../access-control/)
 - [Create more templates](../templates/)
-- [Set up cluster mode](../configuration/cluster-mode/)
-- [Enable security features](../security/)
+- [Set up multi-server clusters](../configuration/cluster-mode/)
+- [Enable security features](../best-practices/security/)

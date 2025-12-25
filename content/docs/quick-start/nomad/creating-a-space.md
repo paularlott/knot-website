@@ -11,7 +11,7 @@ Now that we have a usable template, we can create a space from it. You can creat
 
 1. From the `Templates` page, click the menu icon (three dots) next to the template you want to use, then select `Create Space`.
 
-{{< picture src="../../standalone/images/create-space.webp" caption="Create a Space" >}}
+{{< picture src="../../local-containers/images/create-space.webp" caption="Create a Space" >}}
 
 2. Fill out the form with the following details:
    - **Name**: Enter `phptest`.
@@ -46,7 +46,7 @@ Once the space is running the icons will show:
 echo "<?php phpinfo();" > public_html/index.php
 ```
 
-{{< picture src="../../standalone/images/terminal.webp" caption="Creating a phpinfo Script" >}}
+{{< picture src="../../local-containers/images/terminal.webp" caption="Creating a phpinfo Script" >}}
 
 ---
 
@@ -54,7 +54,7 @@ echo "<?php phpinfo();" > public_html/index.php
 
 1. Click the `Web (80)` item in the `Ports` menu. The web page will open, running the new script and displaying the PHP information.
 
-{{< picture src="../../standalone/images/phpinfo.webp" caption="PHP Information" >}}
+{{< picture src="../../local-containers/images/phpinfo.webp" caption="PHP Information" >}}
 
 ---
 

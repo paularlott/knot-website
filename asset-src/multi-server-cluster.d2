@@ -1,0 +1,44 @@
+server1: {
+  label: "Server 1\n(Primary)"
+  docker: {
+    label: "Docker"
+    shape: rectangle
+  }
+  mysql: {
+    label: "MySQL"
+    shape: rectangle
+  }
+}
+
+server2: {
+  label: "Server 2\n(Secondary)"
+  podman: {
+    label: "Podman"
+    shape: rectangle
+  }
+  mysql: {
+    label: "MySQL"
+    shape: rectangle
+  }
+}
+
+server3: {
+  label: "Server 3\n(Secondary)"
+  docker: {
+    label: "Apple"
+    shape: rectangle
+  }
+  mysql: {
+    label: "MySQL"
+    shape: rectangle
+  }
+}
+
+gossip: {
+  label: "Gossip Protocol\n(Cluster Sync)"
+  shape: oval
+}
+
+server1 -> gossip
+server2 -> gossip
+server3 -> gossip

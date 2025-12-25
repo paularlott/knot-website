@@ -1,11 +1,13 @@
 default: help
 
 ## Generate architecture diagram
-architecture: asset-src/distributed-architecture.d2 asset-src/architecture-single-location.d2 asset-src/architecture-local-docker.d2
+architecture: asset-src/distributed-architecture.d2 asset-src/architecture-single-location.d2 asset-src/architecture-local-docker.d2 asset-src/multi-server-cluster.d2 asset-src/multi-server-load-balancer.d2
 	d2 --sketch --bundle --layout elk asset-src/architecture-single-location.d2 content/docs/getting-started/architecture-single-location.svg
 	d2 --sketch --bundle --layout elk asset-src/architecture-local-docker.d2 content/docs/getting-started/architecture-local-docker.svg
 	d2 --sketch --bundle --layout elk asset-src/distributed-architecture.d2 content/docs/getting-started/distributed-architecture.svg
 	d2 --sketch --bundle --layout elk asset-src/restricted-leaf-server.d2 content/docs/getting-started/restricted-leaf-server.svg
+	d2 --sketch --bundle --layout elk asset-src/multi-server-cluster.d2 content/docs/quick-start/local-containers/multi-server-cluster.svg
+	d2 --sketch --bundle --layout elk asset-src/multi-server-load-balancer.d2 content/docs/quick-start/local-containers/multi-server-load-balancer.svg
 
 .PHONY: help
 ## This help screen

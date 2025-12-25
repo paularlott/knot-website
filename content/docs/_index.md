@@ -18,13 +18,39 @@ Development teams face common challenges:
 
 **knot** solves these by providing instant, consistent environments that can run anywhere.
 
+---
+
+## Deployment Options
+
+knot offers flexible deployment options to match your infrastructure needs:
+
+### Local Containers (Recommended)
+- **Single Server**: Quick setup on one machine with Docker, Podman, or Apple Containers
+- **Multi-Server**: Scale across multiple servers with automatic node selection—no Nomad required
+- **No orchestrator needed**: Just your container runtime and knot
+
+### Nomad Integration
+- **Enterprise Scale**: Leverage existing Nomad infrastructure
+- **Advanced Features**: CSI storage, ingress controllers, job constraints
+
+### Leaf Mode
+- **Hybrid Setup**: Local development with centralized template management
+- **Bandwidth Optimized**: Run containers locally, sync metadata only
+
+Choose your path: [Local Containers](quick-start/local-containers/) | [Nomad](quick-start/nomad/) | [Quick Start](quick-start/)
+
+---
+
 ## How It Works
 
 Environments are defined using templates that specify everything needed: container images, storage, resources, and features. Users create spaces from templates with a single click. Each space is isolated, persistent, and accessible via web terminal, SSH, or IDE integrations.
 
-knot runs as a standalone application on Docker/Podman or scales across Nomad clusters with a leaderless architecture for high availability.
+knot runs on Docker, Podman, or Apple Containers—either as a single server or scaling across multiple servers with a leaderless architecture for high availability. For enterprise deployments, integrate with Nomad clusters.
 
 ## Key Benefits
+
+- **Local Container Orchestration**:
+  Deploy across multiple servers using Docker, Podman, or Apple Containers with automatic load balancing and node selection. No Nomad or other orchestrator required.
 
 - **Distributed Architecture**:
   **knot** supports a leaderless distributed cluster, allowing servers to be placed closer to developers. This reduces network latency while maintaining centralized management of templates and users. It's an ideal solution for globally distributed development teams.

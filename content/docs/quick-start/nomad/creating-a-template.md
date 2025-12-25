@@ -5,7 +5,7 @@ weight: 40
 
 Once logged in to the **knot** web interface at `http://knot.internal` (or the domain you configured), you'll be presented with a list of available spaces. Initially, this list will be blank.
 
-{{< picture src="../../standalone/images/spaces.webp" caption="Spaces on Login" >}}
+{{< picture src="../../local-containers/images/spaces.webp" caption="Spaces on Login" >}}
 
 In this tutorial, we'll create a space that runs PHP and includes a web server powered by Caddy.
 
@@ -15,7 +15,7 @@ In this tutorial, we'll create a space that runs PHP and includes a web server p
 
 1. Click on `Templates` in the navigation menu, then select `New Template`.
 
-{{< picture src="../../standalone/images/new-template.webp" caption="New Template" >}}
+{{< picture src="../../local-containers/images/new-template.webp" caption="New Template" >}}
 
 2. Fill out the following fields:
    - **Name**: Enter `phptest`.
@@ -132,7 +132,7 @@ For this tutorial, we won't apply any restrictions. However, we'll enable the fo
 - **Web Terminal**
 - **SSH Access**
 
-{{< picture src="../../standalone/images/template-features.webp" caption="Enable Template Features" >}}
+{{< picture src="../../local-containers/images/template-features.webp" caption="Enable Template Features" >}}
 
 ---
 
@@ -140,7 +140,7 @@ For this tutorial, we won't apply any restrictions. However, we'll enable the fo
 
 Once saved, you'll be redirected to the `Templates` page, where your new template will be displayed.
 
-{{< picture src="../../standalone/images/templates.webp" caption="Templates" >}}
+{{< picture src="../../local-containers/images/templates.webp" caption="Templates" >}}
 
 ---
 

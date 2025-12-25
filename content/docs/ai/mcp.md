@@ -34,6 +34,54 @@ In both cases, the MCP client will have the same level of access to tools as the
 
 ---
 
+## Tool Modes
+
+Knot's MCP server supports two different tool modes, configured via the `mcp_mode` setting in your `knot.toml`:
+
+### Tool Discovery Mode (Default)
+
+In tool discovery mode, tools are discovered on-demand to minimize context usage. This is efficient for AI assistants that need to manage their token usage.
+
+**Workflow:**
+1. Use `tool_search(query="<operation>")` to find the appropriate tool
+2. Use `execute_tool(name="<tool_name>", arguments={...})` to execute the tool
+
+**Example:**
+```
+tool_search("list spaces") → Returns tool information
+execute_tool("list_spaces", {}) → Executes the tool
+```
+
+**Benefits:**
+- Dynamic tool availability based on user permissions
+- Reduced memory footprint and context usage
+- Permission-based filtering
+- Request-scoped authentication
+
+### Native Tools Mode
+
+In native tools mode, all tools are pre-loaded and directly available without discovery. This is simpler for clients that don't support the discovery pattern.
+
+**Configuration:**
+```toml
+[server.mcp]
+enabled = true
+native_tools = true
+```
+
+**Workflow:**
+- All tools are available directly in the tool list
+- Use tools by name with their required arguments
+- No discovery pattern needed
+
+**Example:**
+```
+list_spaces() → Direct tool call
+create_space({...}) → Direct tool call
+```
+
+---
+
 ## Tools
 
 The following tools are available on the MCP server. The specific tools and operations accessible depend on the user's permissions:

@@ -3,7 +3,7 @@ title: BadgerDB
 weight: 50
 ---
 
-The **knot** server can be configured to use the embedded BadgerDB for its database. This option is ideal for simpler setups where an external database is not required. To enable BadgerDB, update the configuration file as shown below.
+The **knot** server can be configured to use the embedded BadgerDB for its database. BadgerDB is production-ready and works well for single-server and multi-server deployments (data is synced between servers via gossip protocol). To enable BadgerDB, update the configuration file as shown below.
 
 ---
 
