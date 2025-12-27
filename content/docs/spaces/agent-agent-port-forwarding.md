@@ -24,12 +24,12 @@ The following commands are run from inside a space using the knot agent:
 Forward a port from the current space to another space:
 
 ```shell
-knot agent port forward <local-port> <space-name> <remote-port>
+knot port forward <local-port> <space-name> <remote-port>
 ```
 
 Example:
 ```shell
-knot agent port forward 8080 backend-api 3000
+knot port forward 8080 backend-api 3000
 ```
 
 This forwards port 8080 in the current space to port 3000 in the `backend-api` space.
@@ -39,7 +39,7 @@ This forwards port 8080 in the current space to port 3000 in the `backend-api` s
 View all active port forwards from the current space:
 
 ```shell
-knot agent port list
+knot port list
 ```
 
 ### Stop Port Forward
@@ -47,12 +47,12 @@ knot agent port list
 Stop an active port forward:
 
 ```shell
-knot agent port stop <local-port>
+knot port stop <local-port>
 ```
 
 Example:
 ```shell
-knot agent port stop 8080
+knot port stop 8080
 ```
 
 ## Use Cases
