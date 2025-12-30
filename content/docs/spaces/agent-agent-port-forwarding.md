@@ -55,6 +55,59 @@ Example:
 knot port stop 8080
 ```
 
+---
+
+## Desktop Client Commands
+
+The following commands are run from your desktop machine using the knot CLI:
+
+### Forward Port
+
+Forward a port from one space to another space:
+
+```shell
+knot port forward <from-space> <from-port> <to-space> <to-port>
+```
+
+Example:
+```shell
+knot port forward frontend 8080 backend-api 3000
+```
+
+This forwards port 8080 in the `frontend` space to port 3000 in the `backend-api` space.
+
+### List Active Forwards
+
+View all active port forwards from a specific space:
+
+```shell
+knot port list <space-name>
+```
+
+Example:
+```shell
+knot port list frontend
+```
+
+### Stop Port Forward
+
+Stop an active port forward in a specific space:
+
+```shell
+knot port stop <space-name> <local-port>
+```
+
+Example:
+```shell
+knot port stop frontend 8080
+```
+
+{{< tip >}}
+The desktop client commands require you to be authenticated with the knot server. Use `--server` and `--token` flags or configure them in your knot config file.
+{{< /tip >}}
+
+---
+
 ## Use Cases
 
 - **Microservices Communication**: Connect frontend containers to backend services
