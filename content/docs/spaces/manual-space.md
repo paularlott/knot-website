@@ -22,12 +22,50 @@ Once the manual space is created, the **Space ID** will be displayed. This ID is
 
 {{< picture src="../images/manual-space.webp" caption="Manual Space" >}}
 
-### Example Agent Command
+### Download the Agent
+
+The **knot** agent is available for download directly from your **knot** server. Agents are available for:
+
+- Linux (amd64, arm64)
+- macOS (amd64, arm64)
+- Windows (amd64, arm64)
+
+Download the appropriate agent for your platform from your **knot** server:
+
+```shell
+# Linux amd64
+wget https://your-knot-server/agents/knot_agent_linux_amd64.zip
+unzip knot_agent_linux_amd64.zip
+chmod +x knot-agent
+
+# Linux arm64
+wget https://your-knot-server/agents/knot_agent_linux_arm64.zip
+unzip knot_agent_linux_arm64.zip
+chmod +x knot-agent
+
+# macOS amd64
+curl -O https://your-knot-server/agents/knot_agent_darwin_amd64.zip
+unzip knot_agent_darwin_amd64.zip
+chmod +x knot-agent
+
+# macOS arm64
+curl -O https://your-knot-server/agents/knot_agent_darwin_arm64.zip
+unzip knot_agent_darwin_arm64.zip
+chmod +x knot-agent
+
+# Windows (PowerShell)
+Invoke-WebRequest -Uri https://your-knot-server/agents/knot_agent_windows_amd64.exe.zip -OutFile knot_agent_windows_amd64.exe.zip
+Expand-Archive knot_agent_windows_amd64.exe.zip
+```
+
+Replace `your-knot-server` with the actual address of your **knot** server.
+
+### Start the Agent
 
 Assuming the **knot** server is running on `192.168.1.100` with the agent interface on port `3010`, use the following command to start the agent and connect it to the server:
 
 ```shell
-./knot agent --endpoint 192.168.1.100:3010 --space-id=0198384f-59f3-74c2-8a88-3a6b4302b391 --syslog-port=0
+./knot-agent --endpoint 192.168.1.100:3010 --space-id=0198384f-59f3-74c2-8a88-3a6b4302b391 --syslog-port=0
 ```
 
 - **`--endpoint`**: The IP address and port of the **knot** server. Adjust this value based on your environment.
