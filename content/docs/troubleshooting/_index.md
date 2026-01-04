@@ -83,6 +83,7 @@ Common issues and solutions organized by topic.
 3. For SSH: Ensure SSH key is added to profile
 4. Test with web terminal first
 5. Check firewall rules and network connectivity
+6. For IntelliJ IDEA Remote Development: Ensure templates based on knot base images include `KNOT_SSHD=native` environment variable
 
 ---
 

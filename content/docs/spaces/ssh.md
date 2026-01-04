@@ -5,6 +5,10 @@ weight: 100
 
 SSH access allows you to securely connect to your spaces for advanced management and development. This guide explains how to set up SSH keys, connect via SSH, and simplify connections using `.ssh/config`.
 
+{{< tip "warning" >}}
+When using IntelliJ IDEA and its Remote Development plugin with templates based on knot base images, ensure the environment variable `KNOT_SSHD=native` is included, or the plugin won't be able to connect and start the remote session.
+{{< /tip >}}
+
 ---
 
 ## Adding a Public SSH Key
