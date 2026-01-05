@@ -36,6 +36,8 @@ add_host:
   - <host name>:<ip>
 dns_search:
   - <domain name>
+memory: <memory>[G|M]
+cpus: <number of cpus>
 ```
 
 ---
@@ -104,3 +106,9 @@ Adds custom host-to-IP mappings to the container's `/etc/hosts` file.
 
 ### **dns_search**
 Defines custom DNS search domains for the container.
+
+### **memory**
+Defines the amount of memory to allocate to the container with a M or G suffix.
+
+### **cpus**
+Defines the number of CPUs to allocate to the container.
