@@ -165,7 +165,7 @@ Scriptling runtime libraries for general scripting:
 | `scriptling.runtime` | Background tasks and async execution |
 | `scriptling.runtime.kv` | Thread-safe key-value store |
 | `scriptling.runtime.sync` | Concurrency primitives |
-| `scriptling.console` | Console input/output |
+| `scriptling.console` | Console input/output (Local & Remote only) |
 | `scriptling.glob` | File globbing patterns (Local & Remote only) |
 | `scriptling.toon` | TOON encoding/decoding |
 | `scriptling.ai.tools` | AI tools registry |

@@ -99,6 +99,7 @@ All standard, extended, and knot.* libraries are available, loaded on-demand fro
 - Full capabilities within container
 - No access to host filesystem
 - **Requires active agent connection** - script execution fails if space agent is not connected
+- **`scriptling.console` is not available** - interactive TUI scripts require a local terminal; use SSH into the space instead
 
 ### Example
 
@@ -124,10 +125,11 @@ knot space run-script myspace myscript arg1 arg2
 | scriptling.runtime | ✓ | ✗ | ✓ |
 | scriptling.runtime.kv | ✓ | ✗ | ✓ |
 | scriptling.runtime.sync | ✓ | ✗ | ✓ |
-| scriptling.console | ✓ | ✗ | ✓ |
+| scriptling.console | ✓ | ✗ | ✗ |
 | scriptling.glob | ✓ | ✗ | ✓ |
 | scriptling.ai | ✓ | ✓ | ✓ |
 | scriptling.ai.agent | ✓ | ✓ | ✓ |
+| scriptling.ai.agent.interact | ✓ | ✗ | ✗ |
 | scriptling.fuzzy | ✓ | ✓ | ✓ |
 | scriptling.mcp | ✓ | ✓ | ✓ |
 | scriptling.mcp.tool | ✓ | ✓ | ✓ |

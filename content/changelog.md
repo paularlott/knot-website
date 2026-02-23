@@ -10,7 +10,7 @@ weight: 100
 
 {{< version "v0.23.0" >}}
 
-This release introduces a powerful scripting system, skills management for AI assistants, enhanced MCP capabilities, and improved agent authentication.
+This release introduces a powerful scripting system, skills management for AI assistants, enhanced MCP capabilities, OpenAI-compatible chat API, and improved agent authentication.
 
 - **Database Migration**: Database schema changes requires `migrate.sql` to be applied to all MySQL databases
 
@@ -41,6 +41,17 @@ This release introduces a powerful scripting system, skills management for AI as
 - **Remote MCP Servers**:
   - Support for connecting to external MCP servers
   - Bearer token authentication for remote servers
+- **OpenAI-Compatible Chat API**:
+  - New `/v1/chat/completions` endpoint with streaming support
+  - Async response processing with worker pool for scalability
+  - Automatic recovery of incomplete responses on server restart
+- **Script CLI Commands**:
+  - `knot scripts list` - List available scripts
+  - `knot scripts show` - Display script details
+  - `knot scripts delete` - Remove scripts
+- **Space File Operations CLI**:
+  - `knot space read-file` - Read files from running spaces
+  - `knot space write-file` - Write files to running spaces
     {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
@@ -49,6 +60,9 @@ This release introduces a powerful scripting system, skills management for AI as
   - Improved agent token system using deterministic HMAC-SHA256 generation
   - Tokens are zone-specific and work across all servers in a zone
   - No database lookups required for validation
+- **Chat System**:
+  - Rewritten to use OpenAI-compatible endpoint architecture
+  - Improved integration with MCP server functions for tool calling
 - **MCP Enhancements**:
   - On-demand tool discovery for better MCP integration
   - Tool visibility configuration for MCP remote servers
