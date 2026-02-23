@@ -117,6 +117,7 @@ knot space run-script myspace myscript arg1 arg2
 | secrets | ✓ | ✓ | ✓ |
 | yaml | ✓ | ✓ | ✓ |
 | wait_for | ✓ | ✓ | ✓ |
+| logging | ✓ | ✓ | ✓ |
 | subprocess | ✓ | ✗ | ✓ |
 | os/pathlib | ✓ | ✗ | ✓ |
 | sys | ✓ | ✗ | ✓ |
@@ -127,7 +128,12 @@ knot space run-script myspace myscript arg1 arg2
 | scriptling.glob | ✓ | ✗ | ✓ |
 | scriptling.ai | ✓ | ✓ | ✓ |
 | scriptling.ai.agent | ✓ | ✓ | ✓ |
+| scriptling.fuzzy | ✓ | ✓ | ✓ |
 | scriptling.mcp | ✓ | ✓ | ✓ |
+| scriptling.mcp.tool | ✓ | ✓ | ✓ |
+| scriptling.toon | ✓ | ✓ | ✓ |
+| scriptling.ai.tools | ✓ | ✓ | ✓ |
+| toml | ✓ | ✓ | ✓ |
 | knot.space | ✓ API | ✓ Internal | ✓ API |
 | knot.ai | ✓ API | ✓ MCP | ✓ API |
 | knot.mcp | ✓ Tools | ✓ Special | ✓ Tools |

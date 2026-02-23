@@ -159,13 +159,18 @@ Scriptling runtime libraries for general scripting:
 |---------|-------------|
 | `scriptling.ai` | AI and LLM functions |
 | `scriptling.ai.agent` | Agentic AI loop with automatic tool execution |
+| `scriptling.fuzzy` | Fuzzy string matching |
 | `scriptling.mcp` | MCP tool helpers |
 | `scriptling.mcp.tool` | MCP tool parameter access |
 | `scriptling.runtime` | Background tasks and async execution |
 | `scriptling.runtime.kv` | Thread-safe key-value store |
 | `scriptling.runtime.sync` | Concurrency primitives |
 | `scriptling.console` | Console input/output |
+| `scriptling.glob` | File globbing patterns (Local & Remote only) |
 | `scriptling.toon` | TOON encoding/decoding |
+| `scriptling.ai.tools` | AI tools registry |
+| `toml` | TOML parsing and manipulation |
+| `logging` | Logging library |
 
 For detailed documentation on scriptling libraries, see the [Scriptling Documentation](https://scriptling.dev/docs).
 
@@ -180,14 +185,20 @@ Python-compatible standard libraries are available:
 
 ### Extended Libraries
 
-Additional libraries (availability depends on environment):
+Additional libraries (available in all environments):
 
 - `requests` - HTTP client
-- `subprocess` - Process execution (not in MCP environment)
-- `os`, `pathlib`, `sys` - System access (not in MCP environment)
 - `yaml` - YAML parsing
+- `toml` - TOML parsing
 - `secrets` - Cryptographic random numbers
 - `wait_for` - Wait for conditions
+- `logging` - Logging library
+- `scriptling.ai.tools` - AI tools registry
+
+Additional libraries (not in MCP environment):
+
+- `subprocess` - Process execution
+- `os`, `pathlib`, `sys` - System access
 
 ---
 
