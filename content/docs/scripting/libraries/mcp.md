@@ -114,7 +114,7 @@ Tools from remote MCP servers have a namespace prefix:
 import knot.mcp as mcp
 
 # Call a remote tool
-response = mcp.call_tool("ai/generate-text", {
+response = mcp.call_tool("ai.generate-text", {
     "prompt": "Write a hello world function",
     "max_tokens": 50
 })
