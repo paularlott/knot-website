@@ -32,15 +32,15 @@ When creating a script, you specify its type:
 
 ## Execution Environments
 
-Knot provides three distinct execution environments, each with different capabilities:
+Knot provides three distinct execution environments, each with different capabilities and library availability.
 
-| Environment | Used By | System Access | Best For |
-|-------------|---------|---------------|----------|
-| **Local** | CLI `knot run-script` | Full (host) | Local development and testing |
-| **MCP** | AI tool scripts | None | Safe AI tool execution |
-| **Remote** | Space execution | Full (container) | Scripts in user spaces |
+| Environment | Used By | System Access |
+|-------------|---------|---------------|
+| **Local** | CLI `knot run-script` | Full (host) |
+| **MCP** | AI tool scripts | None |
+| **Remote** | Space execution | Full (container) |
 
-See [Execution Environments](environments/) for detailed information about each environment and library availability.
+See [Execution Environments](environments/) for detailed information about each environment, security considerations, and the complete library availability matrix.
 
 ---
 
@@ -131,75 +131,12 @@ echo "data" | knot space run-script myspace myscript
 
 Scripts have access to several library namespaces:
 
-### knot.* Libraries
+- **knot.*** - Knot-specific libraries for platform interaction (see [Library Reference](libraries/))
+- **scriptling.*** - Scriptling runtime libraries for general scripting
+- **Standard libraries** - Python-compatible libraries like `json`, `math`, `re`, `datetime`
+- **Extended libraries** - Additional libraries like `requests`, `yaml`, `toml`
 
-Knot-specific libraries for interacting with the platform:
-
-| Library | Description |
-|---------|-------------|
-| `knot.space` | Space management operations |
-| `knot.ai` | AI completion functions |
-| `knot.mcp` | MCP tool interaction |
-| `knot.skill` | Skills management |
-| `knot.template` | Template management |
-| `knot.volume` | Volume management |
-| `knot.user` | User management |
-| `knot.group` | Group management |
-| `knot.role` | Role management |
-| `knot.vars` | Variables management |
-| `knot.permission` | Permission checking |
-
-See [Library Reference](libraries/) for detailed documentation.
-
-### scriptling.* Libraries
-
-Scriptling runtime libraries for general scripting:
-
-| Library | Description |
-|---------|-------------|
-| `scriptling.ai` | AI and LLM functions |
-| `scriptling.ai.agent` | Agentic AI loop with automatic tool execution |
-| `scriptling.fuzzy` | Fuzzy string matching |
-| `scriptling.mcp` | MCP tool helpers |
-| `scriptling.mcp.tool` | MCP tool parameter access |
-| `scriptling.runtime` | Background tasks and async execution |
-| `scriptling.runtime.kv` | Thread-safe key-value store |
-| `scriptling.runtime.sync` | Concurrency primitives |
-| `scriptling.console` | Interactive TUI console (Local & Remote streaming) |
-| `scriptling.ai.agent.interact` | Interactive AI agent (Local & Remote streaming) |
-| `scriptling.glob` | File globbing patterns (Local & Remote only) |
-| `scriptling.toon` | TOON encoding/decoding |
-| `scriptling.ai.tools` | AI tools registry |
-| `toml` | TOML parsing and manipulation |
-| `logging` | Logging library |
-
-For detailed documentation on scriptling libraries, see the [Scriptling Documentation](https://scriptling.dev/docs).
-
-### Standard Libraries
-
-Python-compatible standard libraries are available:
-
-- `json`, `base64`, `html`, `math`, `random`, `statistics`
-- `time`, `datetime`, `re`, `string`, `textwrap`
-- `functools`, `itertools`, `collections`, `hashlib`
-- `platform`, `urllib`, `uuid`
-
-### Extended Libraries
-
-Additional libraries (available in all environments):
-
-- `requests` - HTTP client
-- `yaml` - YAML parsing
-- `toml` - TOML parsing
-- `secrets` - Cryptographic random numbers
-- `wait_for` - Wait for conditions
-- `logging` - Logging library
-- `scriptling.ai.tools` - AI tools registry
-
-Additional libraries (not in MCP environment):
-
-- `subprocess` - Process execution
-- `os`, `pathlib`, `sys` - System access
+Library availability varies by execution environment. See [Execution Environments](environments/) for the complete library availability matrix.
 
 ---
 
