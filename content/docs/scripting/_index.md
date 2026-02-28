@@ -5,6 +5,8 @@ weight: 125
 
 Knot includes a powerful scripting system based on **Scriptling**, a Python-like scripting language. Scripts can automate tasks, extend functionality, and be exposed as MCP tools for AI assistants.
 
+For the complete language reference including syntax, types, control flow, functions, and classes, see the [Scriptling Language Guide](https://scriptling.dev/docs/language/).
+
 ---
 
 ## Overview
@@ -132,9 +134,11 @@ echo "data" | knot space run-script myspace myscript
 Scripts have access to several library namespaces:
 
 - **knot.*** - Knot-specific libraries for platform interaction (see [Library Reference](libraries/))
-- **scriptling.*** - Scriptling runtime libraries for general scripting
+- **scriptling.*** - Scriptling runtime libraries for AI/LLM integration, MCP support, and concurrency
 - **Standard libraries** - Python-compatible libraries like `json`, `math`, `re`, `datetime`
 - **Extended libraries** - Additional libraries like `requests`, `yaml`, `toml`
+
+For detailed documentation on scriptling.* and standard libraries, see the [Scriptling Libraries Reference](https://scriptling.dev/docs/libraries/).
 
 Library availability varies by execution environment. See [Execution Environments](environments/) for the complete library availability matrix.
 
@@ -142,6 +146,7 @@ Library availability varies by execution environment. See [Execution Environment
 
 ## What's Next
 
+- [Scriptling Language Guide](https://scriptling.dev/docs/language/) - Complete language reference
 - [Execution Environments](environments/) - Detailed environment capabilities
 - [Library Reference](libraries/) - knot.* library documentation
 - [MCP Tool Authoring](mcp-tools/) - Creating MCP tools
