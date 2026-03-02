@@ -120,3 +120,13 @@ The following tools are available on the MCP server. The specific tools and oper
 ### Icons and Skills
 - **list_icons**: List all available icons with descriptions and URLs.
 - **skills**: Access the knowledge base for guides and best practices. Call without a filename to list all skills, or with a filename for specific content.
+
+---
+
+## Remote MCP Servers
+
+Knot can connect to external MCP servers and expose their tools alongside the built-in tools. This allows you to create a unified interface for AI assistants to access tools from multiple sources.
+
+Remote tools are namespaced with a prefix (e.g., `ai.generate-text`) to avoid conflicts with local tools.
+
+For detailed configuration and usage, see [Remote MCP Servers](mcp-remote/).

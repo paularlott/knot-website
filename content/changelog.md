@@ -6,6 +6,82 @@ draft: false
 weight: 100
 ---
 
+## March 2026
+
+{{< version "v0.23.0" >}}
+
+This release introduces a powerful scripting system, skills management for AI assistants, enhanced MCP capabilities, OpenAI-compatible chat API, and improved agent authentication.
+
+- **Database Migration**: Database schema changes requires `migrate.sql` to be applied to all MySQL databases
+
+{{< changelog-item "added" >}}
+
+- **Scripting System**:
+  - Added comprehensive scripting support using Python-like syntax
+  - Three execution environments: local (CLI), MCP (AI tools), and remote (space execution)
+  - Scripts can be exposed as MCP tools for AI assistants with parameter schemas
+  - Support for library scripts for reusable code across scripts
+  - Streaming script execution with binary frame support
+- **Script API Client Library**:
+  - Python client libraries for scripts to interact with knot: knot.api, knot.space, knot.template, knot.user, knot.group, knot.role, knot.var, knot.volume
+  - Full CRUD operations for spaces, templates, users, groups, roles, variables, and volumes
+- **Skills Management**:
+  - Added skills system for AI knowledge base content following the Agent Skills Specification
+  - Skills are markdown documents with YAML/TOML frontmatter
+  - Global and user-level skills with user shadowing
+  - Zone and group restrictions for access control
+  - CLI commands for skill management
+- **AI Library**:
+  - Added knot.ai library providing pre-configured AI client access from scripts
+  - Support for multiple LLM providers (OpenAI, Claude, Gemini, Ollama, etc.)
+  - Integration with scriptling.ai.agent for agentic AI workflows
+- **Startup/Shutdown Scripts**:
+  - Templates can define startup and shutdown scripts
+  - User startup scripts configured per-space
+  - Automatic execution when spaces start or stop
+- **Space to Space Copy**:
+  - Added ability to copy files between spaces
+- **Remote MCP Servers**:
+  - Support for connecting to external MCP servers
+  - Bearer token authentication for remote servers
+- **OpenAI-Compatible Chat API**:
+  - New `/v1/chat/completions` endpoint with streaming support
+  - Async response processing with worker pool for scalability
+  - Automatic recovery of incomplete responses on server restart
+  - New Responses API for long-running async operations
+- **MCP Tools**:
+  - Built-in MCP tools (create_space, start_space, stop_space, etc.) are now script-based and customizable
+  - Tools support discoverable flag for visibility control
+- **Script CLI Commands**:
+  - `knot scripts list` - List available scripts
+  - `knot scripts show` - Display script details
+  - `knot scripts delete` - Remove scripts
+- **Space File Operations CLI**:
+  - `knot space read-file` - Read files from running spaces
+  - `knot space write-file` - Write files to running spaces
+    {{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+
+- **Agent Authentication**:
+  - Improved agent token system using deterministic HMAC-SHA256 generation
+  - Tokens are zone-specific and work across all servers in a zone
+  - No database lookups required for validation
+- **Chat System**:
+  - Rewritten to use OpenAI-compatible endpoint architecture
+  - Improved integration with MCP server functions for tool calling
+- **MCP Enhancements**:
+  - On-demand tool discovery for better MCP integration
+  - Tool visibility configuration for MCP remote servers
+- **UI Improvements**:
+  - Enhanced form handling with better popup behavior
+  - Script and skill management UI
+  - Improved leaf node interface
+  - Better mobile responsiveness
+- **Leaf Node**:
+  - Various reliability and UI improvements for leaf node operation
+    {{< /changelog-item >}}
+
 ## December 2025
 
 {{< version "v0.22.0" >}}
@@ -15,6 +91,7 @@ This release introduces agent-to-agent port forwarding capabilities, enhanced MC
 - **Database Migration**: Database schema changes requires `migrate.sql` to be applied to all MySQL databases
 
 {{< changelog-item "added" >}}
+
 - **Agent-to-Agent Port Forwarding**:
   - Added complete port management CLI with `forward`, `list`, and `stop` subcommands
   - Enables secure port forwarding between agents in spaces within the same zone owned by the same user
@@ -22,9 +99,10 @@ This release introduces agent-to-agent port forwarding capabilities, enhanced MC
   - Added tracking and management of active port forwards with automatic cleanup
 - **Node Selection Service**:
   - Added node selection for automatic or manual placement of containers within a zone
-{{< /changelog-item >}}
+    {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
+
 - **MCP (Model Context Protocol) Support**:
   - Added support for on-demand tool discovery alongside native MCP tools
   - Enhanced tool discovery mechanism for better MCP integration
@@ -51,24 +129,27 @@ This release introduces agent-to-agent port forwarding capabilities, enhanced MC
 - **Dependencies**:
   - Updated Go modules with latest security patches
   - Refreshed frontend dependencies for better compatibility
-{{< /changelog-item >}}
+    {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
+
 - Improved error handling in container operations
 - Fixed form popup auto-close issues
 - Fixed popup closing behavior
-{{< /changelog-item >}}
+  {{< /changelog-item >}}
 
 ## October 2025
 
 {{< version "v0.20.x" >}}
 
 {{< changelog-item "added" >}}
+
 - **Apple Container Support**:
   Added support for Apple Container templates using the macOS container CLI.
-{{< /changelog-item >}}
+  {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
+
 - **Safari**:
   Improved the web interface compatibility with Safari.
 - **HTTP/2 Errors**:
@@ -77,22 +158,24 @@ This release introduces agent-to-agent port forwarding capabilities, enhanced MC
   Minor UI improvements.
 - **Cluster**:
   Improvements to data synchronization.
-{{< /changelog-item >}}
+  {{< /changelog-item >}}
 
 ## September 2025
 
 {{< version "v0.19.1" >}}
 
 {{< changelog-item "changed" >}}
+
 - **Message History UX**:
   Improvements to the usability of the message history.
-{{< /changelog-item >}}
+  {{< /changelog-item >}}
 
 {{< version "v0.19.0" >}}
 
 This release brings Artificial Intelligence to **knot**, with both a built in assistant and connectivity to use with editors and applications that support MCP.
 
 {{< changelog-item "added" >}}
+
 - **Model Content Protocol (MCP)**:
   Added ability to use knot servers as MCP servers exporting tools for creating and managing spaces and templates.
 - **AI Assistant**:
@@ -103,14 +186,15 @@ This release brings Artificial Intelligence to **knot**, with both a built in as
   Copy files between the local machine and the space.
 - **Soft Keyboard**:
   When accessing **knot** from a tablet the terminal window now has a soft keyboard which provides cursor keys, control key and other keys that are not generally available on the keyboard.
-{{< /changelog-item >}}
+  {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
+
 - **Tunnel Server**:
   Allow running the tunnel server on the same port as the main web interface.
 - **Nomad Volumes**:
   Added support for Nomads builtin `mkdir` storage plugin.
-{{< /changelog-item >}}
+  {{< /changelog-item >}}
 
 ## July 2025
 
@@ -119,6 +203,7 @@ This release brings Artificial Intelligence to **knot**, with both a built in as
 This release introduces significant updates, with the most notable being a complete rewrite of the cluster mode. The new leaderless architecture ensures that all servers in the cluster are equal, eliminating the need for a designated leader. This change improves both availability and performance, allowing the system to continue functioning seamlessly even if connections between nodes are interrupted.
 
 {{< changelog-item "added" >}}
+
 - **Enhanced Tunneling**:
   Tunnel functionality has been improved, enabling the creation of tunnels from a port within a space to a port on the local machine.
 - **Leaf Node Support**:
@@ -145,9 +230,10 @@ This release introduces significant updates, with the most notable being a compl
   - Added icons to spaces and templates, including Gravatar support in share dialogs.
 - **Miscellaneous**:
   - Added IP rate limiting for authentication to enhance security.
-{{< /changelog-item >}}
+    {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
+
 - **UI/UX Enhancements**:
   - Enhanced feedback for over-quota errors and improved messaging across the UI.
 - **Performance and Reliability**:
@@ -165,14 +251,15 @@ This release introduces significant updates, with the most notable being a compl
   - Enhanced audit log handling and forwarding to clusters for better traceability.
 - **Templates**:
   - Added platform change warning modals to template and volume forms for better user guidance.
-{{< /changelog-item >}}
+    {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
+
 - Fixed issues with standalone spaces and manual space deletion.
 - Resolved incorrect termination of the main server loop.
 - Addressed storage quota bugs.
 - Corrected permission checks for space transfers and admin roles.
 - Fixed the SSH info window not closing properly.
-{{< /changelog-item >}}
+  {{< /changelog-item >}}
 
 ---

@@ -146,7 +146,7 @@ knot run myspace ls -la /home
 
 ### `knot cp`
 
-Copy files between local machine and space.
+Copy files between local machine, spaces, and between spaces.
 
 ```shell
 # Copy to space
@@ -154,13 +154,25 @@ knot cp LOCAL_FILE SPACE_NAME:REMOTE_PATH
 
 # Copy from space
 knot cp SPACE_NAME:REMOTE_PATH LOCAL_FILE
+
+# Copy between spaces
+knot cp SOURCE_SPACE:SOURCE_PATH DEST_SPACE:DEST_PATH
 ```
 
 Examples:
 ```shell
+# Local to space
 knot cp config.json myspace:/etc/app/
+
+# Space to local
 knot cp myspace:/var/log/app.log ./logs/
+
+# Space to space
+knot cp frontend:/app/build backend:/var/www/html
 ```
+
+**Options**:
+- `--workdir`, `-w`: Working directory for relative paths in space
 
 ---
 
@@ -260,25 +272,156 @@ knot port stop 8080
 ### List Spaces
 
 ```shell
-knot spaces list
+knot space list
 ```
 
 ### Start Space
 
 ```shell
-knot spaces start SPACE_NAME
+knot space start SPACE_NAME
 ```
 
 ### Stop Space
 
 ```shell
-knot spaces stop SPACE_NAME
+knot space stop SPACE_NAME
+```
+
+### Restart Space
+
+```shell
+knot space restart SPACE_NAME
 ```
 
 ### Delete Space
 
 ```shell
-knot spaces delete SPACE_NAME
+knot space delete SPACE_NAME
+```
+
+### Create Space
+
+```shell
+knot space create SPACE_NAME TEMPLATE_NAME
+```
+
+### Get Space Logs
+
+```shell
+knot space logs SPACE_NAME
+```
+
+### Run Command in Space
+
+```shell
+knot space run SPACE_NAME COMMAND [ARGS...]
+```
+
+### Run Script in Space
+
+```shell
+knot space run-script SPACE_NAME SCRIPT_NAME [ARGS...]
+```
+
+---
+
+## Space File Operations
+
+### Read File from Space
+
+Read file contents from a running space.
+
+```shell
+knot space read-file SPACE_NAME FILE_PATH
+```
+
+Examples:
+```shell
+# Read a file
+knot space read-file myspace /etc/hostname
+
+# Redirect to local file
+knot space read-file myspace /var/log/app.log > local.log
+```
+
+### Write File to Space
+
+Write content to a file in a running space.
+
+```shell
+# Write content directly
+knot space write-file SPACE_NAME FILE_PATH --content "CONTENT"
+
+# Read from stdin
+echo "Hello World" | knot space write-file SPACE_NAME FILE_PATH --content -
+```
+
+Examples:
+```shell
+# Write text directly
+knot space write-file myspace /tmp/hello.txt --content "Hello World"
+
+# Pipe from local file
+cat config.json | knot space write-file myspace /etc/app/config.json --content -
+```
+
+**Options**:
+- `--content`, `-d`: Content to write (use `-` to read from stdin)
+
+---
+
+## Space Field Operations
+
+### Get Custom Field
+
+```shell
+knot space get-field SPACE_NAME FIELD_NAME
+```
+
+### Set Custom Field
+
+```shell
+knot space set-field SPACE_NAME FIELD_NAME VALUE
+```
+
+---
+
+## Space Tunnel Port
+
+Create a tunnel from a space port to a local port.
+
+```shell
+knot space tunnel-port SPACE_NAME REMOTE_PORT LOCAL_PORT
+```
+
+---
+
+## Script Management
+
+### List Scripts
+
+List all available scripts (user and global).
+
+```shell
+knot script list
+```
+
+Shows script name, description, active status, type, and discoverability.
+
+### Show Script Details
+
+Display detailed information about a script including its content.
+
+```shell
+knot script show SCRIPT_NAME
+```
+
+### Delete Script
+
+Delete a script by name.
+
+```shell
+knot script delete SCRIPT_NAME
 ```
 
 ---
