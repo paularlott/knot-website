@@ -9,24 +9,18 @@ Skills are knowledge base content for AI assistants. They are markdown documents
 
 ## Overview
 
-Skills provide context and instructions to AI assistants, helping them understand how to perform specific tasks. Knot supports two types of skills:
+Skills provide context and instructions to AI assistants, helping them understand how to perform specific tasks. Skills can be used by:
+
+- The built-in **knot** web assistant
+- External AI tools that connect via MCP
+- Any AI system that supports the Agent Skills format
+
+Knot supports two types of skills:
 
 - **Global Skills**: Available to all users (with optional group restrictions)
 - **User Skills**: Personal skills owned by individual users
 
 User skills with the same name override (shadow) global skills, allowing users to customize behavior.
-
----
-
-## Default Skills
-
-The web assistant includes default skills for creating space templates:
-
-- **`nomad-spec`**: Explains how to create Nomad-based space templates
-- **`docker-spec`**: Explains how to create Docker-based space templates
-- **`podman-spec`**: Explains how to create Podman-based space templates
-
-These default skills are generic and may need to be customized for your specific environment.
 
 ---
 
@@ -115,13 +109,16 @@ Your markdown content here...
 
 Skills can be limited to specific zones:
 
+- If no zones are specified, the skill is available in all zones
+- Zones prefixed with `!` are exclusions (e.g., `!us-west-1` excludes that zone)
+
 ```python
 skill.create(content, zones=["us-east-1", "eu-west-1"])
 ```
 
 ### Group Restrictions
 
-Global skills can be restricted to specific user groups:
+Global skills can be restricted to specific user groups. Only users in those groups can access the skill.
 
 ```python
 skill.create(content, global=True, groups=["dev-team", "ops-team"])
@@ -131,17 +128,67 @@ skill.create(content, global=True, groups=["dev-team", "ops-team"])
 
 ## Permissions
 
-- `MANAGE_OWN_SKILLS`: Create, update, and delete your own skills
-- `MANAGE_GLOBAL_SKILLS`: Create, update, and delete global skills
+| Permission | Description |
+|------------|-------------|
+| `MANAGE_OWN_SKILLS` | Create, update, and delete your own skills |
+| `MANAGE_GLOBAL_SKILLS` | Create, update, and delete global skills |
 
 ---
 
-## Legacy File-Based Skills
+## Example Skills
 
-For backwards compatibility, skills can still be loaded from files by setting `server.skills_path` in `knot.toml`. However, database-stored skills are recommended for better management and access control.
+### Team Conventions
 
-To fetch default skill files:
+```markdown
+---
+name: "team-conventions"
+description: "Coding conventions and best practices for our team"
+---
 
-```bash
-knot scaffold --nomad-spec
+# Team Conventions
+
+## Branch Naming
+- Feature: `feature/<ticket-id>-<description>`
+- Bugfix: `fix/<ticket-id>-<description>`
+- Hotfix: `hotfix/<ticket-id>-<description>`
+
+## Commit Messages
+- Use conventional commits format
+- Reference ticket numbers in commit messages
+
+## Code Review
+- All changes require at least one approval
+- Reviewers should check for test coverage
 ```
+
+### Deployment Guide
+
+```markdown
+---
+name: "deployment-guide"
+description: "How to deploy applications to our environments"
+---
+
+# Deployment Guide
+
+## Environments
+- **dev**: Automatic deployment on merge to develop
+- **staging**: Manual approval required
+- **production**: Requires two approvals and change ticket
+
+## Deployment Process
+1. Create a release branch from main
+2. Update version numbers
+3. Run full test suite
+4. Create pull request
+5. After approval, merge to main
+6. Tag the release
+```
+
+---
+
+## What's Next
+
+- [AI Assistant](../ai-assistant/) - Using the built-in AI assistant
+- [MCP Integration](../mcp/) - Connecting external AI tools
+- [Scripts](../../scripts/) - Creating executable automation scripts

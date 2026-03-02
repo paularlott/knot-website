@@ -18,6 +18,7 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
    - **`Icon`**: (Optional) An icon for the space. By default, the template's icon will be used if one is set.
    - **`Additional Space Names`**: Add additional names for the space by clicking the `+` icon. This is useful for accessing the space under multiple domain names when using the web proxy service.
    - **`Terminal Shell`**: The shell to use for the terminal. By default, the user's profile shell is used.
+   - **`User Startup Script`**: An optional script to run when the space starts, the user startup script is run after the system startup script. This field is unavailable for `Manual` templates. The script must be one defined under scripts and owned by the user creating the space.
    - **`Custom Fields`**: If the template includes custom fields, they will appear here. Set values for each field as needed.
    - **`Start Space on Create`**: If checked, the space will start automatically after creation.
 
@@ -38,7 +39,7 @@ Admins may see the `Create Space For` option, allowing them to create spaces on 
 - The space's status will change to `Starting`, and once running, it will display as `Running`.
 - Icons will appear in the services column, providing access to features such as the web terminal.
 
-   {{< picture src="../images/running-space.webp" caption="Running Space" >}}
+  {{< picture src="../images/running-space.webp" caption="Running Space" >}}
 
 ### Service Icons:
 
@@ -49,9 +50,10 @@ Admins may see the `Create Space For` option, allowing them to create spaces on 
 5. **`Ports`**: Displays a menu of web interfaces and exposed ports for the space.
 
 {{< tip >}}
+
 - Not all icons will be present. Their availability depends on the features enabled in the template and the user's permissions.
 - Spaces created from manual templates do not have a `Start` option. They start automatically when their agent connects to the server.
-{{< /tip >}}
+  {{< /tip >}}
 
 ---
 
