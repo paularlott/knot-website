@@ -1,6 +1,6 @@
 ---
 title: Startup & Shutdown Scripts
-weight: 110
+weight: 200
 ---
 
 Knot provides multiple ways to run scripts when spaces start or stop. These scripts can automate configuration, initialization, and cleanup tasks.

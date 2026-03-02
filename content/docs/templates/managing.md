@@ -47,9 +47,15 @@ To create a new template:
 
 ---
 
-### Resource Allocation
+### Resource Allocation & Scripts
 
 {{< picture src="../images/template-resources.webp" caption="Template Resources" >}}
+
+- **`System Startup Script`**:
+  An optional script to run when the space starts. This field is unavailable for `Manual` templates. The script must be one defined under scripts.
+
+- **`System Shutdown Script`**:
+  An optional script to run when the space stops. This field is unavailable for `Manual` templates. The script must be one defined under scripts.
 
 - **`Compute Units`**:
   The number of compute units the space will use. This is used to calculate the cost of running the space. Set to `0` for no cost.
