@@ -6,7 +6,7 @@ draft: false
 weight: 100
 ---
 
-## February 2026
+## March 2026
 
 {{< version "v0.23.0" >}}
 
@@ -19,9 +19,12 @@ This release introduces a powerful scripting system, skills management for AI as
 - **Scripting System**:
   - Added comprehensive scripting support using Python-like syntax
   - Three execution environments: local (CLI), MCP (AI tools), and remote (space execution)
-  - Rich library ecosystem including knot.space, knot.ai, knot.mcp, and more
   - Scripts can be exposed as MCP tools for AI assistants with parameter schemas
   - Support for library scripts for reusable code across scripts
+  - Streaming script execution with binary frame support
+- **Script API Client Library**:
+  - Python client libraries for scripts to interact with knot: knot.api, knot.space, knot.template, knot.user, knot.group, knot.role, knot.var, knot.volume
+  - Full CRUD operations for spaces, templates, users, groups, roles, variables, and volumes
 - **Skills Management**:
   - Added skills system for AI knowledge base content following the Agent Skills Specification
   - Skills are markdown documents with YAML/TOML frontmatter
@@ -45,6 +48,10 @@ This release introduces a powerful scripting system, skills management for AI as
   - New `/v1/chat/completions` endpoint with streaming support
   - Async response processing with worker pool for scalability
   - Automatic recovery of incomplete responses on server restart
+  - New Responses API for long-running async operations
+- **MCP Tools**:
+  - Built-in MCP tools (create_space, start_space, stop_space, etc.) are now script-based and customizable
+  - Tools support discoverable flag for visibility control
 - **Script CLI Commands**:
   - `knot scripts list` - List available scripts
   - `knot scripts show` - Display script details
