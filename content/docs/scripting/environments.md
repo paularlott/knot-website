@@ -33,11 +33,12 @@ Is it an MCP tool for AI?
 
 **Command:** `knot run-script`
 
-Execute scripts locally with full system access. Scripts can read/write files on the host machine and execute system commands.
+Execute scripts locally with full system access. Libraries are resolved in priority order, mirroring scriptling-cli behaviour:
 
-### Available Libraries
-
-All standard, extended, and knot.* libraries are available. Libraries are loaded on-demand, trying local `.py` files first, then fetching from the server.
+1. **Script directory** — the directory containing the script file (or cwd for stdin/interactive)
+2. **Extra lib paths** — `--libpath` / `-L` flags or `SCRIPTLING_LIBPATH` env var
+3. **Configured libdir** — `server.lib_dir` in `knot.toml`
+4. **Server API** — fetched on demand from the server
 
 ### Security Considerations
 
@@ -49,7 +50,14 @@ All standard, extended, and knot.* libraries are available. Libraries are loaded
 ### Example
 
 ```bash
+# Run local script - libs resolved from script's directory first
 knot run-script myscript.py arg1 arg2
+
+# Add extra lib search paths
+knot run-script -L /path/to/libs myscript.py arg1 arg2
+
+# SCRIPTLING_LIBPATH env var also works
+SCRIPTLING_LIBPATH=/path/to/libs knot run-script myscript.py
 ```
 
 ---
