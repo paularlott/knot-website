@@ -120,35 +120,62 @@ knot space run-script myspace myscript arg1 arg2
 
 ## Library Availability Matrix
 
+### Standard & Extended Libraries
+
 | Library | Local | MCP | Remote |
 |---------|-------|-----|--------|
 | **Standard Libraries** | ✓ | ✓ | ✓ |
 | requests | ✓ | ✓ | ✓ |
 | secrets | ✓ | ✓ | ✓ |
 | yaml | ✓ | ✓ | ✓ |
+| toml | ✓ | ✓ | ✓ |
 | wait_for | ✓ | ✓ | ✓ |
 | logging | ✓ | ✓ | ✓ |
+| html.parser | ✓ | ✓ | ✓ |
 | subprocess | ✓ | ✗ | ✓ |
 | os/pathlib | ✓ | ✗ | ✓ |
 | sys | ✓ | ✗ | ✓ |
-| scriptling.runtime | ✓ | ✗ | ✓ |
-| scriptling.runtime.kv | ✓ | ✗ | ✓ |
-| scriptling.runtime.sync | ✓ | ✗ | ✓ |
-| scriptling.console | ✓ | ✗ | ✓ |
-| scriptling.glob | ✓ | ✗ | ✓ |
+
+### scriptling.* Libraries
+
+| Library | Local | MCP | Remote |
+|---------|-------|-----|--------|
 | scriptling.ai | ✓ | ✓ | ✓ |
 | scriptling.ai.agent | ✓ | ✓ | ✓ |
 | scriptling.ai.agent.interact | ✓ | ✗ | ✓ |
+| scriptling.ai.tools | ✓ | ✓ | ✓ |
 | scriptling.fuzzy | ✓ | ✓ | ✓ |
 | scriptling.mcp | ✓ | ✓ | ✓ |
 | scriptling.mcp.tool | ✓ | ✓ | ✓ |
 | scriptling.toon | ✓ | ✓ | ✓ |
-| scriptling.ai.tools | ✓ | ✓ | ✓ |
-| toml | ✓ | ✓ | ✓ |
+| scriptling.console | ✓ | ✗ | ✓ |
+| scriptling.glob | ✓ | ✗ | ✓ |
+| scriptling.runtime | ✓ | ✗ | ✓ |
+| scriptling.runtime.kv | ✓ | ✗ | ✓ |
+| scriptling.runtime.sync | ✓ | ✗ | ✓ |
+| scriptling.runtime.sandbox | ✓ | ✗ | ✓ |
+
+### knot.* Libraries
+
+| Library | Local | MCP | Remote |
+|---------|-------|-----|--------|
 | knot.space | ✓ API | ✓ Internal | ✓ API |
 | knot.ai | ✓ API | ✓ MCP | ✓ API |
 | knot.mcp | ✓ Tools | ✓ Special | ✓ Tools |
-| **Load from disk** | ✓ First | ✗ | ✗ |
-| **Load from server** | ✓ Fallback | ✓ Only | ✓ Only |
+| knot.user | ✓ API | ✓ API | ✓ API |
+| knot.group | ✓ API | ✓ API | ✓ API |
+| knot.role | ✓ API | ✓ API | ✓ API |
+| knot.template | ✓ API | ✓ API | ✓ API |
+| knot.vars | ✓ API | ✓ API | ✓ API |
+| knot.volume | ✓ API | ✓ API | ✓ API |
+| knot.skill | ✓ API | ✓ API | ✓ API |
+| knot.permission | ✓ API | ✓ API | ✓ API |
+
+### Library Loading
+
+| Source | Local | MCP | Remote |
+|--------|-------|-----|--------|
+| Load from disk | ✓ First | ✗ | ✗ |
+| Load from server | ✓ Fallback | ✓ Only | ✓ Only |
 
 For detailed documentation on scriptling standard and extended libraries, see the [Scriptling Documentation](https://scriptling.dev/docs).
