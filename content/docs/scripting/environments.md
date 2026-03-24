@@ -154,6 +154,7 @@ knot space run-script myspace myscript arg1 arg2
 | scriptling.runtime.kv | ✓ | ✗ | ✓ |
 | scriptling.runtime.sync | ✓ | ✗ | ✓ |
 | scriptling.runtime.sandbox | ✓ | ✗ | ✓ |
+| scriptling.websocket | ✓ | ✓ | ✓ |
 
 ### knot.* Libraries
 
