@@ -29,3 +29,14 @@ roles = role.list()
 for r in roles:
     print(f"{r['name']}: {r['permissions']}")
 ```
+
+---
+
+## Role Properties
+
+`list()` returns:
+- `id` - Role ID
+- `name` - Role name
+
+`get()` also includes:
+- `permissions` - List of permission IDs (integers)

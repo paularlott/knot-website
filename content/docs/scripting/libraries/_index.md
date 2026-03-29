@@ -11,6 +11,7 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 
 | Library | Description |
 |---------|-------------|
+| [knot.apiclient](apiclient/) | Transport configuration for standalone use |
 | [knot.space](space/) | Space management operations |
 | [knot.ai](ai/) | AI completion functions |
 | [knot.mcp](mcp/) | MCP tool interaction |
@@ -37,40 +38,17 @@ import knot.mcp as mcp
 # Use the libraries
 spaces = space.list()
 client = ai.Client()
-tools = mcp.list_tools()
+tools = mcp.Client().tools()
 ```
 
 ---
 
 ## Environment Compatibility
 
-All knot.* libraries are available in all environments, but the implementation differs:
-
-| Library | Local | MCP | Remote |
-|---------|-------|-----|--------|
-| knot.space | API | Internal API | API |
-| knot.ai | API | MCP Server | API |
-| knot.mcp | API Tools | Special | API Tools |
-| knot.skill | API | API | API |
-| knot.template | API | API | API |
-| knot.volume | API | API | API |
-| knot.user | API | API | API |
-| knot.group | API | API | API |
-| knot.role | API | API | API |
-| knot.vars | API | API | API |
-| knot.permission | API | API | API |
-
-- **API**: Uses HTTP API calls to the server
-- **Internal**: Uses internal Go function calls (no network)
-- **MCP Server**: Connects directly to the upstream AI provider
-- **Special**: Has access to MCP tool parameters and context
+All `knot.*` libraries are available in all embedded environments (local, MCP, remote). `knot.ai` and `knot.mcp` are only available in embedded contexts — external scripts should use `scriptling.ai` and `scriptling.mcp` directly.
 
 ---
 
 ## Authentication
 
-Scripts automatically authenticate using the context they're running in:
-
-- **Local**: Uses the configured API token from `~/.knot/config`
-- **Remote**: Uses the space's agent token
-- **MCP**: Uses the internal context (no explicit token needed)
+Scripts automatically authenticate using the context they're running in — no explicit token handling is needed. The `knot.apiclient` transport is pre-configured by the runtime.

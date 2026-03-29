@@ -20,6 +20,7 @@ Standalone volumes do not count toward a user's **Storage Units** quota.
 3. Fill in the required fields:
    - **`Name`**: A descriptive name to identify the volume.
    - **`Platform`**: The platform the volume is for (e.g., Nomad, Docker, or Podman).
+   - **`Server`**: For local container platforms (Docker, Podman, Apple, Container), select which server in the cluster should host the volume. If only one server supports the platform it is selected automatically. This can be changed later while the volume is stopped.
    - **`Volume Definition`**: The YAML definition of the volume.
 
 ---
@@ -104,6 +105,8 @@ A volume must be started to make it available within the cluster.
 2. Select **`Start`**.
    {{< picture src="images/start-volume.webp" caption="Start a Volume" >}}
 
+The volume will be started on the server it was assigned to when it was created or last edited.
+
 ---
 
 ## Stopping a Volume
@@ -114,6 +117,8 @@ Stopping a volume will destroy all data on the volume.
 
 Stopping a volume releases the resources it is using, but it also destroys all data stored on the volume. To stop a volume:
 1. Click **`Stop`** in the volume's menu.
+
+In a cluster, the stop request is automatically forwarded to the server where the volume is running.
 
 ---
 

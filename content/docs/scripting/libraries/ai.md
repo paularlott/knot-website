@@ -3,7 +3,7 @@ title: knot.ai
 weight: 20
 ---
 
-The `knot.ai` library provides access to the server's AI client for scripts. It returns a pre-configured client instance connected to the upstream AI provider.
+The `knot.ai` library provides access to an AI client for scripts. In embedded contexts (MCP, remote, local scripts) it returns a pre-configured client connected to the server's AI provider. For standalone use outside knot, configure `knot.apiclient` with AI connection details.
 
 ---
 
@@ -11,44 +11,76 @@ The `knot.ai` library provides access to the server's AI client for scripts. It 
 
 | Function | Description |
 |----------|-------------|
-| `Client()` | Get a pre-configured AI client instance |
-| `get_default_model()` | Get the server-configured default model name |
+| `get_default_model()` | Returns the configured default model name, or `""` |
+| `Client()` | Get an AI client instance |
 
 ---
 
-## Usage
+## Embedded Usage
 
 ```python
 import knot.ai as ai
 
-# Get the AI client
 client = ai.Client()
-model = ai.get_default_model()
 
-# Simple completion
-response = client.completion(model, [
-    {"role": "user", "content": "What is the capital of France?"}
-])
-print(response.choices[0].message.content)
+# Pass "" as model - server uses its configured default
+answer = client.ask("", "What is the capital of France?")
+print(answer)
+```
+
+---
+
+## Standalone Usage
+
+Configure `knot.apiclient` with AI kwargs or set environment variables:
+
+```python
+import knot.apiclient
+import knot.ai as ai
+
+knot.apiclient.configure(
+    "https://knot.example.com", "your-token",
+    ai_model="gpt-4o",
+    ai_provider="openai",
+    # ai_url defaults to url + "/v1"
+    # ai_token defaults to token
+)
+
+client = ai.Client()
+model = ai.get_default_model()  # returns "gpt-4o"
+
+answer = client.ask(model, "What is the capital of France?")
+print(answer)
+```
+
+Or via environment variables (read on first use):
+
+```
+KNOT_URL=https://knot.example.com
+KNOT_TOKEN=your-token
+KNOT_AI_MODEL=gpt-4o
+KNOT_AI_PROVIDER=openai
+KNOT_AI_URL=https://knot.example.com/v1   # optional
+KNOT_AI_TOKEN=your-ai-token               # optional, defaults to KNOT_TOKEN
 ```
 
 ---
 
 ## Function Details
 
-### Client()
+### get_default_model()
 
-Returns a pre-configured AI client instance. The client connects to whichever LLM provider the server is configured to use (OpenAI, Claude, Gemini, Ollama, etc.).
+Returns the `ai_model` from `knot.apiclient` config. Always returns `""` in embedded contexts — passing `""` to any client method causes the server to use its configured default.
 
-**Returns:** `Client` - An AI client instance with the methods documented below.
+**Returns:** `str` - The model name, or `""`
 
 ---
 
-### get_default_model()
+### Client()
 
-Get the name of the server-configured default model.
+Returns an AI client instance. In embedded contexts returns the pre-configured server client. In standalone use creates a `scriptling.ai` client using the AI connection details from `knot.apiclient`.
 
-**Returns:** `str` - The model name (e.g. `"gpt-4o"`, `"claude-sonnet-4-20250514"`), or an empty string if not configured.
+**Returns:** `Client` - An AI client instance
 
 ---
 
@@ -61,7 +93,7 @@ The client object returned by `ai.Client()` has the following methods:
 Creates a chat completion.
 
 **Parameters:**
-- `model` (str): Model identifier (e.g., "gpt-4o", "claude-sonnet-4-20250514")
+- `model` (str): Model identifier, or `""` to use the server's configured default
 - `messages` (str or list): Either a string (user message) or a list of message dicts with "role" and "content" keys
 - `system_prompt` (str, optional): System prompt to use when messages is a string
 - `tools` (list, optional): List of tool schema dicts
@@ -71,14 +103,14 @@ Creates a chat completion.
 **Returns:** `dict` - Response containing id, choices, usage, etc.
 
 ```python
-# String shorthand
-response = client.completion(model, "What is 2+2?")
+# String shorthand - "" uses server default model
+response = client.completion("", "What is 2+2?")
 
 # With system prompt
-response = client.completion(model, "What is 2+2?", system_prompt="You are a math tutor")
+response = client.completion("", "What is 2+2?", system_prompt="You are a math tutor")
 
 # Full messages array
-response = client.completion(model, [
+response = client.completion("", [
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": "What is Python?"}
 ])
@@ -87,16 +119,31 @@ print(response.choices[0].message.content)
 
 ---
 
+### client.ask(model, messages, **kwargs)
+
+Quick completion that returns text directly, with thinking blocks automatically removed.
+
+**Parameters:** Same as `completion()`
+
+**Returns:** `str` - The response text
+
+```python
+answer = client.ask("", "What is 2+2?")
+print(answer)  # "4"
+```
+
+---
+
 ### client.completion_stream(model, messages, **kwargs)
 
-Creates a streaming chat completion. Returns a ChatStream object.
+Creates a streaming chat completion.
 
 **Parameters:** Same as `completion()`
 
 **Returns:** `ChatStream` - A stream object with a `next()` method
 
 ```python
-stream = client.completion_stream(model, "Count to 10")
+stream = client.completion_stream("", "Count to 10")
 while True:
     chunk = stream.next()
     if chunk is None:
@@ -109,94 +156,29 @@ while True:
 
 ---
 
-### client.ask(model, messages, **kwargs)
-
-Quick completion method that returns text directly, with thinking blocks automatically removed.
-
-**Parameters:** Same as `completion()`
-
-**Returns:** `str` - The response text with thinking blocks removed
-
-```python
-# Simple query
-answer = client.ask(model, "What is 2+2?")
-print(answer)  # "4"
-
-# With system prompt
-answer = client.ask(model, "Explain quantum physics", system_prompt="You are a physics professor")
-```
-
----
-
 ### client.embedding(model, input)
 
 Creates an embedding vector for the given input text(s).
 
 **Parameters:**
-- `model` (str): Model identifier (e.g., "text-embedding-3-small")
+- `model` (str): Model identifier
 - `input` (str or list): Input text(s) to embed
 
 **Returns:** `dict` - Response containing data (list of embeddings), model, and usage
-
-```python
-# Single text embedding
-response = client.embedding("text-embedding-3-small", "Hello world")
-print(response.data[0].embedding)
-
-# Batch embedding
-response = client.embedding("text-embedding-3-small", ["Hello", "World"])
-for emb in response.data:
-    print(emb.embedding)
-```
-
----
-
-## Multi-turn Conversation
-
-```python
-import knot.ai as ai
-
-client = ai.Client()
-model = ai.get_default_model()
-
-messages = [
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "What is Python?"}
-]
-
-response = client.completion(model, messages)
-print("AI:", response.choices[0].message.content)
-
-# Continue the conversation
-messages.append({"role": "assistant", "content": response.choices[0].message.content})
-messages.append({"role": "user", "content": "What are its main use cases?"})
-
-response = client.completion(model, messages)
-print("AI:", response.choices[0].message.content)
-```
 
 ---
 
 ## With Agent Framework
 
-The primary use case is with the `scriptling.ai.agent` library for agentic workflows:
-
 ```python
 import knot.ai as ai
-import scriptling.ai as sai
 import scriptling.ai.agent as agent
 
 client = ai.Client()
-model = ai.get_default_model()
-
-# Create an agent with tools
-tools = sai.ToolRegistry()
-tools.add("greet", "Greet someone", {"name": "string"}, lambda args: f"Hello, {args['name']}!")
 
 bot = agent.Agent(
     client=client,
-    model=model,
-    tools=tools,
+    model="",
     system_prompt="You are a helpful assistant."
 )
 
@@ -207,8 +189,6 @@ print(response.content)
 ---
 
 ## Error Handling
-
-If the AI client is not configured on the server, `Client()` will raise an error:
 
 ```python
 import knot.ai as ai

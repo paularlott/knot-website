@@ -43,7 +43,7 @@ print(icons)
 
 ## Template Properties
 
-Templates contain:
+`list()` returns summary objects containing:
 - `id` - Template ID
 - `name` - Template name
 - `description` - Description
@@ -51,3 +51,25 @@ Templates contain:
 - `active` - Whether the template is active
 - `usage` - Current usage count
 - `deployed` - Number of deployed spaces
+
+`get()` returns the full template including all of the above plus:
+- `job` - Job definition
+- `volumes` - Volume definitions
+- `is_managed` - Whether managed by the system
+- `compute_units` - Compute units quota
+- `storage_units` - Storage units quota
+- `hash` - Template hash
+- `with_terminal` - Terminal access enabled
+- `with_vscode_tunnel` - VS Code tunnel enabled
+- `with_code_server` - Code Server enabled
+- `with_ssh` - SSH access enabled
+- `with_run_command` - Run command enabled
+- `schedule_enabled` - Schedule enabled
+- `auto_start` - Auto-start enabled
+- `max_uptime` - Maximum uptime value
+- `max_uptime_unit` - Maximum uptime unit
+- `icon_url` - Icon URL
+- `groups` - List of group IDs
+- `zones` - List of zone names
+- `schedule` - List of schedule day dicts (`enabled`, `from`, `to`)
+- `custom_fields` - List of custom field dicts (`name`, `description`)

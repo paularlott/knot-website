@@ -3,7 +3,7 @@ title: knot.mcp
 weight: 30
 ---
 
-The `knot.mcp` library provides MCP (Model Context Protocol) functionality for scripts, including tool discovery and execution.
+The `knot.mcp` library provides MCP (Model Context Protocol) tool discovery and execution. It exposes the same flat function interface in all environments — in embedded contexts (Local, MCP, Remote) routing through the server's internal endpoint, and in External contexts connecting to the server's `/mcp` endpoint via `knot.apiclient` config.
 
 ---
 
@@ -11,7 +11,7 @@ The `knot.mcp` library provides MCP (Model Context Protocol) functionality for s
 
 | Function | Description |
 |----------|-------------|
-| `list_tools()` | Get a list of all available MCP tools |
+| `list_tools()` | Get all available MCP tools |
 | `call_tool(name, arguments)` | Call an MCP tool directly |
 | `tool_search(query, max_results=10)` | Search for tools by keyword |
 | `execute_tool(name, arguments)` | Execute a discovered tool |
@@ -26,15 +26,16 @@ import knot.mcp as mcp
 # List all available tools
 tools = mcp.list_tools()
 for tool in tools:
-    print(f"Tool: {tool['name']} - {tool['description']}")
+    print(f"{tool['name']}: {tool['description']}")
 
-# Search for space-related tools
+# Search for tools
 results = mcp.tool_search("list spaces")
-print(results)
 
 # Execute a tool
 spaces = mcp.execute_tool("list_spaces", {})
-print(spaces)
+
+# Call a tool directly
+response = mcp.call_tool("my_tool", {"param": "value"})
 ```
 
 ---
@@ -45,7 +46,7 @@ print(spaces)
 
 Get a list of all available MCP tools, including tools from remote MCP servers if configured.
 
-**Returns:** `list` - List of tool objects with `name`, `description`, and `parameters` (JSON Schema).
+**Returns:** `list` - List of tool dicts with `name`, `description`, and `parameters` (JSON Schema)
 
 ---
 
@@ -54,7 +55,7 @@ Get a list of all available MCP tools, including tools from remote MCP servers i
 Search for tools by keyword.
 
 **Parameters:**
-- `query` (string): Search query
+- `query` (str): Search query
 - `max_results` (int, optional): Maximum results to return (default: 10)
 
 **Returns:** `list` - Matching tools
@@ -66,10 +67,10 @@ Search for tools by keyword.
 Execute a discovered tool.
 
 **Parameters:**
-- `name` (string): Tool name
+- `name` (str): Tool name
 - `arguments` (dict): Arguments to pass to the tool
 
-**Returns:** `any` - The tool's response, automatically decoded from JSON if applicable.
+**Returns:** `any` - The tool's response, automatically decoded from JSON if applicable
 
 ---
 
@@ -78,7 +79,7 @@ Execute a discovered tool.
 Low-level tool execution. For most cases, use `execute_tool()` instead.
 
 **Parameters:**
-- `name` (string): Tool name
+- `name` (str): Tool name
 - `arguments` (dict): Arguments to pass
 
 **Returns:** `any` - Tool response
@@ -87,21 +88,17 @@ Low-level tool execution. For most cases, use `execute_tool()` instead.
 
 ## MCP Tool Development
 
-For creating MCP tools, use `scriptling.mcp.tool` for portable parameter access:
+For creating MCP tools, use `scriptling.mcp.tool` for parameter access and returning results:
 
 ```python
 import scriptling.mcp.tool as tool
-import knot.space
+import knot.space as space
 
-# Get parameters
 name = tool.get_string("name")
 count = tool.get_int("count", 1)
 
-# Use knot libraries
-space = knot.space.get(name)
-
-# Return result
-tool.return_object(space)
+s = space.get(name)
+tool.return_object(s)
 ```
 
 ---
@@ -113,10 +110,8 @@ Tools from remote MCP servers have a namespace prefix:
 ```python
 import knot.mcp as mcp
 
-# Call a remote tool
 response = mcp.call_tool("ai.generate-text", {
     "prompt": "Write a hello world function",
     "max_tokens": 50
 })
-print(response)
 ```

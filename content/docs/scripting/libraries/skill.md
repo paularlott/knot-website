@@ -11,7 +11,7 @@ The `knot.skill` library provides functions to manage skills (knowledge base con
 
 | Function | Description |
 |----------|-------------|
-| `create(content, global=False, groups=[], zones=[])` | Create a new skill |
+| `create(content, is_global=False, groups=[], zones=[])` | Create a new skill |
 | `get(name_or_id)` | Get a skill by name or UUID |
 | `update(name_or_id, content=None, groups=None, zones=None)` | Update a skill |
 | `delete(name_or_id)` | Delete a skill |
@@ -46,6 +46,14 @@ description: "Python coding best practices"
 - Follow PEP 8
 - Use meaningful variable names
 """)
+
+# Create a global skill
+global_id = skill.create("""---
+name: "shared-practices"
+description: "Shared team practices"
+---
+Content here.
+""", is_global=True)
 
 # List skills
 skills = skill.list()

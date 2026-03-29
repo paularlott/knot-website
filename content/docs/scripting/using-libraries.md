@@ -9,11 +9,11 @@ The `knot.*` namespace provides libraries for interacting with Knot from scripts
 
 ## Execution Contexts
 
-| Context                 | Configuration                   | Authentication            |
-| ----------------------- | ------------------------------- | ------------------------- |
-| **Built-in Scriptling** | None required                   | Automatic (context token) |
-| **Knot CLI**            | None required                   | Uses `~/.knot/config`     |
-| **External Scriptling** | `knot.api.configure()` required | Manual (pass token)       |
+| Context | Configuration | Authentication |
+|---------|---------------|----------------|
+| **Built-in** | None required | Automatic (context token) |
+| **Knot CLI** | None required | Uses `~/.knot/config` |
+| **External Scriptling** | `knot.apiclient` required | Manual (env vars or explicit) |
 
 ---
 
@@ -24,31 +24,27 @@ Scripts running inside Knot (startup scripts, shutdown scripts, MCP tools, space
 ```python
 import knot.space as space
 
-# List all spaces
 spaces = space.list()
 for s in spaces:
     status = "running" if s['is_running'] else "stopped"
     print(f"{s['name']}: {status}")
 ```
 
-No configuration is needed - the library uses the execution context for authentication.
+No configuration is needed — the library uses the execution context for authentication.
 
 ---
 
 ## Knot CLI
 
-When running scripts locally with the Knot CLI, the knot.\* libraries are fetched from the Knot server and make API calls automatically:
+When running scripts locally with the Knot CLI, the `knot.*` libraries make API calls automatically using the token from `~/.knot/config`:
 
 ```bash
 knot run-script myscript.py
 ```
 
-The libraries use the API token from `~/.knot/config` for authentication.
-
 ```python
 import knot.space as space
 
-# List all spaces - automatically uses ~/.knot/config
 spaces = space.list()
 for s in spaces:
     status = "running" if s['is_running'] else "stopped"
@@ -59,46 +55,70 @@ for s in spaces:
 
 ## External Scriptling
 
-For standalone [scriptling](https://scriptling.dev/) scripts using the `knot.zip` package, explicit configuration is required:
+For standalone [scriptling](https://scriptling.dev/) scripts using the `knot.zip` package, configure `knot.apiclient` before using any `knot.*` library. The simplest approach is environment variables, which are read automatically on first use:
+
+```bash
+export KNOT_URL=https://knot.example.com
+export KNOT_TOKEN=your-api-token
+
+# AI options (if using knot.ai):
+export KNOT_AI_MODEL=gpt-4o
+export KNOT_AI_PROVIDER=openai   # optional, defaults to openai
+```
 
 ```python
-import knot.api
-import knot.space
+import knot.space as space
 
-# Configure the connection first
-knot.api.configure("https://knot.example.com", "your-api-token")
-
-# List all spaces
-spaces = knot.space.list()
+# Auto-configured from KNOT_URL / KNOT_TOKEN
+spaces = space.list()
 for s in spaces:
     status = "running" if s['is_running'] else "stopped"
     print(f"{s['name']}: {status}")
 ```
 
-This is useful for scripts running outside of the Knot environment.
+Or configure explicitly in the script:
+
+```python
+import knot.apiclient
+import knot.space as space
+
+knot.apiclient.configure(
+    "https://knot.example.com",
+    "your-api-token",
+    ai_model="gpt-4o",      # optional: for knot.ai
+    ai_provider="openai",   # optional: for knot.ai
+)
+
+spaces = space.list()
+```
+
+Load the package with scriptling:
 
 ```bash
 scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 ```
 
 {{< tip "warning" >}}
-**Note**: In production environments the sha256 hash should be included in the package URL to improve security.
+In production environments include the sha256 hash in the package URL to improve security.
 {{< /tip >}}
+
+See [knot.apiclient](../libraries/apiclient/) for the full list of configuration options and environment variables.
 
 ---
 
 ## Available Libraries
 
-| Library                                     | Description          |
-| ------------------------------------------- | -------------------- |
-| [knot.space](../libraries/space/)           | Space management     |
-| [knot.user](../libraries/user/)             | User management      |
-| [knot.group](../libraries/group/)           | Group management     |
-| [knot.role](../libraries/role/)             | Role management      |
-| [knot.template](../libraries/template/)     | Template management  |
-| [knot.volume](../libraries/volume/)         | Volume management    |
-| [knot.vars](../libraries/vars/)             | Template variables   |
-| [knot.skill](../libraries/skill/)           | Skills management    |
+| Library | Description |
+|---------|-------------|
+| [knot.apiclient](../libraries/apiclient/) | Transport configuration (external use) |
+| [knot.space](../libraries/space/) | Space management |
+| [knot.user](../libraries/user/) | User management |
+| [knot.group](../libraries/group/) | Group management |
+| [knot.role](../libraries/role/) | Role management |
+| [knot.template](../libraries/template/) | Template management |
+| [knot.volume](../libraries/volume/) | Volume management |
+| [knot.vars](../libraries/vars/) | Template variables |
+| [knot.skill](../libraries/skill/) | Skills management |
 | [knot.permission](../libraries/permission/) | Permission constants |
-| [knot.ai](../libraries/ai/)                 | AI completion        |
-| [knot.mcp](../libraries/mcp/)               | MCP tool interaction |
+| [knot.ai](../libraries/ai/) | AI completion |
+| [knot.mcp](../libraries/mcp/) | MCP tool interaction |

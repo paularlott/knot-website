@@ -27,5 +27,17 @@ import knot.group as group
 # List groups
 groups = group.list()
 for g in groups:
-    print(f"{g['name']}: {len(g['users'])} users")
+    print(f"{g['name']}")
 ```
+
+---
+
+## Group Properties
+
+Groups contain:
+- `id` - Group ID
+- `name` - Group name
+- `max_spaces` - Maximum spaces allowed
+- `compute_units` - Compute units quota
+- `storage_units` - Storage units quota
+- `max_tunnels` - Maximum tunnels allowed (only in `get()`)

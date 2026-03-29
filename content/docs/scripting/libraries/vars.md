@@ -14,7 +14,7 @@ The `knot.vars` library provides template variable management functions.
 | `list()` | List all variables |
 | `get(var_id)` | Get variable by ID or name |
 | `create(name, value, zones=[], local=False, protected=False, restricted=False)` | Create a new variable |
-| `set(var_id, value)` | Set variable value (alias for update) |
+| `set_value(var_id, value)` | Set variable value |
 | `update(var_id, value=None, zones=None, ...)` | Update variable properties |
 | `delete(var_id)` | Delete a variable |
 
@@ -37,8 +37,8 @@ var_id = vars.create("API_KEY", "secret-value", protected=True)
 api_key = vars.get("API_KEY")
 print(api_key['value'])
 
-# Set a variable value (simple update)
-vars.set("API_KEY", "new-secret-value")
+# Set a variable value
+vars.set_value("API_KEY", "new-secret-value")
 
 # Update with more options
 vars.update("API_KEY", value="new-value", zones=["zone1", "zone2"])
