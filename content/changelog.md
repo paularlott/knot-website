@@ -6,6 +6,39 @@ draft: false
 weight: 100
 ---
 
+## April 2026
+
+{{< version "v0.24.0" >}}
+
+This release introduces Knot Pro with OAuth authentication and visual port forwarding between spaces, along with persistent port forwarding for agents and significant UI improvements.
+
+{{< changelog-item "added" >}}
+
+- **OAuth Authentication** {{< pro-badge >}}:
+  - GitHub and Google OAuth providers for single sign-on
+  - Link and unlink external auth providers from user profiles
+  - Automatic user provisioning from OAuth providers
+- **Visual Port Forwarding** {{< pro-badge >}}:
+  - Visual interface for defining and managing port forwarding between spaces
+  - Persistent port forwarding configuration that survives space restarts
+  {{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+
+- **Agent Port Forwarding**:
+  - Added persistent port forwarding support to agents
+  - Port forwards can be configured to persist across agent restarts
+- **Volume Management**:
+  - Refactored Docker and Podman volume management to reduce dependencies
+  - Improved local container volume support
+- **UI/UX**:
+  - Improved form styles for better accessibility and visual consistency
+  - Enhanced autocompleter inputs with ARIA roles and properties
+  - Improved modal close buttons and popup behaviour
+- **Database Migrations**:
+  - Improved migration code reliability
+  {{< /changelog-item >}}
+
 ## March 2026
 
 {{< version "v0.23.0" >}}

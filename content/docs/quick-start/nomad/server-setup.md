@@ -188,6 +188,10 @@ EOF
 }
 ```
 
+{{< tip >}}
+**Knot Pro** {{< pro-badge >}}: Replace `paularlott/knot:latest` with `paularlott/knot-pro:latest` and add your license configuration. See [Pro Installation](../pro-installation/) for details.
+{{< /tip >}}
+
 ---
 
 ### Step 5: Deploy the Job

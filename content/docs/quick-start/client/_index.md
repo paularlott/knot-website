@@ -24,6 +24,8 @@ While not required to use the **knot** web interface, the desktop client provide
   ```bash
   brew install paularlott/tap/knot
   ```
+
+  For **Knot Pro** {{< pro-badge >}}, use `brew install paularlott/tap/knot-pro` or download from the [knot-pro releases](https://github.com/paularlott/knot-pro/releases) page.
   {{< /tab >}}
 
   {{< tab >}}
@@ -34,6 +36,8 @@ While not required to use the **knot** web interface, the desktop client provide
   ```bash
   brew install paularlott/tap/knot
   ```
+
+  For **Knot Pro** {{< pro-badge >}}, use `brew install paularlott/tap/knot-pro` or download from the [knot-pro releases](https://github.com/paularlott/knot-pro/releases) page.
 
   Alternatively, you can download the latest binary from [GitHub releases](https://github.com/paularlott/knot/releases).
 
@@ -47,7 +51,11 @@ While not required to use the **knot** web interface, the desktop client provide
   {{< tab >}}
   ### Windows Installation
 
-  The latest binary for Windows can be downloaded from [GitHub releases](https://github.com/paularlott/knot/releases).
+  The latest binary for Windows can be downloaded from [GitHub releases](https://github.com/paularlott/knot/releases). For Knot Pro {{< pro-badge >}}, download from the [knot-pro releases](https://github.com/paularlott/knot-pro/releases) page.
   {{< /tab >}}
 
 {{< /tabs >}}
+
+{{< tip >}}
+The **Knot Pro** {{< pro-badge >}} client works with both Pro and open-source Knot servers. You only need the Pro client if you want to use Pro features like OAuth authentication.
+{{< /tip >}}
