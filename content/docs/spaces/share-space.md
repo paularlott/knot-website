@@ -3,7 +3,7 @@ title: Sharing Spaces
 weight: 80
 ---
 
-Spaces can be shared between users on the same **knot** server, allowing both users to access and manage the space collaboratively. Shared spaces enable both users to:
+Spaces can be shared between users on the same **knot** server, allowing users to access and manage the space collaboratively. Shared spaces enable users to:
 - SSH into the space.
 - Access its web interface.
 - Use its web terminal.
@@ -12,8 +12,9 @@ Spaces can be shared between users on the same **knot** server, allowing both us
 
 ## Key Details
 
-- A space can only be shared with **one user at a time**.
-- Both the original user and the shared user will have equal access to the space.
+- **Core**: A space can be shared with **one user at a time**.
+- **Pro**: A space can be shared with **multiple users** simultaneously.
+- The original owner and all shared users have equal access to the space.
 
 ---
 
@@ -33,10 +34,30 @@ Spaces can be shared between users on the same **knot** server, allowing both us
 
 ## Cancelling a Shared Space
 
-- Either user can cancel the sharing at any time by selecting the `Stop Sharing` menu item.
+- The owner can cancel sharing at any time by selecting the `Stop Sharing` menu item.
+- Shared users can leave a shared space from the same menu.
 - Once cancelled:
-  - The space will no longer be accessible to the user it was shared with.
-  - SSH keys belonging to the shared user will be removed from the space.
+  - The space will no longer be accessible to the removed user.
+  - SSH keys belonging to the removed user will be removed from the space.
+
+---
+
+## Sharing via Scripting
+
+Use the `knot.space` library to share and unshare spaces programmatically:
+
+```python
+import knot.space as space
+
+# Share a space with a user (accepts user ID, username, or email)
+space.share("my-space", "alice@example.com")
+
+# Remove sharing for a specific user
+space.unshare("my-space", user_id="alice@example.com")
+
+# Stop all sharing (owner only)
+space.unshare("my-space")
+```
 
 ---
 
