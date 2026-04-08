@@ -14,6 +14,13 @@ This release introduces Knot Pro with OAuth authentication and visual port forwa
 
 {{< changelog-item "added" >}}
 
+- **Space Dependencies**:
+  - Spaces can declare dependencies on other spaces
+  - A space will not start unless all its dependent spaces are running
+- **Structured Log Output**:
+  - Forward logs to external log aggregation services via HTTP
+  - Supports VictoriaLogs (ndjson), Grafana Loki, and Elasticsearch formats
+  - Configurable stream name, batching (100 records / 2 seconds), and automatic field mapping
 - **OAuth Authentication** {{< pro-badge >}}:
   - GitHub and Google OAuth providers for single sign-on
   - Link and unlink external auth providers from user profiles
@@ -25,6 +32,8 @@ This release introduces Knot Pro with OAuth authentication and visual port forwa
 
 {{< changelog-item "changed" >}}
 
+- **Usernames**:
+  - Dots are now allowed in usernames (e.g. `first.last`)
 - **Agent Port Forwarding**:
   - Added persistent port forwarding support to agents
   - Port forwards can be configured to persist across agent restarts

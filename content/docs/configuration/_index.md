@@ -96,6 +96,9 @@ Enable TOTP-based 2FA for enhanced security.
 ### [User Interface](ui)
 Customize the web interface with logos and Gravatar support.
 
+### [Logging](logging)
+Forward structured logs to VictoriaLogs, Grafana Loki, or Elasticsearch.
+
 ---
 
 ## Quick Configuration Examples
