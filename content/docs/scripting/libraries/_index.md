@@ -23,6 +23,7 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 | [knot.role](role/) | Role management |
 | [knot.vars](vars/) | Variables management |
 | [knot.permission](permission/) | Permission checking |
+| [knot.audit](audit/) | Audit log search and filtering |
 
 ---
 

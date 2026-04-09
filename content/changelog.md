@@ -24,6 +24,9 @@ This release introduces Knot Pro with OAuth authentication and visual port forwa
 - **Audit Log Download**:
   - New `Download Audit Logs` permission controls who can export logs
   - Download all audit logs as CSV or JSON directly from the audit log page
+- **Audit Log Filtering** {{< pro-badge >}}:
+  - Filter audit logs by actor, actor type, event type, and date range
+  - Full-text search across actor, event, and details fields
 - **OAuth Authentication** {{< pro-badge >}}:
   - GitHub and Google OAuth providers for single sign-on
   - Link and unlink external auth providers from user profiles
