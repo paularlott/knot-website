@@ -21,6 +21,9 @@ This release introduces Knot Pro with OAuth authentication and visual port forwa
   - Forward logs to external log aggregation services via HTTP
   - Supports VictoriaLogs (ndjson), Grafana Loki, and Elasticsearch formats
   - Configurable stream name, batching (100 records / 2 seconds), and automatic field mapping
+- **Audit Log Download**:
+  - New `Download Audit Logs` permission controls who can export logs
+  - Download all audit logs as CSV or JSON directly from the audit log page
 - **OAuth Authentication** {{< pro-badge >}}:
   - GitHub and Google OAuth providers for single sign-on
   - Link and unlink external auth providers from user profiles
