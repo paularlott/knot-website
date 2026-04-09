@@ -27,7 +27,7 @@ The `knot.space` library provides space management functions for scripts.
 | `get_field(name, field)` | Get a custom field value |
 | `set_field(name, field, value)` | Set a custom field value |
 | `transfer(name, user_id)` | Transfer space ownership |
-| `share(name, user_id)` | Share space with another user |
+| `share(name, user_ids)` | Share space with one or more users |
 | `unshare(name, user_id=None)` | Remove space share, optionally for a specific user |
 | `run_script(space_name, script_name, *args)` | Execute a script in a space |
 | `run(space_name, command, args=[], timeout=30, workdir='')` | Execute a command in a space |
@@ -178,13 +178,13 @@ Get detailed information about a space.
 
 ---
 
-### share(name, user_id)
+### share(name, user_ids)
 
-Share a space with another user.
+Share a space with one or more users.
 
 **Parameters:**
 - `name` (string): Name or ID of the space
-- `user_id` (string): User ID, username, or email to share with
+- `user_ids` (string or list): User ID, username, or email to share with, or a list of those values
 
 **Returns:** `bool` - True on success
 
