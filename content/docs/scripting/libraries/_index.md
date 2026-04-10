@@ -23,6 +23,7 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 | [knot.role](role/) | Role management |
 | [knot.vars](vars/) | Variables management |
 | [knot.permission](permission/) | Permission checking |
+| [knot.healthcheck](healthcheck/) | Space health monitoring (agent-side only) |
 | [knot.audit](audit/) | Audit log search and filtering |
 
 ---
@@ -46,7 +47,7 @@ tools = mcp.Client().tools()
 
 ## Environment Compatibility
 
-All `knot.*` libraries are available in all embedded environments (local, MCP, remote). `knot.ai` and `knot.mcp` are only available in embedded contexts — external scripts should use `scriptling.ai` and `scriptling.mcp` directly.
+All `knot.*` libraries are available in all embedded environments (local, MCP, remote), except `knot.healthcheck` which is only available in agent-side health check scripts. `knot.ai` and `knot.mcp` are only available in embedded contexts — external scripts should use `scriptling.ai` and `scriptling.mcp` directly.
 
 ---
 

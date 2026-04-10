@@ -34,6 +34,12 @@ This release introduces Knot Pro with OAuth authentication and visual port forwa
 - **Visual Port Forwarding** {{< pro-badge >}}:
   - Visual interface for defining and managing port forwarding between spaces
   - Persistent port forwarding configuration that survives space restarts
+- **Health Checks**:
+  - Templates can configure health checks to monitor space availability
+  - Built-in check types: HTTP HEAD, TCP port, program execution, and custom script
+  - Configurable interval, timeout, and failure threshold
+  - Automatic space restart when health checks fail beyond the configured threshold
+  - `knot.healthcheck` library for custom health check scripts
   {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
