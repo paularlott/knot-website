@@ -210,7 +210,7 @@ Set the stack name for a space. Spaces with the same stack name are grouped toge
 
 ### start_stack(stack_name)
 
-Start all spaces in a stack. Requires a Pro license.
+Start all spaces in a stack. Spaces are started in dependency order.
 
 **Parameters:**
 - `stack_name` (string): Name of the stack to start
@@ -221,7 +221,7 @@ Start all spaces in a stack. Requires a Pro license.
 
 ### stop_stack(stack_name)
 
-Stop all spaces in a stack. Requires a Pro license.
+Stop all spaces in a stack. Spaces are stopped in reverse dependency order.
 
 **Parameters:**
 - `stack_name` (string): Name of the stack to stop
@@ -232,7 +232,7 @@ Stop all spaces in a stack. Requires a Pro license.
 
 ### restart_stack(stack_name)
 
-Restart all spaces in a stack. Requires a Pro license.
+Restart all spaces in a stack. Spaces are restarted in dependency order.
 
 **Parameters:**
 - `stack_name` (string): Name of the stack to restart
