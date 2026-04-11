@@ -14,6 +14,10 @@ This release introduces Knot Pro with OAuth authentication and visual port forwa
 
 {{< changelog-item "added" >}}
 
+- **Space Stacks**:
+  - Group spaces under a stack name for visual organization
+  - Stacks are displayed as collapsible groups in the spaces list
+  - `get_stack` and `set_stack` functions in the `knot.space` library
 - **Space Dependencies**:
   - Spaces can declare dependencies on other spaces
   - A space will not start unless all its dependent spaces are running
