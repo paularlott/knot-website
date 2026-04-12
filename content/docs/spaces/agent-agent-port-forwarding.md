@@ -114,6 +114,56 @@ The desktop client commands require you to be authenticated with the knot server
 - **Database Access**: Allow application containers to access database containers
 - **Service Discovery**: Enable development environments that mirror production architectures
 
+---
+
+## Apply Port Forwards
+
+Replace all port forwards for a space with a new set. This is useful for declarative configuration where you want to ensure the forwarding state matches a desired list.
+
+### From a Space (Scripting)
+
+```python
+import knot.space as space
+
+# Apply a set of port forwards, replacing any existing ones
+result = space.port_apply("frontend", [
+    {"local_port": 8080, "space": "backend-api", "remote_port": 3000},
+    {"local_port": 5432, "space": "database", "remote_port": 5432},
+])
+
+print(f"Applied: {result['applied']}")
+print(f"Stopped: {result['stopped']}")
+```
+
+### Via API
+
+```shell
+curl -X POST https://knot.example.com/space-io/{space_id}/port/apply \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "forwards": [
+      {"local_port": 8080, "space": "backend-api", "remote_port": 3000},
+      {"local_port": 5432, "space": "database", "remote_port": 5432}
+    ]
+  }'
+```
+
+Response:
+```json
+{
+  "applied": [
+    {"local_port": 8080, "space": "backend-api", "remote_port": 3000, "persistent": false}
+  ],
+  "stopped": [
+    {"local_port": 9090, "space": "old-service", "remote_port": 8080, "persistent": false}
+  ],
+  "errors": []
+}
+```
+
+Each forward entry supports optional `persistent` and `force` fields (same as individual port forward).
+
 {{< tip >}}
 Agent-to-agent port forwarding only works between spaces in the same zone and owned by the same user. The connection is authenticated and secure.
 {{< /tip >}}

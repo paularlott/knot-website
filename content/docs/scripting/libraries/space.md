@@ -39,6 +39,7 @@ The `knot.space` library provides space management functions for scripts.
 | `read_file(space_name, file_path)` | Read file contents from a space |
 | `write_file(space_name, file_path, content)` | Write content to a file in a space |
 | `port_forward(source_space, local_port, remote_space, remote_port)` | Forward a port between spaces |
+| `port_apply(source_space, forwards)` | Replace all port forwards with the given list |
 | `port_list(space)` | List active port forwards |
 | `port_stop(space, local_port)` | Stop a port forward |
 
@@ -274,3 +275,23 @@ Transfer space ownership to another user.
 - `user_id` (string): User ID, username, or email of the new owner
 
 **Returns:** `bool` - True on success
+
+---
+
+### port_apply(source_space, forwards)
+
+Replace all port forwards for a space with the given list. Any existing forwards not in the list are stopped, and any new forwards in the list are started. Forwards that already exist with the same local port, space, and remote port are left unchanged.
+
+**Parameters:**
+- `source_space` (string): Source space name or ID
+- `forwards` (list): List of dicts, each containing:
+  - `local_port` (int): Local port number
+  - `space` (string): Remote space name or ID
+  - `remote_port` (int): Remote port number
+  - `persistent` (bool, optional): Persist the forward across restarts (default: False)
+  - `force` (bool, optional): Skip validation checks (default: False)
+
+**Returns:** `dict` containing:
+- `applied` (list): List of forwards that were started
+- `stopped` (list): List of forwards that were stopped
+- `errors` (list): List of error messages (if any)
