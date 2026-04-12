@@ -38,7 +38,7 @@ The `knot.space` library provides space management functions for scripts.
 | `run(space_name, command, args=[], timeout=30, workdir='')` | Execute a command in a space |
 | `read_file(space_name, file_path)` | Read file contents from a space |
 | `write_file(space_name, file_path, content)` | Write content to a file in a space |
-| `port_forward(source_space, local_port, remote_space, remote_port)` | Forward a port between spaces |
+| `port_forward(source_space, local_port, remote_space, remote_port, persistent=False, force=False)` | Forward a port between spaces |
 | `port_apply(source_space, forwards)` | Replace all port forwards with the given list |
 | `port_list(space)` | List active port forwards |
 | `port_stop(space, local_port)` | Stop a port forward |

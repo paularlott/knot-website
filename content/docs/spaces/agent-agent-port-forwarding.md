@@ -10,7 +10,7 @@ Agent-to-agent port forwarding allows spaces to communicate directly with each o
 ## Requirements
 
 For agent-to-agent port forwarding to work:
-- Both spaces must be running and have active agents
+- The source space must be running and have an active agent (or use `--persistent` to pre-configure a forward for when it starts)
 - Spaces must be in the same zone
 - Spaces must be owned by the same user
 - Local port must be in the range 1-65535
@@ -24,7 +24,7 @@ The following commands are run from inside a space using the knot agent:
 Forward a port from the current space to another space:
 
 ```shell
-knot port forward <local-port> <space-name> <remote-port>
+knot port forward <local-port> <space-name> <remote-port> [--persistent] [--force]
 ```
 
 Example:
@@ -33,6 +33,9 @@ knot port forward 8080 backend-api 3000
 ```
 
 This forwards port 8080 in the current space to port 3000 in the `backend-api` space.
+
+- `--persistent` (`-p`): Persist the forward across agent restarts.
+- `--force` (`-f`): Create the forward even if the target space is not currently running.
 
 ### List Active Forwards
 
@@ -66,7 +69,7 @@ The following commands are run from your desktop machine using the knot CLI:
 Forward a port from one space to another space:
 
 ```shell
-knot port forward <from-space> <from-port> <to-space> <to-port>
+knot port forward <from-space> <from-port> <to-space> <to-port> [--persistent] [--force]
 ```
 
 Example:
@@ -75,6 +78,9 @@ knot port forward frontend 8080 backend-api 3000
 ```
 
 This forwards port 8080 in the `frontend` space to port 3000 in the `backend-api` space.
+
+- `--persistent` (`-p`): Persist the forward across agent restarts. Also allows creating a forward when the source space is not currently running.
+- `--force` (`-f`): Create the forward even if the target space is not currently running.
 
 ### List Active Forwards
 
