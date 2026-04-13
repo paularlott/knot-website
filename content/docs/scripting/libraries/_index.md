@@ -16,6 +16,7 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 | [knot.ai](ai/) | AI completion functions |
 | [knot.mcp](mcp/) | MCP tool interaction |
 | [knot.skill](skill/) | Skills management |
+| [knot.stack](stack/) | Stack definition and instance management |
 | [knot.template](template/) | Template management |
 | [knot.volume](volume/) | Volume management |
 | [knot.user](user/) | User management |

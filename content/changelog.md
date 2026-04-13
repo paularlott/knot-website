@@ -14,6 +14,13 @@ This release introduces Knot Pro with OAuth authentication and visual port forwa
 
 {{< changelog-item "added" >}}
 
+- **Stack Definitions**:
+  - Structured stack definitions for creating multi-space application stacks
+  - Define reusable blueprints with component spaces, dependencies, and port forwards
+  - Personal and global definitions with zone and group restrictions
+  - CLI commands: `create-def`, `apply`, `delete-def`, `list-defs`, `create`, `start`, `stop`, `restart`, `delete`
+  - `knot.stack` library for stack definition and lifecycle operations from scripts
+  - Stack management page in the web interface
 - **Space Stacks**:
   - Group spaces under a stack name for visual organization
   - Stacks are displayed as collapsible groups in the spaces list

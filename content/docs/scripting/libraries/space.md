@@ -26,9 +26,6 @@ The `knot.space` library provides space management functions for scripts.
 | `set_dependencies(name, depends_on)` | Set the dependency spaces for a space |
 | `get_stack(name)` | Get the stack name for a space |
 | `set_stack(name, stack)` | Set the stack name for a space |
-| `start_stack(stack_name)` | Start all spaces in a stack |
-| `stop_stack(stack_name)` | Stop all spaces in a stack |
-| `restart_stack(stack_name)` | Restart all spaces in a stack |
 | `get_field(name, field)` | Get a custom field value |
 | `set_field(name, field, value)` | Set a custom field value |
 | `transfer(name, user_id)` | Transfer space ownership |
@@ -204,39 +201,6 @@ Set the stack name for a space. Spaces with the same stack name are grouped toge
 **Parameters:**
 - `name` (string): Name or ID of the space
 - `stack` (string): Stack name (empty string to unstack)
-
-**Returns:** `bool` - True on success
-
----
-
-### start_stack(stack_name)
-
-Start all spaces in a stack. Spaces are started in dependency order.
-
-**Parameters:**
-- `stack_name` (string): Name of the stack to start
-
-**Returns:** `bool` - True on success
-
----
-
-### stop_stack(stack_name)
-
-Stop all spaces in a stack. Spaces are stopped in reverse dependency order.
-
-**Parameters:**
-- `stack_name` (string): Name of the stack to stop
-
-**Returns:** `bool` - True on success
-
----
-
-### restart_stack(stack_name)
-
-Restart all spaces in a stack. Spaces are restarted in dependency order.
-
-**Parameters:**
-- `stack_name` (string): Name of the stack to restart
 
 **Returns:** `bool` - True on success
 

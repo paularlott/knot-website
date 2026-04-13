@@ -148,6 +148,7 @@ All `knot.*` libraries are available in all four environments. In Local, MCP, an
 | knot.volume | ✓ | ✓ | ✓ | ✓ |
 | knot.skill | ✓ | ✓ | ✓ | ✓ |
 | knot.permission | ✓ | ✓ | ✓ | ✓ |
+| knot.stack | ✓ | ✓ | ✓ | ✓ |
 
 ---
 
