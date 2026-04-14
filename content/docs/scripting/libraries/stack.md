@@ -18,6 +18,7 @@ The `knot.stack` library provides stack definition and stack lifecycle functions
 | `create_def(name, ...)` | Create a new stack definition |
 | `update_def(name, **fields)` | Update an existing definition |
 | `delete_def(name)` | Delete a definition |
+| `validate_def(spaces, ...)` | Validate a definition without creating it |
 
 ### Stack Operations
 
@@ -98,6 +99,42 @@ stack.create_def(
     ],
 )
 ```
+
+---
+
+## Validating Definitions
+
+Use `validate_def` to check a definition for errors before creating it. This catches structural problems like circular dependencies, missing required fields, and invalid references.
+
+```python
+import knot.stack as stack
+
+# Validate before creating
+result = stack.validate_def(
+    name="my-stack",
+    spaces=[
+        {"name": "db", "template_id": "template-uuid"},
+        {"name": "web", "template_id": "template-uuid", "depends_on": ["db"]},
+    ],
+)
+
+if result["valid"]:
+    print("Definition is valid")
+else:
+    for err in result.get("errors", []):
+        if err.get("space"):
+            print(f"  [{err['space']}] {err['field']}: {err['message']}")
+        else:
+            print(f"  {err['field']}: {err['message']}")
+```
+
+Validation checks for:
+- Required fields (`name`, `template_id`)
+- Duplicate space names
+- Invalid `depends_on` references
+- Circular dependencies
+- Invalid `port_forwards.to_space` references
+- Port number ranges (1-65535)
 
 ---
 

@@ -104,12 +104,72 @@ This permanently deletes all spaces in the stack and all their data.
 
 ---
 
+## Validating Definitions
+
+Validate a definition file without creating it:
+
+```bash
+knot stack validate lamp.toml
+# Stack definition is valid.
+```
+
+This checks for:
+- Required fields (`name`, `template_id`)
+- Duplicate space names
+- Invalid dependency references
+- Circular dependencies
+- Invalid port forward references
+- Port number ranges
+
+Definition files can be TOML or JSON. The format is detected by file extension. TOML files use human-friendly names for templates, scripts, and groups (these are resolved to IDs automatically). JSON files use IDs directly, matching the API request format.
+
+**TOML format** (`lamp.toml`):
+```toml
+name = "LAMP Stack"
+description = "A LAMP development stack"
+
+[[spaces]]
+name = "db"
+template = "mysql-8"
+description = "MySQL database"
+
+[[spaces]]
+name = "web"
+template = "apache-2.4"
+depends_on = ["db"]
+```
+
+**JSON format** (`lamp.json`):
+```json
+{
+  "name": "LAMP Stack",
+  "description": "A LAMP development stack",
+  "spaces": [
+    {
+      "name": "db",
+      "template_id": "template-uuid-here",
+      "description": "MySQL database"
+    },
+    {
+      "name": "web",
+      "template_id": "template-uuid-here",
+      "depends_on": ["db"]
+    }
+  ]
+}
+```
+
+---
+
 ## Full Workflow Example
 
 ```bash
-# 1. Create a stack definition from a TOML file
+# 1. Create a stack definition from a TOML or JSON file
 knot stack create-def lamp.toml
 # Stack definition "lamp-stack" created.
+
+# Or from a JSON file:
+# knot stack create-def lamp.json
 
 # 2. List available definitions
 knot stack list-defs
