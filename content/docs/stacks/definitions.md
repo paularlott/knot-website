@@ -27,8 +27,7 @@ This creates a single-space stack. The space uses the `ubuntu-latest` template a
 ```toml
 name = "lamp-stack"
 description = "Linux, Apache, MySQL, PHP stack"
-icon_url = "https://example.com/icons/lamp.png"
-scope = "personal"
+scope = "user"
 groups = ["developers"]
 zones = ["us-east"]
 
@@ -72,15 +71,14 @@ template = "redis-7"
 |--------|------|----------|---------|-------------|
 | `name` | string | Yes | — | Unique name for the stack definition |
 | `description` | string | No | `""` | Description shown in the UI and CLI |
-| `icon_url` | string | No | `""` | URL for an icon to display in the UI |
-| `scope` | string | No | `"personal"` | Visibility scope: `personal` or `system` |
-| `groups` | list | No | `[]` | Groups allowed to create stacks from this definition (system scope only, names resolved to IDs) |
+| `scope` | string | No | `"user"` | Visibility scope: `user` or `global` |
+| `groups` | list | No | `[]` | Groups allowed to create stacks from this definition (global scope only, names resolved to IDs) |
 | `zones` | list | No | `[]` | Zone restrictions — definition is only available in listed zones (empty = all zones) |
 
 ### Scope
 
-- **`personal`** — Only visible to the creator. Use for personal development stacks.
-- **`system`** — Visible to all users (subject to group restrictions). Use for shared stacks that teams can create instances of.
+- **`user`** — Only visible to the creator. Use for personal development stacks.
+- **`global`** — Visible to all users (subject to group restrictions). Use for shared stacks that teams can create instances of.
 
 ---
 
@@ -210,7 +208,7 @@ import knot.stack as stack
 stack.create_def(
     "my-stack",
     description="My development stack",
-    scope="personal",
+    scope="user",
     spaces=[
         {
             "name": "web",

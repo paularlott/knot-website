@@ -77,7 +77,7 @@ import knot.stack as stack
 stack.create_def(
     "my-stack",
     description="My development stack",
-    scope="personal",
+    scope="user",
     spaces=[
         {
             "name": "db",

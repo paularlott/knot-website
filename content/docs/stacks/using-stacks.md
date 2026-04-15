@@ -174,7 +174,7 @@ knot stack create-def lamp.toml
 # 2. List available definitions
 knot stack list-defs
 # Name          Scope      Zones  Spaces  Active
-# lamp-stack    personal   all    3       yes
+# lamp-stack    user   all    3       yes
 
 # 3. Create a stack from the definition
 knot stack create lamp-stack myproject
