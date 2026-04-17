@@ -40,7 +40,8 @@ This release introduces Knot Pro with OAuth authentication and visual port forwa
   - Filter audit logs by actor, actor type, event type, and date range
   - Full-text search across actor, event, and details fields
 - **OAuth Authentication** {{< pro-badge >}}:
-  - GitHub and Google OAuth providers for single sign-on
+  - GitHub, GitLab (including self-hosted), Google, and Auth0 OAuth providers for single sign-on
+  - Generic OIDC provider with auto-discovery for any OpenID Connect compatible identity provider (Okta, Keycloak, Azure AD, etc.)
   - Link and unlink external auth providers from user profiles
   - Automatic user provisioning from OAuth providers
 - **Visual Port Forwarding** {{< pro-badge >}}:
