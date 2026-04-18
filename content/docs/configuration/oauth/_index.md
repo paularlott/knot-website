@@ -16,7 +16,7 @@ OAuth providers are configured in `knot.toml` using the `[[server.auth_providers
 | GitHub | `github` | GitHub OAuth App with `user:email` scope |
 | GitLab | `gitlab` | GitLab application with `read_user` scope |
 | Google | `google` | Google Cloud project with OAuth 2.0 Web client |
-| Auth0 | `auth0` | Auth0 application with `openid profile email` scopes |
+| Auth0 | `auth0` | Auth0 application with `openid profile email offline_access` scopes |
 | Generic OIDC | `oidc` | Any OpenID Connect compatible provider with a discovery endpoint |
 
 ---
@@ -54,6 +54,8 @@ client_secret = "your-github-client-secret"
 ```
 
 Restart **knot** to apply the configuration.
+
+GitHub is currently integrated using a GitHub OAuth App. GitHub OAuth Apps return an access token, but do not provide refresh tokens in this flow. GitHub refresh tokens are available with GitHub Apps using expiring user-to-server tokens, which is a different integration model.
 
 ---
 
@@ -124,6 +126,8 @@ client_secret = "your-google-client-secret"
 
 Restart **knot** to apply the configuration.
 
+**knot** requests offline access for Google automatically so refresh tokens can be issued. Google may only return a refresh token the first time the user consents, or after the app has been revoked and consent is granted again.
+
 ---
 
 ## Auth0 Setup
@@ -137,6 +141,7 @@ Restart **knot** to apply the configuration.
 5. In **Allowed Callback URLs**, add: `{your-knot-url}/auth/auth0/callback` (e.g., `https://knot.example.com/auth/auth0/callback`)
 6. In **Allowed Logout URLs**, add: `{your-knot-url}` (e.g., `https://knot.example.com`)
 7. Click **Save Changes**.
+8. Enable refresh token issuance for the application if your tenant requires it.
 
 ### 2. Configure knot
 
@@ -154,6 +159,8 @@ The `base_url` is your Auth0 tenant domain. It can be the Auth0 domain (e.g., `y
 
 Restart **knot** to apply the configuration.
 
+**knot** requests the `offline_access` scope for Auth0 automatically so refresh tokens can be issued.
+
 ---
 
 ## Generic OIDC Setup
@@ -168,6 +175,7 @@ Create an OAuth 2.0 / OpenID Connect client in your identity provider with:
 
 - **Redirect URI** — `{your-knot-url}/auth/{name}/callback` where `{name}` is the `name` you configure below (e.g., `https://knot.example.com/auth/okta/callback`)
 - **Scopes** — `openid`, `profile`, `email`
+- **Refresh tokens** — add `offline_access` if your identity provider requires it for refresh token issuance
 - **Response type** — `code` (Authorization Code flow)
 
 Note the **Client ID**, **Client Secret**, and the **discovery URL** (typically `https://your-idp.example.com/.well-known/openid-configuration`).
@@ -184,6 +192,7 @@ display_name = "Okta"
 discovery_url = "https://your-idp.example.com/.well-known/openid-configuration"
 client_id = "your-oidc-client-id"
 client_secret = "your-oidc-client-secret"
+scopes = ["openid", "profile", "email", "offline_access"]
 ```
 
 The `name` field is a unique slug used in URLs (e.g., `/auth/okta/callback`). The `display_name` is shown in the UI and is optional — it defaults to the capitalized `name`.
@@ -228,6 +237,7 @@ Each provider is defined as a `[[server.auth_providers]]` entry with the followi
 | `client_secret` | string | Yes | OAuth client secret from the provider |
 | `base_url` | string | No | Custom base URL (required for Auth0 tenant domain; defaults to `https://gitlab.com` for GitLab) |
 | `discovery_url` | string | Yes for `oidc` | OIDC discovery document URL (e.g., `/.well-known/openid-configuration`) |
+| `scopes` | string[] | No | Override the scopes requested during login. Useful for OIDC providers that require `offline_access` for refresh tokens |
 | `allowed_domains` | string[] | No | Restrict login to users with email addresses in these domains |
 | `auto_create_users` | bool | No | Automatically create a **knot** user account on first login |
 | `default_roles` | string[] | No | Role names assigned to auto-created users |
@@ -278,6 +288,7 @@ display_name = "Keycloak"
 discovery_url = "https://keycloak.example.com/realms/myrealm/.well-known/openid-configuration"
 client_id = "knot-client"
 client_secret = "your-keycloak-secret"
+scopes = ["openid", "profile", "email", "offline_access"]
 auto_create_users = true
 default_roles = ["User"]
 default_groups = ["Developers"]
@@ -293,6 +304,8 @@ When OAuth providers are configured:
 - On first login via OAuth, **knot** either matches the user by email address or creates a new account (if `auto_create_users` is enabled).
 - Users can **link** and **unlink** OAuth providers from their profile settings.
 - Users created via OAuth are prompted to set a password for CLI access.
+- When a provider returns a refresh token, **knot** stores it encrypted alongside the linked provider so future token refresh flows can be supported cleanly.
+- GitHub is the exception in the current implementation because the built-in GitHub provider uses a GitHub OAuth App flow rather than a GitHub App user-token flow.
 
 ### Domain Restrictions
 
