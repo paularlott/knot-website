@@ -53,6 +53,13 @@ This release introduces Knot Pro with OAuth authentication and visual port forwa
   - Configurable interval, timeout, and failure threshold
   - Automatic space restart when health checks fail beyond the configured threshold
   - `knot.healthcheck` library for custom health check scripts
+- **Secret Providers** {{< pro-badge >}}:
+  - Fetch secrets from external secret managers directly in template variable resolution
+  - HashiCorp Vault support (KV v2, token and AppRole authentication)
+  - 1Password Connect support
+  - Use `${{ secret "alias" "path" "field" }}` in container environment variables and volume definitions
+  - Configurable provider aliases for multiple instances of the same provider type
+  - TTL-based caching with configurable expiry
   {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
