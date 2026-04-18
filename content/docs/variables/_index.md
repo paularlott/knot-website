@@ -18,6 +18,9 @@ Created by administrators in the web interface. Shared across templates for comm
 **Custom Variables**
 Defined in templates. Users provide values when creating spaces for per-space customization.
 
+**Secret Providers**
+Resolve secrets from an external manager such as Vault at template render time. {{< pro-badge >}}
+
 ---
 
 ## Variable Syntax
@@ -33,6 +36,7 @@ Examples:
 - `${{ .space.name }}` - Space name
 - `${{ .var.registry_url }}` - User-defined variable
 - `${{ .custom.branch }}` - Custom variable
+- `${{ secret "vault" "secret/data/prod/database" "password" }}` - External secret provider
 
 ---
 
@@ -88,7 +92,14 @@ environment:
 
 Allows users to customize each space.
 
+### External Secret Resolution
 
+```yaml
+environment:
+  - "DB_PASSWORD=${{ secret \"vault\" \"secret/data/prod/database\" \"password\" }}"
+```
+
+Fetches a secret from an external provider when the template is resolved.
 
 ---
 
@@ -97,3 +108,4 @@ Allows users to customize each space.
 - [System Variables](system-variables/)
 - [User-Defined Variables](user-defined-variables/)
 - [Custom Variables](custom-variables/)
+- [Secret Providers](secret-providers/)

@@ -17,6 +17,8 @@ When creating or editing a variable, the `Protected` option can be selected. Pro
 Protected variables are secure in storage but may be visible in job definitions when used in templates.
 {{< /tip >}}
 
+For secrets that should remain outside the **knot** database entirely, use [Secret Providers](../secret-providers/). {{< pro-badge >}}
+
 ---
 
 ## Creating a Variable
@@ -75,3 +77,4 @@ To edit a variable:
 ## What's Next
 
 - [Custom Variables](../custom-variables/)
+- [Secret Providers](../secret-providers/)
