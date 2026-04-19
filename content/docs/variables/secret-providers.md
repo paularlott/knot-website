@@ -3,13 +3,15 @@ title: Secret Providers
 weight: 30
 ---
 
-{{< pro-badge >}} Secret providers let templates fetch secrets from an external secret manager at resolve time instead of storing the value in the **knot** database.
+{{< pro-badge >}} Secret providers let templates and server-side Scriptling runtimes fetch secrets from an external secret manager at resolve time instead of storing the value in the **knot** database.
 
 Secret provider functions only run during server-side variable resolution, including:
 
 - container job rendering
 - volume definition rendering
 - CSI volume definition rendering
+- MCP tool scripts
+- remote/startup/shutdown scripts running through the Knot server
 
 ---
 
@@ -108,6 +110,65 @@ environment:
 ```
 
 For 1Password Connect, the path is `vault/item`. If no field is supplied, **knot** defaults to `password`, then falls back to common built-in field names if available.
+
+---
+
+## Scriptling Usage
+
+The same `[[server.secret_providers]]` configuration is also exposed to server-side Scriptling environments through `scriptling.secret`.
+
+Available in:
+
+- MCP tool scripts
+- remote scripts, including startup and shutdown scripts
+
+Not available in:
+
+- standalone external `scriptling` runs unless you configure that host separately
+
+```python
+import scriptling.secret as secret
+
+db_password = secret.get("vault", "secret/data/prod/database", "password")
+api_key = secret.get("op", "Engineering/API Service Key", "credential")
+```
+
+### Local `knot run-script`
+
+For local CLI execution, use the same secret config format as standalone Scriptling and pass it with `--secret-config`:
+
+```bash
+knot run-script --secret-config ./secrets.toml myscript.py
+```
+
+The file format matches Scriptling's CLI exactly:
+
+```toml {filename=secrets.toml}
+[[secrets.provider]]
+provider = "vault"
+alias = "prod_vault"
+address = "https://vault.internal:8200"
+token = "hvs.example"
+cache_ttl = "5m"
+
+[[secrets.provider]]
+provider = "onepassword"
+alias = "op"
+address = "http://op-connect:8080"
+token = "example-token"
+default_field = "password"
+```
+
+You can also provide the path via `SCRIPTLING_SECRET_CONFIG`.
+
+In a script:
+
+```python
+import scriptling.secret as secret
+
+db_password = secret.get("prod_vault", "secret/data/app", "password")
+api_key = secret.get("op", "Engineering/API Service Key", "credential")
+```
 
 ### Multiple Provider Instances
 

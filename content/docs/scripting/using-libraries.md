@@ -30,6 +30,18 @@ for s in spaces:
     print(f"{s['name']}: {status}")
 ```
 
+For `scriptling.secret`, local Knot CLI runs can opt in to host-owned secret providers with the same TOML format used by standalone Scriptling:
+
+```bash
+knot run-script --secret-config ./secrets.toml myscript.py
+```
+
+```python
+import scriptling.secret as secret
+
+db_password = secret.get("vault", "secret/data/prod/database", "password")
+```
+
 No configuration is needed — the library uses the execution context for authentication.
 
 ---
