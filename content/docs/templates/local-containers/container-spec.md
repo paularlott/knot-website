@@ -1,9 +1,11 @@
 ---
-title: Job Specification
+title: Container Specification
 weight: 20
 ---
 
-Below is an outline of a Local Container specification, showcasing all available options:
+Local Container templates use a single YAML container specification for `container`, `docker`, `podman`, and `apple` platforms. The same schema is used in the editor for all local runtimes, and runtimes ignore fields they do not support.
+
+Below is the unified container specification:
 
 ```yaml
 container_name: <container name>
@@ -60,7 +62,7 @@ Authentication credentials for private registries:
 - **username**: The registry username.
 - **password**: The registry password.
 
-**Note**: Not supported by Apple Container.
+**Note**: Some runtimes may ignore this field when it is not supported.
 
 ### **ports**
 Defines port mappings between the host and container in the format `<host port>:<container port>/<transport>`. The transport protocol (`tcp` or `udp`) is optional.
@@ -74,7 +76,7 @@ Overrides the default command specified in the container image. Provide commands
 ### **privileged**
 When set to `true`, grants the container extended privileges on the host. Use cautiously due to potential security risks.
 
-**Note**: Not supported by Apple Container.
+**Note**: Some runtimes may ignore this field when it is not supported.
 
 ### **network**
 Specifies the network mode for the container. Options include:
@@ -89,12 +91,12 @@ Defines environment variables in the format `<variable>=<value>`.
 ### **cap_add / cap_drop**
 Adds or removes Linux capabilities for the container, controlling privileged operations.
 
-**Note**: Not supported by Apple Container.
+**Note**: Some runtimes may ignore this field when it is not supported.
 
 ### **devices**
 Maps devices from the host to the container in the format `<host path>:<container path>`.
 
-**Note**: Not supported by Apple Container.
+**Note**: Some runtimes may ignore this field when it is not supported.
 
 ### **dns**
 Specifies custom DNS servers for the container.
@@ -102,7 +104,7 @@ Specifies custom DNS servers for the container.
 ### **add_host**
 Adds custom host-to-IP mappings to the container's `/etc/hosts` file.
 
-**Note**: Not supported by Apple Container.
+**Note**: Some runtimes may ignore this field when it is not supported.
 
 ### **dns_search**
 Defines custom DNS search domains for the container.

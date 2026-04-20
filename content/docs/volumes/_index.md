@@ -29,7 +29,7 @@ Standalone volumes do not count toward a user's **Storage Units** quota.
 
 For Nomad volumes:
 - The **`Name`** field is purely descriptive and is not used within the volume definition.
-- The **`Volume Definition`** field must contain YAML defining a single volume. If more than one volume is defined, the volume cannot be started.
+- The **`Volume Definition`** field must contain YAML defining a single Nomad volume. Save validation checks the YAML before the volume is stored.
 - Set the **`Platform`** to **`Nomad`**.
 
 Example YAML for a volume named `test_home`:
@@ -61,7 +61,7 @@ Once the name and definition are entered, click **`Create Volume`** to define th
 
 For Nomad host volumes:
 - **`Name`**: A descriptive name to identify the volume.
-- The **`Volume Definition`** field must contain YAML defining a single volume. If more than one volume is defined, the volume cannot be started.
+- The **`Volume Definition`** field must contain a `volumes` map with exactly one local volume entry. Save validation checks the YAML before the volume is stored.
 - Set the **`Platform`** to **`Nomad`**.
 
 Example YAML for a volume named `test_home`:
