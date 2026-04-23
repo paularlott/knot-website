@@ -132,6 +132,8 @@ scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 | scriptling.ai.agent.interact         | ✓     | ✗   | ✓      | ✓        |
 | scriptling.mcp / scriptling.mcp.tool | ✓     | ✓   | ✓      | ✓        |
 | scriptling.console                   | ✓     | ✗   | ✓      | ✓        |
+| scriptling.grep                      | ✓     | ✗   | ✓      | ✓        |
+| scriptling.sed                       | ✓     | ✗   | ✓      | ✓        |
 | scriptling.runtime                   | ✓     | ✗   | ✓      | ✓        |
 | scriptling.websocket                 | ✓     | ✓   | ✓      | ✓        |
 
