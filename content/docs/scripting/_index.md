@@ -136,6 +136,8 @@ scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 | scriptling.sed                       | ✓     | ✗   | ✓      | ✓        |
 | scriptling.runtime                   | ✓     | ✗   | ✓      | ✓        |
 | scriptling.websocket                 | ✓     | ✓   | ✓      | ✓        |
+| scriptling.template.html             | ✓     | ✓   | ✓      | ✓        |
+| scriptling.template.text             | ✓     | ✓   | ✓      | ✓        |
 
 ### knot.\* Libraries
 

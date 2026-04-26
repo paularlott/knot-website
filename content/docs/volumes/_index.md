@@ -97,6 +97,31 @@ volumes:
 
 ---
 
+### Apple Containers Volume
+
+For Apple Containers volumes:
+1. From the menu, select **`Volumes`**, then click **`New Volume`**.
+2. Choose **`Apple`** for the **`Platform`** option.
+3. Define the volume using the following YAML format:
+
+```yaml
+volumes:
+  test_home:
+    size: 20G
+```
+
+The `size` field is optional. If omitted, the default size is used. Sizes can be specified in bytes or with a suffix such as `M` (megabytes) or `G` (gigabytes).
+
+The same `size` field is also supported in the **Volumes** section of a template when using the Apple Containers platform:
+
+```yaml
+volumes:
+  workspace:
+    size: 20G
+```
+
+---
+
 ## Starting a Volume
 
 A volume must be started to make it available within the cluster.
