@@ -74,24 +74,6 @@ knot scripts delete <script-name>
 
 ## Running Scripts
 
-### Local Execution
-
-Run scripts on your local machine:
-
-```bash
-# Run a script
-knot run-script myscript
-
-# With arguments
-knot run-script myscript arg1 arg2
-
-# With host-owned secret providers for scriptling.secret
-knot run-script --secret-config ./secrets.toml myscript
-
-# With piped input
-echo "input data" | knot run-script myscript
-```
-
 ### Remote Execution (in a Space)
 
 Run scripts inside a running space:

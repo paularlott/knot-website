@@ -133,43 +133,6 @@ db_password = secret.get("vault", "secret/data/prod/database", "password")
 api_key = secret.get("op", "Engineering/API Service Key", "credential")
 ```
 
-### Local `knot run-script`
-
-For local CLI execution, use the same secret config format as standalone Scriptling and pass it with `--secret-config`:
-
-```bash
-knot run-script --secret-config ./secrets.toml myscript.py
-```
-
-The file format matches Scriptling's CLI exactly:
-
-```toml {filename=secrets.toml}
-[[secrets.provider]]
-provider = "vault"
-alias = "prod_vault"
-address = "https://vault.internal:8200"
-token = "hvs.example"
-cache_ttl = "5m"
-
-[[secrets.provider]]
-provider = "onepassword"
-alias = "op"
-address = "http://op-connect:8080"
-token = "example-token"
-default_field = "password"
-```
-
-You can also provide the path via `SCRIPTLING_SECRET_CONFIG`.
-
-In a script:
-
-```python
-import scriptling.secret as secret
-
-db_password = secret.get("prod_vault", "secret/data/app", "password")
-api_key = secret.get("op", "Engineering/API Service Key", "credential")
-```
-
 ### Multiple Provider Instances
 
 Multiple provider instances can be configured with different aliases:

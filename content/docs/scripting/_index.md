@@ -23,11 +23,10 @@ When creating a script, you specify its type:
 
 ## Execution Environments
 
-Knot provides four distinct execution environments, each tailored for specific use cases with different library availability and security constraints.
+Knot provides three distinct execution environments, each tailored for specific use cases with different library availability and security constraints.
 
 | Environment  | Used By               | System Access         | Best For                              |
 | ------------ | --------------------- | --------------------- | ------------------------------------- |
-| **Local**    | CLI `knot run-script` | Full (host)           | Local development and testing         |
 | **MCP**      | AI tool scripts       | None                  | Safe AI tool execution                |
 | **Remote**   | Space execution       | Full (container)      | Scripts in user spaces/containers     |
 | **External** | Standalone scriptling | Host (scriptling-cli) | Scripts outside knot using `knot.zip` |
@@ -37,33 +36,8 @@ Is it an MCP tool for AI?
 ├─ YES → MCP Environment
 └─ NO → Is it running in a space/container?
     ├─ YES → Remote Environment
-    └─ NO → Is it running via knot run-script?
-        ├─ YES → Local Environment
-        └─ NO → External Environment
+    └─ NO → External Environment
 ```
-
----
-
-## Local Environment
-
-**Command:** `knot run-script`
-
-Execute scripts locally with full system access. Libraries are resolved in priority order:
-
-1. **Script directory** — the directory containing the script file (or cwd for stdin/interactive)
-2. **Extra lib paths** — `--libpath` / `-L` flags or `SCRIPTLING_LIBPATH` env var
-3. **Configured libdir** — `server.lib_dir` in `knot.toml`
-4. **Server API** — fetched on demand from the server
-
-```bash
-knot run-script myscript.py arg1 arg2
-knot run-script -L /path/to/libs myscript.py
-knot run-script --secret-config ./secrets.toml myscript.py
-```
-
-**Security:** Full system access — use with trusted scripts only. Can read/write files, execute system commands, and load arbitrary `.py` files from disk.
-
-`scriptling.secret` is available in local execution when you provide a Scriptling-compatible secret config file with `--secret-config` or `SCRIPTLING_SECRET_CONFIG`.
 
 ---
 
@@ -112,51 +86,51 @@ scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 
 ### Standard & Extended Libraries
 
-| Library            | Local | MCP | Remote | External |
-| ------------------ | ----- | --- | ------ | -------- |
-| Standard Libraries | ✓     | ✓   | ✓      | ✓        |
-| requests           | ✓     | ✓   | ✓      | ✓        |
-| secrets            | ✓     | ✓   | ✓      | ✓        |
-| yaml / toml        | ✓     | ✓   | ✓      | ✓        |
-| subprocess         | ✓     | ✗   | ✓      | ✓        |
-| os / pathlib       | ✓     | ✗   | ✓      | ✓        |
-| sys                | ✓     | ✗   | ✓      | ✓        |
+| Library            | MCP | Remote | External |
+| ------------------ | --- | ------ | -------- |
+| Standard Libraries | ✓   | ✓      | ✓        |
+| requests           | ✓   | ✓      | ✓        |
+| secrets            | ✓   | ✓      | ✓        |
+| yaml / toml        | ✓   | ✓      | ✓        |
+| subprocess         | ✗   | ✓      | ✓        |
+| os / pathlib       | ✗   | ✓      | ✓        |
+| sys                | ✗   | ✓      | ✓        |
 
 ### scriptling.\* Libraries
 
-| Library                              | Local | MCP | Remote | External |
-| ------------------------------------ | ----- | --- | ------ | -------- |
-| scriptling.secret                    | Optional via `--secret-config` | ✓   | ✓      | ✗        |
-| scriptling.ai                        | ✓     | ✓   | ✓      | ✓        |
-| scriptling.ai.agent                  | ✓     | ✓   | ✓      | ✓        |
-| scriptling.ai.agent.interact         | ✓     | ✗   | ✓      | ✓        |
-| scriptling.mcp / scriptling.mcp.tool | ✓     | ✓   | ✓      | ✓        |
-| scriptling.console                   | ✓     | ✗   | ✓      | ✓        |
-| scriptling.grep                      | ✓     | ✗   | ✓      | ✓        |
-| scriptling.sed                       | ✓     | ✗   | ✓      | ✓        |
-| scriptling.runtime                   | ✓     | ✗   | ✓      | ✓        |
-| scriptling.websocket                 | ✓     | ✓   | ✓      | ✓        |
-| scriptling.template.html             | ✓     | ✓   | ✓      | ✓        |
-| scriptling.template.text             | ✓     | ✓   | ✓      | ✓        |
+| Library                              | MCP | Remote | External |
+| ------------------------------------ | --- | ------ | -------- |
+| scriptling.secret                    | ✓   | ✓      | ✗        |
+| scriptling.ai                        | ✓   | ✓      | ✓        |
+| scriptling.ai.agent                  | ✓   | ✓      | ✓        |
+| scriptling.ai.agent.interact         | ✗   | ✓      | ✓        |
+| scriptling.mcp / scriptling.mcp.tool | ✓   | ✓      | ✓        |
+| scriptling.console                   | ✗   | ✓      | ✓        |
+| scriptling.grep                      | ✗   | ✓      | ✓        |
+| scriptling.sed                       | ✗   | ✓      | ✓        |
+| scriptling.runtime                   | ✗   | ✓      | ✓        |
+| scriptling.websocket                 | ✓   | ✓      | ✓        |
+| scriptling.template.html             | ✓   | ✓      | ✓        |
+| scriptling.template.text             | ✓   | ✓      | ✓        |
 
 ### knot.\* Libraries
 
-All `knot.*` libraries are available in all four environments. In Local, MCP, and Remote contexts the Go runtime provides the transport automatically — no configuration needed. In External contexts `knot.apiclient` must be configured.
+All `knot.*` libraries are available in all three environments. In MCP and Remote contexts the Go runtime provides the transport automatically — no configuration needed. In External contexts `knot.apiclient` must be configured.
 
-| Library         | Local | MCP | Remote | External |
-| --------------- | ----- | --- | ------ | -------- |
-| knot.space      | ✓     | ✓   | ✓      | ✓        |
-| knot.ai         | ✓     | ✓   | ✓      | ✓        |
-| knot.mcp        | ✓     | ✓   | ✓      | ✓        |
-| knot.user       | ✓     | ✓   | ✓      | ✓        |
-| knot.group      | ✓     | ✓   | ✓      | ✓        |
-| knot.role       | ✓     | ✓   | ✓      | ✓        |
-| knot.template   | ✓     | ✓   | ✓      | ✓        |
-| knot.vars       | ✓     | ✓   | ✓      | ✓        |
-| knot.volume     | ✓     | ✓   | ✓      | ✓        |
-| knot.skill      | ✓     | ✓   | ✓      | ✓        |
-| knot.permission | ✓     | ✓   | ✓      | ✓        |
-| knot.stack      | ✓     | ✓   | ✓      | ✓        |
+| Library         | MCP | Remote | External |
+| --------------- | --- | ------ | -------- |
+| knot.space      | ✓   | ✓      | ✓        |
+| knot.ai         | ✓   | ✓      | ✓        |
+| knot.mcp        | ✓   | ✓      | ✓        |
+| knot.user       | ✓   | ✓      | ✓        |
+| knot.group      | ✓   | ✓      | ✓        |
+| knot.role       | ✓   | ✓      | ✓        |
+| knot.template   | ✓   | ✓      | ✓        |
+| knot.vars       | ✓   | ✓      | ✓        |
+| knot.volume     | ✓   | ✓      | ✓        |
+| knot.skill      | ✓   | ✓      | ✓        |
+| knot.permission | ✓   | ✓      | ✓        |
+| knot.stack      | ✓   | ✓      | ✓        |
 
 ---
 
@@ -176,7 +150,7 @@ for s in spaces:
 
 ### Example: Server-Side Secret Access
 
-`scriptling.secret` is available in Knot's server-side script environments automatically, and in local `knot run-script` execution when you pass a Scriptling-compatible `--secret-config` file.
+`scriptling.secret` is available in Knot's server-side script environments automatically.
 
 ```python
 import scriptling.secret as secret
