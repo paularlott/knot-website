@@ -6,14 +6,24 @@ draft: false
 weight: 100
 ---
 
-## April 2026
+## May 2026
 
 {{< version "v0.24.0" >}}
 
-This release introduces Knot Pro with OAuth authentication and visual port forwarding between spaces, along with persistent port forwarding for agents and significant UI improvements.
-
 {{< changelog-item "added" >}}
 
+- **Space Resource Telemetry**:
+  - Live CPU, memory, load, and disk usage are now collected for spaces
+  - Realtime CPU and memory bars are shown directly in the spaces table
+  - New per-space usage popup with historical charts for the last 7 days
+  - Usage history is stored across MySQL/MariaDB, Redis, and BadgerDB backends
+  - Usage history replicates across clustered and leaf-node gossip networks
+- **Space Activity Tracking** {{< pro-badge >}}:
+  - User filesystem activity is tracked from the in-space agent when it runs as the user
+  - Tracks file writes, creates, deletes, renames, distinct paths, and last activity time
+  - Tracks user space lifecycle actions including spaces started, stopped, created, and destroyed
+  - Activity history is shown on the user management page so managers can review what users are doing
+  - Activity data is retained for 7 days for manager review
 - **Stack Definitions**:
   - Structured stack definitions for creating multi-space application stacks
   - Define reusable blueprints with component spaces, dependencies, and port forwards
@@ -63,7 +73,6 @@ This release introduces Knot Pro with OAuth authentication and visual port forwa
   {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
-
 - **Usernames**:
   - Dots are now allowed in usernames (e.g. `first.last`)
 - **Agent Port Forwarding**:
@@ -78,6 +87,10 @@ This release introduces Knot Pro with OAuth authentication and visual port forwa
   - Improved modal close buttons and popup behaviour
 - **Database Migrations**:
   - Improved migration code reliability
+  {{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- Large docker images could cause timeouts during space creation
   {{< /changelog-item >}}
 
 ## March 2026
