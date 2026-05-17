@@ -19,9 +19,6 @@ title = 'knot'
       name = 'Docs'
       url = '/docs'
     [[params.navigation.header]]
-      name = 'Tutorials'
-      url = '/tutorials'
-    [[params.navigation.header]]
       name = 'Changelog'
       url = '/changelog'
 

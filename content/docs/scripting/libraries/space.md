@@ -14,7 +14,6 @@ The `knot.space` library provides space management functions for scripts.
 | `create(name, template_name, description='', shell='bash', depends_on=None, stack='')` | Create a new space |
 | `delete(name)` | Delete a space by name |
 | `get(name)` | Get detailed space information |
-| `update(name, description='', shell='')` | Update space properties |
 | `start(name)` | Start a space |
 | `stop(name)` | Stop a space |
 | `restart(name)` | Restart a space |
