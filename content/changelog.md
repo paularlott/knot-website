@@ -55,8 +55,9 @@ weight: 100
   - Link and unlink external auth providers from user profiles
   - Automatic user provisioning from OAuth providers
 - **Visual Port Forwarding** {{< pro-badge >}}:
-  - Visual interface for defining and managing port forwarding between spaces
-  - Persistent port forwarding configuration that survives space restarts
+  - Pro-only Spaces page interface for defining and managing port forwarding between spaces
+  - Persistent port forwarding can be configured and edited even when the source space is stopped
+  - Persistent port forwarding configuration survives space restarts
 - **Health Checks**:
   - Templates can configure health checks to monitor space availability
   - Built-in check types: HTTP HEAD, TCP port, program execution, and custom script
