@@ -24,6 +24,7 @@ weight: 100
   - Tracks user space lifecycle actions including spaces started, stopped, created, and destroyed
   - Activity history is shown on the user management page so managers can review what users are doing
   - Activity data is retained for 7 days for manager review
+  - Activity collection can be disabled globally or per template when you want to avoid filesystem watcher overhead
 - **Stack Definitions**:
   - Structured stack definitions for creating multi-space application stacks
   - Define reusable blueprints with component spaces, dependencies, and port forwards

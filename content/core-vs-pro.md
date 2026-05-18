@@ -105,7 +105,7 @@ hideSidebar: true
       <tr>
         <td><strong>User and space activity views</strong></td>
         <td><span class="compare-no">Not included</span></td>
-        <td><span class="compare-yes">Included</span> activity tracking</td>
+        <td><span class="compare-yes">Included</span> activity tracking with per-template disable controls</td>
       </tr>
       <tr>
         <td><strong>Commercial binaries</strong></td>
