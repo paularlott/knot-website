@@ -10,7 +10,7 @@ Agent-to-agent port forwarding allows spaces to communicate directly with each o
 ## Requirements
 
 For agent-to-agent port forwarding to work:
-- Both spaces must be running and have active agents
+- The source space must be running and have an active agent (or use `--persistent` to pre-configure a forward for when it starts)
 - Spaces must be in the same zone
 - Spaces must be owned by the same user
 - Local port must be in the range 1-65535
@@ -24,7 +24,7 @@ The following commands are run from inside a space using the knot agent:
 Forward a port from the current space to another space:
 
 ```shell
-knot port forward <local-port> <space-name> <remote-port>
+knot port forward <local-port> <space-name> <remote-port> [--persistent] [--force]
 ```
 
 Example:
@@ -33,6 +33,9 @@ knot port forward 8080 backend-api 3000
 ```
 
 This forwards port 8080 in the current space to port 3000 in the `backend-api` space.
+
+- `--persistent` (`-p`): Persist the forward across agent restarts.
+- `--force` (`-f`): Create the forward even if the target space is not currently running.
 
 ### List Active Forwards
 
@@ -66,7 +69,7 @@ The following commands are run from your desktop machine using the knot CLI:
 Forward a port from one space to another space:
 
 ```shell
-knot port forward <from-space> <from-port> <to-space> <to-port>
+knot port forward <from-space> <from-port> <to-space> <to-port> [--persistent] [--force]
 ```
 
 Example:
@@ -75,6 +78,9 @@ knot port forward frontend 8080 backend-api 3000
 ```
 
 This forwards port 8080 in the `frontend` space to port 3000 in the `backend-api` space.
+
+- `--persistent` (`-p`): Persist the forward across agent restarts. Also allows creating a forward when the source space is not currently running.
+- `--force` (`-f`): Create the forward even if the target space is not currently running.
 
 ### List Active Forwards
 
@@ -113,6 +119,56 @@ The desktop client commands require you to be authenticated with the knot server
 - **Microservices Communication**: Connect frontend containers to backend services
 - **Database Access**: Allow application containers to access database containers
 - **Service Discovery**: Enable development environments that mirror production architectures
+
+---
+
+## Apply Port Forwards
+
+Replace all port forwards for a space with a new set. This is useful for declarative configuration where you want to ensure the forwarding state matches a desired list.
+
+### From a Space (Scripting)
+
+```python
+import knot.space as space
+
+# Apply a set of port forwards, replacing any existing ones
+result = space.port_apply("frontend", [
+    {"local_port": 8080, "space": "backend-api", "remote_port": 3000},
+    {"local_port": 5432, "space": "database", "remote_port": 5432},
+])
+
+print(f"Applied: {result['applied']}")
+print(f"Stopped: {result['stopped']}")
+```
+
+### Via API
+
+```shell
+curl -X POST https://knot.example.com/space-io/{space_id}/port/apply \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "forwards": [
+      {"local_port": 8080, "space": "backend-api", "remote_port": 3000},
+      {"local_port": 5432, "space": "database", "remote_port": 5432}
+    ]
+  }'
+```
+
+Response:
+```json
+{
+  "applied": [
+    {"local_port": 8080, "space": "backend-api", "remote_port": 3000, "persistent": false}
+  ],
+  "stopped": [
+    {"local_port": 9090, "space": "old-service", "remote_port": 8080, "persistent": false}
+  ],
+  "errors": []
+}
+```
+
+Each forward entry supports optional `persistent` and `force` fields (same as individual port forward).
 
 {{< tip >}}
 Agent-to-agent port forwarding only works between spaces in the same zone and owned by the same user. The connection is authenticated and secure.

@@ -20,6 +20,7 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
    - **`Terminal Shell`**: The shell to use for the terminal. By default, the user's profile shell is used.
    - **`User Startup Script`**: An optional script to run when the space starts, the user startup script is run after the system startup script. This field is unavailable for `Manual` templates. The script must be one defined under scripts and owned by the user creating the space.
    - **`Custom Fields`**: If the template includes custom fields, they will appear here. Set values for each field as needed.
+   - **`Depends On`**: (Optional) Select spaces that this space depends on. Dependent spaces will need to be started before this space starts.
    - **`Start Space on Create`**: If checked, the space will start automatically after creation.
 
 3. Click `Create Space` to finalize the process.

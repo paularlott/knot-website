@@ -1,7 +1,7 @@
 ---
 title: Nomad
 description: Quick start guide to getting knot up and running in a Nomad cluster.
-weight: 20
+weight: 30
 ---
 
 In this section, you'll learn how to deploy **knot** to a Nomad cluster and walk through creating a simple template to deploy a space.

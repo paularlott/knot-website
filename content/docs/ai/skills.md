@@ -191,4 +191,4 @@ description: "How to deploy applications to our environments"
 
 - [AI Assistant](../ai-assistant/) - Using the built-in AI assistant
 - [MCP Integration](../mcp/) - Connecting external AI tools
-- [Scripts](../../scripts/) - Creating executable automation scripts
+- [Scripting](../../scripting/) - Creating executable automation scripts

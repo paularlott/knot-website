@@ -38,6 +38,20 @@ Get **knot** running in minutes. Choose the deployment path that matches your ne
 - High availability needs
 - Organizations with existing Nomad infrastructure
 
+### [Knot Pro Installation](pro-installation/) {{< pro-badge >}}
+**Unlock advanced features**
+
+- OAuth authentication (GitHub, Google)
+- Visual port forwarding
+- Advanced networking and security
+- Install via Homebrew, binary, or Docker
+- **Setup time**: 2 minutes
+
+**Best for**:
+- Teams needing SSO/OAuth
+- Advanced networking requirements
+- Enterprise deployments
+
 ### [Desktop Client](client/)
 **Run locally or connect to servers**
 
@@ -57,13 +71,13 @@ Get **knot** running in minutes. Choose the deployment path that matches your ne
 
 ## Quick Comparison
 
-| Feature | Local Containers | Nomad | Client |
-|---------|------------------|-------|--------|
-| Single Server | ✅ | ✅ | ✅ |
-| Multi-Server | ✅ | ✅ | N/A |
-| Dependencies | Docker/Podman/Apple | Nomad, Consul, CSI | None |
-| Setup Time | 5-10 min | 30+ min | 2 min |
-| Complexity | Low | High | Very Low |
+| Feature | Local Containers | Nomad | Client | Pro |
+|---------|------------------|-------|--------|-----|
+| Single Server | ✅ | ✅ | ✅ | ✅ |
+| Multi-Server | ✅ | ✅ | N/A | ✅ |
+| Dependencies | Docker/Podman/Apple | Nomad, Consul, CSI | None | Docker/Podman/Apple |
+| Setup Time | 5-10 min | 30+ min | 2 min | 2 min |
+| Complexity | Low | High | Very Low | Low |
 
 ---
 

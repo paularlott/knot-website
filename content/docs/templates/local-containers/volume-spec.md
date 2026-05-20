@@ -3,11 +3,14 @@ title: Volume Specification
 weight: 30
 ---
 
-The volume specification for Local Containers is straightforward: it consists of a list of volume names, which can include template variables.
+Local Container templates and local standalone volumes share the same YAML schema for `container`, `docker`, `podman`, and `apple` platforms.
+
+The definition is a top-level `volumes` map whose keys are the local volume names:
 
 ```yaml
 volumes:
-  <volume name>:
+  workspace:
+  cache:
 ```
 
 ---
@@ -16,4 +19,6 @@ volumes:
 
 ### **volumes**
 
-A list of volume names to be created. When a space is started, **knot** instructs the container runtime (Docker, Podman, or Apple Container) to create these volumes automatically.
+A map of local volume names to create. When a space or volume is started, **knot** instructs the selected container runtime to create these volumes automatically.
+
+For template volume definitions you can define multiple entries. For standalone volumes the definition must contain exactly one volume.

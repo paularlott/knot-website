@@ -196,6 +196,10 @@ knot server --config knot.toml
 
 Any errors will be displayed in the terminal.
 
+{{< tip >}}
+**Knot Pro** {{< pro-badge >}}: If you are using [Knot Pro](../pro-installation/), the command is `knot-pro server --config knot.toml`.
+{{< /tip >}}
+
 ---
 
 ## What's Next

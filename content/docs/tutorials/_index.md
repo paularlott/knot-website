@@ -1,6 +1,7 @@
 ---
 title: Tutorials
 description: Tutorials on using knot.
+weight: 200
 ---
 
 In this section we'll cover various tutorials.

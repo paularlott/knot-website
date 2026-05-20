@@ -30,6 +30,18 @@ for s in spaces:
     print(f"{s['name']}: {status}")
 ```
 
+For `scriptling.secret`, local Knot CLI runs can opt in to host-owned secret providers with the same TOML format used by standalone Scriptling:
+
+```bash
+knot run-script --secret-config ./secrets.toml myscript.py
+```
+
+```python
+import scriptling.secret as secret
+
+db_password = secret.get("vault", "secret/data/prod/database", "password")
+```
+
 No configuration is needed — the library uses the execution context for authentication.
 
 ---
@@ -106,19 +118,4 @@ See [knot.apiclient](../libraries/apiclient/) for the full list of configuration
 
 ---
 
-## Available Libraries
-
-| Library | Description |
-|---------|-------------|
-| [knot.apiclient](../libraries/apiclient/) | Transport configuration (external use) |
-| [knot.space](../libraries/space/) | Space management |
-| [knot.user](../libraries/user/) | User management |
-| [knot.group](../libraries/group/) | Group management |
-| [knot.role](../libraries/role/) | Role management |
-| [knot.template](../libraries/template/) | Template management |
-| [knot.volume](../libraries/volume/) | Volume management |
-| [knot.vars](../libraries/vars/) | Template variables |
-| [knot.skill](../libraries/skill/) | Skills management |
-| [knot.permission](../libraries/permission/) | Permission constants |
-| [knot.ai](../libraries/ai/) | AI completion |
-| [knot.mcp](../libraries/mcp/) | MCP tool interaction |
+For the full list of available libraries and their documentation, see the [Library Reference](libraries/).

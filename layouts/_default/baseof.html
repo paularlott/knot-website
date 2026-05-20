@@ -30,7 +30,7 @@
 
     <!-- Main Content Area -->
     <div class="flex flex-1 max-w-screen-xl mx-auto w-full">
-      {{ if not (eq .RelPermalink "/") }}
+      {{ if and (not (eq .RelPermalink "/")) (not .Params.hideSidebar) }}
         {{ partial "sidebar.html" . }}
       {{ end }}
 

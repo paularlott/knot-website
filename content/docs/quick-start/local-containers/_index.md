@@ -1,7 +1,7 @@
 ---
 title: Local Containers
 description: Deploy knot using Docker, Podman, or Apple Containers.
-weight: 10
+weight: 20
 ---
 
 Deploy knot with Local Containers for the simplest path to powerful development environments. No Nomad, Kubernetes, or other orchestrator required.

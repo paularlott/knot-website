@@ -73,3 +73,4 @@ print(icons)
 - `zones` - List of zone names
 - `schedule` - List of schedule day dicts (`enabled`, `from`, `to`)
 - `custom_fields` - List of custom field dicts (`name`, `description`)
+- `disable_user_activity` - Whether filesystem user activity collection is disabled for spaces created from this template {{< pro-badge >}}

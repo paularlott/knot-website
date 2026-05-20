@@ -5,6 +5,8 @@ weight: 20
 
 Nomad templates in **knot** define environments using a Nomad job specification and optional volume definitions. When a developer creates and starts a space from a template, **knot** automatically provisions the required volumes and launches the job within the Nomad cluster.
 
+The editor uses Nomad HCL completion for the job field and YAML completion for Nomad volume definitions. Save-time validation parses the job through Nomad and validates the volume YAML before the template is stored.
+
 For enhanced isolation, namespaces can be set within the job specification. For example:
 `namespace="${{ .user.username }}"`
 This ensures that jobs for each developer are placed in their own namespaces.
@@ -139,14 +141,15 @@ Templates can define one or more volumes. These volumes are:
 Deleting a space will destroy its volumes and all data stored on them.
 {{< /tip >}}
 
-#### Example Volume Definition
+#### Example CSI Volume Definition
 
-Below is an example YAML configuration for defining block storage volumes:
+Below is an example YAML configuration for defining CSI volumes:
 
 ```yaml
 volumes:
   - id: "ubuntu_${{.space.id}}_home"
     name: "ubuntu_${{.space.id}}_home"
+    type: "csi"
     plugin_id: "hostpath"
     capacity_min: 1G
     capacity_max: 10G
@@ -161,6 +164,7 @@ volumes:
 
   - id: "ubuntu_${{.space.id}}_data"
     name: "ubuntu_${{.space.id}}_data"
+    type: "csi"
     plugin_id: "hostpath"
     capacity_min: 1G
     capacity_max: 10G
@@ -172,7 +176,16 @@ volumes:
     capabilities:
       - access_mode: "single-node-writer"
         attachment_mode: "file-system"
+```
 
+In this example, the volume ID `ubuntu_${{.space.id}}_home` dynamically incorporates the unique space ID.
+
+#### Example Host Volume Definition
+
+Below is an example YAML configuration for defining a host volume:
+
+```yaml
+volumes:
   - name: "vol-${{.space.id}}"
     type: "host"
     plugin_id: "mkdir"
@@ -182,7 +195,7 @@ volumes:
       gid: 999
 ```
 
-In this example, the volume ID `ubuntu_${{.space.id}}_home` dynamically incorporates the unique space ID.
+Nomad volume definitions can include both `csi` and `host` volume types.
 
 {{< tip "warning" >}}
 If volume definitions are added or removed from a template, the changes will take effect the next time the space is started. Any data in a deleted volume will be permanently lost.

@@ -93,8 +93,14 @@ Configure Docker, Podman, or Apple Container for local execution.
 ### [Two Factor Authentication](2fa)
 Enable TOTP-based 2FA for enhanced security.
 
+### [OAuth Authentication](oauth)
+Allow users to sign in with GitHub or Google accounts. {{< pro-badge >}}
+
 ### [User Interface](ui)
 Customize the web interface with logos and Gravatar support.
+
+### [Logging](logging)
+Forward structured logs to VictoriaLogs, Grafana Loki, or Elasticsearch.
 
 ---
 
