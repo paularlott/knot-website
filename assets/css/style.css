@@ -257,6 +257,63 @@ tr:nth-child(odd) {
   color: #9a3412;
 }
 
+.compare-pro-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.1rem;
+}
+
+.compare-pro-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.compare-pro-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.18);
+  transition: opacity 0.15s ease;
+}
+
+.compare-pro-btn:hover::before {
+  opacity: 1;
+}
+
+.compare-pro-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.25);
+}
+
+.compare-pro-btn:active {
+  transform: translateY(0);
+  filter: brightness(0.95);
+}
+
+.compare-pro-btn--github {
+  background: linear-gradient(135deg, #1f2937, #111827);
+  color: #f9fafb;
+  box-shadow: 0 4px 14px -3px rgba(17, 24, 39, 0.35);
+}
+
+.compare-pro-btn--store {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #451a03;
+  box-shadow: 0 4px 14px -3px rgba(217, 119, 6, 0.4);
+}
+
 .compare-table-wrap {
   overflow-x: auto;
   margin: 2rem 0;
@@ -339,6 +396,77 @@ tr:nth-child(odd) {
   font-weight: 700;
 }
 
+.compare-cta-band .compare-cta-pro-btn {
+  color: white;
+}
+
+.compare-cta-band .compare-cta-pro-btn--store {
+  color: #000;
+}
+
+.compare-cta-pro-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 1rem 0 0.6rem;
+}
+
+.compare-cta-pro-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.compare-cta-pro-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.18);
+  transition: opacity 0.15s ease;
+}
+
+.compare-cta-pro-btn:hover::before {
+  opacity: 1;
+}
+
+.compare-cta-pro-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.35);
+}
+
+.compare-cta-pro-btn:active {
+  transform: translateY(0);
+  filter: brightness(0.95);
+}
+
+.compare-cta-pro-btn--github {
+  background: linear-gradient(135deg, #4b5563, #1f2937);
+  box-shadow: 0 4px 14px -3px rgba(0, 0, 0, 0.4);
+}
+
+.compare-cta-pro-btn--store {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #451a03;
+  box-shadow: 0 4px 14px -3px rgba(217, 119, 6, 0.4);
+}
+
+.compare-cta-sub {
+  font-size: 0.88rem;
+  opacity: 0.8;
+  margin-top: 0.5rem;
+}
+
 .dark .compare-intro-card,
 .dark .compare-path-card {
   border-color: rgba(148, 163, 184, 0.22);
@@ -366,6 +494,17 @@ tr:nth-child(odd) {
 .dark .compare-intro-card-pro .compare-kicker {
   background: rgba(251, 191, 36, 0.16);
   color: #fde68a;
+}
+
+.dark .compare-pro-btn--github {
+  background: linear-gradient(135deg, #374151, #1f2937);
+  box-shadow: 0 4px 14px -3px rgba(0, 0, 0, 0.5);
+}
+
+.dark .compare-pro-btn--store {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #451a03;
+  box-shadow: 0 4px 14px -3px rgba(251, 191, 36, 0.3);
 }
 
 .dark .compare-yes {

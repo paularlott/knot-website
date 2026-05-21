@@ -30,6 +30,10 @@ hideSidebar: true
       <li>License-gated server features</li>
       <li>Commercial binaries and container images</li>
     </ul>
+    <div class="compare-pro-cta">
+      <a href="https://github.com/sponsors/paularlott" class="compare-pro-btn compare-pro-btn--github">Get a license via GitHub Sponsors</a>
+      <a href="https://clients.clearfusion.support/store/developer-tools" class="compare-pro-btn compare-pro-btn--store">Get a license via clearFusion Digital</a>
+    </div>
   </section>
 </div>
 
@@ -162,6 +166,10 @@ hideSidebar: true
     <p class="compare-kicker">Upgrade to Pro</p>
     <h3>Unlock commercial features</h3>
     <p>Use Knot Pro if you need OAuth, secret providers, activity views, and other advanced operational features.</p>
-    <p><a href="/docs/quick-start/pro-installation/">See Knot Pro installation</a></p>
-  </div>
+    <div class="compare-cta-pro-buttons">
+      <a href="https://github.com/sponsors/paularlott" class="compare-cta-pro-btn compare-cta-pro-btn--github">Get a license via GitHub Sponsors</a>
+      <a href="https://clients.clearfusion.support/store/developer-tools" class="compare-cta-pro-btn compare-cta-pro-btn--store">Get a license via clearFusion Digital</a>
+    </div>
+    <p class="compare-cta-sub">Then <a href="/docs/quick-start/pro-installation/">see the Pro installation guide</a> to get running.</p>
+   </div>
 </div>
