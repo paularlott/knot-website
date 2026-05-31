@@ -131,7 +131,7 @@ job "${{.space.name}}-${{.user.username}}" {
 
 ### Volumes
 
-Templates can define one or more volumes. These volumes are:
+Templates can define one or more volumes or managed host paths. These storage resources are:
 
 - **Created**: When the space is deployed.
 - **Destroyed**: When the space is deleted.
@@ -197,6 +197,17 @@ volumes:
 
 Nomad volume definitions can include both `csi` and `host` volume types.
 
+#### Example Managed Path Definition
+
+Use `paths` when a Nomad job should use a host directory that **knot** creates before the job starts and removes when the space is deleted:
+
+```yaml
+paths:
+  - /storage/${{ .space.id }}/data
+```
+
+`~/data` resolves under the server user's home directory, `/data` is absolute, and `data` is relative to the agent working directory.
+
 {{< tip "warning" >}}
-If volume definitions are added or removed from a template, the changes will take effect the next time the space is started. Any data in a deleted volume will be permanently lost.
+If volume or path definitions are added or removed from a template, the changes will take effect the next time the space is started. Any data in a deleted volume or path will be permanently lost.
 {{< /tip >}}

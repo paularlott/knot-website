@@ -43,7 +43,7 @@ To create a new template:
 {{< picture src="../images/template-volumedef.webp" caption="Template Volume Definition" >}}
 
 - **`Volume Definition (YAML)`**:
-  Optionally define a list of volumes to be created for the space. This field is unavailable for `Manual` templates.
+  Optionally define volumes or managed host paths to be created for the space. This field is unavailable for `Manual` templates. In `paths`, `~` resolves to the server user's home directory, absolute paths start with `/`, and relative paths are resolved from the agent working directory.
 
 ---
 

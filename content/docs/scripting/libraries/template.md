@@ -75,3 +75,5 @@ print(icons)
 - `schedule` - List of schedule day dicts (`enabled`, `from`, `to`)
 - `custom_fields` - List of custom field dicts (`name`, `description`)
 - `disable_user_activity` - Whether filesystem user activity collection is disabled for spaces created from this template {{< pro-badge >}}
+
+`create()` and `update()` also accept `paths`, either as a string or list of strings. These are appended to the template volume definition as managed `paths` entries.

@@ -27,6 +27,10 @@ weight: 100
   - SSH private keys are only visible and editable by the owning user
   - The key is written to `~/.ssh/id_ed25519`, `~/.ssh/id_rsa`, or `~/.ssh/id_ecdsa` depending on key format
   - Running spaces receive updates when the key changes and old keys of a different type are cleaned up
+- **Managed Template Paths**:
+  - Local-container and Nomad templates can define `paths` alongside `volumes`
+  - Paths are created before spaces start and removed when spaces are deleted
+  - `~` resolves to the server user's home directory, absolute paths start with `/`, and relative paths resolve from the agent working directory
   {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
