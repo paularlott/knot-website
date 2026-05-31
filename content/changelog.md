@@ -22,6 +22,11 @@ weight: 100
 - **Multiple SSH Public Keys**:
   - User profiles now support multiple SSH public keys, with one key per line
   - All profile keys are copied through to SSH-enabled spaces and running spaces receive profile key updates
+- **Profile SSH Private Key**:
+  - Users can store an SSH private key in their profile for SSH-enabled spaces
+  - SSH private keys are only visible and editable by the owning user
+  - The key is written to `~/.ssh/id_ed25519`, `~/.ssh/id_rsa`, or `~/.ssh/id_ecdsa` depending on key format
+  - Running spaces receive updates when the key changes and old keys of a different type are cleaned up
   {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}

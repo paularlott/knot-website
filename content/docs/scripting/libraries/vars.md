@@ -13,7 +13,7 @@ The `knot.vars` library provides template variable management functions.
 |----------|-------------|
 | `list()` | List all variables |
 | `get(var_id)` | Get variable by ID or name |
-| `create(name, value, zones=[], local=False, protected=False, restricted=False)` | Create a new variable |
+| `create(name, value, zones=None, local=False, protected=False, restricted=False)` | Create a new variable |
 | `set_value(var_id, value)` | Set variable value |
 | `update(var_id, value=None, zones=None, ...)` | Update variable properties |
 | `delete(var_id)` | Delete a variable |
@@ -48,15 +48,17 @@ vars.update("API_KEY", value="new-value", zones=["zone1", "zone2"])
 
 ## Variable Properties
 
-Variables contain:
+`list()` returns:
 - `id` - Variable ID
 - `name` - Variable name
-- `value` - Variable value (empty string if protected)
-- `zones` - List of zones where variable is available
 - `local` - Whether variable is local
 - `protected` - Whether value is protected (not returned in get)
 - `restricted` - Whether variable is restricted
 - `is_managed` - Whether variable is managed by the system
+
+`get()` also includes:
+- `value` - Variable value (empty string if protected)
+- `zones` - List of zones where variable is available
 
 ---
 

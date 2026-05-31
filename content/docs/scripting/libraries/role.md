@@ -27,7 +27,11 @@ import knot.role as role
 # List roles
 roles = role.list()
 for r in roles:
-    print(f"{r['name']}: {r['permissions']}")
+    print(f"{r['id']}: {r['name']}")
+
+# Get role details with permissions
+r = role.get(roles[0]['id'])
+print(f"{r['name']}: {r['permissions']}")
 ```
 
 ---

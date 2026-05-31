@@ -21,6 +21,20 @@ SSH access allows you to securely connect to your spaces for advanced management
 When using the SSH server built into the **knot** agent, the keys are stored in the agent's memory. When using an SSH server within the space, the keys are written to `~/.ssh/authorized_keys`, one key per line. Profile key changes are also pushed to running SSH-enabled spaces.
 {{< /tip >}}
 
+## Adding a Private SSH Key
+
+You can also add an SSH private key to your own profile. It is not shown when administrators edit other users. When set, **knot** writes it to the appropriate file in `~/.ssh/` depending on the key format:
+
+| Key Format | File |
+|---|---|
+| OpenSSH (Ed25519) | `~/.ssh/id_ed25519` |
+| RSA | `~/.ssh/id_rsa` |
+| EC | `~/.ssh/id_ecdsa` |
+
+The private key belongs to the space owner only. If a space is shared, shared users' public keys are added for login access, but their private keys are not copied into the owner's space.
+
+Clearing the private key in your profile removes the managed key file from running SSH-enabled spaces.
+
 ---
 
 ## Connecting via SSH

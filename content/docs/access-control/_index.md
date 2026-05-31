@@ -26,6 +26,7 @@ Users are created and managed through the web interface. Each user has:
 - Username and password
 - Email address
 - SSH public key (optional)
+- SSH private key in their own profile (optional)
 - Timezone preference
 - Role assignments
 - Group memberships

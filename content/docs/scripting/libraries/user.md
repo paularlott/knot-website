@@ -14,8 +14,10 @@ The `knot.user` library provides user management functions.
 | `list(state='', zone='')` | List all users with optional filters |
 | `get(user_id)` | Get user by ID, username, or email |
 | `get_me()` | Get the current user |
-| `create(username, email, password, ...)` | Create a new user |
-| `update(user_id, ...)` | Update user properties |
+| `create(username, email, password, ..., ssh_public_key='')` | Create a new user |
+| `update(user_id, ..., ssh_public_key=None)` | Update user properties |
+| `set_ssh_public_key(ssh_public_key, github_username=None)` | Set the current user's SSH public keys |
+| `set_ssh_private_key(ssh_private_key)` | Set the current user's SSH private key |
 | `delete(user_id)` | Delete a user |
 | `get_quota(user_id)` | Get user quota and usage |
 | `list_permissions(user_id)` | List all permissions for a user |
@@ -48,6 +50,10 @@ if user.has_permission(me['id'], 2):  # MANAGE_SPACES = 2
 # Get quota information
 quota = user.get_quota(me['id'])
 print(f"Spaces: {quota['number_spaces']}/{quota['max_spaces']}")
+
+# Update SSH keys for the current user
+user.set_ssh_public_key("ssh-ed25519 AAAA...")
+user.set_ssh_private_key("-----BEGIN OPENSSH PRIVATE KEY-----\n...")
 ```
 
 ---
@@ -66,6 +72,8 @@ Users contain:
 - `preferred_shell` - Preferred shell
 - `timezone` - User timezone
 - `github_username` - GitHub username
+- `ssh_public_key` - SSH public keys, one key per line
+- `ssh_private_key` - SSH private key, only populated for the current user
 - `number_spaces` - Current number of spaces
 - `number_spaces_deployed` - Number of running spaces
 - `used_compute_units` - Used compute units

@@ -11,7 +11,7 @@ The `knot.skill` library provides functions to manage skills (knowledge base con
 
 | Function | Description |
 |----------|-------------|
-| `create(content, is_global=False, groups=[], zones=[])` | Create a new skill |
+| `create(content, is_global=False, groups=None, zones=None)` | Create a new skill |
 | `get(name_or_id)` | Get a skill by name or UUID |
 | `update(name_or_id, content=None, groups=None, zones=None)` | Update a skill |
 | `delete(name_or_id)` | Delete a skill |
