@@ -28,7 +28,6 @@ The **knot** agent is available for download directly from your **knot** server.
 
 - Linux (amd64, arm64)
 - macOS (amd64, arm64)
-- Windows (amd64, arm64)
 
 Download the appropriate agent for your platform from your **knot** server:
 
@@ -52,11 +51,9 @@ chmod +x knot-agent
 curl -O https://your-knot-server/agents/knot_agent_darwin_arm64.zip
 unzip knot_agent_darwin_arm64.zip
 chmod +x knot-agent
-
-# Windows (PowerShell)
-Invoke-WebRequest -Uri https://your-knot-server/agents/knot_agent_windows_amd64.exe.zip -OutFile knot_agent_windows_amd64.exe.zip
-Expand-Archive knot_agent_windows_amd64.exe.zip
 ```
+
+For Windows, use the full **knot** binary from the [client download](../quick-start/client) page instead.
 
 Replace `your-knot-server` with the actual address of your **knot** server.
 
