@@ -64,6 +64,7 @@ print(icons)
 - `with_code_server` - Code Server enabled
 - `with_ssh` - SSH access enabled
 - `with_run_command` - Run command enabled
+- `allow_node_migration` - Whether stopped spaces created from this local-container template can be reassigned to another node
 - `schedule_enabled` - Schedule enabled
 - `auto_start` - Auto-start enabled
 - `max_uptime` - Maximum uptime value

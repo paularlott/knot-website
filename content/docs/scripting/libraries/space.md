@@ -11,7 +11,7 @@ The `knot.space` library provides space management functions for scripts.
 
 | Function | Description |
 |----------|-------------|
-| `create(name, template_name, description='', shell='bash', depends_on=None, stack='')` | Create a new space |
+| `create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='')` | Create a new space |
 | `delete(name)` | Delete a space by name |
 | `get(name)` | Get detailed space information |
 | `start(name)` | Start a space |
@@ -70,7 +70,7 @@ print(content)
 
 ## Function Details
 
-### create(name, template_name, description='', shell='bash', depends_on=None, stack='')
+### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='')
 
 Create a new space.
 
@@ -81,6 +81,7 @@ Create a new space.
 - `shell` (string, optional): Shell to use (default: "bash")
 - `depends_on` (list, optional): List of dependency space names or IDs
 - `stack` (string, optional): Stack name to group this space under
+- `selected_node_id` (string, optional): Node ID to assign for local-container spaces. Leave empty to auto-select.
 
 **Returns:** `string` - The space ID of the newly created space
 
@@ -172,7 +173,8 @@ Get detailed information about a space.
 - `is_running` (bool): Whether the space is running
 - `is_pending` (bool): Whether the space is pending
 - `is_deleting` (bool): Whether the space is being deleted
-- `node_hostname` (string): Hostname of the node running the space
+- `node_id` (string): ID of the node assigned to host the space
+- `node_hostname` (string): Hostname of the node assigned to host the space
 - `created_at` (string): Creation timestamp
 - `alt_names` (list): Additional space names
 - `icon_url` (string): Icon URL

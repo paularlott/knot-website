@@ -4,7 +4,7 @@ description: How knot selects servers for space deployment in multi-server setup
 weight: 50
 ---
 
-Node selection determines which server will host a space when multiple servers are available. Knot can automatically select the best server based on availability and runtime requirements, or you can manually specify a server during space creation.
+Node selection determines which server will host a space when multiple servers are available. Knot can automatically select the best server based on availability and runtime requirements, or you can manually specify a server during space creation. For local-container spaces, the selected server can still be changed while the space is stopped when the template allows node migration.
 
 ---
 
@@ -13,6 +13,8 @@ Node selection determines which server will host a space when multiple servers a
 When multiple servers are available, you can choose where a space is deployed:
 - **Automatic Selection** (default): Knot selects the best available server
 - **Manual Selection**: You choose a specific server when creating the space
+
+If a local-container space has not started yet, you can reopen the edit form and change the selected server before the first start. After a space has been started, reassignment is only available for stopped spaces whose template explicitly allows node migration.
 
 If only one server can run the space, that server is automatically selected.
 
@@ -86,7 +88,7 @@ To manually select a server for your space:
 - A server has specialized hardware or configurations
 
 {{< tip >}}
-The space will always use the same server and can't be migrated to a different server.
+A stopped local-container space can be reassigned to a different server before it starts. After it has run once, OSS only offers manual stop-and-reassign when the template allows node migration.
 {{< /tip >}}
 
 ---

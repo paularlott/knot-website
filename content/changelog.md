@@ -8,6 +8,39 @@ weight: 100
 
 ## May 2026
 
+{{< version "v0.25.0" >}}
+
+{{< changelog-item "added" >}}
+
+- **Local Container Node Migration**:
+  - Templates can allow local-container spaces to be manually reassigned to another live node while stopped
+  - Node selection now prefers the least-loaded eligible node when placing or migrating local-container spaces
+- **Automatic Failed-Node Recovery** {{< pro-badge >}}:
+  - Zone leaders can detect failed gossip nodes and automatically restart eligible spaces on another live node
+  - Automatic migration requires both node migration and Auto-restart on failure to be enabled on the template
+  - Leader election reconciliation ensures failed-node migrations continue if the previous zone leader fails
+  {{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+
+- **Template Migration Controls**:
+  - Clarified local-container migration wording in the template form
+  - In Pro, Auto-restart on failure is shown when node migration is enabled, making the automatic migration policy visible from the template form
+- **Container Volume Safety**:
+  - Docker, Podman, and Apple container jobs now reject undeclared named volume binds instead of allowing runtimes to silently create untracked volumes
+  - Host-path binds continue to work, and named volumes must be declared in the template volume definition so they can be tracked and cleaned up correctly
+  {{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+
+- Stopping a space assigned to an offline remote node now marks the space as stopped locally instead of leaving it shown as running
+- Migrated local-container spaces clean up their old container and tracked volumes when the failed node returns
+- Apple container cleanup now treats already-removed containers and volumes as successful cleanup instead of reporting false failures
+- Prevented undeclared named volumes such as `volume-paul` from being auto-created outside Knot volume tracking during space start
+  {{< /changelog-item >}}
+
+---
+
 {{< version "v0.24.0" >}}
 
 {{< changelog-item "added" >}}

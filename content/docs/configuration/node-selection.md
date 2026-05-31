@@ -3,7 +3,7 @@ title: Node Selection
 weight: 65
 ---
 
-Node selection determines which server in the zone will host a space. Knot can automatically select the best server based on availability and runtime requirements, or you can manually specify a server during space creation.
+Node selection determines which server in the zone will host a space. Knot can automatically select the best server based on availability and runtime requirements, or you can manually specify a server during space creation. For local-container spaces, that assignment can still be changed while the space remains stopped when the template allows node migration.
 
 ---
 
@@ -12,6 +12,8 @@ Node selection determines which server in the zone will host a space. Knot can a
 When multiple servers are available in a zone, you can choose where a space is deployed:
 - **Automatic Selection** (default): Knot selects the best available server
 - **Manual Selection**: You choose a specific server when creating the space
+
+If a local-container space has not been started yet, you can still edit it and change the assigned server before the first start. After a space has been started, reassignment is only available for stopped spaces whose template explicitly allows node migration.
 
 If only one server in the zone can run the space, that server is automatically selected.
 
@@ -90,6 +92,8 @@ Spaces can be configured with node affinity for persistent placement:
 
 - **Automatic** (default): No specific server preference; Knot chooses based on current load
 - **Manual**: Space is assigned to a specific server and will prefer that server on restart
+
+For stopped local-container spaces, you can edit the space and switch the assigned server before starting it. Before first start this is always available; after that it depends on the template's node migration setting. This is the manual migration path in OSS.
 
 Node affinity is stored with the space configuration and persists across space restarts.
 

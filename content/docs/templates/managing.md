@@ -57,6 +57,9 @@ To create a new template:
 - **`System Shutdown Script`**:
   An optional script to run when the space stops. This field is unavailable for `Manual` templates. The script must be one defined under scripts.
 
+- **`Allow stopped spaces to be migrated between nodes`**:
+  Available only for local-container templates (`Local Container`, `Docker`, `Podman`, and `Apple`). When enabled, a stopped space created from the template can be reassigned to a different live node from the edit space form.
+
 - **`Compute Units`**:
   The number of compute units the space will use. This is used to calculate the cost of running the space. Set to `0` for no cost.
 
