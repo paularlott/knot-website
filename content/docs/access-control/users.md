@@ -34,7 +34,7 @@ To create a new user:
   If set, the system will attempt to retrieve the user's public key(s) from GitHub.
 
 - **`SSH Public Key`** *(optional)*:
-  If set, this key will be passed to spaces to allow passwordless SSH logins. Users can set their own SSH public key by clicking their username in the top-right corner of the interface.
+  If set, this key will be passed to spaces to allow passwordless SSH logins. To add multiple keys, enter one public key per line. Users can set their own SSH public keys by clicking their username in the top-right corner of the interface.
 
 ---
 

@@ -19,6 +19,9 @@ weight: 100
   - Zone leaders can detect failed gossip nodes and automatically restart eligible spaces on another live node
   - Automatic migration requires both node migration and Auto-restart on failure to be enabled on the template
   - Leader election reconciliation ensures failed-node migrations continue if the previous zone leader fails
+- **Multiple SSH Public Keys**:
+  - User profiles now support multiple SSH public keys, with one key per line
+  - All profile keys are copied through to SSH-enabled spaces and running spaces receive profile key updates
   {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}

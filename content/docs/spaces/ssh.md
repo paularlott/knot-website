@@ -7,17 +7,18 @@ SSH access allows you to securely connect to your spaces for advanced management
 
 ---
 
-## Adding a Public SSH Key
+## Adding Public SSH Keys
 
 1. Click your username in the top-right corner of the web interface and select **`My Profile`**.
 2. Paste your public SSH key into the **`SSH Public Key`** field and click **`Update`**.
-   - This key will be used for all your containers, enabling passwordless authentication.
+   - You can add multiple public keys by placing each key on its own line.
+   - All listed keys will be used for your SSH-enabled spaces, enabling passwordless authentication from any matching private key.
    {{< picture src="../images/profile-sshkey.webp" caption="SSH Public Key" >}}
 
 3. Alternatively, automatically fetch your public keys from GitHub by entering your GitHub username in the **`GitHub Username`** field.
 
 {{< tip >}}
-When using the SSH server built into the **knot** agent the keys are stored in the agents memory, when using a SSH server within the space the keys are updated in `~/.ssh/authorized_keys`.
+When using the SSH server built into the **knot** agent, the keys are stored in the agent's memory. When using an SSH server within the space, the keys are written to `~/.ssh/authorized_keys`, one key per line. Profile key changes are also pushed to running SSH-enabled spaces.
 {{< /tip >}}
 
 ---
