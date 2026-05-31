@@ -53,7 +53,7 @@ unzip knot_agent_darwin_arm64.zip
 chmod +x knot-agent
 ```
 
-For Windows, use the full **knot** binary from the [client download](../quick-start/client) page instead.
+For Windows, download the full **knot** binary from the [client download](../quick-start/client) page and use `knot agent start` with the same flags shown below.
 
 Replace `your-knot-server` with the actual address of your **knot** server.
 
@@ -62,7 +62,11 @@ Replace `your-knot-server` with the actual address of your **knot** server.
 Assuming the **knot** server is running on `192.168.1.100` with the agent interface on port `3010`, use the following command to start the agent and connect it to the server:
 
 ```shell
+# Using the dedicated agent binary
 ./knot-agent --endpoint 192.168.1.100:3010 --space-id=0198384f-59f3-74c2-8a88-3a6b4302b391 --syslog-port=0
+
+# Or using the full knot binary
+./knot agent start --endpoint 192.168.1.100:3010 --space-id=0198384f-59f3-74c2-8a88-3a6b4302b391 --syslog-port=0
 ```
 
 - **`--endpoint`**: The IP address and port of the **knot** server. Adjust this value based on your environment.
