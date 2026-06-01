@@ -5,6 +5,8 @@ weight: 40
 
 The `knot.healthcheck` library provides functions for space health monitoring. It is only available in agent-side health check scripts. The check functions (`http_head`, `tcp_port`, `program`) return `True` or `False` so you can combine them, then call `check_result()` to report the final status and exit.
 
+Template health checks can also use the `Agent` type. Agent health checks do not run a script; the server watches for the space agent to stop transmitting state. If auto-restart is enabled and the agent stops transmitting, Knot marks the space unhealthy and starts a restart cycle for local-container and Nomad spaces.
+
 ---
 
 ## Functions
@@ -92,4 +94,4 @@ Report the final health check result and exit the script immediately.
 
 The `knot.healthcheck` library is **only available in agent-side health check scripts**. It is not available in local, MCP, or remote execution environments.
 
-When a template configures a health check type (HTTP, TCP, or Program), the agent automatically generates and runs a script using these functions. For the `custom` health check type, you write a script that imports `knot.healthcheck` directly, combines check functions as needed, and calls `check_result()` with the final result.
+When a template configures a script-backed health check type (HTTP, TCP, or Program), the agent automatically generates and runs a script using these functions. For the `custom` health check type, you write a script that imports `knot.healthcheck` directly, combines check functions as needed, and calls `check_result()` with the final result. The `Agent` health check type is handled by the server and does not use this library.

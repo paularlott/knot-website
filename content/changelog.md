@@ -31,6 +31,9 @@ weight: 100
   - Local-container and Nomad templates can define `paths` alongside `volumes`
   - Paths are created before spaces start and removed when spaces are deleted
   - `~` resolves to the server user's home directory, absolute paths start with `/`, and relative paths resolve from the agent working directory
+- **Health Checks**:
+  - Added Agent health check mode for monitoring whether the space agent is still transmitting state
+  - Agent health checks can restart local-container and Nomad spaces when Auto-restart on failure is enabled
   {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}

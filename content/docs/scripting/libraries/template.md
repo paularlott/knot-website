@@ -74,6 +74,15 @@ print(icons)
 - `zones` - List of zone names
 - `schedule` - List of schedule day dicts (`enabled`, `from`, `to`)
 - `custom_fields` - List of custom field dicts (`name`, `description`)
+- `health_check_type` - Health check type (`none`, `agent`, `tcp`, `http`, `program`, or `custom`)
+- `health_check_config` - Health check target, command, or custom script depending on type
+- `health_check_skip_ssl_verify` - Skip TLS verification for HTTP health checks
+- `health_check_timeout` - Health check timeout in seconds
+- `health_check_interval` - Health check interval in seconds
+- `health_check_max_failures` - Number of consecutive failures before the space is considered unhealthy
+- `health_check_auto_restart` - Automatically restart when the health check fails. For `agent`, this restarts local-container and Nomad spaces when the agent stops transmitting.
 - `disable_user_activity` - Whether filesystem user activity collection is disabled for spaces created from this template {{< pro-badge >}}
 
 `create()` and `update()` also accept `paths`, either as a string or list of strings. These are appended to the template volume definition as managed `paths` entries.
+
+For `health_check_type="agent"`, no `health_check_config` value is required.
