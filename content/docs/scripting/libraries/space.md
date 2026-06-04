@@ -176,7 +176,7 @@ Get detailed information about a space.
 - `node_id` (string): ID of the node assigned to host the space
 - `node_hostname` (string): Hostname of the node assigned to host the space
 - `created_at` (string): Creation timestamp
-- `alt_names` (list): Additional space names
+- `alt_names` (list of objects): Additional space names, each with `name` (string) and `port` (string, the HTTP port number to route to)
 - `icon_url` (string): Icon URL
 - `custom_fields` (list): Custom field values
 - `startup_script_id` (string): Startup script ID

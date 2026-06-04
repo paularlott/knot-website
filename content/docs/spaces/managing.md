@@ -16,7 +16,7 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
    - **`Name`**: The name of the space.
    - **`Description`**: (Optional) A description for the space.
    - **`Icon`**: (Optional) An icon for the space. By default, the template's icon will be used if one is set.
-   - **`Additional Space Names`**: Add additional names for the space by clicking the `+` icon. This is useful for accessing the space under multiple domain names when using the web proxy service.
+   - **`Additional Space Names`**: Add additional names for the space by clicking the `+` icon. This is useful for accessing the space under multiple domain names when using the web proxy service. Each additional name can be assigned a specific HTTP port from the dropdown; the first available port is selected by default.
    - **`Terminal Shell`**: The shell to use for the terminal. By default, the user's profile shell is used.
    - **`User Startup Script`**: An optional script to run when the space starts, the user startup script is run after the system startup script. This field is unavailable for `Manual` templates. The script must be one defined under scripts and owned by the user creating the space.
    - **`Custom Fields`**: If the template includes custom fields, they will appear here. Set values for each field as needed.

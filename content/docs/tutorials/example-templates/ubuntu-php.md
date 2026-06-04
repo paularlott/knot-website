@@ -5,6 +5,8 @@ weight: 50
 
 The following example sets up a **PHP development space** where the `~/public_html` folder is served via an instance of **Caddy**.
 
+Add a port in the template's **Ports** section with name `Web`, port `80`, and protocol `HTTP` so the web interface is accessible from the space's ports menu.
+
 ---
 
 ## Nomad Cluster
@@ -48,7 +50,6 @@ job "${{.user.username}}-${{.space.name}}" {
         KNOT_SERVER           = "${{.server.url}}"
         KNOT_AGENT_ENDPOINT   = "${{.server.agent_endpoint}}"
         KNOT_SPACEID          = "${{.space.id}}"
-        KNOT_HTTP_PORT        = "Web=80"
         KNOT_USER             = "${{.user.username}}"
         TZ                    = "${{ .user.timezone }}"
       }
@@ -116,7 +117,6 @@ environment:
   - "KNOT_AGENT_ENDPOINT=${{.server.agent_endpoint}}"
   - "KNOT_SPACEID=${{.space.id}}"
   - "KNOT_USER=${{.user.username}}"
-  - "KNOT_HTTP_PORT=80=Site"
 ```
 
 ---

@@ -5,6 +5,8 @@ weight: 30
 
 The following defines a template for deploying a **Valkey server**. This space has no persistent storage, so restarting it will destroy the current data.
 
+Add a port in the template's **Ports** section with name `Valkey`, port `6379`, and protocol `TCP` so the agent exposes the Valkey service for port forwarding.
+
 ---
 
 ## Nomad Cluster
@@ -35,7 +37,6 @@ job "${{.user.username}}-${{.space.name}}" {
         KNOT_SERVER         = "${{.server.url}}"
         KNOT_AGENT_ENDPOINT = "${{.server.agent_endpoint}}"
         KNOT_SPACEID        = "${{.space.id}}"
-        KNOT_TCP_PORT       = "6379"
         KNOT_USER           = "redis"
       }
 
@@ -94,7 +95,6 @@ environment:
   - "KNOT_AGENT_ENDPOINT=${{.server.agent_endpoint}}"
   - "KNOT_SPACEID=${{.space.id}}"
   - "KNOT_USER=${{.user.username}}"
-  - "KNOT_TCP_PORT=6379"
 ```
 
 ---

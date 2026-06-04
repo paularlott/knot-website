@@ -74,7 +74,6 @@ job "${{.space.name}}-${{.user.username}}" {
         KNOT_SERVER = "${{.server.url}}"
         KNOT_AGENT_ENDPOINT = "${{.server.agent_endpoint}}"
         KNOT_SPACEID = "${{.space.id}}"
-        KNOT_HTTP_PORT = "80=Web"
         KNOT_LOGLEVEL = "info"
         KNOT_USER = "${{.user.username}}"
         KNOT_SERVICE_PASSWORD = "${{.user.service_password}}"
@@ -125,7 +124,19 @@ volumes:
 
 ---
 
-## Step 4: Enable Features
+## Step 4: Add Ports
+
+Under the **Ports** section of the template form, add a port so the web server is accessible:
+
+- Name: `Web`
+- Port: `80`
+- Protocol: `HTTP`
+
+This automatically injects the `KNOT_HTTP_PORT` environment variable into spaces created from this template.
+
+---
+
+## Step 5: Enable Features
 
 For this tutorial, we won't apply any restrictions. However, we'll enable the following features:
 
@@ -136,7 +147,7 @@ For this tutorial, we won't apply any restrictions. However, we'll enable the fo
 
 ---
 
-## Step 5: View the New Template
+## Step 6: View the New Template
 
 Once saved, you'll be redirected to the `Templates` page, where your new template will be displayed.
 

@@ -82,6 +82,7 @@ print(icons)
 - `health_check_max_failures` - Number of consecutive failures before the space is considered unhealthy
 - `health_check_auto_restart` - Automatically restart when the health check fails. For `agent`, this restarts local-container and Nomad spaces when the agent stops transmitting.
 - `disable_user_activity` - Whether filesystem user activity collection is disabled for spaces created from this template {{< pro-badge >}}
+- `ports` - List of port dicts (`name`, `port`, `protocol`) defining the web ports exposed by spaces created from this template. These are injected as `KNOT_HTTP_PORT`, `KNOT_HTTPS_PORT`, and `KNOT_TCP_PORT` environment variables.
 
 `create()` and `update()` also accept `paths`, either as a string or list of strings. These are appended to the template volume definition as managed `paths` entries.
 

@@ -7,6 +7,8 @@ The following example runs a **MariaDB server** within a space. Storage is provi
 
 MariaDB is initialized with the root password set to the user's **Service Password** as defined in their user profile.
 
+Add a port in the template's **Ports** section with name `MariaDB`, port `3306`, and protocol `TCP` so the agent exposes the MariaDB service for port forwarding.
+
 The job assumes **Docker** is being used for container management. If **Podman** is being used, change the `driver` to `podman` and update the `image` to `registry-1.docker.io/paularlott/knot-mariadb:11.4` to enable spaces to be created using Podman.
 
 ---
@@ -41,7 +43,6 @@ job "${{.user.username}}-${{.space.name}}" {
         KNOT_SERVER           = "${{.server.url}}"
         KNOT_AGENT_ENDPOINT   = "${{.server.agent_endpoint}}"
         KNOT_SPACEID          = "${{.space.id}}"
-        KNOT_TCP_PORT         = "3306"
         KNOT_USER             = "mysql"
         MARIADB_ROOT_PASSWORD = "${{.user.service_password}}"
       }

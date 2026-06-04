@@ -5,6 +5,8 @@ weight: 10
 
 The following template defines an **Ubuntu 24.04 space**. Below are configurations for both **Nomad** and **local Docker/Podman** deployments.
 
+Add a port in the template's **Ports** section with name `Site`, port `80`, and protocol `HTTP` so the web interface is accessible from the space's ports menu.
+
 ---
 
 ## Nomad Cluster
@@ -110,7 +112,6 @@ environment:
   - "KNOT_AGENT_ENDPOINT=${{.server.agent_endpoint}}"
   - "KNOT_SPACEID=${{.space.id}}"
   - "KNOT_USER=${{.user.username}}"
-  - "KNOT_HTTP_PORT=80=Site"
   - "KNOT_SERVICE_PASSWORD=${{.user.service_password}}"
 ```
 

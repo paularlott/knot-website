@@ -86,7 +86,6 @@ environment:
   - "KNOT_AGENT_ENDPOINT=${{.server.agent_endpoint}}"
   - "KNOT_SPACEID=${{.space.id}}"
   - "KNOT_SSH_PORT=22"
-  - "KNOT_HTTP_PORT=80=Site"
   - "KNOT_SERVICE_PASSWORD=${{.user.service_password}}"
   - "KNOT_VNC_HTTP_PORT=5680"
   - "KNOT_CODE_SERVER_PORT=49374"
