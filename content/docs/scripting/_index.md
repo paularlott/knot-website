@@ -175,6 +175,8 @@ scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 | scriptling.websocket                 | ✓                   | ✓                   | ✓        |
 | scriptling.template.html             | ✓                   | ✓                   | ✓        |
 | scriptling.template.text             | ✓                   | ✓                   | ✓        |
+| scriptling.net.resolve               | ✓                   | ✓                   | ✓        |
+| scriptling.provision.file            | ✗                   | ✓                   | ✓        |
 
 \* Requires a Pro license for secret provider access (Vault, 1Password). Standalone scriptling has built-in secret support.
 

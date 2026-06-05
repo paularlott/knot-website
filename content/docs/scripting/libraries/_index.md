@@ -26,6 +26,8 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 | [knot.permission](permission/) | Permission checking |
 | [knot.healthcheck](healthcheck/) | Space health monitoring (agent-side only) |
 | [knot.audit](audit/) | Audit log search and filtering |
+| [scriptling.net.resolve](net-resolve/) | DNS resolution for IP, SRV, and srv+http URLs |
+| [scriptling.provision.file](provision-file/) | Idempotent file provisioning with correct permissions |
 
 ---
 
