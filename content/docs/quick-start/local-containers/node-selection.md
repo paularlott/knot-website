@@ -88,7 +88,7 @@ To manually select a server for your space:
 - A server has specialized hardware or configurations
 
 {{< tip >}}
-A stopped local-container space can be reassigned to a different server before it starts. After it has run once, OSS only offers manual stop-and-reassign when the template allows node migration.
+A stopped local-container space can be reassigned to a different server before it starts. After it has run once, OSS only offers manual stop-and-reassign when the template allows node migration. Automatic failed-node recovery is available in Knot Pro {{< pro-badge >}}.
 {{< /tip >}}
 
 ---

@@ -64,7 +64,7 @@ print(icons)
 - `with_code_server` - Code Server enabled
 - `with_ssh` - SSH access enabled
 - `with_run_command` - Run command enabled
-- `allow_node_migration` - Whether stopped spaces created from this local-container template can be reassigned to another node
+- `allow_node_migration` - Whether stopped spaces created from this local-container template can be reassigned to another node. Combined with `health_check_auto_restart`, automatic failed-node recovery is available in Knot Pro {{< pro-badge >}}
 - `schedule_enabled` - Schedule enabled
 - `auto_start` - Auto-start enabled
 - `max_uptime` - Maximum uptime value
@@ -80,7 +80,7 @@ print(icons)
 - `health_check_timeout` - Health check timeout in seconds
 - `health_check_interval` - Health check interval in seconds
 - `health_check_max_failures` - Number of consecutive failures before the space is considered unhealthy
-- `health_check_auto_restart` - Automatically restart when the health check fails. For `agent`, this restarts local-container and Nomad spaces when the agent stops transmitting.
+- `health_check_auto_restart` - Automatically restart when the health check fails. For `agent`, this restarts local-container and Nomad spaces when the agent stops transmitting. Combined with `allow_node_migration`, automatic failed-node recovery is available in Knot Pro {{< pro-badge >}}
 - `disable_user_activity` - Whether filesystem user activity collection is disabled for spaces created from this template {{< pro-badge >}}
 - `ports` - List of port dicts (`name`, `port`, `protocol`) defining the web ports exposed by spaces created from this template. These are injected as `KNOT_HTTP_PORT`, `KNOT_HTTPS_PORT`, and `KNOT_TCP_PORT` environment variables.
 

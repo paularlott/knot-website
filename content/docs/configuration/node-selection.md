@@ -93,7 +93,7 @@ Spaces can be configured with node affinity for persistent placement:
 - **Automatic** (default): No specific server preference; Knot chooses based on current load
 - **Manual**: Space is assigned to a specific server and will prefer that server on restart
 
-For stopped local-container spaces, you can edit the space and switch the assigned server before starting it. Before first start this is always available; after that it depends on the template's node migration setting. This is the manual migration path in OSS.
+For stopped local-container spaces, you can edit the space and switch the assigned server before starting it. Before first start this is always available; after that it depends on the template's node migration setting. This is the manual migration path in OSS. Automatic failed-node recovery, detecting a failed node and migrating spaces to a live node, requires Knot Pro {{< pro-badge >}}.
 
 Node affinity is stored with the space configuration and persists across space restarts.
 

@@ -6,7 +6,7 @@ draft: false
 weight: 100
 ---
 
-## May 2026
+## June 2026
 
 {{< version "v0.25.0" >}}
 
@@ -34,6 +34,16 @@ weight: 100
 - **Health Checks**:
   - Added Agent health check mode for monitoring whether the space agent is still transmitting state
   - Agent health checks can restart local-container and Nomad spaces when Auto-restart on failure is enabled
+- **Template Ports**:
+  - Templates can define named ports (TCP, HTTP, HTTPS) that spaces expose
+  - Defined ports are injected into spaces as `KNOT_HTTP_PORT`, `KNOT_HTTPS_PORT`, and `KNOT_TCP_PORT` environment variables
+  - Alt names can route to specific ports defined in the template
+- **Scripting Libraries**:
+  - Added DNS resolution library (`scriptling.resolve`) for IP lookup and SRV record resolution
+  - Added file provisioning library (`scriptling.provision.file`) for file management in scripts
+- **Script CLI Commands**:
+  - New `knot scripts read` and `knot scripts write` commands for reading and writing script files
+  - New `knot run-script` agent command for executing scripts in running spaces
   {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
@@ -55,6 +65,8 @@ weight: 100
   {{< /changelog-item >}}
 
 ---
+
+## May 2026
 
 {{< version "v0.24.0" >}}
 
