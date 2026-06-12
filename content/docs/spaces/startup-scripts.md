@@ -133,8 +133,14 @@ See [Scripting Environments](../scripting/environments/) for complete library av
 
 ## Best Practices
 
-1. **Keep scripts idempotent**: Scripts should handle being run multiple times safely
+1. **Keep scripts idempotent**: Scripts should handle being run multiple times safely. Use `scriptling.provision.file` for file operations -- see [Provisioning](../provisioning/) for the recommended pattern
 2. **Handle errors gracefully**: Use try/except to catch and log errors
 3. **Log progress**: Print statements are captured in space logs
 4. **Use variables**: Store configuration in variables rather than hardcoding
 5. **Test thoroughly**: Test scripts manually before configuring them as startup/shutdown scripts
+
+---
+
+## What's Next
+
+- [Provisioning](../provisioning/) - Idempotent file provisioning with `scriptling.provision.file`

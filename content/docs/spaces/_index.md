@@ -129,6 +129,7 @@ The space owner retains full control and can revoke sharing at any time.
 ## What's Next
 
 - [Managing Spaces](managing/)
+- [Provisioning](provisioning/)
 - [SSH Access](ssh/)
 - [Web Terminal](terminal/)
 - [Port Forwarding](port-forwarding/)

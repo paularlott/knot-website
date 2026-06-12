@@ -208,6 +208,25 @@ stack.start("myproject")
 
 ---
 
+## File Provisioning
+
+```python
+import scriptling.provision.file as file
+
+status = file.ensure("~/.bashrc", """export PATH="$HOME/bin:$PATH"
+export EDITOR=vim
+""")
+
+if status == file.CREATED:
+    print("Created .bashrc")
+elif status == file.UPDATED:
+    print("Updated .bashrc")
+
+file.ensure_directory("~/projects", mode=0o755)
+```
+
+---
+
 ## Custom Health Check
 
 ```python
