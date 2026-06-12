@@ -1,5 +1,5 @@
 ---
-title: Provisioning
+title: Provisioning Scripts
 weight: 210
 ---
 
@@ -56,7 +56,7 @@ elif status == file.UPDATED:
     print("Updated .gitconfig")
 ```
 
-See the [scriptling.provision.file reference](../scripting/libraries/provision-file/) for the full API including `absent`, `ensure_directory`, and `absent_directory`.
+See the [scriptling.provision.file reference](../../scripting/libraries/provision-file/) for the full API including `absent`, `ensure_directory`, and `absent_directory`.
 
 ---
 
@@ -73,13 +73,13 @@ This runs first in the [execution order](../startup-scripts/#script-execution-or
 
 ### As a User Startup Script
 
-Individual users can set a provisioning script for their own space:
+Individual users can set a provisioning script for their own space via the web interface:
 
-```bash
-knot space update myspace --startup-script my-provision
-```
+1. Navigate to the space settings
+2. Select **Startup Script**
+3. Choose a provisioning script to run on startup
 
-Or via the space settings in the web interface. This runs after the template startup script.
+This runs after the template startup script.
 
 ### On Demand
 
@@ -134,8 +134,8 @@ Provision configuration files for services running in the space:
 import scriptling.provision.file as file
 import knot.vars as vars
 
-db_host = vars.get("DB_HOST")
-db_port = vars.get("DB_PORT")
+db_host = vars.get("DB_HOST")["value"]
+db_port = vars.get("DB_PORT")["value"]
 
 file.ensure("/etc/myapp/config.yaml", f"""database:
   host: {db_host}
@@ -164,7 +164,7 @@ Provisioning scripts can read [variables](../variables/) to adapt configuration 
 import scriptling.provision.file as file
 import knot.vars as vars
 
-env = vars.get("ENVIRONMENT") or "development"
+env = vars.get("ENVIRONMENT")["value"] or "development"
 
 if env == "production":
     file.ensure("~/.config/app/settings.toml", """[server]
@@ -192,7 +192,7 @@ debug = true
 
 ## What's Next
 
-- [scriptling.provision.file Reference](../scripting/libraries/provision-file/) - Full API documentation
-- [Startup & Shutdown Scripts](startup-scripts/) - Script execution lifecycle
-- [Variables](../variables/) - Per-space and global configuration
-- [Script Examples](../scripting/examples/) - More scriptling examples
+- [scriptling.provision.file Reference](../../scripting/libraries/provision-file/) - Full API documentation
+- [Startup & Shutdown Scripts](../startup-scripts/) - Script execution lifecycle
+- [Variables](../../variables/) - Per-space and global configuration
+- [Script Examples](../../scripting/examples/) - More scriptling examples

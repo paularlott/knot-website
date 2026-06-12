@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 @source "hugo_stats.json";
+@source inline("{border-teal-500}");
 
 @custom-variant dark (&:where(.dark, .dark *));
 

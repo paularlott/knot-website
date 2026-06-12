@@ -59,16 +59,11 @@ Users can set a custom startup script for their space:
 
 ### Via Web Interface
 
+Users can set a custom startup script for their space when creating or editing it:
+
 1. Navigate to the space settings
-2. Select "Startup Script"
+2. Select **Startup Script**
 3. Choose or create a script to run on startup
-
-### Via CLI
-
-```bash
-# Set a user startup script
-knot space update myspace --startup-script my-init-script
-```
 
 ---
 
