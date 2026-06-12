@@ -1,15 +1,15 @@
 ---
-title: Agent-to-Agent Port Forwarding
+title: Space-to-Space Port Forwarding
 weight: 125
 ---
 
-Agent-to-agent port forwarding allows spaces to communicate directly with each other. This is useful for microservices architectures where one space needs to access a service running in another space (for example, a frontend space connecting to a backend API space).
+Space-to-space port forwarding allows spaces to communicate directly with each other. This is useful for microservices architectures where one space needs to access a service running in another space (for example, a frontend space connecting to a backend API space).
 
 ---
 
 ## Requirements
 
-For agent-to-agent port forwarding to work:
+For space-to-space port forwarding to work:
 - The source space must be running and have an active agent (or use `--persistent` to pre-configure a forward for when it starts)
 - Spaces must be in the same zone
 - Spaces must be owned by the same user
@@ -171,5 +171,5 @@ Response:
 Each forward entry supports optional `persistent` and `force` fields (same as individual port forward).
 
 {{< tip >}}
-Agent-to-agent port forwarding only works between spaces in the same zone and owned by the same user. The connection is authenticated and secure.
+Space-to-space port forwarding only works between spaces in the same zone and owned by the same user. The connection is authenticated and secure.
 {{< /tip >}}

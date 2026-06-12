@@ -61,5 +61,5 @@ Port forwarding is a secure way to access services within a space without exposi
 {{< /tip >}}
 
 {{< tip >}}
-For port forwarding between spaces within the same zone, see [Agent-to-Agent Port Forwarding](agent-agent-port-forwarding.md).
+For port forwarding between spaces within the same zone, see [Space-to-Space Port Forwarding](../space-space-port-forwarding/).
 {{< /tip >}}
