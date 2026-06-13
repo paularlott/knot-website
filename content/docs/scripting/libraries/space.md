@@ -11,14 +11,17 @@ The `knot.space` library provides space management functions for scripts.
 
 | Function | Description |
 |----------|-------------|
-| `create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='')` | Create a new space |
+| `create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='')` | Create a new space |
 | `delete(name)` | Delete a space by name |
 | `get(name)` | Get detailed space information |
+| `update(name, new_name=None, ...)` | Update space properties |
 | `start(name)` | Start a space |
 | `stop(name)` | Stop a space |
 | `restart(name)` | Restart a space |
 | `list()` | List all spaces for the current user |
 | `is_running(name)` | Check if a space is running |
+| `usage_current(name)` | Get current resource usage for a space |
+| `usage_history(name, range='1h')` | Get historical resource usage for a space |
 | `get_description(name)` | Get the description of a space |
 | `set_description(name, description)` | Set the description of a space |
 | `get_dependencies(name)` | Get the dependency space IDs for a space |
@@ -30,7 +33,7 @@ The `knot.space` library provides space management functions for scripts.
 | `transfer(name, user_id)` | Transfer space ownership |
 | `share(name, user_ids)` | Share space with one or more users |
 | `unshare(name, user_id=None)` | Remove space share, optionally for a specific user |
-| `run_script(space_name, script_name, *args)` | Execute a script in a space |
+| `run_script(space_name, script_name, args=None)` | Execute a script in a space |
 | `run(space_name, command, args=[], timeout=30, workdir='')` | Execute a command in a space |
 | `read_file(space_name, file_path)` | Read file contents from a space |
 | `write_file(space_name, file_path, content)` | Write content to a file in a space |
@@ -70,7 +73,7 @@ print(content)
 
 ## Function Details
 
-### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='')
+### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='')
 
 Create a new space.
 
@@ -82,8 +85,34 @@ Create a new space.
 - `depends_on` (list, optional): List of dependency space names or IDs
 - `stack` (string, optional): Stack name to group this space under
 - `selected_node_id` (string, optional): Node ID to assign for local-container spaces. Leave empty to auto-select.
+- `alt_names` (list, optional): Additional HTTP route names, each with `name` and `port`
+- `icon_url` (string, optional): Icon URL
+- `custom_fields` (list, optional): Custom field values as `{"name": "...", "value": "..."}`
+- `startup_script_id` (string, optional): Startup script ID
 
 **Returns:** `string` - The space ID of the newly created space
+
+---
+
+### update(name, new_name=None, ...)
+
+Update a space while preserving fields you do not pass.
+
+**Parameters:**
+- `name` (string): Name or ID of the space to update
+- `new_name` (string, optional): New space name
+- `description` (string, optional): New description
+- `shell` (string, optional): New default shell
+- `template_name` (string, optional): New template name or ID
+- `depends_on` (list, optional): New dependency space names or IDs
+- `stack` (string, optional): New stack name, or empty string to unstack
+- `selected_node_id` (string, optional): New node ID where allowed
+- `alt_names` (list, optional): New additional route names
+- `icon_url` (string, optional): New icon URL
+- `custom_fields` (list, optional): New custom field values
+- `startup_script_id` (string, optional): New startup script ID
+
+**Returns:** `bool` - True on success
 
 ---
 
@@ -99,6 +128,42 @@ Execute a command in a running space.
 - `workdir` (string, optional): Working directory
 
 **Returns:** `string` - Command output
+
+---
+
+### usage_current(name)
+
+Get the current resource usage point for a space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `dict` containing the current usage point, including `bucket_start`, `bucket_kind`, `is_live`, and `resource_usage`.
+
+---
+
+### usage_history(name, range='1h')
+
+Get historical resource usage points for a space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+- `range` (string, optional): `"1h"` for minute samples or `"7d"` for daily samples
+
+**Returns:** `dict` containing `space_id`, `range`, `bucket_kind`, and `points`.
+
+---
+
+### run_script(space_name, script_name, args=None)
+
+Execute a named script in a running space.
+
+**Parameters:**
+- `space_name` (string): Name or ID of the space
+- `script_name` (string): Name of the script to execute
+- `args` (list, optional): Script arguments
+
+**Returns:** `dict` with `output` and `exit_code`
 
 ---
 

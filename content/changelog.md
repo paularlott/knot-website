@@ -8,6 +8,13 @@ weight: 100
 
 ## June 2026
 
+{{< version "v0.25.1" >}}
+
+{{< changelog-item "changed" >}}
+
+- Improved Scriptling API wrappers and added additional MCP tools.
+  {{< /changelog-item >}}
+
 {{< version "v0.25.0" >}}
 
 {{< changelog-item "added" >}}

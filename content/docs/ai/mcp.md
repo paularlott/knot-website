@@ -36,7 +36,7 @@ In both cases, the MCP client will have the same level of access to tools as the
 
 ## Tool Modes
 
-Knot's MCP server supports two different tool modes, configured via the `mcp_mode` setting in your `knot.toml`:
+Knot's MCP server supports two different tool modes, configured with the `native_tools` setting in your `knot.toml`:
 
 ### Tool Discovery Mode (Default)
 
@@ -106,20 +106,28 @@ The following tools are available on the MCP server. The specific tools and oper
 - **get_template**: Retrieve detailed template information, including configuration and job specifications.
 - **delete_template**: Permanently delete a template.
 
+### Stack Management
+- **list_stack_definitions**: List stack definitions that can be used to create stacks.
+- **get_stack_definition**: Retrieve detailed stack definition information.
+- **list_stacks**: List stack instances by grouping spaces with the same stack name.
+- **create_stack**: Create spaces from a stack definition.
+- **start_stack**: Start all spaces in a stack in dependency order.
+- **stop_stack**: Stop all spaces in a stack in reverse dependency order.
+- **restart_stack**: Restart all spaces in a stack.
+- **delete_stack**: Delete all stopped spaces in a stack.
+
 ### File Operations
 - **read_file**: Read the contents of a file from a running space.
 - **write_file**: Write content to a file in a running space.
 
 ### Command Execution
 - **run_command**: Execute a command in a running space and return the results.
+- **run_script**: Execute a named script in a running space.
 
-### User and Group Management
-- **list_users**: List details of all users (e.g., ID, username, email, active status, groups).
-- **list_groups**: List all user groups.
+### Skills
+- **get_skill**: Retrieve skill content by exact name, search by keyword, or list active skills.
 
-### Icons and Skills
-- **list_icons**: List all available icons with descriptions and URLs.
-- **skills**: Access the knowledge base for guides and best practices. Call without a filename to list all skills, or with a filename for specific content.
+Some lower-frequency tools, including template mutation and stack lifecycle tools, are marked as discoverable. In discovery mode, use `tool_search` to find them and `execute_tool` to call them.
 
 ---
 
