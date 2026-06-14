@@ -88,53 +88,9 @@ create_space({...}) → Direct tool call
 
 ## Tools
 
-The following tools are available on the MCP server. The specific tools and operations accessible depend on the user's permissions:
+The **knot** MCP server exposes built-in tools for managing spaces, templates, stack definitions, stacks, files, commands, and skills. Write-capable tools require approval when called from the web assistant; read-only tools run without a confirmation. External MCP clients connected to `/mcp` are not prompted.
 
-Write-capable built-in tools are marked internally as requiring approval when they are called from the web assistant. Read-only tools run without a browser confirmation.
-
-### Space Management
-- **list_spaces**: List all spaces for the current user, including status and sharing details.
-- **get_space**: Retrieve detailed space information, including configuration and status.
-- **create_space**: Create a new development space, optionally with custom fields and start-on-create.
-- **update_space**: Update properties of an existing space, including name, description, shell, and custom fields.
-- **delete_space**: Permanently delete a space and all its data.
-- **start_space**: Start a space.
-- **stop_space**: Stop a space.
-- **restart_space**: Restart a space.
-- **share_space**: Share a space with another user.
-- **stop_sharing_space**: Stop sharing a space.
-- **transfer_space**: Transfer ownership of a space to another user.
-
-### Template Management
-- **list_templates**: List all space templates.
-- **create_template**: Create a new space template.
-- **update_template**: Update an existing template.
-- **get_template**: Retrieve detailed template information, including configuration and job specifications.
-- **delete_template**: Permanently delete a template.
-
-### Stack Management
-- **list_stack_definitions**: List stack definitions that can be used to create stacks.
-- **get_stack_definition**: Retrieve detailed stack definition information.
-- **list_stacks**: List stack instances by grouping spaces with the same stack name.
-- **create_stack**: Create spaces from a stack definition.
-- **start_stack**: Start all spaces in a stack in dependency order.
-- **stop_stack**: Stop all spaces in a stack in reverse dependency order.
-- **restart_stack**: Restart all spaces in a stack.
-- **delete_stack**: Delete all stopped spaces in a stack.
-
-### File Operations
-- **read_file**: Read the contents of a file from a running space.
-- **write_file**: Write content to a file in a running space.
-
-### Command Execution
-- **run_command**: Execute a command in a running space and return the results.
-- **run_script**: Execute a named script in a running space.
-
-### Skills
-
-Skills are available as an on-demand tool. Use `tool_search(query="skill")` to discover the `get_skill` tool, or call it directly via `execute_tool(name="get_skill", arguments={"name": "<skill-name>"})`.
-
-Some lower-frequency tools, including template mutation, stack lifecycle, and skill retrieval, are marked as discoverable. In discovery mode, use `tool_search` to find them and `execute_tool` to call them.
+For the full list grouped by what each tool operates on — plus whether each is **native** or **on-demand** — see [MCP Tools](mcp-tools/).
 
 ---
 
