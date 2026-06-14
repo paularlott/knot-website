@@ -10,10 +10,31 @@ weight: 100
 
 {{< version "v0.25.1" >}}
 
+{{< changelog-item "added" >}}
+
+- New `list_scripts` MCP tool — discover runnable scripts before calling `run_script` (previously `run_script` had no discovery companion)
+- `list_templates` MCP tool now returns each template's custom field definitions, removing the need for a separate `get_template` call when creating spaces with custom fields
+- `list_spaces` MCP tool now returns each space's custom field values (previously the field was always empty)
+- New **MCP Tools** reference page in the documentation, grouping every tool by what it operates on and showing native vs on-demand visibility
+{{< /changelog-item >}}
+
 {{< changelog-item "changed" >}}
 
-- Improved Scriptling API wrappers and added additional MCP tools.
-  {{< /changelog-item >}}
+- **MCP tool surface trimmed** based on a clearer principle: MCP exposes runtime operations on instances plus read-only discovery; authoring of curated artifacts and access-control management happen in the UI/CLI:
+  - Removed template authoring tools (`create_template`, `update_template`, `delete_template`, `get_template`) — `list_templates` now carries custom field definitions
+  - Removed `get_stack_definition` (covered by `list_stack_definitions`)
+  - Removed space access-control tools (`share_space`, `stop_sharing_space`, `transfer_space`)
+- `list_spaces` now defaults to the current zone only; pass `show_all=true` to include spaces from other zones (matches the behaviour of scripts, skills, and templates)
+- `list_templates` and `list_scripts` default to active items only
+- `restart_space` is now a native tool, matching `start_space` and `stop_space`
+- The web assistant no longer asks "are you sure?" in chat before destructive operations — knot's browser approval prompt already handles confirmation, and the previous behaviour caused redundant double-confirmations
+- Stack definition builder now blocks saving a component without a template selected (matches the server-side validation that was already enforced)
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+
+- Calling MCP tools with template or space names containing spaces (e.g. "ubuntu testing") no longer panics with `malformed HTTP version`; the `knot.*` script libraries now URL-encode path segments via `urllib.parse.quote`, and the in-process API client validates request paths before dispatch
+{{< /changelog-item >}}
 
 {{< version "v0.25.0" >}}
 
