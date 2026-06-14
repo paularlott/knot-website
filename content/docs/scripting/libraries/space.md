@@ -11,7 +11,7 @@ The `knot.space` library provides space management functions for scripts.
 
 | Function | Description |
 |----------|-------------|
-| `create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='')` | Create a new space |
+| `create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', start_on_create=False)` | Create a new space |
 | `delete(name)` | Delete a space by name |
 | `get(name)` | Get detailed space information |
 | `update(name, new_name=None, ...)` | Update space properties |
@@ -73,7 +73,7 @@ print(content)
 
 ## Function Details
 
-### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='')
+### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', start_on_create=False)
 
 Create a new space.
 
@@ -89,6 +89,7 @@ Create a new space.
 - `icon_url` (string, optional): Icon URL
 - `custom_fields` (list, optional): Custom field values as `{"name": "...", "value": "..."}`
 - `startup_script_id` (string, optional): Startup script ID
+- `start_on_create` (bool, optional): Start the space immediately after it is created
 
 **Returns:** `string` - The space ID of the newly created space
 
