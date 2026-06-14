@@ -32,11 +32,15 @@ For clients that do not support OAuth2, you will need to manually generate a new
 
 In both cases, the MCP client will have the same level of access to tools as the user who generated the API token.
 
+{{< tip >}}
+The web assistant may ask the browser user to approve write-capable tool calls before they run. This approval prompt is part of the web chat flow only; external MCP clients connected to `/mcp` are not prompted by Knot's browser confirmation UI.
+{{< /tip >}}
+
 ---
 
 ## Tool Modes
 
-Knot's MCP server supports two different tool modes, configured via the `mcp_mode` setting in your `knot.toml`:
+Knot's MCP server supports two different tool modes, configured with the `native_tools` setting in your `knot.toml`:
 
 ### Tool Discovery Mode (Default)
 
@@ -84,42 +88,9 @@ create_space({...}) → Direct tool call
 
 ## Tools
 
-The following tools are available on the MCP server. The specific tools and operations accessible depend on the user's permissions:
+The **knot** MCP server exposes built-in tools for managing spaces, templates, stack definitions, stacks, files, commands, and skills. Write-capable tools require approval when called from the web assistant; read-only tools run without a confirmation. External MCP clients connected to `/mcp` are not prompted.
 
-### Space Management
-- **list_spaces**: List all spaces for the current user, including status and sharing details.
-- **get_space**: Retrieve detailed space information, including configuration and status.
-- **create_space**: Create a new development space.
-- **update_space**: Update an existing space.
-- **delete_space**: Permanently delete a space and all its data.
-- **start_space**: Start a space.
-- **stop_space**: Stop a space.
-- **restart_space**: Restart a space.
-- **share_space**: Share a space with another user.
-- **stop_sharing_space**: Stop sharing a space.
-- **transfer_space**: Transfer ownership of a space to another user.
-
-### Template Management
-- **list_templates**: List all space templates.
-- **create_template**: Create a new space template.
-- **update_template**: Update an existing template.
-- **get_template**: Retrieve detailed template information, including configuration and job specifications.
-- **delete_template**: Permanently delete a template.
-
-### File Operations
-- **read_file**: Read the contents of a file from a running space.
-- **write_file**: Write content to a file in a running space.
-
-### Command Execution
-- **run_command**: Execute a command in a running space and return the results.
-
-### User and Group Management
-- **list_users**: List details of all users (e.g., ID, username, email, active status, groups).
-- **list_groups**: List all user groups.
-
-### Icons and Skills
-- **list_icons**: List all available icons with descriptions and URLs.
-- **skills**: Access the knowledge base for guides and best practices. Call without a filename to list all skills, or with a filename for specific content.
+For the full list grouped by what each tool operates on — plus whether each is **native** or **on-demand** — see [MCP Tools](mcp-tools/).
 
 ---
 

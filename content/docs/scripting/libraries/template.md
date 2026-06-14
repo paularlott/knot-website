@@ -13,6 +13,8 @@ The `knot.template` library provides template management functions. Templates de
 |----------|-------------|
 | `list()` | List all templates |
 | `get(template_id)` | Get template by ID or name |
+| `validate(platform, job='', volumes='')` | Validate template job and volume specs without saving |
+| `nodes(template_id)` | List available nodes for a local-container template |
 | `create(name, ...)` | Create a new template |
 | `update(template_id, ...)` | Update template properties |
 | `delete(template_id)` | Delete a template |
@@ -37,6 +39,10 @@ print(t['description'])
 # Get available icons
 icons = template.get_icons()
 print(icons)
+
+# Validate a template spec before saving
+result = template.validate("docker", job="image: ubuntu:24.04")
+print(result["valid"])
 ```
 
 ---
@@ -87,3 +93,19 @@ print(icons)
 `create()` and `update()` also accept `paths`, either as a string or list of strings. These are appended to the template volume definition as managed `paths` entries.
 
 For `health_check_type="agent"`, no `health_check_config` value is required.
+
+## Validation
+
+`validate(platform, job='', volumes='')` returns:
+- `valid` - Whether the specification is valid
+- `errors` - List of validation errors with `field` and `message`
+
+## Nodes
+
+`nodes(template_id)` returns available placement nodes for local-container templates. Non-local-container templates return an empty list.
+
+Node entries contain:
+- `node_id` - Node ID
+- `hostname` - Node hostname
+- `running_spaces` - Number of currently running spaces on the node
+- `total_spaces` - Total spaces assigned to the node

@@ -44,6 +44,16 @@ If you are using a non-thinking model then do not set `reasoning_effort` in the 
 
 ---
 
+## Tool Approvals
+
+When the web assistant wants to run a write-capable tool, Knot pauses the tool call and shows a confirmation box at the bottom of the current chat message stream. The user can approve or deny the tool call before it executes.
+
+Approvals are only used by the web chat flow. External MCP clients that connect to `/mcp` continue to use the normal MCP protocol and are not prompted by the browser approval UI.
+
+Pending approvals are stored in memory on the Knot instance that started the tool call. In clustered deployments behind a load balancer, the approval request includes the originating instance ID. If the approval response reaches a different Knot instance, Knot forwards it to the origin over cluster gossip.
+
+---
+
 ## Supported Models
 
 The assistant is confirmed to work with the following models:

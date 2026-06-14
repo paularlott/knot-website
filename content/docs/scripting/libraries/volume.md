@@ -14,6 +14,7 @@ The `knot.volume` library provides volume management functions. Volumes are CSI 
 | `list()` | List all volumes |
 | `get(volume_id)` | Get volume by ID or name |
 | `nodes(platform)` | List available nodes for a platform |
+| `validate(platform, definition)` | Validate a volume definition without saving |
 | `create(name, definition, platform='', node_id='')` | Create a new volume |
 | `update(volume_id, ...)` | Update volume properties |
 | `delete(volume_id)` | Delete a volume |
@@ -46,6 +47,10 @@ volume_id = volume.create(
     platform="docker",
     node_id=nodes[0]['node_id']
 )
+
+# Validate a volume definition first
+result = volume.validate("docker", "type: host\npath: /data")
+print(result["valid"])
 
 # Create a volume with auto node selection
 volume_id = volume.create(
@@ -86,6 +91,14 @@ Volumes contain:
 Nodes returned by `nodes()` contain:
 - `node_id` - Node ID
 - `hostname` - Node hostname
+
+---
+
+## Validation
+
+`validate(platform, definition)` returns:
+- `valid` - Whether the volume definition is valid
+- `errors` - List of validation errors with `field` and `message`
 
 ---
 

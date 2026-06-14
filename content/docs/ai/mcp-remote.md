@@ -84,7 +84,7 @@ When the Knot server starts, it:
 
 Tools from remote servers are prefixed with their namespace to avoid conflicts:
 
-- **Local tools**: `list_spaces`, `create_template`, etc.
+- **Local tools**: `list_spaces`, `list_templates`, etc.
 - **Remote tools**: `ai.generate-text`, `data.query`, etc.
 
 ### Hidden Tools

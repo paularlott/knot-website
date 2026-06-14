@@ -18,6 +18,8 @@ Starting with version 0.19.0, **knot** introduces AI support through two key fea
 ## What's Next
 
 - [Model Context Protocol](mcp/)
+- [MCP Tools](mcp-tools/)
+- [Remote MCP Servers](mcp-remote/)
 - [Web Assistant](ai-assistant/)
-- [Skills](skiils/)
+- [Skills](skills/)
 - [System Prompt](system-prompt/)
