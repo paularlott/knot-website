@@ -210,12 +210,16 @@ Scripts of type `tool` are exposed as MCP tools for AI assistants. These tools c
 Define parameters in TOML format:
 
 ```toml
+requires_approval = true
+
 [[parameters]]
 name = "name"
 type = "string"
 description = "Name of the space"
 required = true
 ```
+
+Set `requires_approval = true` for tools that write, mutate, delete, start, stop, or execute commands. When such a tool is called from the web assistant, Knot asks the browser user to approve it before execution. External MCP clients connected to `/mcp` are not prompted by the browser approval UI.
 
 ### Parameter Types
 

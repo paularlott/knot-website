@@ -32,6 +32,10 @@ For clients that do not support OAuth2, you will need to manually generate a new
 
 In both cases, the MCP client will have the same level of access to tools as the user who generated the API token.
 
+{{< tip >}}
+The web assistant may ask the browser user to approve write-capable tool calls before they run. This approval prompt is part of the web chat flow only; external MCP clients connected to `/mcp` are not prompted by Knot's browser confirmation UI.
+{{< /tip >}}
+
 ---
 
 ## Tool Modes
@@ -86,11 +90,13 @@ create_space({...}) → Direct tool call
 
 The following tools are available on the MCP server. The specific tools and operations accessible depend on the user's permissions:
 
+Write-capable built-in tools are marked internally as requiring approval when they are called from the web assistant. Read-only tools run without a browser confirmation.
+
 ### Space Management
 - **list_spaces**: List all spaces for the current user, including status and sharing details.
 - **get_space**: Retrieve detailed space information, including configuration and status.
-- **create_space**: Create a new development space.
-- **update_space**: Update an existing space.
+- **create_space**: Create a new development space, optionally with custom fields and start-on-create.
+- **update_space**: Update properties of an existing space, including name, description, shell, and custom fields.
 - **delete_space**: Permanently delete a space and all its data.
 - **start_space**: Start a space.
 - **stop_space**: Stop a space.
