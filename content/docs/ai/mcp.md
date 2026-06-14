@@ -131,9 +131,10 @@ Write-capable built-in tools are marked internally as requiring approval when th
 - **run_script**: Execute a named script in a running space.
 
 ### Skills
-- **get_skill**: Retrieve skill content by exact name, search by keyword, or list active skills.
 
-Some lower-frequency tools, including template mutation and stack lifecycle tools, are marked as discoverable. In discovery mode, use `tool_search` to find them and `execute_tool` to call them.
+Skills are available as an on-demand tool. Use `tool_search(query="skill")` to discover the `get_skill` tool, or call it directly via `execute_tool(name="get_skill", arguments={"name": "<skill-name>"})`.
+
+Some lower-frequency tools, including template mutation, stack lifecycle, and skill retrieval, are marked as discoverable. In discovery mode, use `tool_search` to find them and `execute_tool` to call them.
 
 ---
 

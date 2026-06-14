@@ -187,6 +187,20 @@ description: "How to deploy applications to our environments"
 
 ---
 
+## How Skills Work with the AI Assistant
+
+When a user interacts with the web assistant, Knot dynamically builds the system prompt to include skill awareness:
+
+1. **Skill summaries**: The names and descriptions of all active, accessible skills (both global and user-owned) are appended to the system prompt. The full skill content is NOT included — only the name and description.
+
+2. **On-demand retrieval**: The assistant uses the `get_skill` tool to fetch full skill content when needed. This keeps the system prompt compact while still making all skill knowledge available.
+
+3. **Platform-first behaviour**: The system prompt instructs the assistant to check for relevant skills before performing platform tasks (nomad, docker, podman), ensuring it follows documented procedures.
+
+For external MCP clients, skills are accessible via the `get_skill` tool (discoverable via `tool_search`). External clients are responsible for their own prompt engineering and skill retrieval logic.
+
+---
+
 ## What's Next
 
 - [AI Assistant](../ai-assistant/) - Using the built-in AI assistant
