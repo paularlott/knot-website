@@ -33,7 +33,7 @@ See [Tool Modes](../mcp/#tool-modes) for configuration details.
 | `delete_space` | Permanently delete a space and all its data. | On-demand |
 | `start_space` | Start a space. | Native |
 | `stop_space` | Stop a space. | Native |
-| `restart_space` | Restart a space. | On-demand |
+| `restart_space` | Restart a space. | Native |
 
 ---
 
