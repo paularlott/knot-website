@@ -3,7 +3,7 @@ title: Using Stacks
 weight: 20
 ---
 
-Once you have a stack definition, you can create stacks from it. This page covers creating, starting, stopping, and deleting stacks.
+Once you have a stack definition, you can create stacks from it. This page covers creating, listing, starting, stopping, restarting, and deleting stacks.
 
 ---
 
@@ -47,14 +47,16 @@ List all stacks for the current user:
 knot stack list
 ```
 
-This groups spaces by their stack name and shows the status of each space:
+This groups spaces by their stack name and shows the status and health of each space:
 
 ```
-Stack          Spaces
-myproject      myproject-db (Stopped)
-               myproject-web (Stopped)
-               myproject-cache (Stopped)
+Stack          Spaces                       Health
+myproject      myproject-db (Stopped)       -
+               myproject-web (Stopped)      -
+               myproject-cache (Stopped)    -
 ```
+
+For running spaces, health is shown as `Healthy` or `Unhealthy`. Spaces that are stopped, starting, stopping, or deleting show `-`.
 
 ---
 
@@ -192,10 +194,10 @@ knot stack start myproject
 
 # 5. Check status
 knot stack list
-# Stack          Spaces
-# myproject      myproject-db (Running)
-#                myproject-web (Running)
-#                myproject-cache (Running)
+# Stack          Spaces                       Health
+# myproject      myproject-db (Running)       Healthy
+#                myproject-web (Running)      Healthy
+#                myproject-cache (Running)    Healthy
 
 # 6. Stop the stack
 knot stack stop myproject

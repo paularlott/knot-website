@@ -8,6 +8,21 @@ weight: 100
 
 ## June 2026
 
+{{< version "v0.25.2" >}}
+
+{{< changelog-item "added" >}}
+
+- `knot spaces create` now accepts repeatable `--custom-field name=value` flags so CLI-created spaces can receive template custom field values at creation time
+- `knot stack list` now shows per-space health alongside stack status, making unhealthy running spaces visible from the CLI
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+
+- CLI documentation now covers stack lifecycle commands (`create`, `list`, `start`, `stop`, `restart`, `delete`) and stack definition management commands
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.25.1" >}}
 
 {{< changelog-item "added" >}}
