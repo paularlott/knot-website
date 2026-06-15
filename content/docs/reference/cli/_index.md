@@ -176,6 +176,33 @@ knot cp frontend:/app/build backend:/var/www/html
 
 ---
 
+### `knot stack`
+
+Manage stack definitions and stack instances from the CLI.
+
+```shell
+# Validate and manage reusable stack definitions
+knot stack validate FILE
+knot stack create-def FILE
+knot stack apply FILE
+knot stack list-defs [--details]
+knot stack enable-def NAME
+knot stack disable-def NAME
+knot stack delete-def NAME
+
+# Create and operate stack instances
+knot stack create DEFINITION PREFIX [NAME]
+knot stack list
+knot stack start STACK_NAME
+knot stack stop STACK_NAME
+knot stack restart STACK_NAME
+knot stack delete STACK_NAME [-y]
+```
+
+`knot stack create` creates one stopped space per component in the stack definition, names each space with the given prefix, applies dependencies, port forwards, and custom fields, and groups the spaces under the stack name. `knot stack list` shows each stack's spaces with status and health.
+
+---
+
 ## Agent Commands
 
 These commands run inside a space.
@@ -272,55 +299,59 @@ knot port stop 8080
 ### List Spaces
 
 ```shell
-knot space list
+knot spaces list
 ```
 
 ### Start Space
 
 ```shell
-knot space start SPACE_NAME
+knot spaces start SPACE_NAME
 ```
 
 ### Stop Space
 
 ```shell
-knot space stop SPACE_NAME
+knot spaces stop SPACE_NAME
 ```
 
 ### Restart Space
 
 ```shell
-knot space restart SPACE_NAME
+knot spaces restart SPACE_NAME
 ```
 
 ### Delete Space
 
 ```shell
-knot space delete SPACE_NAME
+knot spaces delete SPACE_NAME
 ```
 
 ### Create Space
 
 ```shell
-knot space create SPACE_NAME TEMPLATE_NAME
+knot spaces create SPACE_NAME TEMPLATE_NAME [--shell SHELL] [--custom-field name=value]
 ```
+
+**Options**:
+- `--shell`: Shell to use for the space terminal (`sh`, `bash`, `zsh`, or `fish`)
+- `--custom-field name=value`: Custom field value to set on creation; repeat the flag to set multiple fields
 
 ### Get Space Logs
 
 ```shell
-knot space logs SPACE_NAME
+knot spaces logs SPACE_NAME
 ```
 
 ### Run Command in Space
 
 ```shell
-knot space run SPACE_NAME COMMAND [ARGS...]
+knot spaces run SPACE_NAME COMMAND [ARGS...]
 ```
 
 ### Run Script in Space
 
 ```shell
-knot space run-script SPACE_NAME SCRIPT_NAME [ARGS...]
+knot spaces run-script SPACE_NAME SCRIPT_NAME [ARGS...]
 ```
 
 ---
@@ -332,16 +363,16 @@ knot space run-script SPACE_NAME SCRIPT_NAME [ARGS...]
 Read file contents from a running space.
 
 ```shell
-knot space read-file SPACE_NAME FILE_PATH
+knot spaces read-file SPACE_NAME FILE_PATH
 ```
 
 Examples:
 ```shell
 # Read a file
-knot space read-file myspace /etc/hostname
+knot spaces read-file myspace /etc/hostname
 
 # Redirect to local file
-knot space read-file myspace /var/log/app.log > local.log
+knot spaces read-file myspace /var/log/app.log > local.log
 ```
 
 ### Write File to Space
@@ -350,19 +381,19 @@ Write content to a file in a running space.
 
 ```shell
 # Write content directly
-knot space write-file SPACE_NAME FILE_PATH --content "CONTENT"
+knot spaces write-file SPACE_NAME FILE_PATH --content "CONTENT"
 
 # Read from stdin
-echo "Hello World" | knot space write-file SPACE_NAME FILE_PATH --content -
+echo "Hello World" | knot spaces write-file SPACE_NAME FILE_PATH --content -
 ```
 
 Examples:
 ```shell
 # Write text directly
-knot space write-file myspace /tmp/hello.txt --content "Hello World"
+knot spaces write-file myspace /tmp/hello.txt --content "Hello World"
 
 # Pipe from local file
-cat config.json | knot space write-file myspace /etc/app/config.json --content -
+cat config.json | knot spaces write-file myspace /etc/app/config.json --content -
 ```
 
 **Options**:
@@ -375,13 +406,13 @@ cat config.json | knot space write-file myspace /etc/app/config.json --content -
 ### Get Custom Field
 
 ```shell
-knot space get-field SPACE_NAME FIELD_NAME
+knot spaces get-field SPACE_NAME FIELD_NAME
 ```
 
 ### Set Custom Field
 
 ```shell
-knot space set-field SPACE_NAME FIELD_NAME VALUE
+knot spaces set-field SPACE_NAME FIELD_NAME VALUE
 ```
 
 ---
@@ -391,7 +422,7 @@ knot space set-field SPACE_NAME FIELD_NAME VALUE
 Create a tunnel from a space port to a local port.
 
 ```shell
-knot space tunnel-port SPACE_NAME REMOTE_PORT LOCAL_PORT
+knot spaces tunnel-port SPACE_NAME REMOTE_PORT LOCAL_PORT
 ```
 
 ---
