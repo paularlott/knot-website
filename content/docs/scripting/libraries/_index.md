@@ -13,6 +13,7 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 |---------|-------------|
 | [knot.apiclient](apiclient/) | Transport configuration for standalone use |
 | [knot.space](space/) | Space management operations |
+| [knot.server](server/) | Server information |
 | [knot.ai](ai/) | AI completion functions |
 | [knot.mcp](mcp/) | MCP tool interaction |
 | [knot.skill](skill/) | Skills management |

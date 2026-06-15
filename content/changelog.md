@@ -8,6 +8,14 @@ weight: 100
 
 ## June 2026
 
+{{< version "v0.26.0" >}}
+
+{{< changelog-item "added" >}}
+- New API endpoints to support the Visual Studio Code extension
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.25.2" >}}
 
 {{< changelog-item "added" >}}
