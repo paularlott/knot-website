@@ -8,6 +8,28 @@ weight: 100
 
 ## June 2026
 
+{{< version "v0.26.1" >}}
+
+{{< changelog-item "added" >}}
+
+- New `${{ .space.stack }}` system variable exposes the space's stack name in job and volume templates, allowing templates to react to stack membership
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+
+- **SSH Authorized Keys**: the "SSH Public Key" field on the user profile form has been renamed to "SSH Authorized Keys" to better reflect that these keys are written to the space's `authorized_keys` file
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+
+- **SSH private key isolation**: the private key file (`id_ed25519` / `id_rsa` / `id_ecdsa`) is now only modified when the private key value itself changes, not when authorized keys or GitHub username are updated
+- **SSH private key on transfer**: the private key always reflects the current space owner's profile — if the owner has no private key set, any existing key file is removed on next space start, preventing the previous owner's key from persisting after a space transfer
+- **SSH key type cleanup**: switching between key formats (e.g. RSA to Ed25519) now removes the old key file so only the current format remains
+- **Modal behaviour**: clicking outside a modal no longer closes it — all modals now require an explicit action (button or Escape key) to dismiss
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.26.0" >}}
 
 {{< changelog-item "added" >}}

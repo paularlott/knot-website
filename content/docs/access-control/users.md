@@ -33,8 +33,8 @@ To create a new user:
 - **`GitHub Username`** *(optional)*:
   If set, the system will attempt to retrieve the user's public key(s) from GitHub.
 
-- **`SSH Public Key`** *(optional)*:
-  If set, this key will be passed to spaces to allow passwordless SSH logins. To add multiple keys, enter one public key per line. Users can set their own SSH public keys by clicking their username in the top-right corner of the interface.
+- **`SSH Authorized Keys`** *(optional)*:
+  If set, these keys will be passed to spaces to allow passwordless SSH logins. To add multiple keys, enter one public key per line. Users can set their own SSH authorized keys by clicking their username in the top-right corner of the interface.
 
 ---
 

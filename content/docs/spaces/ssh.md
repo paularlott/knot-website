@@ -7,13 +7,13 @@ SSH access allows you to securely connect to your spaces for advanced management
 
 ---
 
-## Adding Public SSH Keys
+## Adding Authorized SSH Keys
 
 1. Click your username in the top-right corner of the web interface and select **`My Profile`**.
-2. Paste your public SSH key into the **`SSH Public Key`** field and click **`Update`**.
+2. Paste your public SSH key into the **`SSH Authorized Keys`** field and click **`Update`**.
    - You can add multiple public keys by placing each key on its own line.
    - All listed keys will be used for your SSH-enabled spaces, enabling passwordless authentication from any matching private key.
-   {{< picture src="../images/profile-sshkey.webp" caption="SSH Public Key" >}}
+   {{< picture src="../images/profile-sshkey.webp" caption="SSH Authorized Keys" >}}
 
 3. Alternatively, automatically fetch your public keys from GitHub by entering your GitHub username in the **`GitHub Username`** field.
 
@@ -23,7 +23,9 @@ When using the SSH server built into the **knot** agent, the keys are stored in 
 
 ## Adding a Private SSH Key
 
-You can also add an SSH private key to your own profile. It is not shown when administrators edit other users. When set, **knot** writes it to the appropriate file in `~/.ssh/` depending on the key format:
+You can also add an SSH private key to your own profile. It is not shown when administrators edit other users. The private key is always taken from the **current space owner's profile** and is applied every time a space starts.
+
+When set, **knot** writes it to the appropriate file in `~/.ssh/` depending on the key format:
 
 | Key Format | File |
 |---|---|
@@ -31,9 +33,11 @@ You can also add an SSH private key to your own profile. It is not shown when ad
 | RSA | `~/.ssh/id_rsa` |
 | EC | `~/.ssh/id_ecdsa` |
 
+Switching key formats (for example from RSA to Ed25519) automatically removes the old key file so only the current key remains.
+
 The private key belongs to the space owner only. If a space is shared, shared users' public keys are added for login access, but their private keys are not copied into the owner's space.
 
-Clearing the private key in your profile removes the managed key file from running SSH-enabled spaces.
+If the owner has no private key set in their profile, any previously written key file is removed from the space on next start. This ensures that transferring a space to a new owner does not leave the previous owner's private key behind.
 
 ---
 
