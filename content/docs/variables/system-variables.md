@@ -17,6 +17,7 @@ To use a system variable, simply specify it in the format `${{ .<group>.<name> }
 | **space**    | `space.id`             | The UUID of the space                                                          |
 |              | `space.name`           | The name of the space                                                          |
 |              | `space.stack`          | The name of the stack the space belongs to, empty if not part of a stack       |
+|              | `space.stack_prefix`   | The prefix used when the stack was created (space names are `prefix-key`); empty if not part of a stack. Use it to reference sibling containers, e.g. `${{ .space.stack_prefix }}-db` |
 |              | `space.first_boot`     | Flags if this is the first boot of the space                                   |
 | **template** | `template.id`          | The UUID of the template used to create the space                              |
 |              | `template.name`        | The name of the template used to create the space                              |

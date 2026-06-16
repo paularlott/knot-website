@@ -13,6 +13,7 @@ weight: 100
 {{< changelog-item "added" >}}
 
 - New `${{ .space.stack }}` system variable exposes the space's stack name in job and volume templates, allowing templates to react to stack membership
+- New `${{ .space.stack_prefix }}` system variable exposes the prefix used when creating a stack, so job and volume templates can reference sibling containers in the same stack (e.g. `${{ .space.stack_prefix }}-db`)
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
