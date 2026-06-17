@@ -3,33 +3,33 @@ title: Using Stacks
 weight: 20
 ---
 
-Once you have a stack definition, you can create stacks from it. This page covers creating, listing, starting, stopping, restarting, and deleting stacks.
+Once you have a stack template, you can create stacks from it. This page covers creating, listing, starting, stopping, restarting, and deleting stacks.
 
 ---
 
 ## Creating a Stack
 
-Use the `knot stack create` command to create spaces from a definition:
+Use the `knot stack create` command to create spaces from a template:
 
 ```bash
-knot stack create <definition> <prefix> [name]
+knot stack create <template> <prefix> [name]
 ```
 
-- **`definition`** — the name of the stack definition
+- **`template`** — the name of the stack template
 - **`prefix`** — prefix for space names (spaces are named `prefix-name`)
 - **`name`** — stack name used to group spaces (optional, defaults to prefix)
 
 ```bash
-# Create from the "lamp-stack" definition with prefix "myproject"
+# Create from the "lamp-stack" template with prefix "myproject"
 knot stack create lamp-stack myproject
 
 # Create with a different stack name
 knot stack create lamp-stack myproject production
 ```
 
-This creates spaces named `myproject-db`, `myproject-web`, and `myproject-cache` (one per space in the definition, named `prefix-name`). Each space is created with:
+This creates spaces named `myproject-db`, `myproject-web`, and `myproject-cache` (one per space in the template, named `prefix-name`). Each space is created with:
 
-- The template specified in the definition
+- The template specified in the stack template
 - The stack field set to the stack name (`myproject` by default, or the `name` argument)
 - Dependencies resolved to actual space IDs
 - Port forwards configured between spaces
@@ -106,9 +106,9 @@ This permanently deletes all spaces in the stack and all their data.
 
 ---
 
-## Validating Definitions
+## Validating Templates
 
-Validate a definition file without creating it:
+Validate a template file without creating it:
 
 ```bash
 knot stack validate lamp.toml
@@ -123,7 +123,7 @@ This checks for:
 - Invalid port forward references
 - Port number ranges
 
-Definition files can be TOML or JSON. The format is detected by file extension. TOML files use human-friendly names for templates, scripts, and groups (these are resolved to IDs automatically). JSON files use IDs directly, matching the API request format.
+Template files can be TOML or JSON. The format is detected by file extension. TOML files use human-friendly names for templates, scripts, and groups (these are resolved to IDs automatically). JSON files use IDs directly, matching the API request format.
 
 **TOML format** (`lamp.toml`):
 ```toml
@@ -166,19 +166,19 @@ depends_on = ["db"]
 ## Full Workflow Example
 
 ```bash
-# 1. Create a stack definition from a TOML or JSON file
+# 1. Create a stack template from a TOML or JSON file
 knot stack create-def lamp.toml
 # Stack definition "lamp-stack" created.
 
 # Or from a JSON file:
 # knot stack create-def lamp.json
 
-# 2. List available definitions
+# 2. List available templates
 knot stack list-defs
 # Name          Scope      Zones  Spaces  Active
 # lamp-stack    user   all    3       yes
 
-# 3. Create a stack from the definition
+# 3. Create a stack from the template
 knot stack create lamp-stack myproject
 #   Created space "myproject-db" (abc-123)
 #   Created space "myproject-web" (def-456)
@@ -216,9 +216,9 @@ knot stack delete myproject -y
 
 ## Stacks in the Web Interface
 
-Stack definitions are visible on the **Stacks** page in the web interface. The page shows all available definitions with their scope, status, space count, and zone restrictions. You can view definition details including components, dependencies, and port forwards.
+Stack templates are visible on the **Stack Templates** page in the web interface. The page shows all available templates with their scope, status, space count, and zone restrictions. You can view template details including components, dependencies, and port forwards.
 
-Stack definitions are managed exclusively through the CLI — the web interface is for viewing only.
+Stack templates are managed exclusively through the CLI — the web interface is for viewing only.
 
 ---
 
@@ -229,7 +229,7 @@ The `knot.stack` library provides the same operations for use in scripts:
 ```python
 import knot.stack as stack
 
-# Create a stack from a definition
+# Create a stack from a template
 result = stack.create("lamp-stack", "myproject")
 print(f"Created {len(result['spaces'])} spaces")
 

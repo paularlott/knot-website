@@ -1,9 +1,9 @@
 ---
-title: Stack Definitions
+title: Stack Template Format
 weight: 10
 ---
 
-Stack definitions are TOML files that describe the spaces, dependencies, and configuration that make up a stack. This page covers the complete TOML format with all available options.
+A stack template (called a **stack definition** in the CLI and API) is a TOML file that describes the spaces, dependencies, and configuration that make up a stack. This page covers the complete TOML format with all available options.
 
 ---
 
@@ -18,7 +18,7 @@ name = "web"
 template = "ubuntu-latest"
 ```
 
-This creates a single-space stack. The space uses the `ubuntu-latest` template and is named `web`.
+This creates a single-space stack template. The space uses the `ubuntu-latest` template and is named `web`.
 
 ---
 
@@ -69,11 +69,11 @@ template = "redis-7"
 
 | Option | Type | Required | Default | Description |
 |--------|------|----------|---------|-------------|
-| `name` | string | Yes | — | Unique name for the stack definition |
+| `name` | string | Yes | — | Unique name for the stack template |
 | `description` | string | No | `""` | Description shown in the UI and CLI |
 | `scope` | string | No | `"user"` | Visibility scope: `user` or `global` |
-| `groups` | list | No | `[]` | Groups allowed to create stacks from this definition (global scope only, names resolved to IDs) |
-| `zones` | list | No | `[]` | Zone restrictions — definition is only available in listed zones (empty = all zones) |
+| `groups` | list | No | `[]` | Groups allowed to create stacks from this template (global scope only, names resolved to IDs) |
+| `zones` | list | No | `[]` | Zone restrictions — template is only available in listed zones (empty = all zones) |
 
 ### Scope
 
@@ -84,7 +84,7 @@ template = "redis-7"
 
 ## Space Configuration
 
-Each `[[spaces]]` block defines a space in the stack. The `name` is used as the identifier — spaces are named `{prefix}-{name}` when the stack is created, and `name` is used in dependency and port forward references.
+Each `[[spaces]]` block defines a space in the template. The `name` is used as the identifier — spaces are named `{prefix}-{name}` when the stack is created, and `name` is used in dependency and port forward references.
 
 | Option | Type | Required | Default | Description |
 |--------|------|----------|---------|-------------|
@@ -166,32 +166,32 @@ remote_port = 3306
 | `local_port` | integer | Yes | Port on the source space |
 | `remote_port` | integer | Yes | Port on the target space |
 
-Port forwards are created as persistent forwards — they survive space restarts. The `to_space` value references another space by its `name` in the same stack definition.
+Port forwards are created as persistent forwards — they survive space restarts. The `to_space` value references another space by its `name` in the same stack template.
 
 ---
 
 ## CLI Workflow
 
 ```bash
-# Create a stack definition
+# Create a stack template
 knot stack create-def lamp.toml
 
-# List all definitions
+# List all templates
 knot stack list-defs
 
-# View detailed definition info
+# View detailed template info
 knot stack list-defs --details
 
-# Disable a definition (prevents creating stacks from it)
+# Disable a template (prevents creating stacks from it)
 knot stack disable-def lamp-stack
 
-# Re-enable a definition
+# Re-enable a template
 knot stack enable-def lamp-stack
 
-# Update a definition
+# Update a template
 knot stack apply lamp.toml
 
-# Delete a definition
+# Delete a template
 knot stack delete-def lamp-stack
 ```
 
@@ -199,12 +199,12 @@ knot stack delete-def lamp-stack
 
 ## Scripting
 
-Stack definitions can also be created and managed from scripts using the `knot.stack` library:
+Stack templates can also be created and managed from scripts using the `knot.stack` library:
 
 ```python
 import knot.stack as stack
 
-# Create a definition programmatically
+# Create a template programmatically
 stack.create_def(
     "my-stack",
     description="My development stack",

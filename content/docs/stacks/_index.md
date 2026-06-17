@@ -1,17 +1,19 @@
 ---
-title: Stacks
+title: Stack Templates
 weight: 75
 ---
 
-Stacks let you define and manage multi-space application environments as a single unit. A stack definition is a reusable blueprint that describes which spaces make up an application, how they depend on each other, and how they are wired together with port forwarding.
+Stack templates let you define and manage multi-space application environments as a single unit. A stack template is a reusable blueprint that describes which spaces make up an application, how they depend on each other, and how they are wired together with port forwarding.
+
+> The CLI and API still use the historical name **stack definition** for these blueprints (`knot stack create-def`, the `knot.stack.create_def` function, the `stack_definition_id` field, etc.). "Stack template" and "stack definition" refer to the same thing.
 
 ---
 
-## What is a Stack?
+## What is a Stack Template?
 
-A stack definition is a blueprint. When you create a stack from a definition, Knot creates the individual spaces, sets their stack field, resolves dependencies, and configures port forwards. The resulting spaces are grouped under a stack name and can be started, stopped, and deleted together.
+A stack template is a blueprint. When you create a stack from a template, Knot creates the individual spaces, sets their stack field, resolves dependencies, and configures port forwards. The resulting spaces are grouped under a stack name and can be started, stopped, and deleted together.
 
-Each stack definition specifies:
+Each stack template specifies:
 
 - **Spaces** — which templates to use, identified by name and prefixed when created
 - **Dependencies** — which spaces must be running before others can start
@@ -23,10 +25,10 @@ Each stack definition specifies:
 ## Stack Lifecycle
 
 **Define**
-Create a stack definition from a TOML file. The definition is stored on the server and can be reused.
+Create a stack template from a TOML file. The template is stored on the server and can be reused.
 
 **Create**
-Create spaces from a definition. Spaces are named with a prefix and grouped under a stack name. Spaces are created in a stopped state.
+Create spaces from a template. Spaces are named with a prefix and grouped under a stack name. Spaces are created in a stopped state.
 
 **Start**
 Start all spaces in dependency order. Spaces that depend on others wait for their dependencies to be running first.
@@ -39,9 +41,9 @@ Delete all spaces in the stack. Each space and its data are permanently removed.
 
 ---
 
-## Stack Definitions vs Stacks
+## Stack Templates vs Stacks
 
-| | Stack Definition | Stack |
+| | Stack Template | Stack |
 |---|---|---|
 | **What** | Blueprint (TOML) | Running spaces |
 | **Created by** | `knot stack create-def` | `knot stack create` |
@@ -53,23 +55,23 @@ Delete all spaces in the stack. Each space and its data are permanently removed.
 
 ## CLI Commands
 
-### Managing Definitions
+### Managing Templates
 
 | Command | Description |
 |---------|-------------|
-| `knot stack create-def <file>` | Create a new stack definition from a TOML file |
-| `knot stack apply <file>` | Update an existing stack definition from a TOML file |
-| `knot stack delete-def <name>` | Delete a stack definition |
-| `knot stack enable-def <name>` | Enable a stack definition for creating stacks |
-| `knot stack disable-def <name>` | Disable a stack definition |
-| `knot stack list-defs` | List all stack definitions |
-| `knot stack list-defs --details` | List definitions with space details |
+| `knot stack create-def <file>` | Create a new stack template from a TOML file |
+| `knot stack apply <file>` | Update an existing stack template from a TOML file |
+| `knot stack delete-def <name>` | Delete a stack template |
+| `knot stack enable-def <name>` | Enable a stack template for creating stacks |
+| `knot stack disable-def <name>` | Disable a stack template |
+| `knot stack list-defs` | List all stack templates |
+| `knot stack list-defs --details` | List templates with space details |
 
 ### Managing Stacks
 
 | Command | Description |
 |---------|-------------|
-| `knot stack create <definition> <prefix> [name]` | Create spaces from a definition |
+| `knot stack create <template> <prefix> [name]` | Create spaces from a template |
 | `knot stack start <name>` | Start all spaces in a stack |
 | `knot stack stop <name>` | Stop all spaces in a stack |
 | `knot stack restart <name>` | Restart all spaces in a stack |
@@ -80,5 +82,5 @@ Delete all spaces in the stack. Each space and its data are permanently removed.
 
 ## What's Next
 
-- [Stack Definitions](definitions/) — TOML file format and options
-- [Using Stacks](using-stacks/) — Creating and managing stacks from definitions
+- [Stack Template Format](definitions/) — TOML file format and options
+- [Using Stacks](using-stacks/) — Creating and managing stacks from templates

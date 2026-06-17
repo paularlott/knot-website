@@ -178,10 +178,10 @@ knot cp frontend:/app/build backend:/var/www/html
 
 ### `knot stack`
 
-Manage stack definitions and stack instances from the CLI.
+Manage stack templates (also called stack definitions) and stack instances from the CLI.
 
 ```shell
-# Validate and manage reusable stack definitions
+# Validate and manage reusable stack templates
 knot stack validate FILE
 knot stack create-def FILE
 knot stack apply FILE
@@ -191,7 +191,7 @@ knot stack disable-def NAME
 knot stack delete-def NAME
 
 # Create and operate stack instances
-knot stack create DEFINITION PREFIX [NAME]
+knot stack create TEMPLATE PREFIX [NAME]
 knot stack list
 knot stack start STACK_NAME
 knot stack stop STACK_NAME
@@ -199,7 +199,7 @@ knot stack restart STACK_NAME
 knot stack delete STACK_NAME [-y]
 ```
 
-`knot stack create` creates one stopped space per component in the stack definition, names each space with the given prefix, applies dependencies, port forwards, and custom fields, and groups the spaces under the stack name. `knot stack list` shows each stack's spaces with status and health.
+`knot stack create` creates one stopped space per component in the stack template, names each space with the given prefix, applies dependencies, port forwards, and custom fields, and groups the spaces under the stack name. `knot stack list` shows each stack's spaces with status and health.
 
 ---
 

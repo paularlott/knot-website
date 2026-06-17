@@ -8,6 +8,27 @@ weight: 100
 
 ## June 2026
 
+{{< version "v0.26.2" >}}
+
+{{< changelog-item "added" >}}
+
+- **Delete a stack from the web UI**: a new **Delete** button on each stack header deletes every space in the stack in one action. The button only appears when all of the stack's spaces are stopped (and local to the current zone), matching the existing rules for deleting a single space. A confirmation modal lists the space count before the stack is removed, and the underlying `DELETE /api/stacks/{name}` endpoint validates the entire stack before mutating anything, so a stack with a running space is rejected up front rather than partially deleted
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+
+- **Stack action buttons**: the Start, Stop, Restart, and Delete buttons on each stack header have been restyled to match the outlined row-action look used elsewhere in the UI (white/slate background with a coloured icon and label). Delete and Stop both use a red icon to signal their destructive intent, Start uses green, and Restart uses blue
+- **"Stacks" renamed to "Stack Templates"**: the web UI menu item and the page that lists stack blueprints is now labelled **Stack Templates** to distinguish the blueprint from a running stack. The CLI, API, and scripting library still use the historical name **stack definition** for the same concept
+- **Primary buttons**: the solid blue **+ New …** buttons across the listing pages have been restyled as outlined buttons (white background, blue border and label) to match the visual weight of the other action buttons
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+
+- **My Usage page**: the four usage doughnut charts (spaces, tunnels, compute, storage) are rendering again — a regression introduced in v0.26.1 left the chart canvases without their Alpine `x-ref` attributes, so Chart.js could not acquire them
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.26.1" >}}
 
 {{< changelog-item "added" >}}

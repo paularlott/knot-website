@@ -3,28 +3,30 @@ title: knot.stack
 weight: 15
 ---
 
-The `knot.stack` library provides stack definition and stack lifecycle functions. Stack definitions are blueprints describing which spaces make up a stack and how they are wired together. When you create a stack from a definition, spaces are created with the stack field set, dependencies resolved, and port forwards applied.
+The `knot.stack` library provides stack template (definition) management and stack lifecycle functions. Stack templates are blueprints describing which spaces make up a stack and how they are wired together. When you create a stack from a template, spaces are created with the stack field set, dependencies resolved, and port forwards applied.
+
+> The function names use the historical `_def` suffix (short for "definition") — these operate on what the web UI now calls **stack templates**. The two terms are interchangeable.
 
 ---
 
 ## Functions
 
-### Definition Management
+### Template Management
 
 | Function | Description |
 |----------|-------------|
-| `list_defs()` | List all stack definitions visible to the current user |
-| `get_def(name)` | Get a definition by name or ID |
-| `create_def(name, ...)` | Create a new stack definition |
-| `update_def(name, **fields)` | Update an existing definition |
-| `delete_def(name)` | Delete a definition |
-| `validate_def(spaces, ...)` | Validate a definition without creating it |
+| `list_defs()` | List all stack templates visible to the current user |
+| `get_def(name)` | Get a template by name or ID |
+| `create_def(name, ...)` | Create a new stack template |
+| `update_def(name, **fields)` | Update an existing template |
+| `delete_def(name)` | Delete a template |
+| `validate_def(spaces, ...)` | Validate a template without creating it |
 
 ### Stack Operations
 
 | Function | Description |
 |----------|-------------|
-| `create(definition_name, prefix, stack_name=None)` | Create spaces from a definition |
+| `create(template_name, prefix, stack_name=None)` | Create spaces from a template |
 | `delete(stack_name)` | Delete all spaces in a stack |
 | `start(stack_name)` | Start all spaces in a stack in dependency order |
 | `stop(stack_name)` | Stop all spaces in reverse dependency order |
@@ -38,18 +40,18 @@ The `knot.stack` library provides stack definition and stack lifecycle functions
 ```python
 import knot.stack as stack
 
-# List available definitions
+# List available templates
 defs = stack.list_defs()
 for d in defs:
     print(f"{d['name']}: {len(d['spaces'])} spaces")
 
-# Get definition details
+# Get template details
 defn = stack.get_def("lamp")
-print(f"Definition: {defn['name']}")
+print(f"Template: {defn['name']}")
 for comp in defn['spaces']:
     print(f"  {comp['name']}: {comp.get('template_id', 'unknown')}")
 
-# Create a stack from a definition
+# Create a stack from a template
 result = stack.create("lamp", "myproject")
 for name, space_id in result['spaces'].items():
     print(f"  {name}: {space_id}")
@@ -68,12 +70,12 @@ stack.delete("myproject")
 
 ---
 
-## Creating Definitions
+## Creating Templates
 
 ```python
 import knot.stack as stack
 
-# Create a personal stack definition
+# Create a personal stack template
 stack.create_def(
     "my-stack",
     description="My development stack",
@@ -102,9 +104,9 @@ stack.create_def(
 
 ---
 
-## Validating Definitions
+## Validating Templates
 
-Use `validate_def` to check a definition for errors before creating it. This catches structural problems like circular dependencies, missing required fields, and invalid references.
+Use `validate_def` to check a template for errors before creating it. This catches structural problems like circular dependencies, missing required fields, and invalid references.
 
 ```python
 import knot.stack as stack
@@ -119,7 +121,7 @@ result = stack.validate_def(
 )
 
 if result["valid"]:
-    print("Definition is valid")
+    print("Template is valid")
 else:
     for err in result.get("errors", []):
         if err.get("space"):
@@ -138,12 +140,12 @@ Validation checks for:
 
 ---
 
-## Creating from a Definition
+## Creating from a Template
 
 ```python
 import knot.stack as stack
 
-# Create spaces from the "lamp" definition
+# Create spaces from the "lamp" template
 # Spaces will be named: webapp-db, webapp-web
 # and grouped under the stack name "webapp"
 result = stack.create("lamp", "webapp")
@@ -154,14 +156,14 @@ result = stack.create("lamp", "webapp", stack_name="my-lamp-stack")
 
 ---
 
-## Definition Properties
+## Template Properties
 
-Definitions returned by `get_def()` contain:
+Templates returned by `get_def()` contain:
 - `id` - Stack definition ID
-- `name` - Definition name
+- `name` - Template name
 - `description` - Description
-- `user_id` - Owner user ID (empty for global definitions)
-- `active` - Whether the definition is available for creating stacks
+- `user_id` - Owner user ID (empty for global templates)
+- `active` - Whether the template is available for creating stacks
 - `groups` - List of group IDs allowed to create instances
 - `zones` - List of zone restrictions
 - `spaces` - List of space dicts (see below)

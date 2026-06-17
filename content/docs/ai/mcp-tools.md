@@ -49,7 +49,7 @@ Templates are read-only via MCP — authoring and editing happens through the **
 
 ## Stack Definitions
 
-Stack definitions are blueprints that describe a set of components (template bindings) and the dependencies between them. They are instantiated into running stacks via `create_stack`. Definitions are authored through the **knot** web UI or CLI; MCP exposes read access so AI assistants can discover what's available to instantiate.
+Stack definitions (called **stack templates** in the web UI) are blueprints that describe a set of components (template bindings) and the dependencies between them. They are instantiated into running stacks via `create_stack`. Definitions are authored through the **knot** web UI or CLI; MCP exposes read access so AI assistants can discover what's available to instantiate.
 
 | Tool | Description | Visibility |
 |------|-------------|------------|
@@ -68,7 +68,7 @@ A stack is a deployed instance — a group of spaces that share a stack name, ty
 | `start_stack` | Start all spaces in a stack in dependency order. | On-demand |
 | `stop_stack` | Stop all spaces in a stack in reverse dependency order. | On-demand |
 | `restart_stack` | Restart all spaces in a stack. | On-demand |
-| `delete_stack` | Delete all stopped spaces in a stack. Running spaces must be stopped first. | On-demand |
+| `delete_stack` | Delete all spaces in a stack. The server validates that every space is stoppable before mutating anything, so the call is all-or-nothing. | On-demand |
 
 ---
 
