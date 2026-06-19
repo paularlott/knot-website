@@ -122,7 +122,7 @@ Startup and shutdown scripts run in the **Remote** environment with access to:
 - Standard scriptling libraries
 - Extended libraries (os, pathlib, subprocess, etc.)
 
-See [Scripting Environments](../scripting/environments/) for complete library availability.
+See [Scripting Environments](../../scripting/environments/) for complete library availability.
 
 ---
 

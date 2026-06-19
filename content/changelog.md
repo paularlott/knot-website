@@ -8,6 +8,20 @@ weight: 100
 
 ## June 2026
 
+{{< version "v0.27.0" >}}
+
+{{< changelog-item "added" >}}
+
+- **Space methods**: running spaces can now register JSON-RPC methods backed by a long-running stdio method server. Methods can be private or shared, optionally filtered by group, discovered through `GET /api/methods`, and called through `POST /api/methods/call`
+- **Method CLI commands**: `knot methods register <file>.toml` (or `.py`) registers methods from inside a space, while `knot method list` and `knot method call` discover and invoke visible methods from the desktop CLI
+- **MCP projection for methods**: methods marked `mcp_tool = true` are exposed as discoverable MCP tools, with dotted names rewritten to underscores
+- **Startup script registration**: startup scripts can register methods with the new agent-only `knot.methods` library — a `Server` class plus a `knot.methods.schema` JSON Schema builder
+- **Scriptling JSON-RPC method servers**: Scriptling's `scriptling.runtime.jsonrpc` library (via `scriptling --json-rpc`) is the recommended stdio server for method servers implemented in Scriptling; it runs each request on a fresh evaluator, so the Knot method server should use `mode = "concurrent"`
+- **Method server concurrency mode**: a new `[server].mode` option (`concurrent` by default, or `serial`) controls how many JSON-RPC requests are in flight on a stdio method server at once. Concurrent mode pipelines requests and correlates responses by id; serial mode sends one request at a time for non-re-entrant servers
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.26.2" >}}
 
 {{< changelog-item "added" >}}
