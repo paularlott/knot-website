@@ -289,6 +289,12 @@ Or pipe params:
 echo '{"query":"receipt"}' | knot method call notes.search | jq
 ```
 
+Call the same method multiple times in one batch (each element in the params array becomes a separate call):
+
+```shell
+knot method call notes.search --batch '[{"query":"a"},{"query":"b"}]'
+```
+
 The HTTP API is:
 
 ```text
