@@ -245,6 +245,21 @@ The owner always sees and calls their own methods under the bare canonical name 
 
 ---
 
+## Duplicate Methods and Load Balancing
+
+Multiple spaces can register the same canonical method name, as long as the visible method definition is identical. This is useful when several spaces provide the same service and should share calls.
+
+When a call has more than one visible target, Knot selects a target in two steps:
+
+1. Prefer the registered space with the fewest in-flight calls for that method.
+2. If multiple spaces are tied, rotate between them in round-robin order.
+
+This means long-running calls naturally push later calls toward less busy spaces, while normal sequential calls are still spread fairly across equivalent providers.
+
+Method registrations are held by the Knot server process that has the live agent session for the space. In a multi-server cluster, load balancing happens among the matching method registrations visible to the Knot server handling the request; method calls are not redistributed through a separate cluster-wide method registry.
+
+---
+
 ## Calling Methods
 
 List visible methods:
@@ -295,7 +310,7 @@ Returns a JSON-RPC response:
 
 ### Batch requests
 
-Send a JSON array to call multiple methods in one request. Each item is routed independently — items can target different spaces and Knot naturally splits the batch by destination agent:
+Send a JSON array to call multiple methods in one request. Each item is routed independently using the same load-balancing rule as a single request — items can target different spaces and Knot naturally splits the batch by destination agent:
 
 ```json
 [
