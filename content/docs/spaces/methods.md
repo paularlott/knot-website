@@ -93,6 +93,8 @@ The TOML and Scriptling examples above describe the same method.
 
 A space can only have one active method registration at a time. Calling `register()` replaces everything the space previously registered — every method from any prior `Server` is removed and only the methods from the most recent `register()` call remain. If you need to publish methods from more than one process, combine them into a single `Server` and a single `register()` call. (This matches the TOML path: a `knot methods register` overwrites the space's previous registration too.)
 
+Calling `unregister()` with no arguments removes all methods and stops the method server process. Calling `unregister("search")` removes just that method and re-publishes the reduced set (removing the last method also stops the server).
+
 ### Server constructor
 
 ```python
@@ -204,6 +206,12 @@ server.register()
 
 Register with `knot methods register methods.toml` or `knot methods register methods.py` from inside the space.
 
+To remove all methods and stop the method server:
+
+```shell
+knot methods unregister
+```
+
 `setup.py` routes each method's `local_name` (the name Knot forwards over stdio) to a handler function referenced as `"library.function"`:
 
 ```python
@@ -249,12 +257,7 @@ The owner always sees and calls their own methods under the bare canonical name 
 
 Multiple spaces can register the same canonical method name, as long as the visible method definition is identical. This is useful when several spaces provide the same service and should share calls.
 
-When a call has more than one visible target, Knot selects a target in two steps:
-
-1. Prefer the registered space with the fewest in-flight calls for that method.
-2. If multiple spaces are tied, rotate between them in round-robin order.
-
-This means long-running calls naturally push later calls toward less busy spaces, while normal sequential calls are still spread fairly across equivalent providers.
+When a call has more than one visible target, Knot selects the target with the fewest in-flight calls for that method. If multiple targets are tied, the one that registered first wins. This means long-running calls naturally push later calls toward less busy spaces.
 
 Method registrations are held by the Knot server process that has the live agent session for the space. In a multi-server cluster, load balancing happens among the matching method registrations visible to the Knot server handling the request; method calls are not redistributed through a separate cluster-wide method registry.
 
@@ -266,6 +269,12 @@ List visible methods:
 
 ```shell
 knot method list
+```
+
+Show full details (params/result schemas, owner, scope, provider count) for a specific method:
+
+```shell
+knot method list notes.search
 ```
 
 Call a method with JSON params:

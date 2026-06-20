@@ -15,6 +15,8 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 | [knot.space](space/) | Space management operations |
 | [knot.server](server/) | Server information |
 | [knot.ai](ai/) | AI completion functions |
+| [knot.methods](methods/) | Register JSON-RPC methods (agent-side only) |
+| [knot.methods.schema](methods-schema/) | JSON Schema builder for method params and results |
 | [knot.mcp](mcp/) | MCP tool interaction |
 | [knot.skill](skill/) | Skills management |
 | [knot.script](script/) | Script management and execution |
@@ -30,6 +32,7 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 | [knot.audit](audit/) | Audit log search and filtering |
 | [scriptling.net.resolve](net-resolve/) | DNS resolution for IP, SRV, and srv+http URLs |
 | [scriptling.provision.file](provision-file/) | Idempotent file provisioning with correct permissions |
+| [scriptling.provision.fetch](provision-fetch/) | Download files and unpack zip archives over HTTP/HTTPS |
 
 ---
 
@@ -52,7 +55,7 @@ tools = mcp.Client().tools()
 
 ## Environment Compatibility
 
-All `knot.*` libraries are available in all embedded environments (local, MCP, remote), except `knot.healthcheck` which is only available in agent-side health check scripts. `knot.ai` and `knot.mcp` are only available in embedded contexts — external scripts should use `scriptling.ai` and `scriptling.mcp` directly.
+All `knot.*` libraries are available in all embedded environments (local, MCP, remote), except `knot.healthcheck` which is only available in agent-side health check scripts, and `knot.methods` / `knot.methods.schema` which are not available in MCP tool execution environments. `knot.ai` and `knot.mcp` are only available in embedded contexts — external scripts should use `scriptling.ai` and `scriptling.mcp` directly.
 
 ---
 
