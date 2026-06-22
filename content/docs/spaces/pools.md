@@ -97,3 +97,13 @@ The pool API is available to authenticated callers:
 - `POST /api/pools/{id_or_name}/stop`
 
 Pool operations require **Use Space Pools** permission.
+
+## CLI
+
+```bash
+knot pool list                          # List your pools
+knot pool start <name>                  # Start a stopped pool
+knot pool stop <name>                   # Stop a running pool
+knot pool set-size <name> <count>       # Change the desired space count
+knot pool delete <name> [-y]            # Delete a stopped pool (prompts unless -y)
+```
