@@ -12,6 +12,10 @@ weight: 100
 
 {{< changelog-item "added" >}}
 
+- **Space pools**: fixed-size, self-healing pools keep a target number of identical spaces running from a template. Pools are reconciled by the cluster leader every 15s, gossip definitions across servers, drain method traffic before stopping members (with undrain for reuse during fluctuations), apply a 2-pass grace period before deleting stopped excess spaces, and expose utilization stats for custom scaler scripts
+- **Pool HTTP/TCP port routing**: pool member spaces expose their ports under the pool name (`username--poolname--port.domain`). The proxy falls back to pool lookup when no space matches and round-robins across healthy, non-drained members. TCP WebSocket proxy (`/proxy/spaces/{name}/port/{port}`) also supports pool names
+- **Pool API and Scriptling library**: `/api/pools` endpoints and `knot.pool` functions let scripts list pools, read utilization, adjust `desired_count`, start, and stop pools
+- **Pool MCP tools**: AI assistants and MCP clients can create, delete, start, stop, and resize pools via five new MCP tools (`create_pool`, `delete_pool`, `start_pool`, `stop_pool`, `set_pool_size`)
 - **Space methods**: running spaces can now register JSON-RPC methods backed by a long-running stdio method server. Methods can be private or shared, optionally filtered by group, discovered through `GET /api/methods`, and called through `POST /api/methods/call`
 - **Method CLI commands**: `knot methods register <file>.toml` (or `.py`) registers methods from inside a space, while `knot method list` and `knot method call` discover and invoke visible methods from the desktop CLI
 - **MCP projection for methods**: methods marked `mcp_tool = true` are exposed as discoverable MCP tools, with dotted names rewritten to underscores
