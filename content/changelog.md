@@ -12,16 +12,32 @@ weight: 100
 
 {{< changelog-item "added" >}}
 
-- **Space pools**: fixed-size, self-healing pools keep a target number of identical spaces running from a template. Pools are reconciled by the cluster leader every 15s, gossip definitions across servers, drain method traffic before stopping members (with undrain for reuse during fluctuations), apply a 2-pass grace period before deleting stopped excess spaces, and expose utilization stats for custom scaler scripts
-- **Pool HTTP/TCP port routing**: pool member spaces expose their ports under the pool name (`username--poolname--port.domain`). The proxy falls back to pool lookup when no space matches and round-robins across healthy, non-drained members. TCP WebSocket proxy (`/proxy/spaces/{name}/port/{port}`) also supports pool names
-- **Pool API and Scriptling library**: `/api/pools` endpoints and `knot.pool` functions let scripts list pools, read utilization, adjust `desired_count`, start, and stop pools
-- **Pool MCP tools**: AI assistants and MCP clients can create, delete, start, stop, and resize pools via five new MCP tools (`create_pool`, `delete_pool`, `start_pool`, `stop_pool`, `set_pool_size`)
-- **Space methods**: running spaces can now register JSON-RPC methods backed by a long-running stdio method server. Methods can be private or shared, optionally filtered by group, discovered through `GET /api/methods`, and called through `POST /api/methods/call`
-- **Method CLI commands**: `knot methods register <file>.toml` (or `.py`) registers methods from inside a space, while `knot method list` and `knot method call` discover and invoke visible methods from the desktop CLI
-- **MCP projection for methods**: methods marked `mcp_tool = true` are exposed as discoverable MCP tools, with dotted names rewritten to underscores
-- **Startup script registration**: startup scripts can register methods with the new agent-only `knot.methods` library — a `Server` class plus a `knot.methods.schema` JSON Schema builder
-- **Scriptling JSON-RPC method servers**: Scriptling's `scriptling.runtime.jsonrpc` library (via `scriptling --json-rpc`) is the recommended stdio server for method servers implemented in Scriptling; it runs each request on a fresh evaluator, so the Knot method server should use `mode = "concurrent"`
-- **Method server concurrency mode**: a new `[server].mode` option (`concurrent` by default, or `serial`) controls how many JSON-RPC requests are in flight on a stdio method server at once. Concurrent mode pipelines requests and correlates responses by id; serial mode sends one request at a time for non-re-entrant servers
+- **Space pools**
+  - New fixed-size, self-healing pools keep a target number of identical spaces running from a template.
+  - The cluster leader reconciles pools every 15 seconds and gossips pool definitions across servers.
+  - Scale-down drains method traffic before stopping members (with undrain support for reuse during fluctuations).
+  - A 2-pass grace period is applied before deleting stopped excess spaces.
+  - Pool utilization stats are now available for custom scaler scripts.
+
+- **Pool routing and control surface**
+  - Pool member ports are reachable via the pool name (`username--poolname--port.domain`).
+  - The proxy now falls back to pool lookup when no space matches, then round-robins across healthy, non-drained members.
+  - TCP WebSocket proxy routing (`/proxy/spaces/{name}/port/{port}`) now supports pool names.
+  - New `/api/pools` endpoints and `knot.pool` functions let scripts list pools, read utilization, adjust `desired_count`, and start/stop pools.
+  - New MCP tools for pools: `create_pool`, `delete_pool`, `start_pool`, `stop_pool`, and `set_pool_size`.
+
+- **Space methods and MCP exposure**
+  - Running spaces can now register JSON-RPC methods backed by a long-running stdio method server.
+  - Methods can be private or shared, optionally filtered by group, discovered with `GET /api/methods`, and called via `POST /api/methods/call`.
+  - New CLI workflow: `knot methods register <file>.toml` (or `.py`) to register methods from inside a space, plus `knot method list` and `knot method call` from the desktop CLI.
+  - Methods with `mcp_tool = true` are exposed as discoverable MCP tools, with dotted names rewritten to underscores.
+  - Startup scripts can now register methods using the new agent-only `knot.methods` library (`Server` class and `knot.methods.schema` JSON Schema builder).
+
+- **Method server runtime behavior**
+  - The stdio method server is a long-running process: Knot writes JSON-RPC requests to its stdin and reads responses from its stdout, correlating each response by id. Logs go to stderr.
+  - A `mode` setting controls request concurrency: `concurrent` (default) pipelines requests and correlates responses by id, while `serial` processes one request at a time for non-re-entrant servers.
+  - JSON-RPC notifications (requests without an `id`) are forwarded to the server with no response expected; batch calls are supported.
+  - Scriptling scripts can serve as the method server process via `scriptling --json-rpc` using the `scriptling.runtime.jsonrpc` library, spinning up a fresh isolated evaluator per request.
 {{< /changelog-item >}}
 
 ---
