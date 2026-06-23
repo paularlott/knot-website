@@ -38,6 +38,11 @@ weight: 100
   - A `mode` setting controls request concurrency: `concurrent` (default) pipelines requests and correlates responses by id, while `serial` processes one request at a time for non-re-entrant servers.
   - JSON-RPC notifications (requests without an `id`) are forwarded to the server with no response expected; batch calls are supported.
   - Scriptling scripts can serve as the method server process via `scriptling --json-rpc` using the `scriptling.runtime.jsonrpc` library, spinning up a fresh isolated evaluator per request.
+
+- **User access overview**:
+  - A new **Access** button on the users list opens a popup showing everything a user can reach, derived from their roles and groups.
+  - Shows the user's effective permissions — every permission grouped by category, with the ones they lack greyed out — alongside their effective quota (personal plus group allowances), owned and shared spaces, and the templates, variables, volumes, scripts, skills, and stack definitions they can access.
+  - Backed by a new `GET /api/users/{user_id}/access` endpoint that aggregates resolved roles, groups, permissions, quota, and resource visibility for a user.
 {{< /changelog-item >}}
 
 ---
