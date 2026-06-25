@@ -61,6 +61,77 @@ The method server is a long-running stdio JSON-RPC process. Knot writes JSON-RPC
 
 ---
 
+## Event Subscriptions
+
+A method can subscribe to events by declaring `events` in its definition. When a matching event fires, Knot calls the method via JSON-RPC with the event payload as `params`. Optionally, `event_sinks` references named formatters that transform the payload before delivery.
+
+### `events`
+
+Subscribes the method to event patterns. The method receives the default event payload format.
+
+TOML:
+
+```toml
+[[methods]]
+name = "handle_events"
+local_name = "handle_events"
+description = "React to space lifecycle events"
+events = ["space.created", "space.started"]
+```
+
+Scriptling:
+
+```python
+server.method(
+    name="handle_events",
+    description="React to space lifecycle events",
+    events=["space.created", "space.started"],
+)
+```
+
+The method receives a single `params` dict:
+
+```json
+{
+  "event_id":   "...",
+  "event_type": "space.created",
+  "event_ts":   "...",
+  "data": { ... }
+}
+```
+
+### `event_sinks`
+
+Optional formatters. References named JSON-RPC sinks defined on the [Events](../events/json-rpc-sinks/) page. Each sink has its own event patterns and a body template that formats the event data before passing it to the method. `event_sinks` does **not** subscribe the method — `events` is always required for subscription.
+
+TOML:
+
+```toml
+[[methods]]
+name = "handle_deploy"
+local_name = "handle_deploy"
+description = "Handle deployment events"
+events = ["custom.deploy.*"]
+event_sinks = ["deploy-formatter"]
+```
+
+Scriptling:
+
+```python
+server.method(
+    name="handle_deploy",
+    description="Handle deployment events",
+    events=["custom.deploy.*"],
+    event_sinks=["deploy-formatter"],
+)
+```
+
+When an event matches `events`, the server checks each referenced sink's patterns in declaration order. The first matching sink's body template formats the payload. If no sink matches, the default format is used.
+
+See [JSON-RPC Sinks](../events/json-rpc-sinks/) for sink configuration details, scope rules, and delivery semantics.
+
+---
+
 ## Startup Script Registration
 
 Startup scripts (and `knot methods register file.py`) use the agent-only `knot.methods` library. Construct a `Server`, attach one or more method definitions, then call `register()`:

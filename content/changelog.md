@@ -12,37 +12,40 @@ weight: 100
 
 {{< changelog-item "added" >}}
 
+- **Events system**
+  - Route lifecycle and custom events to webhooks, scripts, or JSON-RPC methods, scoped per-user or global.
+  - System events fire automatically on space lifecycle transitions: `space.created`, `space.started`, `space.stopped`, `space.deleted`, `space.healthy`, `space.unhealthy`. System event payloads now include `space_name` and `space_id` (plus `space_urls` for created/started).
+  - Raise custom events from inside a space via the `knot event` CLI, the agent's `POST /event`, or the `knot.event.emit()` scriptling function.
+  - Sinks match on glob patterns (`space.*`, `custom.myapp.*`) and deliver zone-local, in-order per sink, with at-least-once semantics. Webhook sinks render a Go template body and sign with HMAC-SHA256; script sinks run an existing scriptling server-side; JSON-RPC sinks deliver events to running script methods via `events`/`event_sinks` method annotations.
+  - Simplified default webhook template: just `event_id`, `event_type`, `event_ts`, `data`.
+  - Two new permissions: `Manage Own Event Sinks` and `Manage Global Event Sinks`.
+  - New endpoints: `GET/POST/PUT/DELETE /api/event-sinks`, `POST /api/spaces/{id}/emit-event`.
+
 - **Space pools**
-  - New fixed-size, self-healing pools keep a target number of identical spaces running from a template.
-  - The cluster leader reconciles pools every 15 seconds and gossips pool definitions across servers.
-  - Scale-down drains method traffic before stopping members (with undrain support for reuse during fluctuations).
-  - A 2-pass grace period is applied before deleting stopped excess spaces.
-  - Pool utilization stats are now available for custom scaler scripts.
+  - Fixed-size, self-healing pools keep a target number of identical spaces running from a template; the cluster leader reconciles membership every 15 seconds, drains method traffic before stopping members, and applies a grace period before deleting excess spaces.
+  - Pool members are reachable via the pool name (`username--poolname--port.domain`), with the proxy falling back to pool lookup and round-robining across healthy, non-drained members. TCP WebSocket proxy routing (`/proxy/spaces/{name}/port/{port}`) accepts pool names too.
+  - Manage via `knot.pool` scriptling functions (list, utilization, `desired_count`, start/stop), the `/api/pools` endpoints, or MCP tools `create_pool`, `delete_pool`, `start_pool`, `stop_pool`, `set_pool_size`.
 
-- **Pool routing and control surface**
-  - Pool member ports are reachable via the pool name (`username--poolname--port.domain`).
-  - The proxy now falls back to pool lookup when no space matches, then round-robins across healthy, non-drained members.
-  - TCP WebSocket proxy routing (`/proxy/spaces/{name}/port/{port}`) now supports pool names.
-  - New `/api/pools` endpoints and `knot.pool` functions let scripts list pools, read utilization, adjust `desired_count`, and start/stop pools.
-  - New MCP tools for pools: `create_pool`, `delete_pool`, `start_pool`, `stop_pool`, and `set_pool_size`.
+- **Space methods**
+  - Running spaces can register JSON-RPC methods backed by a long-running stdio method server, and optionally expose them as discoverable MCP tools (`mcp_tool = true`; dotted names are rewritten to underscores).
+  - Methods can be private or shared, filtered by group, discovered with `GET /api/methods`, and called via `POST /api/methods/call`.
+  - The server supports concurrent (default) or serial request handling, JSON-RPC notifications, and batch calls; scriptlings can serve as the server via `scriptling --json-rpc`.
+  - Register from inside a space with `knot methods register <file>.toml` (or `.py`), or from startup scripts via the agent-only `knot.methods` library and `knot.methods.schema` JSON Schema builder.
 
-- **Space methods and MCP exposure**
-  - Running spaces can now register JSON-RPC methods backed by a long-running stdio method server.
-  - Methods can be private or shared, optionally filtered by group, discovered with `GET /api/methods`, and called via `POST /api/methods/call`.
-  - New CLI workflow: `knot methods register <file>.toml` (or `.py`) to register methods from inside a space, plus `knot method list` and `knot method call` from the desktop CLI.
-  - Methods with `mcp_tool = true` are exposed as discoverable MCP tools, with dotted names rewritten to underscores.
-  - Startup scripts can now register methods using the new agent-only `knot.methods` library (`Server` class and `knot.methods.schema` JSON Schema builder).
+- **User access overview** {{< pro-badge >}}
+  - A new **Access** button on the users list opens a popup showing everything a user can reach, derived from their roles and groups: effective permissions (grouped by category, with the ones they lack greyed out), effective quota, owned and shared spaces, and the templates, variables, volumes, scripts, skills, and stack definitions they can access.
+  - Backed by `GET /api/users/{user_id}/access`.
 
-- **Method server runtime behavior**
-  - The stdio method server is a long-running process: Knot writes JSON-RPC requests to its stdin and reads responses from its stdout, correlating each response by id. Logs go to stderr.
-  - A `mode` setting controls request concurrency: `concurrent` (default) pipelines requests and correlates responses by id, while `serial` processes one request at a time for non-re-entrant servers.
-  - JSON-RPC notifications (requests without an `id`) are forwarded to the server with no response expected; batch calls are supported.
-  - Scriptling scripts can serve as the method server process via `scriptling --json-rpc` using the `scriptling.runtime.jsonrpc` library, spinning up a fresh isolated evaluator per request.
+{{< /changelog-item >}}
 
-- **User access overview** {{< pro-badge >}}:
-  - A new **Access** button on the users list opens a popup showing everything a user can reach, derived from their roles and groups.
-  - Shows the user's effective permissions — every permission grouped by category, with the ones they lack greyed out — alongside their effective quota (personal plus group allowances), owned and shared spaces, and the templates, variables, volumes, scripts, skills, and stack definitions they can access.
-  - Backed by a new `GET /api/users/{user_id}/access` endpoint that aggregates resolved roles, groups, permissions, quota, and resource visibility for a user.
+{{< changelog-item "changed" >}}
+
+- **SSH key updates**: in-space SSH key updates are now driven by the agent's reported SSH port (`SSHPort > 0`) rather than the template's SSH capability, so keys are pushed only once the agent is actually ready to accept them — including during reconnect churn before the first state report fully lands.
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+
+- **Agent monitoring and health reporting**: fixes to the agent's per-server connection data races that could leave a server stuck on a closed session after a reconnect (presenting as "mux ping succeeds but agent state goes stale") or racing the stale-session checker.
 {{< /changelog-item >}}
 
 ---
