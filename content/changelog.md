@@ -31,6 +31,7 @@ weight: 100
   - Methods can be private or shared, filtered by group, discovered with `GET /api/methods`, and called via `POST /api/methods/call`.
   - The server supports concurrent (default) or serial request handling, JSON-RPC notifications, and batch calls; scriptlings can serve as the server via `scriptling --json-rpc`.
   - Register from inside a space with `knot methods register <file>.toml` (or `.py`), or from startup scripts via the agent-only `knot.methods` library and `knot.methods.schema` JSON Schema builder.
+  - Register methods automatically at agent startup with `knot agent start --methods-file <file>.toml` (or `.py`); also configurable via the `agent.methods_file` config key or `KNOT_METHODS_FILE` environment variable.
 
 - **User access overview** {{< pro-badge >}}
   - A new **Access** button on the users list opens a popup showing everything a user can reach, derived from their roles and groups: effective permissions (grouped by category, with the ones they lack greyed out), effective quota, owned and shared spaces, and the templates, variables, volumes, scripts, skills, and stack definitions they can access.
@@ -41,6 +42,8 @@ weight: 100
 {{< changelog-item "changed" >}}
 
 - **SSH key updates**: in-space SSH key updates are now driven by the agent's reported SSH port (`SSHPort > 0`) rather than the template's SSH capability, so keys are pushed only once the agent is actually ready to accept them — including during reconnect churn before the first state report fully lands.
+- **Name field sanitization**: space, pool, and volume name fields now strip invalid characters as you type or paste (e.g. pasting `test #1234` yields `test1234`), matching the URL-safe character set the backend already enforces.
+- **Administration sidebar group**: Templates, Variables, Users, Groups, Roles, Audit Logs, and Cluster Info are grouped under a collapsible **Administration** section in the sidebar (hidden entirely if you have none of the relevant permissions). On leaf nodes, Templates and Variables remain top-level entries.
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}

@@ -57,6 +57,16 @@ knot methods register methods.toml
 knot methods register methods.py
 ```
 
+### Registering at agent startup
+
+To register methods automatically when the agent starts — without running `knot methods register` by hand — point the agent at the file with `--methods-file` (or the `agent.methods_file` config key / `KNOT_METHODS_FILE` environment variable):
+
+```shell
+knot agent start --methods-file methods.toml
+```
+
+The file may be a `.toml` registration or a `.py` Scriptling script, exactly as with `knot methods register`. The agent waits until it has connected to the server, then registers once; any failure is logged and never stops the agent from serving the space. This is the convenient way to bake a method registration into a space image or template so the space's methods come up on their own every time it starts.
+
 The method server is a long-running stdio JSON-RPC process. Knot writes JSON-RPC requests to the server's stdin and reads responses from its stdout, correlating each response by JSON-RPC id. Logs should be written to stderr.
 
 ---
