@@ -228,15 +228,21 @@ In both modes the server's `timeout` applies to each call.
 
 ## Scriptling Method Servers
 
-A Scriptling script can be the method server process itself, using the `scriptling.runtime.jsonrpc` library. The registration metadata (`name`, `local_name`, `description`, `params_schema`, scope, etc.) is declared in Knot exactly the same way as for any other method server — the only difference is that `[server].command` points at `scriptling --json-rpc`.
+A Scriptling script can be the method server process itself, using the `scriptling.runtime.jsonrpc` library. The registration metadata (`name`, `local_name`, `description`, `params_schema`, scope, etc.) is declared in Knot exactly the same way as for any other method server — the only difference is that `[server].command` runs a Scriptling JSON-RPC server.
 
-TOML form (`methods.toml`):
+{{< tip >}}
+The Knot agent embeds the Scriptling runtime, so you do **not** need to install a separate `scriptling` binary in the space. Run the script through the agent instead: `knot run-script ./setup.py --json-rpc`.
+
+`knot run-script` mirrors the Scriptling CLI's run modes (container support excluded): `--json-rpc` (stdio JSON-RPC method server), `--listen :PORT` (HTTP server), and `--mcp-tools DIR` (MCP server), plus the sandbox flags (`--allowed-path`, `--disable-lib`, `--bearer-token`, `--web-root`, `--kv-storage`, `--tls-*`). Knot's own libraries (`knot.apiclient`, `knot.event`, …) are available both to evaluated scripts and to served handlers (json-rpc/http/mcp). Run `knot --version` to see the bundled Scriptling version.
+{{< /tip >}}
+
+TOML form (`methods.toml`) — using the agent's bundled runtime:
 
 ```toml
 [server]
 type = "stdio"
-command = "scriptling"
-args = ["--json-rpc", "./setup.py"]
+command = "knot"
+args = ["run-script", "--json-rpc", "./setup.py"]
 mode = "concurrent"
 
 [[methods]]
@@ -267,7 +273,7 @@ Scriptling form (`methods.py`):
 from knot.methods import Server
 from knot.methods import schema as s
 
-server = Server("scriptling", args=["--json-rpc", "./setup.py"], mode="concurrent")
+server = Server("knot", args=["run-script", "--json-rpc", "./setup.py"], mode="concurrent")
 
 server.method(
     name="{{space}}.search",

@@ -33,6 +33,11 @@ weight: 100
   - Register from inside a space with `knot methods register <file>.toml` (or `.py`), or from startup scripts via the agent-only `knot.methods` library and `knot.methods.schema` JSON Schema builder.
   - Register methods automatically at agent startup with `knot agent start --methods-file <file>.toml` (or `.py`); also configurable via the `agent.methods_file` config key or `KNOT_METHODS_FILE` environment variable.
 
+- **`knot run-script` server modes**
+  - The agent embeds the Scriptling runtime, so `knot run-script` now mirrors the Scriptling CLI's run modes — no separate `scriptling` binary needed in a space. Run a script as a stdio JSON-RPC method server (`--json-rpc`), an HTTP server (`--listen :PORT`), or an MCP server (`--mcp-tools DIR`), with the sandbox flags (`--allowed-path`, `--disable-lib`, `--bearer-token`, `--web-root`, `--kv-storage`, `--tls-*`). Container runtime libraries are excluded.
+  - Plain `knot run-script <file>` now exposes the full Scriptling library set (minus container) plus Knot's own libraries.
+  - `knot --version` reports the bundled Scriptling runtime version.
+
 - **User access overview** {{< pro-badge >}}
   - A new **Access** button on the users list opens a popup showing everything a user can reach, derived from their roles and groups: effective permissions (grouped by category, with the ones they lack greyed out), effective quota, owned and shared spaces, and the templates, variables, volumes, scripts, skills, and stack definitions they can access.
   - Backed by `GET /api/users/{user_id}/access`.
