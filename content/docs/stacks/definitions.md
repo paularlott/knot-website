@@ -27,6 +27,7 @@ This creates a single-space stack template. The space uses the `ubuntu-latest` t
 ```toml
 name = "lamp-stack"
 description = "Linux, Apache, MySQL, PHP stack"
+icon_url = "/icons/lamp.svg"
 scope = "user"
 groups = ["developers"]
 zones = ["us-east"]
@@ -71,6 +72,7 @@ template = "redis-7"
 |--------|------|----------|---------|-------------|
 | `name` | string | Yes | — | Unique name for the stack template |
 | `description` | string | No | `""` | Description shown in the UI and CLI |
+| `icon_url` | string | No | `""` | Icon URL shown in the UI (stack templates list and stack selector) |
 | `scope` | string | No | `"user"` | Visibility scope: `user` or `global` |
 | `groups` | list | No | `[]` | Groups allowed to create stacks from this template (global scope only, names resolved to IDs) |
 | `zones` | list | No | `[]` | Zone restrictions — template is only available in listed zones (empty = all zones) |

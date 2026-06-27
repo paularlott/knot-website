@@ -79,6 +79,7 @@ import knot.stack as stack
 stack.create_def(
     "my-stack",
     description="My development stack",
+    icon_url="/icons/my-stack.svg",
     scope="user",
     spaces=[
         {
@@ -162,6 +163,7 @@ Templates returned by `get_def()` contain:
 - `id` - Stack definition ID
 - `name` - Template name
 - `description` - Description
+- `icon_url` - Icon URL
 - `user_id` - Owner user ID (empty for global templates)
 - `active` - Whether the template is available for creating stacks
 - `groups` - List of group IDs allowed to create instances
