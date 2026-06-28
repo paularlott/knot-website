@@ -18,7 +18,7 @@ The `knot.space` library provides space management functions for scripts.
 | `start(name)` | Start a space |
 | `stop(name)` | Stop a space |
 | `restart(name)` | Restart a space |
-| `list()` | List all spaces for the current user |
+| `list(all_zones=False)` | List all spaces for the current user |
 | `is_running(name)` | Check if a space is running |
 | `usage_current(name)` | Get current resource usage for a space |
 | `usage_history(name, range='1h')` | Get historical resource usage for a space |
@@ -213,6 +213,21 @@ Set the dependency spaces for a space. Dependencies are required to be started b
 - `depends_on` (list): List of dependency space names or IDs
 
 **Returns:** `bool` - True on success
+
+---
+
+### list(all_zones=False)
+
+List all spaces for the current user.
+
+**Parameters:**
+- `all_zones` (bool, optional): If True, include spaces from all zones. Default is False (only spaces in the current server's zone).
+
+**Returns:** `list` of dicts, each containing:
+- `id` (string): Space ID
+- `name` (string): Space name
+- `is_running` (bool): Whether the space is running
+- `description` (string): Space description
 
 ---
 

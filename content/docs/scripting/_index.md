@@ -143,6 +143,19 @@ Scripts running outside knot entirely, using the published `knot.zip` package. R
 scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 ```
 
+### Plugin Scopes
+
+Every script execution in knot's embedded environments (MCP, Remote) gets its own **isolated plugin scope** via the [`scriptling.plugin`](https://scriptling.dev/) library. A plugin that a script loads at runtime with `scriptling.plugin.load()` is visible only to that execution — it cannot leak into another user's script or another tool invocation. The scope is released automatically when the script finishes.
+
+The transports a scope will accept depend on the environment:
+
+| Environment                | HTTP(S) plugins | Stdio executable plugins |
+| -------------------------- | --------------- | ------------------------ |
+| MCP / event sink / health  | ✓               | ✗                        |
+| Remote (in-space)          | ✓               | ✓                        |
+
+Server-side scripts (MCP tools, event sinks, health checks) run on the knot server and are restricted to HTTP(S) plugin endpoints — they cannot spawn arbitrary executables on the server. In-space (Remote) scripts already run inside a container with subprocess access, so both transports are permitted.
+
 ---
 
 ## Library Availability
@@ -177,8 +190,11 @@ scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 | scriptling.template.text             | ✓                   | ✓                   | ✓        |
 | scriptling.net.resolve               | ✓                   | ✓                   | ✓        |
 | scriptling.provision.file            | ✗                   | ✓                   | ✓        |
+| scriptling.plugin                    | ✓ †                 | ✓                   | ✓        |
 
 \* Requires a Pro license for secret provider access (Vault, 1Password). Standalone scriptling has built-in secret support.
+
+† In server-side environments (MCP, event sink, and health check scripts) the plugin scope is **HTTP(S) only** — scripts may connect to remote HTTP(S) plugin endpoints but cannot spawn local executables on the knot server. Remote (in-space) scripts may load both HTTP(S) and stdio executable plugins. Each script execution gets its own isolated plugin scope, so plugins loaded by one execution are invisible to every other user and execution. In the External environment, plugin transport and scoping are governed by [scriptling](https://scriptling.dev/) itself, not knot.
 
 ### knot.\* Libraries
 

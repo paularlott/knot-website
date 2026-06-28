@@ -8,6 +8,62 @@ weight: 100
 
 ## June 2026
 
+{{< version "v0.28.0" >}}
+
+{{< changelog-item "added" >}}
+
+- **Events system**
+  - Route lifecycle and custom events to webhooks, scripts, or JSON-RPC methods, scoped per-user or global.
+  - System events fire automatically on space lifecycle transitions: `space.created`, `space.started`, `space.stopped`, `space.deleted`, `space.healthy`, `space.unhealthy`. System event payloads now include `space_name` and `space_id` (plus `space_urls` for created/started).
+  - Raise custom events from inside a space via the `knot event` CLI, the agent's `POST /event`, or the `knot.event.emit()` scriptling function.
+  - Sinks match on glob patterns (`space.*`, `custom.myapp.*`) and deliver zone-local, in-order per sink, with at-least-once semantics. Webhook sinks render a Go template body and sign with HMAC-SHA256; script sinks run an existing scriptling server-side; JSON-RPC sinks deliver events to running script methods via `events`/`event_sinks` method annotations.
+  - Simplified default webhook template: just `event_id`, `event_type`, `event_ts`, `data`.
+  - Two new permissions: `Manage Own Event Sinks` and `Manage Global Event Sinks`.
+  - New endpoints: `GET/POST/PUT/DELETE /api/event-sinks`, `POST /api/spaces/{id}/emit-event`.
+
+- **Space pools**
+  - Fixed-size, self-healing pools keep a target number of identical spaces running from a template; the cluster leader reconciles membership every 15 seconds, drains method traffic before stopping members, and applies a grace period before deleting excess spaces.
+  - Pool members are reachable via the pool name (`username--poolname--port.domain`), with the proxy falling back to pool lookup and round-robining across healthy, non-drained members. TCP WebSocket proxy routing (`/proxy/spaces/{name}/port/{port}`) accepts pool names too.
+  - Manage via `knot.pool` scriptling functions (list, utilization, `desired_count`, start/stop), the `/api/pools` endpoints, or MCP tools `create_pool`, `delete_pool`, `start_pool`, `stop_pool`, `set_pool_size`.
+
+- **Space methods**
+  - Running spaces can register JSON-RPC methods backed by a long-running stdio method server, and optionally expose them as discoverable MCP tools (`mcp_tool = true`; dotted names are rewritten to underscores).
+  - Methods can be private or shared, filtered by group, discovered with `GET /api/methods`, and called via `POST /api/methods/call`.
+  - The server supports concurrent (default) or serial request handling, JSON-RPC notifications, and batch calls; scriptlings can serve as the server via `scriptling --json-rpc`.
+  - Register from inside a space with `knot methods register <file>.toml` (or `.py`), or from startup scripts via the agent-only `knot.methods` library and `knot.methods.schema` JSON Schema builder.
+  - Register methods automatically at agent startup with `knot agent start --methods-file <file>.toml` (or `.py`); also configurable via the `agent.methods_file` config key or `KNOT_METHODS_FILE` environment variable.
+
+- **`knot run-script` server modes**
+  - The agent embeds the Scriptling runtime, so `knot run-script` now mirrors the Scriptling CLI's run modes — no separate `scriptling` binary needed in a space. Run a script as a stdio JSON-RPC method server (`--json-rpc`), an HTTP server (`--listen :PORT`), or an MCP server (`--mcp-tools DIR`), with the sandbox flags (`--allowed-path`, `--disable-lib`, `--bearer-token`, `--web-root`, `--kv-storage`, `--tls-*`). Container runtime libraries are excluded.
+  - Plain `knot run-script <file>` now exposes the full Scriptling library set (minus container) plus Knot's own libraries.
+  - `knot --version` reports the bundled Scriptling runtime version.
+
+- **User access overview** {{< pro-badge >}}
+  - A new **Access** button on the users list opens a popup showing everything a user can reach, derived from their roles and groups: effective permissions (grouped by category, with the ones they lack greyed out), effective quota, owned and shared spaces, and the templates, variables, volumes, scripts, skills, and stack definitions they can access.
+  - Backed by `GET /api/users/{user_id}/access`.
+
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+
+- **SSH key updates**: in-space SSH key updates are now driven by the agent's reported SSH port (`SSHPort > 0`) rather than the template's SSH capability, so keys are pushed only once the agent is actually ready to accept them — including during reconnect churn before the first state report fully lands.
+- **Name field sanitization**: space, pool, and volume name fields now strip invalid characters as you type or paste (e.g. pasting `test #1234` yields `test1234`), matching the URL-safe character set the backend already enforces.
+- **Administration sidebar group**: Templates, Variables, Users, Groups, Roles, Audit Logs, and Cluster Info are grouped under a collapsible **Administration** section in the sidebar (hidden entirely if you have none of the relevant permissions). On leaf nodes, Templates and Variables remain top-level entries.
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+
+- **Agent monitoring and health reporting**: fixes to the agent's per-server connection data races that could leave a server stuck on a closed session after a reconnect (presenting as "mux ping succeeds but agent state goes stale") or racing the stale-session checker.
+{{< /changelog-item >}}
+
+---
+
+{{< version "v0.27.0" >}}
+
+**Internal Release**
+
+---
+
 {{< version "v0.26.2" >}}
 
 {{< changelog-item "added" >}}

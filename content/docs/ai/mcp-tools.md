@@ -105,6 +105,20 @@ Skills are markdown knowledge documents that give AI assistants context and proc
 
 ---
 
+## Pools
+
+Pools keep a target number of identical spaces running from a template. See [Space Pools](../../spaces/pools/) for the full lifecycle and port routing details.
+
+| Tool | Description | Visibility |
+|------|-------------|------------|
+| `create_pool` | Create a pool from a template with a desired space count, optional startup script, and optional start-on-create. | On-demand |
+| `delete_pool` | Delete a stopped pool and all its member spaces. | On-demand |
+| `start_pool` | Start a stopped pool: starts all member spaces and creates new ones if needed. | On-demand |
+| `stop_pool` | Stop a running pool: stops all member spaces without deleting them. | On-demand |
+| `set_pool_size` | Change the desired number of spaces in a pool. The sweep loop handles scaling. | On-demand |
+
+---
+
 ## Tool Discovery
 
 These tools are provided by the MCP server itself to support the on-demand discovery pattern. They are available on the discovery endpoint (`/mcp/discovery`).
