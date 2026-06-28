@@ -8,7 +8,7 @@ weight: 100
 
 ## June 2026
 
-{{< version "v0.27.0" >}}
+{{< version "v0.28.0" >}}
 
 {{< changelog-item "added" >}}
 
@@ -55,6 +55,12 @@ weight: 100
 
 - **Agent monitoring and health reporting**: fixes to the agent's per-server connection data races that could leave a server stuck on a closed session after a reconnect (presenting as "mux ping succeeds but agent state goes stale") or racing the stale-session checker.
 {{< /changelog-item >}}
+
+---
+
+{{< version "v0.27.0" >}}
+
+**Internal Release**
 
 ---
 
