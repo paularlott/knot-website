@@ -17,10 +17,6 @@ knot's architecture, deployment modes, network design, and scaling strategies.
 
 The `knot.*` scripting libraries exposed to Scriptling — space, template, user, volume, stack, and more — plus the bundled `scriptling.*` helpers available in knot's execution environments.
 
-## [API Tokens](api-tokens/)
-
-How API tokens are created, used, and revoked for authenticating external clients.
-
 ## [Events](events/)
 
 The events system: webhook sinks, script sinks, and JSON-RPC sinks for reacting to space lifecycle and custom events.

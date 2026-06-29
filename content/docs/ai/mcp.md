@@ -21,10 +21,10 @@ The **knot** MCP server operates over HTTP transport and is accessible at the UR
 For example, if your **knot** installation is hosted at `knot.getknot.dev`, the MCP server URL would be: `https://knot.getknot.dev/mcp`
 
 ### OAuth2-Supported Clients
-If your client supports OAuth2, it will connect to the MCP server and allow you to log in using your standard credentials. During this process, an [API token](/reference/api-tokens/) will be generated for use.
+If your client supports OAuth2, it will connect to the MCP server and allow you to log in using your standard credentials. During this process, an [API token](/docs/api-tokens/) will be generated for use.
 
 ### Non-OAuth2 Clients
-For clients that do not support OAuth2, you will need to manually generate a new [API token](/reference/api-tokens/) via the web interface and provide it to the MCP client. Use the following format:
+For clients that do not support OAuth2, you will need to manually generate a new [API token](/docs/api-tokens/) via the web interface and provide it to the MCP client. Use the following format:
 
 | Key           | Value                     |
 |---------------|---------------------------|
