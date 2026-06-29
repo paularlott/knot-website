@@ -30,9 +30,16 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 | [knot.permission](permission/) | Permission checking |
 | [knot.healthcheck](healthcheck/) | Space health monitoring (agent-side only) |
 | [knot.audit](audit/) | Audit log search and filtering |
-| [scriptling.net.resolve](net-resolve/) | DNS resolution for IP, SRV, and srv+http URLs |
-| [scriptling.provision.file](provision-file/) | Idempotent file provisioning with correct permissions |
-| [scriptling.provision.fetch](provision-fetch/) | Download files and unpack zip archives over HTTP/HTTPS |
+
+---
+
+## Scriptling libraries
+
+The full `scriptling.*` library set is documented on the [Scriptling website](https://scriptling.dev/reference/libraries/), including:
+
+- [`scriptling.net.resolve`](https://scriptling.dev/reference/libraries/scriptling/networking/resolve/) — DNS resolution for IP, SRV, and srv+http URLs
+- [`scriptling.provision.file`](https://scriptling.dev/reference/libraries/scriptling/provisioning/provision-file/) — idempotent file provisioning
+- [`scriptling.provision.fetch`](https://scriptling.dev/reference/libraries/scriptling/provisioning/provision-fetch/) — download files and unpack zip archives over HTTP/HTTPS
 
 ---
 
