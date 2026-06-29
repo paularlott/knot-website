@@ -11,7 +11,22 @@ Knot supports three deployment modes for different use cases.
 
 Single server running knot with local containers.
 
-![Standalone Architecture](/images/diagrams/standalone.svg)
+{{< mermaid >}}
+flowchart TD
+  User(["User · Browser · SSH"])
+  Server["Knot Server"]
+  DB[("BadgerDB")]
+  Runtime["Container Runtime\nDocker · Podman · Apple Containers"]
+  Space["Space"]
+  Agent["Agent"]
+
+  User -->|HTTPS / SSH| Server
+  Server --- DB
+  Server -->|provision| Runtime
+  Runtime --- Space
+  Space --- Agent
+  Agent -->|connect| Server
+{{< /mermaid >}}
 
 **Characteristics**:
 - Simple setup
@@ -32,7 +47,30 @@ Single server running knot with local containers.
 
 Multiple servers with gossip-based synchronization.
 
-![Cluster Architecture](/images/diagrams/cluster.svg)
+{{< mermaid >}}
+flowchart TD
+  User(["User · Browser · SSH"])
+  LB["Load Balancer"]
+  SA["Server A\nZone A"]
+  SB["Server B\nZone B"]
+  SC["Server C\nZone C"]
+  DBA[("MariaDB")]
+  DBB[("Redis")]
+  DBC[("BadgerDB")]
+
+  User --> LB
+  LB --> SA
+  LB --> SB
+  LB --> SC
+  SA --- DBA
+  SB --- DBB
+  SC --- DBC
+  SA <-.->|gossip| SB
+  SB <-.->|gossip| SC
+  SA <-.->|gossip| SC
+{{< /mermaid >}}
+
+Each server runs its own database backend — BadgerDB (embedded), MariaDB, or Redis — and replicates changes to peers over the gossip protocol (leaderless). See [High Availability](../cluster-architecture/#database-redundancy) for database redundancy options.
 
 **Characteristics**:
 - High availability
@@ -55,7 +93,28 @@ Multiple servers with gossip-based synchronization.
 
 Local server connected to cluster server with own storage.
 
-![Leaf Mode Architecture](/images/diagrams/leaf.svg)
+{{< mermaid >}}
+flowchart TD
+  subgraph Cluster["Central Cluster"]
+    direction TB
+    S1["Server 1"]
+    S2["Server 2"]
+    S3["Server 3"]
+    S1 <-.->|gossip| S2
+    S2 <-.->|gossip| S3
+    S1 <-.->|gossip| S3
+  end
+
+  subgraph Leaf["Leaf Node · local machine"]
+    LDB[("BadgerDB")]
+    LR["Container Runtime"]
+    LSp["Space"]
+  end
+
+  S2 <-.->|gossip sync| LDB
+  LDB --- LR
+  LR --- LSp
+{{< /mermaid >}}
 
 **Characteristics**:
 - Connects to one cluster server
