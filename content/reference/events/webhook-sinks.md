@@ -118,7 +118,7 @@ For example, if your template defines custom fields `GITHUB_REPO` and `DEPLOY_EN
 }
 ```
 
-Fields that are defined on the template but not set on the space render as empty strings. See [Custom Variables](../variables/custom-variables/) for how to define custom fields on templates.
+Fields that are defined on the template but not set on the space render as empty strings. See [Custom Variables](/docs/variables/custom-variables/) for how to define custom fields on templates.
 
 ---
 

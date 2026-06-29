@@ -1,6 +1,6 @@
 ---
 title: Glossary
-weight: 30
+weight: 60
 ---
 
 Common terms and concepts used in **knot**.

@@ -15,7 +15,7 @@ Script sinks run an existing scriptling script on the knot server when a matchin
 | **Timeout** | Reuses the server's `MCPToolTimeout` config. |
 | **User context** | The sink owner — `knot.space.*`, `knot.user.*` etc. act as this user. |
 
-Scripts are authored on the existing [Scripts](../scripting/) page and referenced from the sink by name. This keeps them reusable — one script can serve many sinks.
+Scripts are authored on the existing [Scripts](/docs/scripting/) page and referenced from the sink by name. This keeps them reusable — one script can serve many sinks.
 
 ---
 
@@ -51,7 +51,7 @@ If the field is missing or the wrong type, the default value is returned. The ac
 
 ### `.custom` — Space Custom Fields
 
-`knot.event.custom()` returns a dict of [custom fields](../variables/custom-variables/) from the source space's template. Each key is the field name defined on the template, and the value is what the user entered at space-creation time:
+`knot.event.custom()` returns a dict of [custom fields](/docs/variables/custom-variables/) from the source space's template. Each key is the field name defined on the template, and the value is what the user entered at space-creation time:
 
 ```python
 import knot.event
@@ -132,4 +132,4 @@ event_id = knot.event.id()
 
 ## Available Libraries
 
-Sink scripts run on the knot server with the full `knot.*` library set (except `knot.event.emit`, which is not registered). See the [Scripting](../scripting/) documentation for available libraries.
+Sink scripts run on the knot server with the full `knot.*` library set (except `knot.event.emit`, which is not registered). See the [Scripting](/docs/scripting/) documentation for available libraries.

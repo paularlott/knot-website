@@ -1,6 +1,6 @@
 ---
 title: Library Reference
-weight: 20
+weight: 30
 ---
 
 Knot provides several libraries in the `knot.*` namespace for interacting with the platform from scripts.

@@ -1,6 +1,6 @@
 ---
 title: Events
-weight: 90
+weight: 50
 ---
 
 The events system lets you react to space lifecycle changes and custom events raised from inside spaces. Events are routed to **event sinks** — listeners that POST to a webhook URL, run a scriptling script, or deliver to a running JSON-RPC method.

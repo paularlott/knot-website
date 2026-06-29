@@ -114,8 +114,8 @@ scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 In production environments include the sha256 hash in the package URL to improve security.
 {{< /tip >}}
 
-See [knot.apiclient](../libraries/apiclient/) for the full list of configuration options and environment variables.
+See [knot.apiclient](/reference/libraries/apiclient/) for the full list of configuration options and environment variables.
 
 ---
 
-For the full list of available libraries and their documentation, see the [Library Reference](libraries/).
+For the full list of available libraries and their documentation, see the [Library Reference](/reference/libraries/).

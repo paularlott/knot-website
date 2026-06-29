@@ -1,6 +1,6 @@
 ---
 title: API Tokens
-weight: 90
+weight: 40
 ---
 
 API tokens are automatically created when logging in with the **knot** client. Additionally, tokens can be manually created and used to access the API from external applications.

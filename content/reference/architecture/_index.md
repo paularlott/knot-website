@@ -19,7 +19,7 @@ The agent runs inside containers and communicates with the server. It handles SS
 Stores users, templates, spaces, and configuration. Options: BadgerDB, MySQL/MariaDB, or Redis/Valkey.
 
 **Container Runtime**
-Executes spaces. Options: Docker, Podman, Nomad, or Apple Container.
+Executes spaces. Options include: Docker, Podman, Nomad, or Apple Container.
 
 ---
 

@@ -80,3 +80,4 @@ knot runs on Docker, Podman, or Apple Containers—either as a single server or 
 ## What's Next
 
 - [Quick Start](quick-start/)
+- [Reference](/reference/) — CLI, architecture, scripting libraries, events, API tokens, and glossary
