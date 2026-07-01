@@ -4,6 +4,7 @@ description: "Keep track of all changes, updates, and improvements to knot."
 layout: "changelog"
 draft: false
 weight: 100
+navSection: docs
 ---
 
 ## July 2026

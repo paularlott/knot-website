@@ -38,46 +38,17 @@ Get **knot** running in minutes. Choose the deployment path that matches your ne
 - High availability needs
 - Organizations with existing Nomad infrastructure
 
-### [Knot Pro Installation](pro-installation/) {{< pro-badge >}}
-**Unlock advanced features**
-
-- OAuth authentication (GitHub, Google)
-- Visual port forwarding
-- Advanced networking and security
-- Install via Homebrew, binary, or Docker
-- **Setup time**: 2 minutes
-
-**Best for**:
-- Teams needing SSO/OAuth
-- Advanced networking requirements
-- Enterprise deployments
-
-### [Desktop Client](client/)
-**Run locally or connect to servers**
-
-- Run containers on your desktop
-- Connect to existing servers for shared templates
-- SSH access to spaces
-- Port forwarding and tunnel creation
-- File transfers
-- **Setup time**: 2 minutes
-
-**Best for**:
-- Individual developers working locally
-- Remote developers connecting to shared servers
-- Quick testing without server setup
-
 ---
 
 ## Quick Comparison
 
-| Feature | Local Containers | Nomad | Client | Pro |
-|---------|------------------|-------|--------|-----|
-| Single Server | ✅ | ✅ | ✅ | ✅ |
-| Multi-Server | ✅ | ✅ | N/A | ✅ |
-| Dependencies | Docker/Podman/Apple | Nomad, Consul, CSI | None | Docker/Podman/Apple |
-| Setup Time | 5-10 min | 30+ min | 2 min | 2 min |
-| Complexity | Low | High | Very Low | Low |
+| Feature | Local Containers | Nomad |
+|---------|------------------|-------|
+| Single Server | ✅ | ✅ |
+| Multi-Server | ✅ | ✅ |
+| Dependencies | Docker/Podman/Apple | Nomad, Consul, CSI |
+| Setup Time | 5-10 min | 30+ min |
+| Complexity | Low | High |
 
 ---
 
@@ -98,12 +69,6 @@ Get **knot** running in minutes. Choose the deployment path that matches your ne
 4. Create admin user
 5. Create Nomad template
 6. Launch space in cluster
-
-**Client Path**:
-1. Install client binary
-2. Run locally or connect to server
-3. Configure SSH
-4. Access spaces
 
 ---
 

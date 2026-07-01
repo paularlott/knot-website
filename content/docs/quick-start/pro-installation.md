@@ -34,9 +34,9 @@ Knot Pro includes additional features such as OAuth authentication, visual port 
   Download the latest binary from [GitHub releases](https://github.com/paularlott/knot-pro/releases).
 
   ```shell
-  curl -sL https://github.com/paularlott/knot-pro/releases/latest/download/knot-pro-linux-amd64 -o knot-pro
-  chmod +x knot-pro
-  sudo mv knot-pro /usr/local/bin/
+  curl -sL https://github.com/paularlott/knot-pro/releases/latest/download/knot_linux_amd64.zip -o knot.zip
+  unzip knot.zip
+  sudo mv knot /usr/local/bin/
   ```
   {{< /tab >}}
 
@@ -48,23 +48,23 @@ Knot Pro includes additional features such as OAuth authentication, visual port 
   **Apple Silicon:**
 
   ```shell
-  curl -sL https://github.com/paularlott/knot-pro/releases/latest/download/knot-pro-darwin-arm64 -o knot-pro
-  chmod +x knot-pro
-  sudo mv knot-pro /usr/local/bin/
+  curl -sL https://github.com/paularlott/knot-pro/releases/latest/download/knot_darwin_arm64.zip -o knot.zip
+  unzip knot.zip
+  sudo mv knot /usr/local/bin/
   ```
 
   **Intel:**
 
   ```shell
-  curl -sL https://github.com/paularlott/knot-pro/releases/latest/download/knot-pro-darwin-amd64 -o knot-pro
-  chmod +x knot-pro
-  sudo mv knot-pro /usr/local/bin/
+  curl -sL https://github.com/paularlott/knot-pro/releases/latest/download/knot_darwin_amd64.zip -o knot.zip
+  unzip knot.zip
+  sudo mv knot /usr/local/bin/
   ```
 
   **Note:** If you encounter issues launching the application after downloading it from GitHub, try running the following command:
 
   ```shell
-  sudo xattr -d com.apple.quarantine /usr/local/bin/knot-pro
+  sudo xattr -d com.apple.quarantine /usr/local/bin/knot
   ```
   {{< /tab >}}
 

@@ -3,6 +3,7 @@ title: "Early 2026"
 date: 2026-05-15
 layout: "changelog"
 draft: false
+navSection: docs
 ---
 
 ← [Back to Changelog](/changelog/)

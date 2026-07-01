@@ -25,7 +25,12 @@ While not required to use the **knot** web interface, the desktop client provide
   brew install paularlott/tap/knot
   ```
 
-  For **Knot Pro** {{< pro-badge >}}, use `brew install paularlott/tap/knot-pro` or download from the [knot-pro releases](https://github.com/paularlott/knot-pro/releases) page.
+  For **Knot Pro** {{< pro-badge >}}, use:
+
+  ```bash
+  brew install paularlott/tap/knot-pro
+  ```
+  Or download from the [knot-pro releases](https://github.com/paularlott/knot-pro/releases) page.
   {{< /tab >}}
 
   {{< tab >}}
@@ -37,7 +42,13 @@ While not required to use the **knot** web interface, the desktop client provide
   brew install paularlott/tap/knot
   ```
 
-  For **Knot Pro** {{< pro-badge >}}, use `brew install paularlott/tap/knot-pro` or download from the [knot-pro releases](https://github.com/paularlott/knot-pro/releases) page.
+  For **Knot Pro** {{< pro-badge >}}, use:
+
+  ```bash
+  brew install paularlott/tap/knot-pro
+  ```
+
+  Or download from the [knot-pro releases](https://github.com/paularlott/knot-pro/releases) page.
 
   Alternatively, you can download the latest binary from [GitHub releases](https://github.com/paularlott/knot/releases).
 

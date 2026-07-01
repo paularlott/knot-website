@@ -7,7 +7,17 @@ Leaf node mode allows a **knot** server to run on a local machine while maintain
 
 By default, support for leaf mode is enabled. However, it can be disabled by setting `server.cluster.allow_leaf_nodes` to `false` in the `knot.toml` configuration file.
 
-{{< picture src="images/leaf-node.svg" caption="Cluster with Leaf Node" >}}
+{{< mermaid >}}
+flowchart LR
+  K1["Knot Server 1"]
+  K2["Knot Server 2"]
+  K3["Knot Server 3"]
+  Leaf["Leaf Node\n(Knot Server 4)"]
+  K1 <-.->|gossip| K2
+  K2 <-.->|gossip| K3
+  K3 <-.->|gossip| K1
+  K2 --> Leaf
+{{< /mermaid >}}
 
 ---
 
