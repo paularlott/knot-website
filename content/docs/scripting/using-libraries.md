@@ -78,6 +78,18 @@ export KNOT_AI_MODEL=gpt-4o
 export KNOT_AI_PROVIDER=openai   # optional, defaults to openai
 ```
 
+All environment variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `KNOT_URL` | Knot server URL | required |
+| `KNOT_TOKEN` | Access token | required |
+| `KNOT_INSECURE` | Skip TLS verification (`true`/`1`/`yes`) | `false` |
+| `KNOT_AI_URL` | AI endpoint URL | `KNOT_URL + /v1` |
+| `KNOT_AI_TOKEN` | AI access token | `KNOT_TOKEN` |
+| `KNOT_AI_MODEL` | Default AI model name | `""` |
+| `KNOT_AI_PROVIDER` | AI provider (`openai`, `claude`, `gemini`, `ollama`, `mistral`) | `openai` |
+
 ```python
 import knot.space as space
 

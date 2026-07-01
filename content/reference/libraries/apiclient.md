@@ -13,8 +13,9 @@ For standalone use outside knot, configure it explicitly or set environment vari
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP, remote, local) | Go runtime provides transport — `configure()` is a no-op |
-| External (standalone scripts) | Python implementation — call `configure()` or set env vars |
+| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Go runtime provides the transport. `configure()` is a no-op and tokens are never exposed to scripts. |
+| Health check scripts | Not available. |
+| External (standalone scripts) | Python implementation. Call `configure()` or set the `KNOT_*` environment variables. |
 
 ---
 

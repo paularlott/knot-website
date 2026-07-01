@@ -7,6 +7,16 @@ Build JSON Schema fragments for method `params` and `result` definitions. Conven
 
 ---
 
+## Execution Environment
+
+| Environment | Behaviour |
+|-------------|-----------|
+| Remote/space scripts (startup scripts), `knot methods register`, `knot run-script` | Available (same contexts as `knot.methods`). |
+| MCP tool execution, event sink scripts, `knot run-script` server mode | Not available. |
+| Health check scripts, external standalone | Not available. |
+
+---
+
 ## Import
 
 ```python

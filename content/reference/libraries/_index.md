@@ -13,6 +13,7 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 |---------|-------------|
 | [knot.apiclient](apiclient/) | Transport configuration for standalone use |
 | [knot.space](space/) | Space management operations |
+| [knot.pool](pool/) | Space pool management and scaling |
 | [knot.server](server/) | Server information |
 | [knot.ai](ai/) | AI completion functions |
 | [knot.methods](methods/) | Register JSON-RPC methods (agent-side only) |
@@ -28,7 +29,8 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 | [knot.role](role/) | Role management |
 | [knot.vars](vars/) | Variables management |
 | [knot.permission](permission/) | Permission checking |
-| [knot.healthcheck](healthcheck/) | Space health monitoring (agent-side only) |
+| [knot.healthcheck](healthcheck/) | Space health monitoring (health check scripts only) |
+| [knot.event](event/) | Event emission (space-side) and sink accessors (server-side) |
 | [knot.audit](audit/) | Audit log search and filtering |
 
 ---
@@ -62,7 +64,17 @@ tools = mcp.Client().tools()
 
 ## Environment Compatibility
 
-All `knot.*` libraries are available in all embedded environments (local, MCP, remote), except `knot.healthcheck` which is only available in agent-side health check scripts, and `knot.methods` / `knot.methods.schema` which are not available in MCP tool execution environments. `knot.ai` and `knot.mcp` are only available in embedded contexts — external scripts should use `scriptling.ai` and `scriptling.mcp` directly.
+Each library's availability depends on where the script runs. Not every library is available in every context — most notably, MCP tool execution environments do **not** provide `knot.methods`, `knot.event.emit()`, or system access libraries. Every reference page opens with an **Execution Environment** table showing exactly where that library works.
+
+Summary of the embedded execution contexts:
+
+- **MCP tool execution**, **event sink scripts**, **remote/space scripts**, and **`knot run-script`** register the Go-provided `knot.apiclient` transport, so the API libraries (`knot.space`, `knot.user`, `knot.group`, `knot.role`, `knot.audit`, `knot.permission`, `knot.vars`, `knot.volume`, `knot.script`, `knot.skill`, `knot.server`, `knot.template`, `knot.stack`, `knot.pool`), plus `knot.ai` and `knot.mcp`, are available and authenticated automatically.
+- **`knot.methods` / `knot.methods.schema`** are agent-side only: remote/space scripts and `knot run-script`. They are not available in MCP tool execution, event sink scripts, or `knot run-script` server mode.
+- **`knot.event`** is context-sensitive: `emit()` runs in space-side scripts, MCP tool execution, and external standalone scripts; the payload/metadata accessors run only in event sink scripts.
+- **`knot.healthcheck`** runs only in health check scripts (and `knot run-script`).
+- **Health check scripts** have no `knot.apiclient` transport, so none of the API libraries are available there except `knot.healthcheck`.
+
+For standalone scripts running outside knot (the scriptling CLI), the Python implementations resolve over HTTP via `knot.apiclient` configuration; `knot.methods`, `knot.event`, and `knot.healthcheck` have no standalone form.
 
 ---
 

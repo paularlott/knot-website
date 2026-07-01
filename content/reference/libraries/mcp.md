@@ -7,6 +7,16 @@ The `knot.mcp` library provides MCP (Model Context Protocol) tool discovery and 
 
 ---
 
+## Execution Environment
+
+| Environment | Behaviour |
+|-------------|-----------|
+| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Go library routes tool discovery and execution through the server's internal MCP endpoint, with per-user tool scoping applied automatically. |
+| Health check scripts | Not available. |
+| External (standalone scripts) | Python implementation. Connects to the server's `/mcp` endpoint using the `knot.apiclient` configuration. |
+
+---
+
 ## Functions
 
 | Function | Description |

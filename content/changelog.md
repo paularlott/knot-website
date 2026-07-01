@@ -8,6 +8,22 @@ weight: 100
 
 ## June 2026
 
+{{< version "v0.28.1" >}}
+
+{{< changelog-item "added" >}}
+
+- **Events**: `knot.event.emit()` now works from MCP tool execution and external standalone scripts (delivered via `knot.apiclient`), not just from inside a space. Events raised outside a space are user-scoped with a nil space id.
+
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+
+- **UI improvements**: refined stack template permissions and filters.
+
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.28.0" >}}
 
 {{< changelog-item "added" >}}

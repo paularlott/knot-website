@@ -7,6 +7,16 @@ The `knot.volume` library provides volume management functions. Volumes are CSI 
 
 ---
 
+## Execution Environment
+
+| Environment | Behaviour |
+|-------------|-----------|
+| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Health check scripts | Not available. |
+| External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
+
+---
+
 ## Functions
 
 | Function | Description |

@@ -7,6 +7,16 @@ Register JSON-RPC methods for the current space from startup scripts or `knot me
 
 ---
 
+## Execution Environment
+
+| Environment | Behaviour |
+|-------------|-----------|
+| Remote/space scripts (startup scripts), `knot methods register`, `knot run-script` | Available (agent-side). The agent installs the registrar that `register()` calls to publish methods to the server. |
+| MCP tool execution, event sink scripts, `knot run-script` server mode | Not available. `register()` returns an error if called. |
+| Health check scripts, external standalone | Not available. |
+
+---
+
 ## Import
 
 ```python
@@ -28,7 +38,7 @@ Creates a new method server configuration. `command` is the executable to run as
 
 | Method | Description |
 |--------|-------------|
-| `method(name, *, local_name="", description="", scope="private", keywords=[], groups=[], mcp_tool=False, params=None, result=None)` | Add a method definition |
+| `method(name, *, local_name="", description="", scope="private", keywords=[], groups=[], mcp_tool=False, params=None, result=None, events=[], event_sinks=[])` | Add a method definition |
 | `register()` | Validate and publish the current registration. Replaces any previous registration from this space |
 | `unregister(name=None)` | Remove all methods (no argument) or one method by name. Stops the method server if all methods are removed |
 

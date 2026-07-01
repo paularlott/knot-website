@@ -9,6 +9,16 @@ The `knot.stack` library provides stack template (definition) management and sta
 
 ---
 
+## Execution Environment
+
+| Environment | Behaviour |
+|-------------|-----------|
+| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Health check scripts | Not available. |
+| External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
+
+---
+
 ## Functions
 
 ### Template Management
@@ -21,6 +31,8 @@ The `knot.stack` library provides stack template (definition) management and sta
 | `update_def(name, **fields)` | Update an existing template |
 | `delete_def(name)` | Delete a template |
 | `validate_def(spaces, ...)` | Validate a template without creating it |
+| `add_component(stack_definition, template, name, ...)` | Add a component (template binding) to an existing template |
+| `remove_component(stack_definition, name)` | Remove a component from a template by name |
 
 ### Stack Operations
 

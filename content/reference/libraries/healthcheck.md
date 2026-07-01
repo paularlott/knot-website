@@ -9,6 +9,16 @@ Template health checks can also use the `Agent` type. Agent health checks do not
 
 ---
 
+## Execution Environment
+
+| Environment | Behaviour |
+|-------------|-----------|
+| Health check scripts | Available. This is the only embedded environment that registers the library. |
+| `knot run-script` | Available. |
+| MCP tool execution, event sink scripts, remote/space scripts, external standalone | Not available. |
+
+---
+
 ## Functions
 
 | Function | Description |
@@ -90,8 +100,6 @@ Report the final health check result and exit the script immediately.
 
 ---
 
-## Environment Compatibility
-
-The `knot.healthcheck` library is **only available in agent-side health check scripts**. It is not available in local, MCP, or remote execution environments.
+## How Health Check Scripts Run
 
 When a template configures a script-backed health check type (HTTP, TCP, or Program), the agent automatically generates and runs a script using these functions. For the `custom` health check type, you write a script that imports `knot.healthcheck` directly, combines check functions as needed, and calls `check_result()` with the final result. The `Agent` health check type is handled by the server and does not use this library.
