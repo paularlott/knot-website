@@ -112,6 +112,11 @@ hideSidebar: true
         <td><span class="compare-yes">Included</span> activity tracking with per-template disable controls</td>
       </tr>
       <tr>
+        <td><strong>User access overview</strong></td>
+        <td><span class="compare-no">Not included</span></td>
+        <td><span class="compare-yes">Included</span> single panel view of what a user can access</td>
+      </tr>
+      <tr>
         <td><strong>Commercial binaries</strong></td>
         <td><a href="https://github.com/paularlott/knot/releases">Open-source releases</a></td>
         <td><a href="https://github.com/paularlott/knot-pro/releases">Knot Pro releases</a></td>
