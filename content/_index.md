@@ -67,7 +67,7 @@ description: Self hosted solution for managing cloud development environments.
 {{< feature-grid >}}
   {{< feature-row
     reverse=true
-    img="/images/cloud.webp"
+    img="/images/multiserver.webp"
     alt="Multi-Server Container Orchestration"
     is4=true
   >}}

@@ -22,7 +22,25 @@ Multi-server deployments let you:
 
 In a multi-server Local Container deployment:
 
-{{< picture src="../images/multi-server-cluster.svg" alt="Multi-Server Cluster Architecture" >}}
+{{< mermaid >}}
+flowchart TD
+  subgraph S1["Server 1 (Primary)"]
+    R1["Docker"]
+    DB1[("MySQL")]
+  end
+  subgraph S2["Server 2 (Secondary)"]
+    R2["Podman"]
+    DB2[("MySQL")]
+  end
+  subgraph S3["Server 3 (Secondary)"]
+    R3["Apple"]
+    DB3[("MySQL")]
+  end
+  Gossip(("Gossip Protocol\nCluster Sync"))
+  S1 <-.-> Gossip
+  S2 <-.-> Gossip
+  S3 <-.-> Gossip
+{{< /mermaid >}}
 
 ### Key Components
 
@@ -267,7 +285,13 @@ Users access spaces through the load balancer or any server's URL.
 
 Place a load balancer in front of all servers:
 
-{{< picture src="../images/multi-server-load-balancer.svg" alt="Load Balancer Setup" >}}
+{{< mermaid >}}
+flowchart TD
+  LB["Load Balancer\nknot.example"]
+  LB --> S1["Server 1"]
+  LB --> S2["Server 2"]
+  LB --> S3["Server 3"]
+{{< /mermaid >}}
 
 The load balancer can use any strategy (round-robin, least connections, etc.).
 

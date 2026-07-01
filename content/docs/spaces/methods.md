@@ -112,7 +112,7 @@ The method receives a single `params` dict:
 
 ### `event_sinks`
 
-Optional formatters. References named JSON-RPC sinks defined on the [Events](../events/json-rpc-sinks/) page. Each sink has its own event patterns and a body template that formats the event data before passing it to the method. `event_sinks` does **not** subscribe the method — `events` is always required for subscription.
+Optional formatters. References named JSON-RPC sinks defined on the [Events](/reference/events/json-rpc-sinks/) page. Each sink has its own event patterns and a body template that formats the event data before passing it to the method. `event_sinks` does **not** subscribe the method — `events` is always required for subscription.
 
 TOML:
 
@@ -138,7 +138,7 @@ server.method(
 
 When an event matches `events`, the server checks each referenced sink's patterns in declaration order. The first matching sink's body template formats the payload. If no sink matches, the default format is used.
 
-See [JSON-RPC Sinks](../events/json-rpc-sinks/) for sink configuration details, scope rules, and delivery semantics.
+See [JSON-RPC Sinks](/reference/events/json-rpc-sinks/) for sink configuration details, scope rules, and delivery semantics.
 
 ---
 

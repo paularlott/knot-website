@@ -246,4 +246,4 @@ stack.stop("myproject")
 stack.delete("myproject")
 ```
 
-See the [knot.stack library reference](../../scripting/libraries/stack/) for the full API.
+See the [knot.stack library reference](/reference/libraries/stack/) for the full API.

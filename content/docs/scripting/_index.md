@@ -5,7 +5,7 @@ weight: 85
 
 Knot includes a powerful scripting system based on **Scriptling**, a Python-like scripting language. Scripts can automate tasks, extend functionality, and be exposed as MCP tools for AI assistants.
 
-For the complete language reference including syntax, types, control flow, functions, and classes, see the [Scriptling Language Guide](https://scriptling.dev/docs/language/).
+For the complete language reference including syntax, types, control flow, functions, and classes, see the [Scriptling Language Guide](https://scriptling.dev/reference/).
 
 ---
 
@@ -277,7 +277,7 @@ Global scripts can be restricted to specific user groups. Only users in those gr
 ## What's Next
 
 - [Script Examples](examples/) - Practical script examples
-- [Scriptling Language Guide](https://scriptling.dev/docs/language/) - Complete language reference
+- [Scriptling Language Guide](https://scriptling.dev/reference/) - Complete language reference
 - [Using knot.\* Libraries](using-libraries/) - Configuration and authentication
-- [Library Reference](libraries/) - knot.\* library documentation
+- [Library Reference](/reference/libraries/) - knot.\* library documentation
 - [Startup/Shutdown Scripts](../spaces/startup-scripts/) - Space lifecycle scripts

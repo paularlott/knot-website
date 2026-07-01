@@ -1,0 +1,353 @@
+---
+title: knot.space
+weight: 10
+---
+
+The `knot.space` library provides space management functions for scripts.
+
+---
+
+## Execution Environment
+
+| Environment | Behaviour |
+|-------------|-----------|
+| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Health check scripts | Not available. |
+| External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
+
+---
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', start_on_create=False)` | Create a new space |
+| `delete(name)` | Delete a space by name |
+| `get(name)` | Get detailed space information |
+| `update(name, new_name=None, ...)` | Update space properties |
+| `start(name)` | Start a space |
+| `stop(name)` | Stop a space |
+| `restart(name)` | Restart a space |
+| `list(all_zones=False)` | List all spaces for the current user |
+| `is_running(name)` | Check if a space is running |
+| `usage_current(name)` | Get current resource usage for a space |
+| `usage_history(name, range='1h')` | Get historical resource usage for a space |
+| `get_description(name)` | Get the description of a space |
+| `set_description(name, description)` | Set the description of a space |
+| `get_dependencies(name)` | Get the dependency space IDs for a space |
+| `set_dependencies(name, depends_on)` | Set the dependency spaces for a space |
+| `get_stack(name)` | Get the stack name for a space |
+| `set_stack(name, stack)` | Set the stack name for a space |
+| `get_field(name, field)` | Get a custom field value |
+| `set_field(name, field, value)` | Set a custom field value |
+| `transfer(name, user_id)` | Transfer space ownership |
+| `share(name, user_ids)` | Share space with one or more users |
+| `unshare(name, user_id=None)` | Remove space share, optionally for a specific user |
+| `run_script(space_name, script_name, args=None)` | Execute a script in a space |
+| `run(space_name, command, args=[], timeout=30, workdir='')` | Execute a command in a space |
+| `read_file(space_name, file_path)` | Read file contents from a space |
+| `write_file(space_name, file_path, content)` | Write content to a file in a space |
+| `port_forward(source_space, local_port, remote_space, remote_port, persistent=False, force=False)` | Forward a port between spaces |
+| `port_apply(source_space, forwards)` | Replace all port forwards with the given list |
+| `port_list(space)` | List active port forwards |
+| `port_stop(space, local_port)` | Stop a port forward |
+
+---
+
+## Usage
+
+```python
+import knot.space as space
+
+# List all spaces
+spaces = space.list()
+for s in spaces:
+    print(f"{s['name']}: {'running' if s['is_running'] else 'stopped'}")
+
+# Create a new space
+space_id = space.create("my-space", "ubuntu", description="My dev environment")
+
+# Start a space
+space.start("my-space")
+
+# Execute a command
+output = space.run("my-space", "ls", args=["-la", "/tmp"])
+print(output)
+
+# Read a file
+content = space.read_file("my-space", "/etc/hostname")
+print(content)
+```
+
+---
+
+## Function Details
+
+### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', start_on_create=False)
+
+Create a new space.
+
+**Parameters:**
+- `name` (string): Name for the new space
+- `template_name` (string): Name of the template to use
+- `description` (string, optional): Description for the space
+- `shell` (string, optional): Shell to use (default: "bash")
+- `depends_on` (list, optional): List of dependency space names or IDs
+- `stack` (string, optional): Stack name to group this space under
+- `selected_node_id` (string, optional): Node ID to assign for local-container spaces. Leave empty to auto-select.
+- `alt_names` (list, optional): Additional HTTP route names, each with `name` and `port`
+- `icon_url` (string, optional): Icon URL
+- `custom_fields` (list, optional): Custom field values as `{"name": "...", "value": "..."}`
+- `startup_script_id` (string, optional): Startup script ID
+- `start_on_create` (bool, optional): Start the space immediately after it is created
+
+**Returns:** `string` - The space ID of the newly created space
+
+---
+
+### update(name, new_name=None, ...)
+
+Update a space while preserving fields you do not pass.
+
+**Parameters:**
+- `name` (string): Name or ID of the space to update
+- `new_name` (string, optional): New space name
+- `description` (string, optional): New description
+- `shell` (string, optional): New default shell
+- `template_name` (string, optional): New template name or ID
+- `depends_on` (list, optional): New dependency space names or IDs
+- `stack` (string, optional): New stack name, or empty string to unstack
+- `selected_node_id` (string, optional): New node ID where allowed
+- `alt_names` (list, optional): New additional route names
+- `icon_url` (string, optional): New icon URL
+- `custom_fields` (list, optional): New custom field values
+- `startup_script_id` (string, optional): New startup script ID
+
+**Returns:** `bool` - True on success
+
+---
+
+### run(space_name, command, args=[], timeout=30, workdir='')
+
+Execute a command in a running space.
+
+**Parameters:**
+- `space_name` (string): Name of the space
+- `command` (string): Command to execute
+- `args` (list, optional): Arguments for the command
+- `timeout` (int, optional): Timeout in seconds (default: 30)
+- `workdir` (string, optional): Working directory
+
+**Returns:** `string` - Command output
+
+---
+
+### usage_current(name)
+
+Get the current resource usage point for a space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `dict` containing the current usage point, including `bucket_start`, `bucket_kind`, `is_live`, and `resource_usage`.
+
+---
+
+### usage_history(name, range='1h')
+
+Get historical resource usage points for a space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+- `range` (string, optional): `"1h"` for minute samples or `"7d"` for daily samples
+
+**Returns:** `dict` containing `space_id`, `range`, `bucket_kind`, and `points`.
+
+---
+
+### run_script(space_name, script_name, args=None)
+
+Execute a named script in a running space.
+
+**Parameters:**
+- `space_name` (string): Name or ID of the space
+- `script_name` (string): Name of the script to execute
+- `args` (list, optional): Script arguments
+
+**Returns:** `dict` with `output` and `exit_code`
+
+---
+
+### read_file(space_name, file_path)
+
+Read file contents from a running space.
+
+**Parameters:**
+- `space_name` (string): Name of the space
+- `file_path` (string): Path to the file
+
+**Returns:** `string` - File contents
+
+---
+
+### write_file(space_name, file_path, content)
+
+Write content to a file in a running space.
+
+**Parameters:**
+- `space_name` (string): Name of the space
+- `file_path` (string): Path to the file
+- `content` (string): Content to write
+
+**Returns:** `bool` - True on success
+
+---
+
+### get_dependencies(name)
+
+Get the dependency space IDs for a space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `list` - List of dependency space IDs
+
+---
+
+### set_dependencies(name, depends_on)
+
+Set the dependency spaces for a space. Dependencies are required to be started before the space starts.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+- `depends_on` (list): List of dependency space names or IDs
+
+**Returns:** `bool` - True on success
+
+---
+
+### list(all_zones=False)
+
+List all spaces for the current user.
+
+**Parameters:**
+- `all_zones` (bool, optional): If True, include spaces from all zones. Default is False (only spaces in the current server's zone).
+
+**Returns:** `list` of dicts, each containing:
+- `id` (string): Space ID
+- `name` (string): Space name
+- `is_running` (bool): Whether the space is running
+- `description` (string): Space description
+
+---
+
+### get(name)
+
+Get detailed information about a space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `dict` containing:
+- `id` (string): Space ID
+- `name` (string): Space name
+- `description` (string): Space description
+- `template_id` (string): Template ID
+- `template_name` (string): Template name
+- `user_id` (string): Owner user ID
+- `username` (string): Owner username
+- `shares` (list): List of shared user IDs
+- `depends_on` (list): List of dependency space IDs
+- `shell` (string): Default shell
+- `platform` (string): Platform (e.g., "linux/amd64")
+- `zone` (string): Zone name
+- `is_running` (bool): Whether the space is running
+- `is_pending` (bool): Whether the space is pending
+- `is_deleting` (bool): Whether the space is being deleted
+- `node_id` (string): ID of the node assigned to host the space
+- `node_hostname` (string): Hostname of the node assigned to host the space
+- `created_at` (string): Creation timestamp
+- `alt_names` (list of objects): Additional space names, each with `name` (string) and `port` (string, the HTTP port number to route to)
+- `icon_url` (string): Icon URL
+- `custom_fields` (list): Custom field values
+- `startup_script_id` (string): Startup script ID
+- `stack` (string): Stack name (empty if unstacked)
+
+---
+
+### get_stack(name)
+
+Get the stack name for a space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `string` - The stack name (empty string if unstacked)
+
+---
+
+### set_stack(name, stack)
+
+Set the stack name for a space. Spaces with the same stack name are grouped together.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+- `stack` (string): Stack name (empty string to unstack)
+
+**Returns:** `bool` - True on success
+
+---
+
+### share(name, user_ids)
+
+Share a space with one or more users.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+- `user_ids` (string or list): User ID, username, or email to share with, or a list of those values
+
+**Returns:** `bool` - True on success
+
+---
+
+### unshare(name, user_id=None)
+
+Remove a space share.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+- `user_id` (string, optional): User ID, username, or email to remove sharing for. If omitted, owners stop all sharing and recipients leave their own share.
+
+**Returns:** `bool` - True on success
+
+---
+
+### transfer(name, user_id)
+
+Transfer space ownership to another user.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+- `user_id` (string): User ID, username, or email of the new owner
+
+**Returns:** `bool` - True on success
+
+---
+
+### port_apply(source_space, forwards)
+
+Replace all port forwards for a space with the given list. Any existing forwards not in the list are stopped, and any new forwards in the list are started. Forwards that already exist with the same local port, space, and remote port are left unchanged.
+
+**Parameters:**
+- `source_space` (string): Source space name or ID
+- `forwards` (list): List of dicts, each containing:
+  - `local_port` (int): Local port number
+  - `space` (string): Remote space name or ID
+  - `remote_port` (int): Remote port number
+  - `persistent` (bool, optional): Persist the forward across restarts (default: False)
+  - `force` (bool, optional): Skip validation checks (default: False)
+
+**Returns:** `dict` containing:
+- `applied` (list): List of forwards that were started
+- `stopped` (list): List of forwards that were stopped
+- `errors` (list): List of error messages (if any)

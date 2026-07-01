@@ -56,7 +56,7 @@ elif status == file.UPDATED:
     print("Updated .gitconfig")
 ```
 
-See the [scriptling.provision.file reference](../../scripting/libraries/provision-file/) for the full API including `absent`, `ensure_directory`, and `absent_directory`.
+See the [scriptling.provision.file reference](https://scriptling.dev/reference/libraries/scriptling/provisioning/provision-file/) for the full API including `absent`, `ensure_directory`, and `absent_directory`.
 
 ---
 
@@ -192,7 +192,7 @@ debug = true
 
 ## What's Next
 
-- [scriptling.provision.file Reference](../../scripting/libraries/provision-file/) - Full API documentation
+- [scriptling.provision.file Reference](https://scriptling.dev/reference/libraries/scriptling/provisioning/provision-file/) - Full API documentation
 - [Startup & Shutdown Scripts](../startup-scripts/) - Script execution lifecycle
 - [Variables](../../variables/) - Per-space and global configuration
 - [Script Examples](../../scripting/examples/) - More scriptling examples

@@ -1,0 +1,8 @@
+<div class="not-prose my-6 overflow-x-auto">
+  <pre class="mermaid">{{ .Inner }}</pre>
+</div>
+{{- if not (.Page.Store.Get "mermaid-loaded") -}}
+  {{- .Page.Store.Set "mermaid-loaded" true -}}
+  {{- $m := resources.Get "js/mermaid.js" | js.Build (dict "target" "es2018" "minify" true) | fingerprint -}}
+  <script src="{{ $m.RelPermalink }}" defer></script>
+{{- end -}}
