@@ -11,12 +11,10 @@ This guide covers how to create, edit, and delete users in **knot**, as well as 
 
 To create a new user:
 
-1. From the menu, select `Users` and then click `New User`.
+1. From the `Administration` menu, select `Users` and then click `New User`.
 2. Fill out the form presented:
 
 ### User Details
-
-{{< picture src="../images/userform-details.webp" caption="User Details" >}}
 
 - **`Username`**:
   The username to assign to the user.
@@ -40,8 +38,6 @@ To create a new user:
 
 ### Setting a Password
 
-{{< picture src="../images/userform-password.webp" caption="User Password" >}}
-
 - **`Password`**:
   The password to assign to the user. Users can change their password after logging in.
 
@@ -51,8 +47,6 @@ To create a new user:
 ---
 
 ### Resource Limits
-
-{{< picture src="../images/userform-resource-limits.webp" caption="User Resource Limits" >}}
 
 - **`Maximum Spaces`**:
   The maximum number of spaces the user can create. Set to `0` for no limit.
@@ -70,15 +64,13 @@ To create a new user:
 
 ### Assigning Roles and Groups
 
-{{< picture src="../images/userform-roles-groups.webp" caption="User Roles and Groups" >}}
-
 - **`Roles`**:
   A list of optional roles to assign to the user. Roles define the user's permissions within the system.
 
 - **`Groups`**:
   The groups the user will belong to. Users can only access templates that are either ungrouped or belong to groups they are a member of. Groups can also define Compute and Storage Unit limits.
 
-3. Once all fields are completed, click `Create User` to save the new user.
+Once all fields are completed, click `Create User` to save the new user.
 
 ---
 
@@ -92,7 +84,6 @@ To delete a user:
 
 1. Select the menu item for the user you want to delete.
 2. Click `Delete` and confirm the action.
-   {{< picture src="../images/delete-user.webp" caption="Delete User" >}}
 
 ---
 

@@ -13,7 +13,7 @@ In this tutorial, we'll create a space that runs PHP and includes a web server p
 
 ## Step 1: Start a New Template
 
-Start by clicking `Templates` and then `New Template`.
+Start by clicking `Admiinistration`, `Templates` and then `+ Template`.
 
 - Click on Templates in the navigation menu, then select New Template.
   {{< picture src="../images/new-template.webp" caption="New Template" >}}
@@ -32,7 +32,7 @@ The icon selected here will be the default icon for new spaces created from this
 
 Next, define the job for the template. In this case, we'll create a Docker-based space.
 
-- Click on Docker to select the container type.
+- The default for the platform is `Local Container` when this is selected **knot** will attempt to use Docker, Podman or Apple Containers depending on which runtimes are installed on your machine.
 - In the **Container Specification** field, enter the following YAML configuration:
 
 ```yaml
@@ -49,10 +49,6 @@ environment:
   - "KNOT_AGENT_ENDPOINT=${{.server.agent_endpoint}}"
   - "KNOT_SPACEID=${{.space.id}}"
   - "KNOT_SERVICE_PASSWORD=${{.user.service_password}}"
-
-# Add the address of the host
-add_host:
-  - knot.internal:192.168.1.100
 ```
 
 ---
@@ -65,7 +61,7 @@ To ensure data persistence between reboots, define a volume to host the user's h
 
 ```yaml
 volumes:
-  - volume1:
+  volume1:
 ```
 
 ---

@@ -11,7 +11,7 @@ In **knot**, roles are used to control access to features. Each role is assigned
 
 To create a new role:
 
-1. From the menu, select `Roles` and then click `New Role`.
+1. From the `Administration` menu, select `Roles` and then click `New Role`.
 2. Fill out the form presented:
    {{< picture src="../images/role-form.webp" caption="Create and Edit Role Form" >}}
 
@@ -31,7 +31,6 @@ To delete a role:
 
 1. Select the menu item for the role you want to delete.
 2. Click `Delete` and confirm the action.
-   {{< picture src="../images/delete-role.webp" caption="Delete Role" >}}
 
 ---
 

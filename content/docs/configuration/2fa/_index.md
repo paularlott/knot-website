@@ -30,9 +30,6 @@ Once 2FA is enabled, the login screen will include an additional entry box for t
 
 1. On the **first login**, enter your **Email** and **Password**, leaving the **One Time Password** field blank.
 2. Click **Sign In**. A new one-time password will be generated, and a QR code will be displayed on the screen.
-
-{{< picture src="images/new-totp.webp" caption="Login" >}}
-
 3. Scan the QR code or record the secret within your authenticator application.
 4. Click **I Have Recorded The Code** to complete the setup.
 

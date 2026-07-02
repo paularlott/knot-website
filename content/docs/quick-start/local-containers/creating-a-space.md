@@ -9,7 +9,7 @@ Now that we have a usable template, we can create a space from it. You can creat
 
 ### Step 1: Create a Space
 
-1. From the `Templates` page, click the menu icon (three dots) next to the template you want to use, then select `Create Space`.
+1. From the `Spaces` page, click the `+ Space` button and from the popup, click the template you want to use:
   {{< picture src="../images/create-space.webp" caption="Create a Space" >}}
 
 2. Fill out the form with the following details:
@@ -17,6 +17,7 @@ Now that we have a usable template, we can create a space from it. You can creat
    - **Description**: Enter `A test PHP space.`.
    - **Terminal**: Select the terminal you'd like to use.
    - **Icon**: Optionally, change the icon shown for the space.
+  {{< picture src="../images/create-space-form.webp" caption="Create a Space Form" >}}
 
 3. Leave the `Start Space on Create` option checked, then click `Create Space`. You'll be returned to the `Spaces` page, where the new space will now be visible.
 
@@ -52,8 +53,6 @@ echo "<?php phpinfo();" > public_html/index.php
 ### Step 4: View the PHP Script
 
 1. Click the `Web (80)` item in the `Ports` menu. The web page will open, running the new script and displaying the PHP information.
-
-{{< picture src="../images/phpinfo.webp" caption="PHP Information" >}}
 
 ---
 

@@ -18,30 +18,36 @@
     <div class="md:order-1 flex justify-center items-center">
       <div>
         <h1 class="text-4xl font-bold text-gray-100 mb-4">{{ $title }}</h1>
-        {{- if $subtitle  -}}
+        {{- if $subtitle -}}
         <p class="text-xl text-gray-200 mb-6">{{ $subtitle }}</p>
-        {{- end  -}}
-        {{- if or $btn1 $btn2 -}}
+        {{- end -}} {{- if or $btn1 $btn2 -}}
         <div class="flex flex-wrap gap-4">
           {{- if $btn1 -}}
-            <a href="{{ $btn1Link }}" class="inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg no-underline">
-              {{ $btn1 }}
-            </a>
-          {{- end  -}}
-          {{- if $btn2 -}}
-            <a href="{{ $btn2Link }}" class="inline-flex items-center px-6 py-3 bg-blue-600/20 backdrop-blur-sm border-2 border-white/30 text-white font-semibold rounded-lg hover:bg-blue-600/30 hover:border-white/50 transition-all shadow-lg no-underline">
-              {{ $btn2 }}
-            </a>
-          {{- end  -}}
+          <a
+            href="{{ $btn1Link }}"
+            class="inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg no-underline"
+          >
+            {{ $btn1 }}
+          </a>
+          {{- end -}} {{- if $btn2 -}}
+          <a
+            href="{{ $btn2Link }}"
+            class="inline-flex items-center px-6 py-3 bg-blue-600/20 backdrop-blur-sm border-2 border-white/30 text-white font-semibold rounded-lg hover:bg-blue-600/30 hover:border-white/50 transition-all shadow-lg no-underline"
+          >
+            {{ $btn2 }}
+          </a>
+          {{- end -}}
         </div>
-        {{- end  -}}
+        {{- end -}}
       </div>
     </div>
 
-    {{- if $img  -}}
-    <div class="md:order-2 flex justify-center items-center perspective-normal mt-4 md:mt-0">
-        <img src="{{ $img }}" alt="{{ $alt }}" class="rounded-lg shadow-2xl -rotate-y-5 scale-95" />
+    {{- if $img -}}
+    <div
+      class="md:order-2 flex justify-center items-center perspective-normal mt-4 md:mt-0"
+    >
+      <img src="{{ $img }}" alt="{{ $alt }}" class="-rotate-y-5 scale-95" />
     </div>
-    {{- end  -}}
+    {{- end -}}
   </div>
 </div>

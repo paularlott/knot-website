@@ -13,7 +13,7 @@ Groups can also define limits for Compute and Storage Units, as well as other re
 
 To create a new group:
 
-1. From the menu, select `Groups` and then click `New Group`.
+1. From the `Administration` menu, select `Groups` and then click `New Group`.
 2. Fill out the form presented:
    {{< picture src="../images/group-form.webp" caption="Group Create and Edit Form" >}}
 
@@ -37,7 +37,6 @@ To delete a group:
 
 1. Select the menu item for the group you want to delete.
 2. Click `Delete` and confirm the action.
-   {{< picture src="../images/delete-group.webp" caption="Delete Group Menu" >}}
 
 ---
 

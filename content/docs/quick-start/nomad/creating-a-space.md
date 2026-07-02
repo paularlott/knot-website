@@ -28,8 +28,6 @@ Now that we have a usable template, we can create a space from it. You can creat
 - While the space is starting, its **Status** will show as `Starting`.
 - Once the space is running, the **Status** will change to `Running`, and icons will appear, allowing access to the space's features.
 
-{{< picture src="../images/running-space.webp" caption="Running Space" >}}
-
 Once the space is running the icons will show:
 
 1. **Terminal**: Clicking the terminal icon opens a new window with a web terminal inside the space. The shell will match the one selected during space creation.
@@ -54,15 +52,11 @@ echo "<?php phpinfo();" > public_html/index.php
 
 1. Click the `Web (80)` item in the `Ports` menu. The web page will open, running the new script and displaying the PHP information.
 
-{{< picture src="../../local-containers/images/phpinfo.webp" caption="PHP Information" >}}
-
 ---
 
 ### Step 5: Stop and Restart the Space
 
 1. To stop the space, click the menu icon (three dots) next to the space, then select `Stop` from the menu.
-
-{{< picture src="../images/stop-space.webp" caption="Stop Space" >}}
 
 2. Since the template was created with a persistent volume, restarting the space from the menu will restore it to the state it was in when it was stopped.
 
