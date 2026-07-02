@@ -11,8 +11,6 @@ When a space is configured to expose web ports (e.g., for a web server), the **`
 
 1. Ensure the space is running.
 2. Click the **`Ports`** icon next to the running space.
-   {{< picture src="../images/space-ports.webp" caption="Ports" >}}
-
 3. A list of available ports will be displayed:
    - **Clickable Ports**: The top group of ports in the menu are clickable. Clicking a port name or number will open a new browser tab pointing to that port.
    - **Informational Ports**: The bottom group of ports is for use with command-line port forwarding and is shown for informational purposes only.
@@ -23,8 +21,7 @@ When a space is configured to expose web ports (e.g., for a web server), the **`
 
 ## Example: Caddy File Browser
 
-If the space is running the **knot** PHP image, clicking **port 80** will open the Caddy file browser:
-{{< picture src="../images/caddy-file-browser.webp" caption="Caddy Server" >}}
+If the space is running the **knot** PHP image, clicking **port 80** will open the Caddy file browser.
 
 Other container images may display different content depending on their configuration.
 

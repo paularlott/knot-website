@@ -11,8 +11,6 @@ Custom variables are defined within templates and can have values assigned to th
 
 Before custom variables can be created and used, fields must be added to the template:
 
-{{< picture src="../images/template-define-fields.webp" caption="Adding Fields to a Template" >}}
-
 #### Field Configuration Options
 
 - **`Variable Name`**:
@@ -25,8 +23,4 @@ Before custom variables can be created and used, fields must be added to the tem
 
 ### Setting a Custom Variable
 
-When creating or editing a space, the fields added to the template will be displayed, allowing you to enter values for each custom variable:
-
-{{< picture src="../images/set-custom-variable.webp" caption="Setting the Value of a Custom Variable" >}}
-
-Once the space is saved, the values for the custom variables will also be saved and applied.
+When creating or editing a space, the fields added to the template will be displayed, allowing you to enter values for each custom variable. These values will be saved and applied to the space, enabling per-space customization based on the template's configuration.

@@ -23,7 +23,6 @@ Spaces can be shared between users on the same **knot** server, allowing users t
 1. Navigate to the **`Spaces`** page.
 2. Select the space you want to share.
 3. Click the **`Share`** menu item.
-   {{< picture src="../images/share-space.webp" caption="Share Space" >}}
 
 4. A dialog will appear, allowing you to select the target user from a dropdown list.
    - Click the target user's name in the dropdown to select them.

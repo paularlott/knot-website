@@ -45,8 +45,6 @@ To create a Local Container template:
 2. Complete the form, selecting `Local Container` (or a specific runtime) under the `Platform` option.
 3. Fill out the `Container Specification` field with the container configuration.
 
-{{< picture src="../images/template-docker.webp" caption="Local Container Template" >}}
-
 #### Example Container Specification
 
 ```yaml

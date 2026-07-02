@@ -15,8 +15,6 @@ Standalone volumes do not count toward a user's **Storage Units** quota.
 
 1. From the menu, select **`Volumes`**, then click **`New Volume`**.
 2. The following form will be displayed:
-   {{< picture src="images/create-volume.webp" caption="Create Volume" >}}
-
 3. Fill in the required fields:
    - **`Name`**: A descriptive name to identify the volume.
    - **`Platform`**: The platform the volume is for (e.g., Nomad, Docker, or Podman).
@@ -128,7 +126,6 @@ A volume must be started to make it available within the cluster.
 
 1. From the **`Volumes`** page, click the menu next to the volume you want to start.
 2. Select **`Start`**.
-   {{< picture src="images/start-volume.webp" caption="Start a Volume" >}}
 
 The volume will be started on the server it was assigned to when it was created or last edited.
 

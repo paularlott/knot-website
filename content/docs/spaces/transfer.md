@@ -12,8 +12,6 @@ Spaces can be transferred between users on the same **knot** server. This featur
 1. Navigate to the **`Spaces`** page.
 2. Select the space you want to transfer.
 3. Click the **`Transfer To...`** button from the space's menu.
-   {{< picture src="../images/transfer.webp" caption="Transfer Space" >}}
-
 4. A dialog will appear, allowing you to select the target user from a dropdown list.
    - Click the target user's name in the dropdown to select them.
 

@@ -11,8 +11,6 @@ weight: 50
 
 1. Ensure the space is running.
 2. Click the **`Code Server`** icon (#2) next to the running space.
-   {{< picture src="../images/running-space.webp" caption="Running Space" >}}
-
 3. A new window will open, launching the Code Server interface.
 
 ---
@@ -35,5 +33,3 @@ If the space template includes a volume for `/home/`, all changes made to Code S
 
 - To use Code Server, the user must have a role with the **`Use Code Server`** permission.
 - Code Server must be enabled in the space template for the feature to be available.
-
-{{< picture src="../images/code-server.webp" caption="Code Server" >}}

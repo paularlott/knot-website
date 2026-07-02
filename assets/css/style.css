@@ -150,6 +150,13 @@ tr:nth-child(odd) {
   border-bottom-color: var(--color-slate-600);
 }
 
+/* Allow wide tables (e.g. reference tables) to scroll horizontally inside the
+   content column instead of overflowing into the TOC sidebar. */
+.prose table {
+  display: block;
+  overflow-x: auto;
+}
+
 .hide-scrollbar {
   -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
   scrollbar-width: none; /* Firefox */

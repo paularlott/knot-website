@@ -27,7 +27,6 @@ To create a new variable:
 
 1. Log in to the **knot** web interface.
 2. Click `Variables` and then select `New Variable`.
-   {{< picture src="../images/variable-form.webp" caption="Create Variable Form" >}}
 
 ### Variable Configuration Options
 
@@ -60,7 +59,6 @@ To delete a variable:
 1. Click the menu item next to the variable.
 2. Select `Delete`.
 3. Confirm the action when prompted.
-   {{< picture src="../images/delete-variable.webp" caption="Delete Variable" >}}
 
 ---
 

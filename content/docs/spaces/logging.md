@@ -12,8 +12,6 @@ Spaces built using the **knot** base images utilize `rsyslog` to collect logs fr
 Once a space is running, logs can be accessed directly from the **Spaces** page:
 
 1. Click the **`Logs`** button next to the space whose logs you want to view.
-   {{< picture src="../images/logs-option.webp" caption="Logs Icon" >}}
-
 2. A window will open, tailing the logs in real-time.
 
 ---
@@ -37,8 +35,6 @@ You can send messages to the syslog interface using the `logger` command:
 ```shell
 logger test message
 ```
-
-{{< picture src="../images/log-message.webp" caption="Output from Logger Command" >}}
 
 ---
 

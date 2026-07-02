@@ -11,10 +11,8 @@ Spaces in **knot** allow for a description to be set during creation or editing,
 
 1. On the **`Spaces`** page, the short form of the description is displayed.
    - Clicking the short description (#1) opens a dialog showing the full description and note.
-   {{< picture src="../images/space-note.webp" caption="Space Note" >}}
 
 2. The dialog provides a detailed view of the description and note.
-   {{< picture src="../images/notes-detail.webp" caption="Note Detail" >}}
 
 ---
 

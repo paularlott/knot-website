@@ -9,6 +9,16 @@ navSection: docs
 
 ## July 2026
 
+{{< version "v0.28.2" >}}
+
+{{< changelog-item "changed" >}}
+
+- **UI improvements**
+
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.28.1" >}}
 
 {{< changelog-item "added" >}}
