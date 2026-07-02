@@ -9,9 +9,7 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
 
 ## Creating a Space
 
-1. Navigate to the `Templates` page, click the menu icon (three dots) next to the desired template, and select `Create Space`.
-   {{< picture src="../../quick-start/local-containers/images/create-space.webp" caption="Create Space" >}}
-
+1. Navigate to the `Spaces` page, click the `+ Space` button to get a list of the available templates, select the required template.
 2. Complete the form for the new space:
    - **`Name`**: The name of the space.
    - **`Description`**: (Optional) A description for the space.
@@ -35,12 +33,9 @@ Admins may see the `Create Space For` option, allowing them to create spaces on 
 
 1. Navigate to the `Spaces` page.
 2. Click the menu icon next to the space and select `Start`.
-   {{< picture src="../images/start-space.webp" caption="Start Space" >}}
 
 - The space's status will change to `Starting`, and once running, it will display as `Running`.
 - Icons will appear in the services column, providing access to features such as the web terminal.
-
-  {{< picture src="../images/running-space.webp" caption="Running Space" >}}
 
 ### Service Icons:
 
@@ -62,7 +57,6 @@ Admins may see the `Create Space For` option, allowing them to create spaces on 
 
 1. Click the menu icon next to the running space.
 2. Select `Stop`.
-   {{< picture src="../images/stop-space.webp" caption="Stopping a Space" >}}
 
 - The `Stop` button is a split button:
   - **`Stop`**: Stops the space.
@@ -77,7 +71,6 @@ Stopping a space will result in the loss of all data in memory that is not store
 ## Updates
 
 If the template used by a running space is updated, an `Update Available` badge will appear:
-{{< picture src="../images/space-update.webp" caption="Pending Update" >}}
 
 To apply the update:
 

@@ -7,12 +7,10 @@ weight: 10
 
 To create a new template:
 
-1. Navigate to the `Templates` menu and select `New Template`.
+1. Navigate to the `Templates` page via the `Administration` menu and select `+ Template`.
 2. Fill out the form presented:
 
 ### Template Information
-
-{{< picture src="../images/template-info.webp" caption="Template Info" >}}
 
 - **`Name`**:
   The name of the template, used to identify it in the system.
@@ -27,8 +25,6 @@ To create a new template:
 
 ### Platform and Job Description
 
-{{< picture src="../images/template-platform.webp" caption="Template Platform" >}}
-
 - **`Platform`**:
   Choose the platform to run the template: Docker, Podman, Nomad, or Manual.
   - **Manual templates**: Require the **knot** agent to be started manually on the remote server.
@@ -40,16 +36,12 @@ To create a new template:
 
 ### Volume Definition
 
-{{< picture src="../images/template-volumedef.webp" caption="Template Volume Definition" >}}
-
 - **`Volume Definition (YAML)`**:
   Optionally define volumes or managed host paths to be created for the space. This field is unavailable for `Manual` templates. In `paths`, `~` resolves to the server user's home directory, absolute paths start with `/`, and relative paths are resolved from the agent working directory.
 
 ---
 
 ### Resource Allocation & Scripts
-
-{{< picture src="../images/template-resources.webp" caption="Template Resources" >}}
 
 - **`System Startup Script`**:
   An optional script to run when the space starts. This field is unavailable for `Manual` templates. The script must be one defined under scripts.
@@ -73,8 +65,6 @@ To create a new template:
 
 ### Scheduling
 
-{{< picture src="../images/template-schedule.webp" caption="Template Schedule" >}}
-
 - **`Schedule`**:
   Define the days and times the space is allowed to run. Spaces running outside the schedule will be automatically stopped.
   - **`Auto Start`**: Automatically start a stopped space when its scheduled start time is reached.
@@ -82,8 +72,6 @@ To create a new template:
 ---
 
 ### Zones and Access Control
-
-{{< picture src="../images/template-zones.webp" caption="Template Zones" >}}
 
 - **`Limit to Zones`**:
   Specify the zones where the template is available. Prefix a zone name with `!` to make the template available in all zones except the specified one.
@@ -95,8 +83,6 @@ To create a new template:
 ---
 
 ### Custom Fields and Features
-
-{{< picture src="../images/template-fields-features.webp" caption="Custom Fields and Features" >}}
 
 - **`Custom Fields`**:
   Add optional fields to pass additional information into a space.
@@ -121,8 +107,6 @@ To delete a template:
 1. Select the menu item next to the template.
 2. Click `Delete` to open a confirmation dialog.
 3. Confirm the action to remove the template.
-
-{{< picture src="../images/template-delete.webp" caption="Delete Template" >}}
 
 {{< tip >}}
 Templates with existing spaces cannot be deleted.

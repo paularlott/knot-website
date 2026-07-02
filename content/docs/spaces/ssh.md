@@ -13,8 +13,6 @@ SSH access allows you to securely connect to your spaces for advanced management
 2. Paste your public SSH key into the **`SSH Authorized Keys`** field and click **`Update`**.
    - You can add multiple public keys by placing each key on its own line.
    - All listed keys will be used for your SSH-enabled spaces, enabling passwordless authentication from any matching private key.
-   {{< picture src="../images/profile-sshkey.webp" caption="SSH Authorized Keys" >}}
-
 3. Alternatively, automatically fetch your public keys from GitHub by entering your GitHub username in the **`GitHub Username`** field.
 
 {{< tip >}}

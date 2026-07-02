@@ -12,15 +12,11 @@ Manual spaces allow you to run the **knot** agent manually on a virtual machine 
 1. Create a new template with the `Platform` set to `Manual`.
 2. Use this template to create a space.
 
-{{< picture src="../images/manual-template.webp" caption="Manual Template" >}}
-
 ---
 
 ## Connecting the Agent to the Server
 
 Once the manual space is created, the **Space ID** will be displayed. This ID is required for the agent to connect to the **knot** server. Clicking the ID will copy it to the clipboard.
-
-{{< picture src="../images/manual-space.webp" caption="Manual Space" >}}
 
 ### Download the Agent
 

@@ -11,10 +11,7 @@ The web-based terminal in **knot** provides users with shell access to their spa
 
 1. Navigate to the `Spaces` page.
 2. Click the **`Terminal`** icon (#1) next to the running space.
-   {{< picture src="../images/running-space.webp" caption="Running Space" >}}
-
 3. A new browser window will open, displaying the web-based terminal.
-   {{< picture src="../images/web-terminal.webp" caption="Web Based Terminal" >}}
 
 ---
 

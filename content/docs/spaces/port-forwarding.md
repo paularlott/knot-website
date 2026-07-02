@@ -11,8 +11,6 @@ Port forwarding allows you to securely access ports within a remote space from y
 
 1. Ensure the space is running.
 2. Click the **`Ports`** icon next to the running space.
-   {{< picture src="../images/space-ports.webp" caption="Ports" >}}
-
 3. The list of advertised ports will appear below the dividing line. These ports cannot be clicked but are available for port forwarding.
    - For example, **port 80** may be exposed for web access, and **port 22** (SSH) may also be advertised.
 
