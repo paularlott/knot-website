@@ -10,7 +10,7 @@ API tokens are automatically created when logging in with the **knot** client. A
 ## Creating a Token
 
 1. From the menu, select **`API Tokens`**, then click **`New Token`**.
-   {{< picture src="images/create-token.webp" caption="Create API Token" >}}
+   {{< picture src="../configuration/leaf-mode/images/create-token.webp" caption="Create API Token" >}}
 
 2. Complete the **`Name`** field to identify the token.
 3. Click **`Create Token`** to generate a new token.
