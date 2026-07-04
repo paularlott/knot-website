@@ -41,33 +41,45 @@ Remote MCP servers are configured in the `knot.toml` configuration file under th
 [server.mcp]
 enabled = true
 
+# HTTP remote server
 [[server.mcp.remote_servers]]
 namespace = "ai"
 url = "https://ai.example.com/mcp"
 token = "your-bearer-token"
+notifications = true   # accept listChanged notifications from this server
 
+# Another HTTP server, tools discoverable on-demand
 [[server.mcp.remote_servers]]
 namespace = "data"
 url = "https://data.example.com/mcp"
 token = "your-bearer-token"
-
-[[server.mcp.remote_servers]]
-namespace = "internal"
-url = "https://internal.example.com/mcp"
-token = "your-internal-bearer-token"
 tool_visibility = "on-demand"
+
+# stdio remote server: a local executable launched as a subprocess
+[[server.mcp.remote_servers]]
+namespace = "fs"
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "/data"]
 ```
+
+Remote servers can be either **HTTP** (`url` + `token`) or **stdio**
+(`command` + `args`): a local executable that Knot launches as a subprocess and
+talks to over stdin/stdout. stdio servers need no token.
 
 ### Configuration Fields
 
 | Field | Description |
 |-------|-------------|
 | `namespace` | The namespace prefix for tools from this server (e.g., tools will appear as `ai.generate-text`) |
-| `url` | The full URL of the remote MCP server endpoint |
-| `token` | Bearer token for authentication |
+| `url` | The full URL of a remote **HTTP** MCP server endpoint (omit for stdio) |
+| `token` | Bearer token for **HTTP** authentication (omit for stdio) |
+| `command` | For **stdio** servers: the executable to launch as a subprocess (omit for HTTP) |
+| `args` | For **stdio** servers: command-line arguments (array of strings) |
 | `tool_visibility` | Optional (default: `native`). Controls how tools are exposed: |
 | | `native` - Full tool definitions sent immediately (default) |
 | | `on-demand` - Tools discovered on-demand via `tool_search`, reduces context usage |
+| | `discoverable` - Alias for `on-demand` |
+| `notifications` | Optional (default: `false`). When `true`, Knot accepts `listChanged` notifications from this server and propagates them to its own clients, so tool changes on the remote are reflected automatically. stdio servers propagate automatically regardless. |
 
 ---
 
@@ -100,6 +112,29 @@ Hidden tools can still be called using `knot.mcp.call_tool()` in scripts, but wo
 ### Authentication
 
 Remote servers use Bearer token authentication. The token is configured in the TOML file and sent with each request to the remote server.
+
+---
+
+## Live Tool Updates (Notifications)
+
+Knot's MCP server advertises `listChanged` support and pushes notifications to
+connected clients when its tool set changes, so MCP clients (Claude Desktop, VS
+Code, etc.) refresh their cached tool list automatically. This happens in two
+ways:
+
+1. **Knot's own tools change** — when a user's scripts are created, updated, or
+   deleted, Knot emits `notifications/tools/listChanged`. (This is a broadcast:
+   each connected client re-fetches and receives its own, permission-scoped tool
+   list.)
+2. **A remote server's tools change** — set `notifications = true` on a remote
+   server and Knot accepts its `listChanged` events, refreshes its merged tool
+   cache, and re-emits the notification to its own clients. stdio remote servers
+   propagate automatically (no flag needed); HTTP remote servers need the flag
+   and must themselves support SSE push.
+
+On the client side, an SSE connection to `/mcp` (`Accept: text/event-stream`)
+receives these notifications; clients that don't open the stream simply poll
+as before.
 
 ---
 
