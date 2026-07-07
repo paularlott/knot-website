@@ -9,17 +9,6 @@ navSection: docs
 
 ## July 2026
 
-{{< version "v0.28.3" >}}
-
-{{< changelog-item "added" >}}
-
-- **MCP listChanged notifications**: Knot's MCP server now advertises `listChanged` and pushes notifications to connected clients when its tool set changes. When a user's scripts are created, updated, or deleted, Knot emits `notifications/tools/listChanged` so MCP clients refresh automatically.
-- **Remote server change propagation**: set `notifications = true` on a remote server and Knot accepts its `listChanged` events, refreshes its merged tool cache, and re-emits the notification to its own clients. stdio remote servers propagate automatically.
-- **stdio remote MCP servers**: remote servers can now be a local executable launched as a subprocess (`command` + `args`), not just an HTTP endpoint. Configure with `command`/`args` instead of `url`/`token`.
-- **Scriptling MCP client (resources & prompts)**: the embedded Scriptling now exposes resource and prompt access on `MCPClient` — `list_resources()`, `list_resource_templates()`, `read_resource(uri)`, `list_prompts()`, and `get_prompt(name, arguments)`. The in-app script editor's autocomplete has been updated to include them.
-
-{{< /changelog-item >}}
-
 {{< version "v0.28.2" >}}
 
 {{< changelog-item "changed" >}}
