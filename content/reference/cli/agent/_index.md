@@ -203,16 +203,6 @@ Options:
 
 ---
 
-## `knot chat`
-
-Start an interactive chat session with the AI assistant from inside the space.
-
-```shell
-knot chat
-```
-
----
-
 ## See also
 
 - [knot CLI](/reference/cli/knot/) — the main `knot` command run from your machine
