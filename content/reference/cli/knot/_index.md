@@ -144,14 +144,16 @@ knot space write-file <space> <path> --content "Hello"
 echo "data" | knot space write-file <space> <path> --content -
 ```
 
-### Custom fields and tunnels
+### Custom fields and port forwards
 
 ```shell
 knot space get-field <space> <field>
 knot space set-field <space> <field> <value>
 
-# Tunnel a port from a space to the local machine
-knot space tunnel <space> <listen> <port> [--tls]
+# Manage a space's inter-space port forwards
+knot space port forward <from-space> <from-port> <to-space> <to-port> [--persistent] [--force]
+knot space port list <space>
+knot space port stop <space> <local-port>
 ```
 
 ---
@@ -263,12 +265,31 @@ knot forward port 127.0.0.1:8080 myspace 80
 
 ### `knot port`
 
-Forward a port from one space to another (orchestrated from the client).
+Link a service running on your local machine into a space so the space can reach it. Active only while the command runs (Ctrl-C to stop).
 
 ```shell
-knot port forward <from-space> <from-port> <to-space> <to-port> [--persistent] [--force]
-knot port list <space>
-knot port stop <space> <local-port>
+knot port <space> <space-port> <local-port> [--tls]
+```
+
+### `knot space port`
+
+Manage a space's inter-space port forwards (orchestrated from the client).
+
+```shell
+knot space port forward <from-space> <from-port> <to-space> <to-port> [--persistent] [--force]
+knot space port list <space>
+knot space port stop <space> <local-port>
+```
+
+### `knot space tunnel`
+
+Manage a space's agent-owned web tunnels (expose a space port to the internet as `<user>--<name>.<domain>`). Tunnels are owned by the space's agent and run until the agent exits or they are stopped; they are not persisted.
+
+```shell
+knot space tunnel http <space> <port> <name>
+knot space tunnel https <space> <port> <name>
+knot space tunnel list <space>
+knot space tunnel stop <space> <name>
 ```
 
 ### `knot tunnel`

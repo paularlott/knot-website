@@ -22,10 +22,10 @@ Tunnels allow a space to access a service running on your local workstation. Thi
 
 ### Step 2: Create a Tunnel
 
-To expose a service running on your local machine to a space, use the `knot space tunnel` command. For example, to expose **Ollama** running on local port `11434` to the space `phptest`, run:
+To expose a service running on your local machine to a space, use the `knot port` command. For example, to expose **Ollama** running on local port `11434` to the space `phptest`, run:
 
 ```shell
-knot space tunnel phptest 11434 11434
+knot port phptest 11434 11434
 ```
 
 - The first `11434` is the local port on your workstation.

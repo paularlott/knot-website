@@ -13,7 +13,10 @@ navSection: docs
 
 {{< changelog-item "added" >}}
 
-- **AI Assistant chat**: built-in floating chat window powered by the webchat library. Draggable and resizable, with browser-side conversation history, streaming responses, tool call approval flow, and slash command autocomplete. Integrates per-user skills and MCP tools.
+- **Agent-managed tunnels**: `knot tunnel http|https <port> <name> --daemon` started inside a space hands the tunnel to the knot agent, which keeps it running for the life of the agent. New `knot tunnel stop <name>` and `knot tunnel list` commands manage agent-owned tunnels. Tunnels are not persisted and stop when the agent exits. See [Agent Tunnels](./docs/tunnels/agent-tunnels/).
+- **Remote web-tunnel management**: `knot space tunnel http|https|stop|list` lets you start and manage a space's agent-owned web tunnels from the desktop CLI (daemon implied). Driven via the server→agent relay, converging on the same agent-owned tunnel registry as the in-space commands.
+- **Scriptling tunnel library**: `knot.space.tunnel_start`, `tunnel_list`, and `tunnel_stop` expose agent-owned web-tunnel management to scripts (startup scripts, MCP tools, standalone). Available in all scriptling environments via the server API.
+- **AI Assistant chat**: updated built-in floating chat window. Draggable and resizable, with conversation history, streaming responses, tool call approval flow, and slash command autocomplete. Integrates per-user skills and MCP tools.
 - **Slash commands**: create per-user and global slash commands from the web UI (stored in the database). Commands support markdown bodies with `$ARGUMENTS` substitution, argument hints, and auto-allowed tools. Changes propagate to open chat windows instantly via SSE.
 - **MCP listChanged notifications**: Knot's MCP server now advertises `listChanged` and pushes notifications to connected clients when its tool set changes. When a user's scripts are created, updated, or deleted, Knot emits `notifications/tools/listChanged` so MCP clients refresh automatically.
 - **Remote server change propagation**: set `notifications = true` on a remote server and Knot accepts its `listChanged` events, refreshes its merged tool cache, and re-emits the notification to its own clients. stdio remote servers propagate automatically.
@@ -26,6 +29,7 @@ navSection: docs
 
 - **Compact navigation**: frequently used items (Spaces, Tunnels, API Tokens, Volumes) are always visible; everything else collapses under a single expandable "More" section that hides entirely when the user has no relevant permissions.
 - **Movable form popups**: all form modals are now draggable by the header and resizable from any corner or edge, so they can be positioned alongside the AI chat or other content.
+- **CLI reorganisation (port & tunnel commands)**: the port/tunnel commands have been reorganised for clarity. Linking a local service into a space (so the space can reach it) is now `knot port <space> <space-port> <local-port>` (was `knot space tunnel`). Inter-space port-forward control moved to `knot space port forward|list|stop` (was `knot port forward|list|stop`). `knot space tunnel` now manages a space's agent-owned web tunnels remotely.
 
 {{< /changelog-item >}}
 

@@ -29,7 +29,14 @@ The leftmost component of the host determines the username and tunnel name. For 
 
 ## Creating a Tunnel
 
-Tunnels can be created either on a local machine or within a space.
+Tunnels can be created either on a local machine (desktop) or within a space
+(managed by the knot agent).
+
+- **Desktop tunnels** (described below) run as a foreground process on your
+  local machine and live for the life of that command.
+- **Agent tunnels**, started inside a space, can optionally be handed to the
+  knot agent so they keep running after the launching command exits. See
+  [Agent Tunnels](./agent-tunnels/) for `--daemon`, `stop`, and `list`.
 
 ---
 
@@ -58,15 +65,14 @@ Tunnels can be created either on a local machine or within a space.
 
 ### Creating a Tunnel in a Space
 
-1. **Enter the Space**
-   Access the space via a terminal.
+Run the same command from a terminal **inside a space**:
 
-2. **Create a Tunnel**
-   Run the `tunnel` command with the protocol, port, and tunnel name:
+```shell
+knot tunnel http 8080 test1
+```
 
-   ```shell
-   knot tunnel http 8080 test1
-   ```
-
-   - This creates a tunnel to the local port `8080` with the tunnel name `example-test1.tunnels.knot.internal`.
-   - Stopping the `knot tunnel` command will stop and remove the tunnel.
+By default this behaves like the desktop version — the tunnel lives for the life
+of the command. To let the knot agent own the tunnel so it keeps running after
+the command exits, add `--daemon`, and use `knot tunnel stop` / `knot tunnel
+list` to manage it. See [Agent Tunnels](./agent-tunnels/) for the full
+agent-managed workflow.

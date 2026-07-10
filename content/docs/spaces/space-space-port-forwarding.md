@@ -69,12 +69,12 @@ The following commands are run from your desktop machine using the knot CLI:
 Forward a port from one space to another space:
 
 ```shell
-knot port forward <from-space> <from-port> <to-space> <to-port> [--persistent] [--force]
+knot space port forward <from-space> <from-port> <to-space> <to-port> [--persistent] [--force]
 ```
 
 Example:
 ```shell
-knot port forward frontend 8080 backend-api 3000
+knot space port forward frontend 8080 backend-api 3000
 ```
 
 This forwards port 8080 in the `frontend` space to port 3000 in the `backend-api` space.
@@ -87,12 +87,12 @@ This forwards port 8080 in the `frontend` space to port 3000 in the `backend-api
 View all active port forwards from a specific space:
 
 ```shell
-knot port list <space-name>
+knot space port list <space-name>
 ```
 
 Example:
 ```shell
-knot port list frontend
+knot space port list frontend
 ```
 
 ### Stop Port Forward
@@ -100,12 +100,12 @@ knot port list frontend
 Stop an active port forward in a specific space:
 
 ```shell
-knot port stop <space-name> <local-port>
+knot space port stop <space-name> <local-port>
 ```
 
 Example:
 ```shell
-knot port stop frontend 8080
+knot space port stop frontend 8080
 ```
 
 {{< tip >}}

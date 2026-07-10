@@ -51,6 +51,9 @@ The `knot.space` library provides space management functions for scripts.
 | `port_apply(source_space, forwards)` | Replace all port forwards with the given list |
 | `port_list(space)` | List active port forwards |
 | `port_stop(space, local_port)` | Stop a port forward |
+| `tunnel_start(space, protocol, port, name)` | Start an agent-owned web tunnel in a space |
+| `tunnel_list(space)` | List agent-owned web tunnels in a space |
+| `tunnel_stop(space, name)` | Stop an agent-owned web tunnel in a space |
 
 ---
 
@@ -351,3 +354,44 @@ Replace all port forwards for a space with the given list. Any existing forwards
 - `applied` (list): List of forwards that were started
 - `stopped` (list): List of forwards that were stopped
 - `errors` (list): List of error messages (if any)
+
+---
+
+### tunnel_start(space, protocol, port, name)
+
+Start an agent-owned web tunnel in a space, exposing a port inside the space on the internet as `<user>--<name>.<domain>`. The tunnel is owned by the space's agent and runs until the agent exits or the tunnel is stopped; it is not persisted. The space must be running.
+
+**Parameters:**
+- `space` (string): Space name or ID
+- `protocol` (string): `"http"` or `"https"`
+- `port` (int): The port within the space to tunnel
+- `name` (string): The tunnel name (forms `<user>--<name>.<domain>`)
+
+**Returns:** `string` - The public tunnel URL
+
+---
+
+### tunnel_list(space)
+
+List the agent-owned web tunnels active in a space.
+
+**Parameters:**
+- `space` (string): Space name or ID
+
+**Returns:** `list` of dicts, each containing:
+- `port` (int): Port within the space
+- `protocol` (string): `"http"` or `"https"`
+- `name` (string): Tunnel name
+- `url` (string): Public tunnel URL
+
+---
+
+### tunnel_stop(space, name)
+
+Stop an agent-owned web tunnel in a space by name.
+
+**Parameters:**
+- `space` (string): Space name or ID
+- `name` (string): The tunnel name
+
+**Returns:** `bool` - True on success
