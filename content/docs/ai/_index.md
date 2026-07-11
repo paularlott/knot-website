@@ -22,4 +22,5 @@ Starting with version 0.19.0, **knot** introduces AI support through two key fea
 - [Remote MCP Servers](mcp-remote/)
 - [Web Assistant](ai-assistant/)
 - [Skills](skills/)
+- [Slash Commands](slash-commands/)
 - [System Prompt](system-prompt/)

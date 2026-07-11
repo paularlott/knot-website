@@ -9,6 +9,41 @@ navSection: docs
 
 ## July 2026
 
+{{< version "v0.29.0" >}}
+
+{{< changelog-item "added" >}}
+
+- **Agent-managed tunnels**: Tunnels started inside a space with `--daemon` are now handed to the knot agent, which keeps them running for the life of the agent. Manage them with `knot tunnel stop <name>` and `knot tunnel list`. See [Agent Tunnels](./docs/tunnels/agent-tunnels/).
+- **Remote tunnel management**: Start and manage a space's tunnels from your desktop CLI with `knot space tunnel http|https|stop|list`, without needing to be inside the space.
+- **Scripting tunnel library**: Manage tunnels from scripts via `knot.space.tunnel_start`, `tunnel_list`, and `tunnel_stop` — available in all Scriptling environments through the server API.
+- **AI Assistant chat overhaul**: The built-in floating chat window is now draggable, resizable, and supports conversation history, streaming responses, tool call approval flow, slash command autocomplete, per-user skills, and MCP tools.
+- **Slash commands**: Create custom per-user or global slash commands from the web UI with markdown bodies (`$ARGUMENTS` substitution), argument hints, and auto-allowed tools. Changes appear instantly in open chat windows.
+- **MCP tool refresh notifications**: Knot's MCP server now notifies connected clients when its tool set changes (e.g. when scripts are created or updated), so clients always show the latest available tools. Remote servers can also push their own change notifications with `notifications = true`.
+- **stdio remote MCP servers**: Configure a remote MCP server as a local executable (`command` + `args`) instead of an HTTP endpoint, for greater flexibility in how you connect external tools.
+- **Scriptling MCP client enhancements**: The embedded Scriptling runtime now supports resource and prompt access — `list_resources()`, `read_resource(uri)`, `list_prompts()`, and more — with autocomplete support in the script editor.
+
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+
+- **Compact navigation**: frequently used items (Spaces, Tunnels, API Tokens, Volumes) are always visible; everything else collapses under a single expandable "More" section.
+- **Movable form popups**: all form modals are now draggable and resizable so you can position them alongside the AI chat or other content.
+- **CLI reorganisation (port & tunnel commands)**: port and tunnel commands have been reorganised for clarity — see [Agent Tunnels](./docs/tunnels/agent-tunnels/) for details on the new command layout.
+
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+
+- **Volume deletion on space delete**: volumes are now properly cleaned up when a space is deleted, even if Nomad takes time to terminate the underlying job (up to 5 minutes).
+- **Space delete with missing job**: deleting a space whose underlying job was already removed no longer fails — the operation completes successfully.
+- **Volume deletion resilience**: a single volume deletion failure no longer aborts cleanup of remaining volumes, and previously silent errors are now logged for debugging.
+- **Space deletion on volume failure**: if volume cleanup fails, the space is left in place so you can retry the delete rather than being left with orphaned volumes.
+- **Crash fixes**: fixed crashes when internal transport objects were nil (previously could occur during testing or early startup), and improved Apple container volume cleanup reliability.
+
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.28.2" >}}
 
 {{< changelog-item "changed" >}}
