@@ -9,27 +9,36 @@ navSection: docs
 
 ## July 2026
 
-{{< version "v0.28.3" >}}
+{{< version "v0.29.0" >}}
 
 {{< changelog-item "added" >}}
 
-- **Agent-managed tunnels**: `knot tunnel http|https <port> <name> --daemon` started inside a space hands the tunnel to the knot agent, which keeps it running for the life of the agent. New `knot tunnel stop <name>` and `knot tunnel list` commands manage agent-owned tunnels. Tunnels are not persisted and stop when the agent exits. See [Agent Tunnels](./docs/tunnels/agent-tunnels/).
-- **Remote web-tunnel management**: `knot space tunnel http|https|stop|list` lets you start and manage a space's agent-owned web tunnels from the desktop CLI (daemon implied). Driven via the server→agent relay, converging on the same agent-owned tunnel registry as the in-space commands.
-- **Scriptling tunnel library**: `knot.space.tunnel_start`, `tunnel_list`, and `tunnel_stop` expose agent-owned web-tunnel management to scripts (startup scripts, MCP tools, standalone). Available in all scriptling environments via the server API.
-- **AI Assistant chat**: updated built-in floating chat window. Draggable and resizable, with conversation history, streaming responses, tool call approval flow, and slash command autocomplete. Integrates per-user skills and MCP tools.
-- **Slash commands**: create per-user and global slash commands from the web UI (stored in the database). Commands support markdown bodies with `$ARGUMENTS` substitution, argument hints, and auto-allowed tools. Changes propagate to open chat windows instantly via SSE.
-- **MCP listChanged notifications**: Knot's MCP server now advertises `listChanged` and pushes notifications to connected clients when its tool set changes. When a user's scripts are created, updated, or deleted, Knot emits `notifications/tools/listChanged` so MCP clients refresh automatically.
-- **Remote server change propagation**: set `notifications = true` on a remote server and Knot accepts its `listChanged` events, refreshes its merged tool cache, and re-emits the notification to its own clients. stdio remote servers propagate automatically.
-- **stdio remote MCP servers**: remote servers can now be a local executable launched as a subprocess (`command` + `args`), not just an HTTP endpoint. Configure with `command`/`args` instead of `url`/`token`.
-- **Scriptling MCP client (resources & prompts)**: the embedded Scriptling now exposes resource and prompt access on `MCPClient` — `list_resources()`, `list_resource_templates()`, `read_resource(uri)`, `list_prompts()`, and `get_prompt(name, arguments)`. The in-app script editor's autocomplete has been updated to include them.
+- **Agent-managed tunnels**: Tunnels started inside a space with `--daemon` are now handed to the knot agent, which keeps them running for the life of the agent. Manage them with `knot tunnel stop <name>` and `knot tunnel list`. See [Agent Tunnels](./docs/tunnels/agent-tunnels/).
+- **Remote tunnel management**: Start and manage a space's tunnels from your desktop CLI with `knot space tunnel http|https|stop|list`, without needing to be inside the space.
+- **Scripting tunnel library**: Manage tunnels from scripts via `knot.space.tunnel_start`, `tunnel_list`, and `tunnel_stop` — available in all Scriptling environments through the server API.
+- **AI Assistant chat overhaul**: The built-in floating chat window is now draggable, resizable, and supports conversation history, streaming responses, tool call approval flow, slash command autocomplete, per-user skills, and MCP tools.
+- **Slash commands**: Create custom per-user or global slash commands from the web UI with markdown bodies (`$ARGUMENTS` substitution), argument hints, and auto-allowed tools. Changes appear instantly in open chat windows.
+- **MCP tool refresh notifications**: Knot's MCP server now notifies connected clients when its tool set changes (e.g. when scripts are created or updated), so clients always show the latest available tools. Remote servers can also push their own change notifications with `notifications = true`.
+- **stdio remote MCP servers**: Configure a remote MCP server as a local executable (`command` + `args`) instead of an HTTP endpoint, for greater flexibility in how you connect external tools.
+- **Scriptling MCP client enhancements**: The embedded Scriptling runtime now supports resource and prompt access — `list_resources()`, `read_resource(uri)`, `list_prompts()`, and more — with autocomplete support in the script editor.
 
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
 
-- **Compact navigation**: frequently used items (Spaces, Tunnels, API Tokens, Volumes) are always visible; everything else collapses under a single expandable "More" section that hides entirely when the user has no relevant permissions.
-- **Movable form popups**: all form modals are now draggable by the header and resizable from any corner or edge, so they can be positioned alongside the AI chat or other content.
-- **CLI reorganisation (port & tunnel commands)**: the port/tunnel commands have been reorganised for clarity. Linking a local service into a space (so the space can reach it) is now `knot port <space> <space-port> <local-port>` (was `knot space tunnel`). Inter-space port-forward control moved to `knot space port forward|list|stop` (was `knot port forward|list|stop`). `knot space tunnel` now manages a space's agent-owned web tunnels remotely.
+- **Compact navigation**: frequently used items (Spaces, Tunnels, API Tokens, Volumes) are always visible; everything else collapses under a single expandable "More" section.
+- **Movable form popups**: all form modals are now draggable and resizable so you can position them alongside the AI chat or other content.
+- **CLI reorganisation (port & tunnel commands)**: port and tunnel commands have been reorganised for clarity — see [Agent Tunnels](./docs/tunnels/agent-tunnels/) for details on the new command layout.
+
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+
+- **Volume deletion on space delete**: volumes are now properly cleaned up when a space is deleted, even if Nomad takes time to terminate the underlying job (up to 5 minutes).
+- **Space delete with missing job**: deleting a space whose underlying job was already removed no longer fails — the operation completes successfully.
+- **Volume deletion resilience**: a single volume deletion failure no longer aborts cleanup of remaining volumes, and previously silent errors are now logged for debugging.
+- **Space deletion on volume failure**: if volume cleanup fails, the space is left in place so you can retry the delete rather than being left with orphaned volumes.
+- **Crash fixes**: fixed crashes when internal transport objects were nil (previously could occur during testing or early startup), and improved Apple container volume cleanup reliability.
 
 {{< /changelog-item >}}
 
