@@ -12,6 +12,21 @@ navSection: docs
 {{< version "v0.29.0" >}}
 
 {{< changelog-item "added" >}}
+- **Additional Scripting Libraries**:
+  - `scriptling.grep`
+  - `scriptling.find`
+  - `tempfile`
+  - `shutil`
+  - `shlex`
+  - `zipfile`
+  - `tarfile`
+{{< /changelog-item >}}
+
+---
+
+{{< version "v0.29.0" >}}
+
+{{< changelog-item "added" >}}
 
 - **Agent-managed tunnels**: Tunnels started inside a space with `--daemon` are now handed to the knot agent, which keeps them running for the life of the agent. Manage them with `knot tunnel stop <name>` and `knot tunnel list`. See [Agent Tunnels](./docs/tunnels/agent-tunnels/).
 - **Remote tunnel management**: Start and manage a space's tunnels from your desktop CLI with `knot space tunnel http|https|stop|list`, without needing to be inside the space.

@@ -168,8 +168,14 @@ Server-side scripts (MCP tools, event sinks, health checks) run on the knot serv
 | requests           | ✓   | ✓      | ✓        |
 | secrets            | ✓   | ✓      | ✓        |
 | yaml / toml        | ✓   | ✓      | ✓        |
+| shlex              | ✓   | ✓      | ✓        |
 | subprocess         | ✗   | ✓      | ✓        |
 | os / pathlib       | ✗   | ✓      | ✓        |
+| glob               | ✗   | ✓      | ✓        |
+| tempfile           | ✗   | ✓      | ✓        |
+| shutil             | ✗   | ✓      | ✓        |
+| zipfile            | ✗   | ✓      | ✓        |
+| tarfile            | ✗   | ✓      | ✓        |
 | sys                | ✗   | ✓      | ✓        |
 
 ### scriptling.\* Libraries
@@ -183,6 +189,7 @@ Server-side scripts (MCP tools, event sinks, health checks) run on the knot serv
 | scriptling.mcp / scriptling.mcp.tool | ✓                   | ✓                   | ✓        |
 | scriptling.console                   | ✗                   | ✓                   | ✓        |
 | scriptling.grep                      | ✗                   | ✓                   | ✓        |
+| scriptling.find                      | ✗                   | ✓                   | ✓        |
 | scriptling.sed                       | ✗                   | ✓                   | ✓        |
 | scriptling.runtime                   | ✗                   | ✓                   | ✓        |
 | scriptling.websocket                 | ✓                   | ✓                   | ✓        |
