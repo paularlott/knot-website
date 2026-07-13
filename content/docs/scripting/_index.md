@@ -190,6 +190,8 @@ Server-side scripts (MCP tools, event sinks, health checks) run on the knot serv
 | scriptling.console                   | ✗                   | ✓                   | ✓        |
 | scriptling.grep                      | ✗                   | ✓                   | ✓        |
 | scriptling.find                      | ✗                   | ✓                   | ✓        |
+| scriptling.csv                       | ✓                   | ✓                   | ✓        |
+| scriptling.xml                       | ✓                   | ✓                   | ✓        |
 | scriptling.sed                       | ✗                   | ✓                   | ✓        |
 | scriptling.runtime                   | ✗                   | ✓                   | ✓        |
 | scriptling.websocket                 | ✓                   | ✓                   | ✓        |
