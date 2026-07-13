@@ -116,6 +116,38 @@ Options for `create`:
 ```shell
 knot space run <space> <command> [args...]
 knot space run-script <space> <script> [args...]
+knot space eval <space> <code|-> [args...]
+```
+
+`eval` runs inline Scriptling source directly — no stored script needed. Pass the
+code as a quoted argument, or use `-` to read it from stdin. Trailing positionals
+become the script's `sys.argv` (`argv[0]` is `"eval"`). Output streams live, so it
+pipes cleanly:
+
+```shell
+knot space eval web "print(knot.space.run('web','uname',args=['-a']))"
+echo 'print(json.dumps(stats))' | knot space eval web - | jq .
+```
+
+### Searching and editing files
+
+```shell
+knot space grep <space> <pattern> [path]   # one match per line: file:line: text
+knot space find <space> [path]              # one path per line
+knot space sed   <space> <old> <new> [path] # literal in-place replace
+```
+
+`grep` and `find` are read-only and run in the space's agent via a parallel
+worker pool — no file contents leave the space. `sed` modifies files in place
+(atomic temp-file + rename). All three take `--json` for structured output, and
+share filter flags (`-i` ignore case, `-r` recursive, `--glob`, ...).
+
+```shell
+knot space grep web "TODO" src -r --glob "*.py"
+knot space find web ~ --name "*.md"
+knot space sed web "old_name" "new_name" src/ -r --glob "*.py"
+knot space sed web --regex 'def get_(\w+)\(' 'def fetch_${1}(' src/app.py
+knot space sed web --extract '(\w+)=(\S+)' .env | jq .
 ```
 
 ### Copying files
@@ -139,9 +171,16 @@ knot space copy <source-space>:/app/build <dest-space>:/var/www/html
 # Read a file (write to stdout)
 knot space read-file <space> <path>
 
+# Read a 1-based line range (e.g. lines 100-119)
+knot space read-file <space> <path> --offset 100 --limit 20
+
 # Write content (use --content - to read from stdin)
 knot space write-file <space> <path> --content "Hello"
 echo "data" | knot space write-file <space> <path> --content -
+
+# Append or prepend instead of overwriting
+knot space write-file <space> /app/log.txt --content "new entry" --mode append
+knot space write-file <space> /app/header.py --content "# License" --mode prepend
 ```
 
 ### Custom fields and port forwards

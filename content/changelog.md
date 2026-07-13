@@ -9,9 +9,14 @@ navSection: docs
 
 ## July 2026
 
-{{< version "v0.29.2" >}}
+{{< version "v0.30.0" >}}
 
 {{< changelog-item "added" >}}
+- **In-space file search and edit (`grep` / `find` / `sed` / `edit_file`)**: Search file contents, find files by name/type/mtime/size, perform literal or regex in-place edits, and make targeted search-and-replace edits with uniqueness verification. Operations run in the space's agent via the scriptling `extlibs` worker pool (no interpreter, no file contents leave the space). Each operation has its own typed agent message (`CmdGrep`, `CmdFind`, `CmdSed`, `CmdEditFile`) and API endpoint. Exposed four ways:
+  - **Scripting library**: `knot.space.grep`, `find`, `sed_replace`, `sed_replace_pattern`, `sed_extract`, `edit_file` — see [knot.space reference](../reference/libraries/space/).
+  - **CLI**: `knot space grep`, `find`, `sed` (with `--regex` / `--extract` / `--json`), `edit` (with `--search` / `--replace`) — see [CLI reference](../reference/cli/knot/).
+  - **MCP tools**: `grep`, `find`, `sed_replace`, `sed_replace_pattern`, `sed_extract`, `edit_file` — discoverable by default; the replace/edit ops require approval.
+- **`knot.space.eval` + `knot space eval`**: Execute inline Scriptling code in a running space without first storing a named script. The library function (`knot.space.eval`) and the CLI command both hit the existing inline-content execution path; the CLI streams output live and reads code from an argument or stdin (`-`). See [knot.space reference](../reference/libraries/space/) and [CLI reference](../reference/cli/knot/).
 - **Additional Scripting Libraries**:
   - `scriptling.grep`
   - `scriptling.find`
@@ -30,7 +35,7 @@ navSection: docs
 
 {{< changelog-item "added" >}}
 
-- **Agent-managed tunnels**: Tunnels started inside a space with `--daemon` are now handed to the knot agent, which keeps them running for the life of the agent. Manage them with `knot tunnel stop <name>` and `knot tunnel list`. See [Agent Tunnels](./docs/tunnels/agent-tunnels/).
+- **Agent-managed tunnels**: Tunnels started inside a space with `--daemon` are now handed to the knot agent, which keeps them running for the life of the agent. Manage them with `knot tunnel stop <name>` and `knot tunnel list`. See [Agent Tunnels](/docs/tunnels/agent-tunnels/).
 - **Remote tunnel management**: Start and manage a space's tunnels from your desktop CLI with `knot space tunnel http|https|stop|list`, without needing to be inside the space.
 - **Scripting tunnel library**: Manage tunnels from scripts via `knot.space.tunnel_start`, `tunnel_list`, and `tunnel_stop` — available in all Scriptling environments through the server API.
 - **AI Assistant chat overhaul**: The built-in floating chat window is now draggable, resizable, and supports conversation history, streaming responses, tool call approval flow, slash command autocomplete, per-user skills, and MCP tools.
@@ -45,7 +50,7 @@ navSection: docs
 
 - **Compact navigation**: frequently used items (Spaces, Tunnels, API Tokens, Volumes) are always visible; everything else collapses under a single expandable "More" section.
 - **Movable form popups**: all form modals are now draggable and resizable so you can position them alongside the AI chat or other content.
-- **CLI reorganisation (port & tunnel commands)**: port and tunnel commands have been reorganised for clarity — see [Agent Tunnels](./docs/tunnels/agent-tunnels/) for details on the new command layout.
+- **CLI reorganisation (port & tunnel commands)**: port and tunnel commands have been reorganised for clarity — see [Agent Tunnels](/docs/tunnels/agent-tunnels/) for details on the new command layout.
 
 {{< /changelog-item >}}
 
