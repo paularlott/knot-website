@@ -9,7 +9,7 @@ navSection: docs
 
 ## July 2026
 
-{{< version "v0.29.0" >}}
+{{< version "v0.29.1" >}}
 
 {{< changelog-item "added" >}}
 - **Additional Scripting Libraries**:
