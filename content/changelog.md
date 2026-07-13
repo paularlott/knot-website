@@ -9,7 +9,7 @@ navSection: docs
 
 ## July 2026
 
-{{< version "v0.29.1" >}}
+{{< version "v0.29.2" >}}
 
 {{< changelog-item "added" >}}
 - **Additional Scripting Libraries**:
@@ -20,6 +20,8 @@ navSection: docs
   - `shlex`
   - `zipfile`
   - `tarfile`
+  - `scriptling.csv`
+  - `scriptling.xml`
 {{< /changelog-item >}}
 
 ---
