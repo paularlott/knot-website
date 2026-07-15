@@ -14,7 +14,27 @@ pack: okf
 	@mkdir -p dist
 	cd mcp && zip -qr ../dist/knot-kb.zip tools okf README.md
 
-.PHONY: help okf mcp-server pack
+## Pack just the OKF bundles into dist/knot-okf-bundles.zip
+bundle-pack: okf
+	@rm -f dist/knot-okf-bundles.zip
+	@mkdir -p dist
+	cd mcp/okf && zip -qr ../../dist/knot-okf-bundles.zip knot-docs knot-reference
+
+## Tag and publish a GitHub release with the KB + OKF bundles archives
+release: pack bundle-pack
+	@test -d ../knot || { echo "knot repo not found at ../knot"; exit 1; }
+	@command -v gh >/dev/null 2>&1 || { echo "gh CLI not installed"; exit 1; }
+	@V=$$(cd ../knot && go run ./scripts/getversion); \
+	echo "Releasing knot-kb v$$V"; \
+	if git tag -l v$$V | grep -q v$$V; then \
+		echo "Tag v$$V already exists, skipping tag creation"; \
+	else \
+		git tag -a v$$V -m "Release $$V" && git push origin v$$V; \
+	fi; \
+	gh release create v$$V dist/knot-kb.zip dist/knot-okf-bundles.zip \
+		-t "Release $$V" -n "Knot knowledge bundles and MCP server $$V"
+
+.PHONY: help okf mcp-server pack bundle-pack release
 ## This help screen
 help:
 	@printf "Available targets:\n\n"
