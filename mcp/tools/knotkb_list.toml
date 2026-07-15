@@ -1,0 +1,7 @@
+description = "Browse Knot's documentation (guides and technical reference). List the bundles (empty path), a folder's contents, or a single file's metadata. Use this to navigate before reading a page."
+keywords = ["knot", "documentation", "docs", "reference", "list", "browse", "folder", "navigate"]
+
+[[parameters]]
+name = "path"
+type = "string"
+description = "Path relative to the OKF root: a folder (e.g. 'knot-reference', 'knot-reference/cli'), a file (e.g. 'knot-reference/glossary.md'), or empty to list the bundles."

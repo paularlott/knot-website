@@ -1,6 +1,20 @@
 default: help
 
-.PHONY: help
+## Generate OKF knowledge bundles into mcp/okf/ (generated; not published)
+okf:
+	scriptling scripts/okf.py
+
+## Run the Knot KB MCP server (tools: knotkb_list, knotkb_get, knotkb_search, knotkb_grep)
+mcp-server:
+	scriptling --server :8765 --mcp-tools mcp/tools
+
+## Pack the KB MCP server + OKF bundles into dist/knot-kb.zip (portable)
+pack: okf
+	@rm -f dist/knot-kb.zip
+	@mkdir -p dist
+	cd mcp && zip -qr ../dist/knot-kb.zip tools okf README.md
+
+.PHONY: help okf mcp-server pack
 ## This help screen
 help:
 	@printf "Available targets:\n\n"

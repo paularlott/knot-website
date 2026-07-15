@@ -1,0 +1,18 @@
+description = "Semantic search of Knot's documentation (guides and technical reference): rank pages by relevance to a natural-language query. Best for conceptual or paraphrased questions where you don't know the exact term. For exact keyword or identifier matching, use knotkb_grep."
+keywords = ["knot", "documentation", "docs", "search", "semantic", "query", "find", "natural", "ask"]
+
+[[parameters]]
+name = "query"
+type = "string"
+description = "Natural-language query, e.g. 'how do I create a space' or 'configure storage'."
+required = true
+
+[[parameters]]
+name = "path"
+type = "string"
+description = "Scope: a bundle or folder path (e.g. 'knot-reference', 'knot-reference/cli'). Empty searches all bundles."
+
+[[parameters]]
+name = "top_k"
+type = "int"
+description = "Maximum number of results to return. Default 10."
