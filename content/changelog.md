@@ -22,6 +22,8 @@ navSection: docs
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
+- **Stack name clashes on create**: creating a new stack no longer silently reuses an existing stack name, which previously mixed spaces from different stack instances under one name. The CLI (`knot stack create`) and the web create-stack flow now refuse to create a stack whose name is already in use. Editing a normal space can still be assigned to an existing stack.
+
 - **Web VNC for shared spaces**: opening web VNC on a space shared with you no longer fails. VNC access now resolves against the authenticated viewer and grants access to the space owner and any user the space is shared with, matching the SSH and terminal proxies.
 {{< /changelog-item >}}
 
