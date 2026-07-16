@@ -36,6 +36,55 @@ To use a system variable, simply specify it in the format `${{ .<group>.<name> }
 
 ---
 
+### Stack Variables
+
+When a space is part of a [stack](../stacks/), it can reference variables belonging to any **sibling space** in the same stack via the `.stack` group. This lets one space consume values produced by another — for example, a web space reading a database password defined on a `db` space.
+
+The syntax is:
+
+```
+${{ .stack.<key>.<group>.<name> }}
+```
+
+where `<key>` is the sibling's **stack key** — its space name with the stack prefix removed (the same key used in the stack definition for `depends_on` and port forwards). For a stack with prefix `myapp`, a space named `myapp-db` is referenced as `db`.
+
+`.stack.<key>` exposes the same variable groups as the current space, resolved for that sibling:
+
+- `${{ .stack.db.space.id }}` — the sibling's space UUID
+- `${{ .stack.db.space.name }}` — the sibling's full space name
+- `${{ .stack.db.custom.password }}` — a custom variable defined on the sibling
+- `${{ .stack.db.template.name }}`, `${{ .stack.db.user.username }}`, etc.
+
+**Example** — a `web` space wiring up a connection to a `db` space in the same stack:
+
+```yaml
+environment:
+  - "DB_HOST=${{ .space.stack_prefix }}-db"
+  - "DB_PASSWORD=${{ .stack.db.custom.password }}"
+```
+
+**Keys containing hyphens** — Go templates treat `-` as subtraction, so `.stack.my-db` won't parse. Each sibling is therefore exposed under **two equivalent keys**: the literal key (for `index`) and a dotted-safe alias with `-` replaced by `_` (for dotted access). Pick whichever you prefer:
+
+```
+${{ .stack.my_db.custom.password }}              # dotted, using the _ alias
+${{ (index .stack "my-db").custom.password }}    # index, using the literal key
+```
+
+The dotted path *after* the key (`.custom.password`, `.space.id`) works as normal in either form.
+
+**Quoting inside YAML/HCL values** — only the `index` form has inner double quotes, which collide with a YAML double-quoted value. If you use `index` inside a quoted value, switch the surrounding YAML string to single quotes (or escape the inner quotes):
+
+```yaml
+environment:
+  - 'DB_PASSWORD=${{ (index .stack "my-db").custom.password }}'
+```
+
+The dotted `_` form has no inner quotes, so it needs no special handling.
+
+**Note:** `.stack.<key>` only resolves if the sibling space has already been created. Stacks created the normal way (`knot stack create` then `knot stack start`) create every space before any of them start, so sibling references resolve in both directions. If a sibling does not yet exist, the reference renders as `<no value>` (the standard fallback for a missing variable).
+
+---
+
 ## What's Next
 
 - [User Defined Variables](../user-defined-variables/)
