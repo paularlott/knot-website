@@ -18,6 +18,8 @@ navSection: docs
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
+- **Template/volume validation**: validation errors now point at the exact source line (the editor annotates the offending line instead of stacking errors at the top), messages are clearer and consistently include the offending value, and additional checks are enforced — `cap_add`/`cap_drop` must be `CAP_*` capabilities, `command` must be a list, and `privileged` must be a boolean.
+
 - **Improvements to UI**
 {{< /changelog-item >}}
 
