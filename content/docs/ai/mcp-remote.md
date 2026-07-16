@@ -60,6 +60,7 @@ tool_visibility = "on-demand"
 namespace = "fs"
 command = "npx"
 args = ["-y", "@modelcontextprotocol/server-filesystem", "/data"]
+env = ["FS_ROOT=/data", "LOG_LEVEL=debug"]  # extra KEY=VALUE vars (merged on top of the inherited environment)
 ```
 
 Remote servers can be either **HTTP** (`url` + `token`) or **stdio**
@@ -75,6 +76,7 @@ talks to over stdin/stdout. stdio servers need no token.
 | `token` | Bearer token for **HTTP** authentication (omit for stdio) |
 | `command` | For **stdio** servers: the executable to launch as a subprocess (omit for HTTP) |
 | `args` | For **stdio** servers: command-line arguments (array of strings) |
+| `env` | Optional, **stdio** only. Extra `KEY=value` environment variables for the subprocess (array of strings). These are merged on top of the inherited environment, so `PATH`, `HOME`, etc. are preserved. |
 | `tool_visibility` | Optional (default: `native`). Controls how tools are exposed: |
 | | `native` - Full tool definitions sent immediately (default) |
 | | `on-demand` - Tools discovered on-demand via `tool_search`, reduces context usage |

@@ -9,6 +9,26 @@ navSection: docs
 
 ## July 2026
 
+{{< version "v0.30.1" >}}
+
+{{< changelog-item "fixed" >}}
+- **Web VNC for shared spaces**: opening web VNC on a space shared with you no longer fails. VNC access now resolves against the authenticated viewer and grants access to the space owner and any user the space is shared with, matching the SSH and terminal proxies.
+{{< /changelog-item >}}
+
+{{< changelog-item "security" >}}
+- **Web VNC now requires authentication**: the web VNC subdomain previously had no authentication and was reachable by anyone who knew the URL. It now requires an active session with the *Use VNC* permission. The web session cookie is also shared across the wildcard domain so it reaches the VNC subdomain; existing sessions pick this up on the next login.
+{{< /changelog-item >}}
+
+{{< changelog-item "added" >}}
+- **Environment variables for stdio MCP servers**: stdio-based MCP servers (local executables launched as subprocesses) can now set one or more environment variables that are applied to the child process. Variables are merged on top of the inherited environment, so `PATH`, `HOME`, and other defaults remain available. Configure them from the MCP Servers UI (one `KEY=value` per line) or via `env` in `knot.toml`. See [Remote MCP Servers](/docs/ai/mcp-remote/).
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- **Improvements to UI**
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.30.0" >}}
 
 {{< changelog-item "added" >}}
