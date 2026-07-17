@@ -49,6 +49,19 @@ View all active port forwards from the current space:
 knot port list
 ```
 
+Example output:
+```
+Active port forwards:
+  8080 -> backend-api:3000 (persistent, direct)
+  5432 -> database:5432 (temporary, relay)
+```
+
+The mode shown after the state indicates how traffic is routed:
+- **direct** {{< pro-badge >}}: traffic flows directly between agents without going through the server
+- **relay**: traffic is relayed through the knot server
+
+Direct mode requires Knot Pro and both spaces running on the same host or network. When direct isn't available or fails, the forward automatically falls back to relay.
+
 ### Stop Port Forward
 
 Stop an active port forward:

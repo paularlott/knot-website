@@ -11,6 +11,15 @@ navSection: docs
 
 ## July 2026
 
+{{< version "v0.31.0" >}}
+
+{{< changelog-item "added" >}}
+- **Direct agent-to-agent connections** {{< pro-badge >}}: agents in the same zone can now connect directly to each other for port-forwarded traffic, bypassing the server relay. The server coordinates the introduction (resolving the target's address), the agents authenticate with a user-scoped shared secret, and a single session per peer multiplexes all forwarded connections. Relay through the server remains the automatic fallback when direct isn't available or fails. Port forwards show their connection mode (`direct` or `relay`) in `knot port list` and the UI. Enabled by default in Pro for Docker, Podman, and Apple Containers.
+
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.30.1" >}}
 
 {{< changelog-item "added" >}}
