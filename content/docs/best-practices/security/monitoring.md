@@ -1,5 +1,9 @@
 ---
 title: Monitoring and Compliance
+linkTitle: Monitoring
+description: Security monitoring, auditing, and compliance.
+type: Guide
+tags: [security, logging]
 weight: 40
 ---
 

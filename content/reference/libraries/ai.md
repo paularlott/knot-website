@@ -1,5 +1,8 @@
 ---
 title: knot.ai
+description: AI client for chat completions, embeddings, and streaming responses.
+type: API Reference
+tags: [ai, api, scripting]
 weight: 20
 ---
 

@@ -1,5 +1,9 @@
 ---
 title: Nomad & Docker
+linkTitle: Nomad & Docker
+description: Minimum configuration to deploy Nomad, Consul, and knot using Docker.
+type: Overview
+tags: [deployment, installation]
 weight: 10
 ---
 

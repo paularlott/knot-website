@@ -1,5 +1,8 @@
 ---
 title: Deploy Knot
+description: Deploy the knot server as a Nomad job using Docker.
+type: Tutorial
+tags: [deployment, installation]
 weight: 30
 ---
 

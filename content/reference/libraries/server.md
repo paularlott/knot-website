@@ -1,5 +1,8 @@
 ---
 title: knot.server
+description: Exposes server-wide information such as version and wildcard domain.
+type: API Reference
+tags: [api, scripting]
 weight: 71
 ---
 

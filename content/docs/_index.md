@@ -2,6 +2,8 @@
 title: Introduction
 linkTitle: Documentation
 description: Getting started and working with knot for the management of cloud based development environments.
+type: Overview
+tags: [spaces, templates, configuration, deployment]
 ---
 
 **knot** is a lightweight, single-binary tool that simplifies managing development environments. Whether you need a single local setup or a globally distributed cluster, knot provides consistent, on-demand environments for your team.

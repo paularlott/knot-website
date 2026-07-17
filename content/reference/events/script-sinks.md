@@ -1,5 +1,8 @@
 ---
 title: Script Sinks
+description: Script sinks run a server-side scriptling script on matching events, accessing payloads via the knot.event module.
+type: Reference
+tags: [api, events, scripting]
 weight: 20
 ---
 

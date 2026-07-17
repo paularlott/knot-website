@@ -1,5 +1,8 @@
 ---
 title: Architecture
+description: Core components and topics for understanding knot's architecture and designing effective deployments.
+type: Overview
+tags: [architecture]
 weight: 20
 ---
 

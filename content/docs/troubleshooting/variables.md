@@ -1,5 +1,8 @@
 ---
 title: Variables
+description: Troubleshooting variable issues in templates.
+type: Guide
+tags: [troubleshooting, variables]
 weight: 40
 ---
 

@@ -1,5 +1,8 @@
 ---
 title: Single Server
+description: Deploy knot on a single server with Docker, Docker Compose, and Cloudflare.
+type: Overview
+tags: [deployment, installation]
 weight: 20
 ---
 

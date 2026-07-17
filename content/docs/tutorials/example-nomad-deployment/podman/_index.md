@@ -1,5 +1,9 @@
 ---
 title: Nomad & Podman
+linkTitle: Nomad & Podman
+description: Minimum configuration to deploy Nomad, Consul, and knot using Podman.
+type: Overview
+tags: [deployment, installation]
 weight: 20
 ---
 

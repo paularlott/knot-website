@@ -1,5 +1,8 @@
 ---
 title: API Tokens
+description: Create and manage API tokens to access the knot API from external applications.
+type: Overview
+tags: [security, authentication, api]
 weight: 35
 ---
 

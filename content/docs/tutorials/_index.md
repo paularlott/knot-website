@@ -1,6 +1,8 @@
 ---
 title: Tutorials
-description: Tutorials on using knot.
+description: Step-by-step tutorials for deploying knot and using example templates.
+type: Overview
+tags: [deployment, installation]
 weight: 200
 ---
 

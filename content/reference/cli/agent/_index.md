@@ -1,7 +1,9 @@
 ---
 title: knot agent
-weight: 20
 description: Command-line reference for the knot agent that runs inside a space.
+type: Overview
+tags: [api, cli]
+weight: 20
 ---
 
 The **knot agent** is a separate binary (`knot-agent`, built from `agent/`) that runs inside a space's container and connects it to the knot server. Inside the space it is invoked as `knot`.

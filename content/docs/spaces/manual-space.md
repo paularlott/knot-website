@@ -1,5 +1,8 @@
 ---
 title: Manual Space
+description: Run the knot agent manually on a VM or physical server and connect it to knot as a space.
+type: Guide
+tags: [spaces]
 weight: 20
 ---
 

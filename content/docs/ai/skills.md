@@ -1,5 +1,8 @@
 ---
 title: Skills
+description: Author and manage markdown skills that give AI assistants context and procedures in knot.
+type: Guide
+tags: [ai, scripting]
 weight: 30
 ---
 

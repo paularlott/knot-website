@@ -1,5 +1,8 @@
 ---
 title: Server Setup
+description: Configure and run the knot server using a knot.toml configuration file.
+type: Guide
+tags: [installation, deployment]
 weight: 10
 ---
 

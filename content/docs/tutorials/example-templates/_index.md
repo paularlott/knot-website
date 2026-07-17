@@ -1,5 +1,8 @@
 ---
 title: Example Templates
+description: Ready-to-use knot space templates for Nomad, Docker, and Podman.
+type: Overview
+tags: [templates, deployment]
 weight: 30
 ---
 

@@ -1,5 +1,8 @@
 ---
 title: JSON-RPC Sinks
+description: JSON-RPC sinks are named formatters that deliver events to running script methods via body templates.
+type: Reference
+tags: [api, events]
 weight: 30
 ---
 

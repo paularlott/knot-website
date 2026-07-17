@@ -1,6 +1,8 @@
 ---
 title: Quick Start
 description: Choose your deployment path and get knot running in minutes.
+type: Overview
+tags: [installation, deployment]
 weight: 10
 ---
 

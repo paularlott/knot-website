@@ -1,6 +1,8 @@
 ---
 title: Local Containers
 description: Deploy knot using Docker, Podman, or Apple Containers.
+type: Overview
+tags: [installation, deployment]
 weight: 20
 ---
 

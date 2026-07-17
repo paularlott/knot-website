@@ -1,5 +1,9 @@
 ---
 title: Remote MCP Servers
+linkTitle: Remote MCP
+description: Connect external MCP servers to knot and expose their tools alongside knot's built-in tools.
+type: Guide
+tags: [ai, mcp, networking]
 weight: 15
 ---
 

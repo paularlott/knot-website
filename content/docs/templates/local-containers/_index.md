@@ -1,5 +1,8 @@
 ---
 title: Local Containers
+description: Local Container templates support Docker, Podman, and Apple Container runtimes for spaces on local machines.
+type: Overview
+tags: [templates, deployment]
 weight: 30
 ---
 

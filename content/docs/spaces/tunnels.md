@@ -1,5 +1,8 @@
 ---
 title: Tunnels
+description: Expose a service running on your local workstation to a space through a knot tunnel.
+type: Guide
+tags: [spaces, networking]
 weight: 130
 ---
 

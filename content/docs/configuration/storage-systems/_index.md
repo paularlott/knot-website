@@ -1,5 +1,8 @@
 ---
 title: Storage Systems
+description: Choose between BadgerDB, MySQL/MariaDB, and Redis/Valkey for data storage.
+type: Overview
+tags: [storage, configuration]
 weight: 10
 ---
 

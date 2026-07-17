@@ -1,5 +1,8 @@
 ---
 title: Port Forwarding
+description: Securely forward local ports to ports inside a remote space using the knot client.
+type: Guide
+tags: [spaces, networking]
 weight: 120
 ---
 

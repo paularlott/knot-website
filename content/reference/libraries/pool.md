@@ -1,5 +1,8 @@
 ---
 title: knot.pool
+description: Manage space pools that keep a desired count of identical spaces running.
+type: API Reference
+tags: [spaces, api, scripting]
 weight: 16
 ---
 

@@ -1,5 +1,8 @@
 ---
 title: Space Methods
+description: Publish JSON-RPC methods from a space with discovery, access control, and MCP tool projection.
+type: Guide
+tags: [spaces, configuration]
 weight: 210
 ---
 

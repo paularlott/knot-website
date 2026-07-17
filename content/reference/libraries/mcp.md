@@ -1,5 +1,8 @@
 ---
 title: knot.mcp
+description: MCP tool discovery and execution across all execution environments.
+type: API Reference
+tags: [mcp, ai, api, scripting]
 weight: 30
 ---
 

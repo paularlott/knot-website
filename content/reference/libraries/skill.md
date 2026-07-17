@@ -1,5 +1,8 @@
 ---
 title: knot.skill
+description: Manage skills — markdown knowledge base content for AI agents.
+type: API Reference
+tags: [ai, scripting, api]
 weight: 40
 ---
 

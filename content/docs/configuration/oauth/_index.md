@@ -1,5 +1,8 @@
 ---
 title: OAuth Authentication
+description: Sign in with GitHub, GitLab, Google, Auth0, or any OIDC identity provider.
+type: Overview
+tags: [security, authentication, configuration]
 weight: 55
 ---
 

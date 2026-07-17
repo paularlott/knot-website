@@ -1,5 +1,8 @@
 ---
 title: Events
+description: The events system — react to space lifecycle and custom events via webhook, script, and JSON-RPC sinks.
+type: Overview
+tags: [api, events]
 weight: 50
 ---
 

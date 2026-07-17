@@ -1,5 +1,8 @@
 ---
 title: Network Security
+description: Network configuration and access control.
+type: Guide
+tags: [security, networking]
 weight: 10
 ---
 

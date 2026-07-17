@@ -1,5 +1,8 @@
 ---
 title: knot.permission
+description: Permission constants and a function to list available permissions.
+type: API Reference
+tags: [security, authentication, api, scripting]
 weight: 110
 ---
 

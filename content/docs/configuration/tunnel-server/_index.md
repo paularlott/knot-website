@@ -1,5 +1,8 @@
 ---
 title: Tunnel Server
+description: Securely expose local HTTP and HTTPS services to the internet via a knot server.
+type: Overview
+tags: [networking, configuration]
 weight: 40
 ---
 

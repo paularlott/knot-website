@@ -1,5 +1,8 @@
 ---
 title: Secret Providers
+description: Secret providers fetch secrets from external managers like Vault and 1Password at template resolve time.
+type: Guide
+tags: [variables, security]
 weight: 30
 ---
 

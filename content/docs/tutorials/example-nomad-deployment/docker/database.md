@@ -1,5 +1,8 @@
 ---
 title: Database
+description: Deploy a Valkey server as the storage database for knot on Nomad.
+type: Tutorial
+tags: [storage, deployment]
 weight: 20
 ---
 

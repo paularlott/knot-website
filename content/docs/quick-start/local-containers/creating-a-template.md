@@ -1,5 +1,9 @@
 ---
 title: Creating a Template
+linkTitle: New Template
+description: Build a reusable template that defines how spaces are created.
+type: Guide
+tags: [installation, templates]
 weight: 30
 ---
 

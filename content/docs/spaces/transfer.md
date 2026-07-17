@@ -1,5 +1,8 @@
 ---
 title: Transfer Spaces
+description: Reassign ownership of a stopped space to another user on the same knot server.
+type: Guide
+tags: [spaces, storage]
 weight: 70
 ---
 

@@ -1,6 +1,8 @@
 ---
 title: Desktop Client
 description: Covers the installation of the desktop client.
+type: Overview
+tags: [deployment]
 weight: 5
 ---
 

@@ -1,5 +1,8 @@
 ---
 title: Sharing Spaces
+description: Share a space with one or more users so they can SSH in and use its terminal and web interface.
+type: Guide
+tags: [spaces, networking]
 weight: 80
 ---
 

@@ -1,5 +1,8 @@
 ---
-title: Managing Template
+title: Managing Templates
+description: Create, edit, and delete templates, including platform, volume, resource, and access control settings.
+type: Guide
+tags: [templates]
 weight: 10
 ---
 

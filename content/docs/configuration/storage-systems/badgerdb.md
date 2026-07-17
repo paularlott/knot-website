@@ -1,5 +1,8 @@
 ---
 title: BadgerDB
+description: Configure the embedded BadgerDB database for single and multi-server deployments.
+type: Guide
+tags: [storage, configuration]
 weight: 50
 ---
 

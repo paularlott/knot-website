@@ -1,5 +1,8 @@
 ---
 title: knot.volume
+description: Volume management functions for CSI volume definitions attached to spaces.
+type: API Reference
+tags: [storage, api, scripting]
 weight: 60
 ---
 

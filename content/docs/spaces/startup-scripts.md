@@ -1,5 +1,9 @@
 ---
 title: Startup & Shutdown Scripts
+linkTitle: Startup Scripts
+description: Run scripts when a space starts or stops using template, user, and file-based startup and shutdown scripts.
+type: Guide
+tags: [spaces, scripting]
 weight: 200
 ---
 

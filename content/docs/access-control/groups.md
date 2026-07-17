@@ -1,5 +1,8 @@
 ---
 title: Managing Groups
+description: Create, edit, and delete groups that control template access and resource limits in knot.
+type: Guide
+tags: [security, authentication]
 weight: 10
 ---
 

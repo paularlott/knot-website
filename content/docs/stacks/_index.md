@@ -1,5 +1,8 @@
 ---
 title: Stack Templates
+description: Stack templates bundle multiple spaces into a single deployable unit with dependencies and port forwarding.
+type: Overview
+tags: [stacks, templates]
 weight: 75
 ---
 

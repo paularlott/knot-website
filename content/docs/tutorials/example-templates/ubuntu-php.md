@@ -1,5 +1,9 @@
 ---
 title: PHP with Caddy
+linkTitle: PHP with Caddy
+description: Template for a PHP development space serving ~/public_html via Caddy.
+type: Tutorial
+tags: [templates]
 weight: 50
 ---
 

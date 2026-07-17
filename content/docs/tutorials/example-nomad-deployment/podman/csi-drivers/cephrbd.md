@@ -1,5 +1,8 @@
 ---
 title: Ceph RBD
+description: Deploy the Ceph RBD CSI driver with Podman to mount block devices into spaces.
+type: Tutorial
+tags: [storage, deployment]
 weight: 30
 ---
 

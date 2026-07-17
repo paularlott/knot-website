@@ -1,5 +1,8 @@
 ---
 title: knot.apiclient
+description: Transport layer used by all knot.* libraries for HTTP and AI connectivity.
+type: API Reference
+tags: [api, scripting]
 weight: 15
 ---
 

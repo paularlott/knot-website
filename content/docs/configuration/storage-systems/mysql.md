@@ -1,5 +1,8 @@
 ---
 title: MySQL / MariaDB
+description: Configure MySQL or MariaDB, including Galera cluster setups, for data storage.
+type: Guide
+tags: [storage, configuration]
 weight: 40
 ---
 

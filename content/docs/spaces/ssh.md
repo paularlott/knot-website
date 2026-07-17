@@ -1,5 +1,8 @@
 ---
 title: SSH Access
+description: Securely connect to a space over SSH using keys, the knot client, and ssh-config helpers.
+type: Guide
+tags: [spaces, networking]
 weight: 100
 ---
 

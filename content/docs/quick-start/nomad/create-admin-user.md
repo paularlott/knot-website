@@ -1,5 +1,9 @@
 ---
 title: Create Admin User
+linkTitle: Admin User
+description: Create the initial admin user to access the knot web interface.
+type: Guide
+tags: [installation, security, authentication]
 weight: 40
 ---
 

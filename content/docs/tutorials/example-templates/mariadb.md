@@ -1,5 +1,8 @@
 ---
 title: MariaDB
+description: Template to run a MariaDB server in a space with dynamic host volume storage.
+type: Tutorial
+tags: [templates, storage]
 weight: 40
 ---
 

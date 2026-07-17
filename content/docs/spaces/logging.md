@@ -1,5 +1,8 @@
 ---
 title: Logging
+description: Collect, forward, and view service logs from a space using rsyslog and the HTTP log API.
+type: Guide
+tags: [spaces, logging]
 weight: 110
 ---
 

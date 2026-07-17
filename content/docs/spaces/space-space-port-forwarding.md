@@ -1,5 +1,9 @@
 ---
 title: Space-to-Space Port Forwarding
+linkTitle: Space Forwarding
+description: Forward ports between spaces in the same zone for direct service-to-service communication.
+type: Guide
+tags: [spaces, networking]
 weight: 125
 ---
 

@@ -1,6 +1,9 @@
 ---
 title: Reference
+linkTitle: Reference
 description: Technical reference for knot — architecture, CLI, scripting libraries, events, API tokens, and glossary.
+type: Overview
+tags: [api, architecture, scripting]
 ---
 
 Technical reference documentation for **knot**.

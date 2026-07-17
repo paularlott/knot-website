@@ -2,6 +2,11 @@ baseURL = 'https://getknot.dev/'
 languageCode = 'en-US'
 title = 'knot'
 
+# OKF frontmatter uses `tags` as dormant metadata (consumed by scripts/okf.py and
+# the OKF bundles), not as browseable site taxonomies. Suppress the auto-generated
+# /tags/ listing pages so tags stay metadata-only.
+disableKinds = ['taxonomy', 'term']
+
 [outputs]
   home = ['HTML', 'JSON']
 

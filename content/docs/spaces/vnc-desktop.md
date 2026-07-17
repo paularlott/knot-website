@@ -1,5 +1,8 @@
 ---
 title: Desktop
+description: Open a browser-based graphical VNC desktop for a space that exposes a VNC server.
+type: Guide
+tags: [spaces]
 weight: 90
 ---
 

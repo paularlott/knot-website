@@ -1,5 +1,9 @@
 ---
 title: Stack Template Format
+linkTitle: Stack Format
+description: The TOML format for stack templates, covering spaces, dependencies, custom fields, and port forwards.
+type: Guide
+tags: [stacks, templates, configuration]
 weight: 10
 ---
 

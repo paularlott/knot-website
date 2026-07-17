@@ -1,5 +1,8 @@
 ---
 title: Agent Tunnels
+description: Agent-owned tunnels inside a space keep running after the launching command exits.
+type: Guide
+tags: [networking]
 weight: 101
 ---
 

@@ -1,7 +1,9 @@
 ---
 title: knot
-weight: 10
 description: Command-line reference for the main knot binary run from your machine or as the server.
+type: Overview
+tags: [api, cli]
+weight: 10
 ---
 
 The **`knot`** command-line interface runs on your machine to manage remote spaces, templates, stacks, and scripts, and on a host to run the knot server. It connects to a server using credentials stored by [`knot connect`](#knot-connect).

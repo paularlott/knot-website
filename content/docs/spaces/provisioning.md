@@ -1,5 +1,8 @@
 ---
 title: Provisioning Scripts
+description: Write idempotent provisioning scripts that put files and directories into a desired state on space start or on demand.
+type: Guide
+tags: [spaces]
 weight: 210
 ---
 

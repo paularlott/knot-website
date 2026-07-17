@@ -1,5 +1,8 @@
 ---
 title: AI Assistant
+description: Configure knot's web-based AI assistant and CLI, which connect to an OpenAI-compatible LLM.
+type: Guide
+tags: [ai]
 weight: 20
 ---
 

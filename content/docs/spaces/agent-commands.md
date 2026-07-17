@@ -1,5 +1,8 @@
 ---
 title: Agent Commands
+description: Control a running space from within the space using knot agent commands like shutdown and restart.
+type: Guide
+tags: [spaces, scripting]
 weight: 150
 ---
 

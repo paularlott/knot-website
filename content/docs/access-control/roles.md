@@ -1,5 +1,8 @@
 ---
 title: Managing Roles
+description: Create, edit, and delete roles and assign permissions that define what users can do in knot.
+type: Guide
+tags: [security, authentication]
 weight: 20
 ---
 

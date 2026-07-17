@@ -1,5 +1,9 @@
 ---
 title: Container Specification
+linkTitle: Container Spec
+description: The unified YAML container specification used by local container templates across all local runtimes.
+type: Guide
+tags: [templates, configuration]
 weight: 20
 ---
 

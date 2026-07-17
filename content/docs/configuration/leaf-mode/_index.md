@@ -1,5 +1,8 @@
 ---
 title: Leaf Node
+description: Run a local knot server with access to cluster templates and resources.
+type: Overview
+tags: [deployment, networking, configuration]
 weight: 30
 ---
 

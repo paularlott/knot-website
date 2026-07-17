@@ -1,5 +1,9 @@
 ---
 title: Creating a Space
+linkTitle: New Space
+description: Create a space from a template to launch your first development environment.
+type: Guide
+tags: [installation, spaces]
 weight: 40
 ---
 

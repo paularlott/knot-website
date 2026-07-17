@@ -1,5 +1,8 @@
 ---
 title: Variables
+description: Variables inject dynamic values into templates at runtime, including system, user-defined, and custom types.
+type: Overview
+tags: [variables, configuration]
 weight: 40
 ---
 

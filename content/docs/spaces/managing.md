@@ -1,5 +1,9 @@
 ---
 title: Managing a Space
+linkTitle: Managing
+description: Create, start, stop, update, edit, and delete spaces in knot.
+type: Guide
+tags: [spaces]
 weight: 10
 ---
 

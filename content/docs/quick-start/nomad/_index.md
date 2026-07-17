@@ -1,6 +1,8 @@
 ---
 title: Nomad
 description: Quick start guide to getting knot up and running in a Nomad cluster.
+type: Overview
+tags: [installation, deployment]
 weight: 30
 ---
 

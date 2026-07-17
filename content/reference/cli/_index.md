@@ -1,7 +1,9 @@
 ---
 title: CLI Reference
-weight: 10
 description: Command-line reference for knot — the main knot binary and the in-space agent.
+type: Overview
+tags: [api, cli]
+weight: 10
 ---
 
 knot has two command-line interfaces, each documented separately:

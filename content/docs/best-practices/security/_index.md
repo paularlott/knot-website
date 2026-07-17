@@ -1,5 +1,8 @@
 ---
 title: Security
+description: Security considerations for deploying knot.
+type: Overview
+tags: [security]
 weight: 160
 ---
 

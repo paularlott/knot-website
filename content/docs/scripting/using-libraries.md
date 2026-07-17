@@ -1,5 +1,9 @@
 ---
 title: Using knot.* Libraries
+linkTitle: knot.* Libraries
+description: Use knot.* libraries across built-in, CLI, and external Scriptling execution contexts.
+type: Guide
+tags: [scripting, api]
 weight: 15
 ---
 

@@ -1,5 +1,8 @@
 ---
 title: Node Selection
+description: Control which server hosts a space via automatic or manual selection.
+type: Guide
+tags: [deployment, configuration]
 weight: 65
 ---
 

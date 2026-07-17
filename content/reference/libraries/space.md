@@ -1,5 +1,8 @@
 ---
 title: knot.space
+description: Space management functions for creating, running, and editing spaces.
+type: API Reference
+tags: [spaces, api, scripting]
 weight: 10
 ---
 

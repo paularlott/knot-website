@@ -1,6 +1,8 @@
 ---
-title: "Changelog"
-description: "Keep track of all changes, updates, and improvements to knot."
+title: Changelog
+description: Keep track of all changes, updates, and improvements to knot.
+type: Changelog
+tags: [changelog]
 layout: "changelog"
 draft: false
 weight: 100

@@ -1,5 +1,8 @@
 ---
 title: CSI Drivers
+description: Supported CSI drivers knot can request volumes from on Nomad clients.
+type: Overview
+tags: [storage, deployment]
 weight: 100
 ---
 

@@ -1,5 +1,8 @@
 ---
 title: MCP
+description: Enable and configure knot's Model Context Protocol server and connect MCP clients.
+type: Guide
+tags: [ai, mcp]
 weight: 10
 ---
 

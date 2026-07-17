@@ -1,5 +1,8 @@
 ---
 title: knot.template
+description: Template management functions for space configuration definitions.
+type: API Reference
+tags: [templates, api, scripting]
 weight: 50
 ---
 

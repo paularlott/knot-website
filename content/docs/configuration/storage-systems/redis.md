@@ -1,5 +1,8 @@
 ---
 title: Redis / Valkey
+description: Configure Redis or Valkey in single-server, Sentinel, or cluster modes.
+type: Guide
+tags: [storage, configuration]
 weight: 60
 ---
 

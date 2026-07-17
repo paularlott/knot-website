@@ -1,6 +1,8 @@
 ---
 title: Server Setup
 description: Creating the Nomad job and deploying to the cluster.
+type: Guide
+tags: [installation, deployment]
 weight: 30
 ---
 

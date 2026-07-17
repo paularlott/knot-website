@@ -1,5 +1,7 @@
 ---
 title: Glossary
+description: Glossary of common terms and concepts used throughout knot documentation.
+type: Overview
 weight: 60
 ---
 

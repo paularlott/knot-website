@@ -1,5 +1,8 @@
 ---
 title: knot.user
+description: User management functions including permissions, quotas, and SSH keys.
+type: API Reference
+tags: [security, authentication, api, scripting]
 weight: 70
 ---
 

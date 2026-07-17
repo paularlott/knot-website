@@ -1,5 +1,9 @@
 ---
 title: Accessing Web Pages
+linkTitle: Web Pages
+description: View web pages and services exposed by a space directly in the browser via the Ports menu.
+type: Guide
+tags: [spaces, networking]
 weight: 60
 ---
 

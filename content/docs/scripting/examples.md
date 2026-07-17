@@ -1,5 +1,8 @@
 ---
 title: Script Examples
+description: Practical scripts using the knot.* and scriptling.* libraries for common automation tasks.
+type: Guide
+tags: [scripting]
 weight: 10
 ---
 

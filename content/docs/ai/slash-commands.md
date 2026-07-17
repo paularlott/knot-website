@@ -1,5 +1,8 @@
 ---
 title: Slash Commands
+description: Create and use slash commands as reusable prompt templates in the AI assistant chat.
+type: Guide
+tags: [ai, scripting]
 weight: 5
 ---
 

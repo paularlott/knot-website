@@ -1,5 +1,9 @@
 ---
 title: Volume Specification
+linkTitle: Volume Spec
+description: The YAML schema for volumes and managed host paths used by local container templates and standalone volumes.
+type: Guide
+tags: [templates, storage, configuration]
 weight: 30
 ---
 

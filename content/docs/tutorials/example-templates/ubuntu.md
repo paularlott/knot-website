@@ -1,5 +1,8 @@
 ---
 title: Ubuntu
+description: Template for a simple Ubuntu 24.04 space with a persistent home volume.
+type: Tutorial
+tags: [templates]
 weight: 10
 ---
 

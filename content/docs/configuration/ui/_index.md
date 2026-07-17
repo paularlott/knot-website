@@ -1,5 +1,8 @@
 ---
 title: User Interface
+description: Customize the knot web interface with custom logos and Gravatar integration.
+type: Overview
+tags: [configuration]
 weight: 70
 ---
 

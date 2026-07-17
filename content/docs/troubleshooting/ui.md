@@ -1,5 +1,8 @@
 ---
 title: User Interface
+description: Troubleshooting UI customization issues.
+type: Guide
+tags: [troubleshooting]
 weight: 50
 ---
 

@@ -1,5 +1,9 @@
 ---
 title: Backup and Restore
+linkTitle: Backup / Restore
+description: Troubleshooting backup and restore issues.
+type: Guide
+tags: [troubleshooting, backup]
 weight: 70
 ---
 

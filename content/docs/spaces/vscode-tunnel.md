@@ -1,5 +1,8 @@
 ---
 title: VSCode Tunnel
+description: Connect to a space from desktop Visual Studio Code through a managed VSCode tunnel.
+type: Guide
+tags: [spaces, networking]
 weight: 40
 ---
 

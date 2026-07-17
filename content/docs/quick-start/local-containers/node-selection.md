@@ -1,6 +1,8 @@
 ---
 title: Node Selection
 description: How knot selects servers for space deployment in multi-server setups.
+type: Guide
+tags: [deployment]
 weight: 50
 ---
 

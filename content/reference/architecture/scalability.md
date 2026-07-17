@@ -1,5 +1,8 @@
 ---
 title: Scalability
+description: Scaling strategies and performance for knot — vertical and horizontal scaling, database options, and resource tuning.
+type: Reference
+tags: [architecture, deployment]
 weight: 40
 ---
 

@@ -1,5 +1,8 @@
 ---
 title: knot.methods
+description: Register JSON-RPC methods for the current space from startup scripts.
+type: API Reference
+tags: [api, scripting]
 weight: 25
 ---
 

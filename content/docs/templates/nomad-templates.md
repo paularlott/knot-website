@@ -1,5 +1,8 @@
 ---
 title: Nomad Templates
+description: Nomad templates define environments using a Nomad HCL job specification with optional CSI and host volumes.
+type: Guide
+tags: [templates, deployment]
 weight: 20
 ---
 

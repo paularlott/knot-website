@@ -1,5 +1,8 @@
 ---
 title: Code Server
+description: Access the browser-based Code Server for in-browser VS Code-style development within a space.
+type: Guide
+tags: [spaces]
 weight: 50
 ---
 

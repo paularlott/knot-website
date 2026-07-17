@@ -1,5 +1,8 @@
 ---
 title: SSL
+description: Use Caddy with Cloudflare to issue valid SSL certificates for knot.
+type: Tutorial
+tags: [networking, deployment]
 weight: 40
 ---
 

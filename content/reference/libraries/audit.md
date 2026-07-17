@@ -1,5 +1,8 @@
 ---
 title: knot.audit
+description: Audit log search and filtering functions.
+type: API Reference
+tags: [security, api, scripting]
 weight: 130
 ---
 

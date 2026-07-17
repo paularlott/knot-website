@@ -1,5 +1,8 @@
 ---
 title: Authentication
+description: User authentication and access control.
+type: Guide
+tags: [security, authentication]
 weight: 20
 ---
 

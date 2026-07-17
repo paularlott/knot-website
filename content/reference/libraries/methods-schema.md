@@ -1,5 +1,8 @@
 ---
 title: knot.methods.schema
+description: Build JSON Schema fragments for method params and result definitions.
+type: API Reference
+tags: [api, scripting]
 weight: 26
 ---
 

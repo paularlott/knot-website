@@ -1,5 +1,9 @@
 ---
 title: Web Based Terminal
+linkTitle: Terminal
+description: Access a shell in a running space directly from the browser via the web-based terminal.
+type: Guide
+tags: [spaces]
 weight: 30
 ---
 

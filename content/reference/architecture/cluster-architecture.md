@@ -1,5 +1,9 @@
 ---
 title: Cluster Architecture
+linkTitle: Clusters
+description: How knot's leaderless cluster works — equal servers, gossip sync, data flow, high availability, and disaster recovery.
+type: Reference
+tags: [architecture, deployment]
 weight: 20
 ---
 

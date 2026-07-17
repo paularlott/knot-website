@@ -1,5 +1,9 @@
 ---
 title: Backup and Restore
+linkTitle: Backup / Restore
+description: Protect your knot configuration and data with backups.
+type: Overview
+tags: [backup]
 weight: 170
 ---
 

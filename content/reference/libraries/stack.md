@@ -1,5 +1,8 @@
 ---
 title: knot.stack
+description: Stack template management and stack lifecycle functions.
+type: API Reference
+tags: [stacks, templates, api, scripting]
 weight: 15
 ---
 

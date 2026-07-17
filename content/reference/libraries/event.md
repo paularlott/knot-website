@@ -1,5 +1,8 @@
 ---
 title: knot.event
+description: Event emission in space-side scripts and payload accessors in sink scripts.
+type: API Reference
+tags: [events, api, scripting]
 weight: 135
 ---
 

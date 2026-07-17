@@ -1,5 +1,8 @@
 ---
 title: System Variables
+description: System variables are automatically provided by knot to reference space, template, user, and server details.
+type: Guide
+tags: [variables, configuration]
 weight: 10
 ---
 

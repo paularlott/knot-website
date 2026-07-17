@@ -1,5 +1,8 @@
 ---
-title: "Early 2026"
+title: Early 2026
+description: Archive of knot changelog entries and release notes from early 2026.
+type: Changelog
+tags: [changelog]
 date: 2026-05-15
 layout: "changelog"
 draft: false

@@ -1,6 +1,8 @@
 ---
-title: "Space Pools"
-description: "Fixed-size, self-healing groups of spaces with HTTP/TCP port routing and method draining."
+title: Space Pools
+description: Fixed-size, self-healing groups of spaces with HTTP/TCP port routing and method draining.
+type: Guide
+tags: [spaces, configuration]
 weight: 82
 ---
 

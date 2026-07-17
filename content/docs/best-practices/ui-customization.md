@@ -1,5 +1,8 @@
 ---
 title: UI Customization
+description: Best practices for customizing the knot interface.
+type: Guide
+tags: [configuration]
 weight: 50
 ---
 

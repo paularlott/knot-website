@@ -1,6 +1,8 @@
 ---
 title: Knot Core vs Knot Pro
+linkTitle: Core vs Pro
 description: Compare the open-source Knot Core release with Knot Pro and see which features are available in each.
+type: Reference
 hideSidebar: true
 ---
 

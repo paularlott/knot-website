@@ -1,5 +1,8 @@
 ---
 title: System Prompt
+description: Customize the system prompt the AI assistant uses to operate within the knot environment.
+type: Guide
+tags: [ai]
 weight: 40
 ---
 

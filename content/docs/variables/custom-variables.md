@@ -1,5 +1,8 @@
 ---
 title: Custom Variables
+description: Custom variables are defined in templates and set per-space using the .custom prefix when creating spaces.
+type: Guide
+tags: [variables, configuration]
 weight: 30
 ---
 

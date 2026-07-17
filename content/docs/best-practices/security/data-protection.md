@@ -1,5 +1,8 @@
 ---
 title: Data Protection
+description: Protecting data at rest and in transit.
+type: Guide
+tags: [security, storage, backup]
 weight: 30
 ---
 

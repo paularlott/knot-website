@@ -1,5 +1,9 @@
 ---
 title: Nomad & Consul
+linkTitle: Nomad & Consul
+description: Install and configure Nomad, Consul, and Podman as the container runtime.
+type: Tutorial
+tags: [installation, deployment]
 weight: 10
 ---
 

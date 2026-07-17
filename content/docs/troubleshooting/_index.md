@@ -1,5 +1,8 @@
 ---
 title: Troubleshooting
+description: Common issues and solutions organized by topic.
+type: Overview
+tags: [troubleshooting]
 weight: 130
 ---
 

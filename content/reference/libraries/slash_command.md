@@ -1,5 +1,8 @@
 ---
 title: knot.slash_command
+description: Manage slash commands — reusable prompt templates invoked from the AI chat.
+type: API Reference
+tags: [ai, scripting, api]
 weight: 45
 ---
 

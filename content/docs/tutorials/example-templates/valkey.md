@@ -1,5 +1,8 @@
 ---
 title: Valkey
+description: Template for deploying a Valkey server accessible via port forwarding.
+type: Tutorial
+tags: [templates, storage]
 weight: 30
 ---
 

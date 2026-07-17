@@ -1,5 +1,8 @@
 ---
 title: Using Stacks
+description: Create, list, start, stop, restart, and delete stacks from stack templates using the CLI and scripts.
+type: Guide
+tags: [stacks, templates]
 weight: 20
 ---
 

@@ -1,5 +1,8 @@
 ---
 title: Access Control
+description: Manage permissions and resource access in knot using users, roles, and groups.
+type: Overview
+tags: [security, authentication]
 weight: 30
 ---
 

@@ -1,5 +1,8 @@
 ---
 title: Access Control
+description: Best practices for managing users, roles, and groups.
+type: Guide
+tags: [security, authentication]
 weight: 30
 ---
 

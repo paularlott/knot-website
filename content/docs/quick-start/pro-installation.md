@@ -1,6 +1,9 @@
 ---
 title: Knot Pro Installation
+linkTitle: Pro Installation
 description: Install and configure Knot Pro to unlock advanced features.
+type: Guide
+tags: [installation, deployment]
 weight: 11
 ---
 

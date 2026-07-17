@@ -1,7 +1,9 @@
 ---
 title: knot
-layout: index
 description: Self hosted solution for managing cloud development environments.
+type: Overview
+tags: [spaces, templates, deployment]
+layout: index
 ---
 
 {{< big-title

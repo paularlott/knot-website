@@ -1,5 +1,8 @@
 ---
 title: Variables
+description: Best practices for using variables in templates.
+type: Guide
+tags: [variables, configuration]
 weight: 40
 ---
 

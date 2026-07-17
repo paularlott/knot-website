@@ -1,5 +1,8 @@
 ---
 title: Cluster Mode
+description: Configure knot servers in a leaderless cluster using the gossip protocol.
+type: Overview
+tags: [deployment, configuration]
 weight: 20
 ---
 

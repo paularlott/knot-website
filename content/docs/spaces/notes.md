@@ -1,5 +1,8 @@
 ---
 title: Space Notes
+description: Set and update a space's description and dynamic note from the UI or within the space.
+type: Guide
+tags: [spaces]
 weight: 140
 ---
 

@@ -1,5 +1,8 @@
 ---
 title: DNS Server
+description: Built-in DNS server for knot domain name resolution with upstream forwarding.
+type: Overview
+tags: [networking, configuration]
 weight: 70
 ---
 

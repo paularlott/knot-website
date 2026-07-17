@@ -1,5 +1,8 @@
 ---
 title: DNS
+description: Troubleshooting DNS server issues.
+type: Guide
+tags: [troubleshooting, networking]
 weight: 60
 ---
 

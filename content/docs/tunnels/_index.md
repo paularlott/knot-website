@@ -1,5 +1,8 @@
 ---
 title: Tunnels
+description: Expose local or in-space HTTP and HTTPS services on the internet via a knot server.
+type: Overview
+tags: [networking]
 weight: 100
 ---
 

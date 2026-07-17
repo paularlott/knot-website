@@ -1,5 +1,8 @@
 ---
 title: Volumes
+description: Standalone volumes persist independently of spaces and can be attached to multiple spaces for shared storage.
+type: Overview
+tags: [storage]
 weight: 80
 ---
 

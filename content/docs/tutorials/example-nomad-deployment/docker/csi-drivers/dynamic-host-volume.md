@@ -1,5 +1,8 @@
 ---
 title: Host Volumes
+description: Use Nomad's built-in dynamic host volume driver for local storage.
+type: Tutorial
+tags: [storage, deployment]
 weight: 5
 ---
 

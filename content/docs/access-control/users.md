@@ -1,5 +1,9 @@
 ---
 title: User Management
+linkTitle: Users
+description: Create, edit, and delete users, and manage their roles, groups, and resource limits in knot.
+type: Guide
+tags: [security, authentication]
 weight: 30
 ---
 

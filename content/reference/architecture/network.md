@@ -1,5 +1,9 @@
 ---
 title: Network Architecture
+linkTitle: Network
+description: knot's network configuration — ports, client/agent/server communication paths, and TLS/VPN hardening guidance.
+type: Reference
+tags: [architecture, networking]
 weight: 30
 ---
 

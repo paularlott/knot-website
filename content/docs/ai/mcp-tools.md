@@ -1,5 +1,8 @@
 ---
 title: MCP Tools
+description: Built-in MCP tools for managing spaces, templates, stacks, files, and commands in knot.
+type: Guide
+tags: [ai, mcp]
 weight: 12
 ---
 

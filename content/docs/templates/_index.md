@@ -1,5 +1,8 @@
 ---
 title: Templates
+description: Templates are reusable blueprints that define compute, storage, networking, and tooling for knot spaces.
+type: Overview
+tags: [templates]
 weight: 50
 ---
 

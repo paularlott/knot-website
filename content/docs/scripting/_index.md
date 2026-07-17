@@ -1,5 +1,8 @@
 ---
 title: Scripting
+description: Automate knot with Scriptling, a Python-like scripting language exposed as MCP tools and libraries.
+type: Overview
+tags: [scripting]
 weight: 85
 ---
 

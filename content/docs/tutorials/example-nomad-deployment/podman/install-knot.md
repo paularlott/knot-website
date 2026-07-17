@@ -1,5 +1,8 @@
 ---
 title: Install Knot
+description: Install and set up knot by following the Nomad server setup guide.
+type: Tutorial
+tags: [installation, deployment]
 weight: 50
 ---
 

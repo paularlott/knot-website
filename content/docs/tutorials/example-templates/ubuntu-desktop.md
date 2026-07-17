@@ -1,5 +1,8 @@
 ---
 title: Ubuntu Desktop
+description: Template for an Ubuntu 24.04 space running an XFCE desktop via KasmVNC.
+type: Tutorial
+tags: [templates]
 weight: 20
 ---
 

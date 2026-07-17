@@ -1,6 +1,8 @@
 ---
 title: Multi-Server Setup
 description: Configure knot to run across multiple servers with Local Containers.
+type: Guide
+tags: [deployment]
 weight: 15
 ---
 

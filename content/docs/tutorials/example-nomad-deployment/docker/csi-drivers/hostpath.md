@@ -1,5 +1,8 @@
 ---
 title: Hostpath
+description: Deploy the hostpath CSI driver for simple, single-server storage.
+type: Tutorial
+tags: [storage, deployment]
 weight: 10
 ---
 

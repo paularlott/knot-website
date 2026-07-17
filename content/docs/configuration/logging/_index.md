@@ -1,5 +1,8 @@
 ---
 title: Logging
+description: Console and structured HTTP logging with VictoriaLogs, Loki, and Elasticsearch support.
+type: Overview
+tags: [logging, configuration]
 weight: 70
 ---
 

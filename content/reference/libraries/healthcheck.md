@@ -1,5 +1,8 @@
 ---
 title: knot.healthcheck
+description: Functions for space health monitoring in agent-side health check scripts.
+type: API Reference
+tags: [api, scripting]
 weight: 40
 ---
 

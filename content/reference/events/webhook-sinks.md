@@ -1,5 +1,8 @@
 ---
 title: Webhook Sinks
+description: Webhook sinks POST matching events to a URL with an HMAC-signed, Go-templated JSON body for full payload control.
+type: Reference
+tags: [api, events]
 weight: 10
 ---
 

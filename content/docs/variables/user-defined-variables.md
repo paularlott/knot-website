@@ -1,5 +1,9 @@
 ---
 title: User Defined Variables
+linkTitle: User Variables
+description: User-defined variables are created in the web interface and shared across templates via the .var. prefix.
+type: Guide
+tags: [variables]
 weight: 20
 ---
 

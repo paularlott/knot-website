@@ -1,5 +1,8 @@
 ---
 title: Ceph RBD
+description: Deploy the Ceph RBD CSI driver to mount Ceph block devices into spaces.
+type: Tutorial
+tags: [storage, deployment]
 weight: 30
 ---
 

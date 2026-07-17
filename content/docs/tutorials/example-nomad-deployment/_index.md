@@ -1,5 +1,8 @@
 ---
 title: Nomad Deployment
+description: Deploy a Nomad cluster to run knot and the spaces it manages.
+type: Overview
+tags: [deployment, installation]
 weight: 10
 ---
 

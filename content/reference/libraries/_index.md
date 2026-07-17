@@ -1,5 +1,8 @@
 ---
 title: Library Reference
+description: Knot's knot.* namespace libraries for interacting with the platform from scripts.
+type: Overview
+tags: [api, scripting]
 weight: 30
 ---
 

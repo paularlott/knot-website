@@ -1,5 +1,8 @@
 ---
 title: CephFS
+description: Deploy the CephFS CSI driver to mount shared CephFS filesystems into spaces.
+type: Tutorial
+tags: [storage, deployment]
 weight: 20
 ---
 

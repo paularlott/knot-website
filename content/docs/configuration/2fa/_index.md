@@ -1,5 +1,9 @@
 ---
 title: Two Factor Authentication
+linkTitle: 2FA
+description: Enable TOTP-based two-factor authentication for enhanced login security.
+type: Overview
+tags: [security, authentication, configuration]
 weight: 60
 ---
 

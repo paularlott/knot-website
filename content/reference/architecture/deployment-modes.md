@@ -1,5 +1,8 @@
 ---
 title: Deployment Modes
+description: The three knot deployment modes — standalone, cluster, and leaf — their trade-offs, and how zones organize servers.
+type: Reference
+tags: [architecture, deployment]
 weight: 10
 ---
 
