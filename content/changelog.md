@@ -14,7 +14,9 @@ navSection: docs
 {{< version "v0.31.0" >}}
 
 {{< changelog-item "added" >}}
-- **Direct agent-to-agent connections** {{< pro-badge >}}: agents in the same zone can now connect directly to each other for port-forwarded traffic, bypassing the server relay. The server coordinates the introduction (resolving the target's address), the agents authenticate with a user-scoped shared secret, and a single session per peer multiplexes all forwarded connections. Relay through the server remains the automatic fallback when direct isn't available or fails. Port forwards show their connection mode (`direct` or `relay`) in `knot port list` and the UI. Enabled by default in Pro for Docker, Podman, and Apple Containers.
+- **Direct agent-to-agent connections** {{< pro-badge >}}: agents in the same zone can now connect directly to each other for port-forwarded traffic, bypassing the server relay. The server coordinates the introduction (resolving the target's address), the agents authenticate with a user-scoped shared secret, and a single connection per peer carries all forwarded traffic. Relay through the server remains the automatic fallback when direct isn't available or fails. Port forwards show their connection mode (`direct` or `relay`) in `knot port list` and the UI. Enabled by default in Pro for Docker, Podman, and Apple Containers.
+
+- **Port forward throttling**: apply latency, jitter, and bandwidth limits to any port forward to simulate real-world network conditions. Use `knot port throttle <port> --latency 50ms --jitter 10ms --bandwidth 1024` from inside a space, or `knot space port throttle` / the web UI {{< pro-badge >}}. Settings are runtime-only (not persisted), apply to both relay and direct connections, and show in `knot port list`. Clear with `--reset`.
 
 {{< /changelog-item >}}
 

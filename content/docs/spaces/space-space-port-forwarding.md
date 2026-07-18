@@ -77,6 +77,57 @@ knot port stop 8080
 
 ---
 
+## Port Forward Throttling
+
+Apply latency, jitter, and bandwidth limits to simulate real-world network conditions on any port forward.
+
+### From Inside a Space
+
+```shell
+knot port throttle <local-port> [--latency Nms] [--jitter Nms] [--bandwidth NKB/s] [--reset]
+```
+
+Examples:
+```shell
+# Add 200ms latency with 50ms jitter
+knot port throttle 3306 --latency 200ms --jitter 50ms
+
+# Limit to 100 KB/s
+knot port throttle 3306 --bandwidth 100
+
+# Simulate slow, unstable connection
+knot port throttle 3306 --latency 100ms --jitter 200ms --bandwidth 50
+
+# Clear all limits
+knot port throttle 3306 --reset
+```
+
+### From Desktop or Web UI (Pro)
+
+```shell
+knot space port throttle <space> <local-port> --latency 200ms --jitter 50ms
+```
+
+Or use the web UI {{< pro-badge >}}: open the space's port forwards panel, click edit on a forward, and set latency, jitter, and bandwidth values. Empty fields mean no limit.
+
+### How It Works
+
+- **Latency**: each direction gets the specified delay (e.g. 50ms each way = 100ms round trip)
+- **Jitter**: random variance added to or subtracted from the latency, uniform distribution
+- **Bandwidth**: proportional throttling per write, limiting throughput in both directions independently
+- Settings are runtime-only: they do not persist across agent restarts and are not stored in the space record
+- Throttling applies to both relay and direct connections equally
+- Changes take effect immediately on existing connections (no need to recreate the forward)
+
+`knot port list` shows active throttle settings:
+```
+Active port forwards:
+  3306 -> db:3306 (persistent, direct, 200ms ±50ms 100KB/s)
+  6379 -> cache:6379 (persistent, relay)
+```
+
+---
+
 ## Desktop Client Commands
 
 The following commands are run from your desktop machine using the knot CLI:
