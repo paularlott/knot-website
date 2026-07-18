@@ -95,6 +95,9 @@ knot port throttle 3306 --latency 200ms --jitter 50ms
 # Limit to 100 KB/s
 knot port throttle 3306 --bandwidth 100
 
+# Kill connections after 5 seconds
+knot port throttle 3306 --timeout 5000ms
+
 # Simulate slow, unstable connection
 knot port throttle 3306 --latency 100ms --jitter 200ms --bandwidth 50
 
@@ -115,6 +118,7 @@ Or use the web UI {{< pro-badge >}}: open the space's port forwards panel, click
 - **Latency**: each direction gets the specified delay (e.g. 50ms each way = 100ms round trip)
 - **Jitter**: random variance added to or subtracted from the latency, uniform distribution
 - **Bandwidth**: proportional throttling per write, limiting throughput in both directions independently
+- **Timeout**: kills each connection after the specified number of milliseconds, simulating a connection drop
 - Settings are runtime-only: they do not persist across agent restarts and are not stored in the space record
 - Throttling applies to both relay and direct connections equally
 - Changes take effect immediately on existing connections (no need to recreate the forward)
@@ -123,6 +127,7 @@ Or use the web UI {{< pro-badge >}}: open the space's port forwards panel, click
 ```
 Active port forwards:
   3306 -> db:3306 (persistent, direct, 200ms ±50ms 100KB/s)
+  9000 -> payments:9000 (persistent, relay, timeout=5000ms)
   6379 -> cache:6379 (persistent, relay)
 ```
 
