@@ -104,6 +104,11 @@ hideSidebar: true
         <td><span class="compare-yes">Included</span> UI-driven forwarded port management</td>
       </tr>
       <tr>
+        <td><strong>Visual port Throttling</strong></td>
+        <td><span class="compare-no">Not included</span></td>
+        <td><span class="compare-yes">Included</span> UI editing of port throttling</td>
+      </tr>
+      <tr>
         <td><strong>Direct agent-to-agent connections</strong></td>
         <td><span class="compare-no">Not included</span> relay only</td>
         <td><span class="compare-yes">Included</span> agents connect directly with automatic relay fallback</td>
