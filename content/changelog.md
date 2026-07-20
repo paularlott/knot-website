@@ -18,6 +18,17 @@ navSection: docs
 
 - **Port forward throttling**: apply latency, jitter, and bandwidth limits to any port forward to simulate real-world network conditions. Use `knot port throttle <port> --latency 50ms --jitter 10ms --bandwidth 1024` from inside a space, or `knot space port throttle` / the web UI {{< pro-badge >}}. Settings are runtime-only (not persisted), apply to both relay and direct connections, and show in `knot port list`. Clear with `--reset`.
 
+- **`knot space delete-file`**: remove a file or directory in a running space from the desktop CLI. `--recursive` removes a directory and its contents (os.RemoveAll semantics); a non-recursive delete on a non-empty directory fails. Missing paths return success so the call is idempotent — safe to use in scripts and CI that computed their delete list against a slightly stale snapshot. Mirrored by `knot.space.delete_file` in the [scripting library](../reference/libraries/space/).
+
+- **`knot space mirror`**: mirror a local directory tree to a space in one shot. Walks the source, uploads files in parallel (default 8 workers, configurable via `--parallel`), preserves each file's mtime and permission bits on the destination, and deletes any remote file that doesn't exist locally — the destination ends up as a one-way mirror of the source. Supports `--exclude`/`-x` glob patterns (repeatable) and `--dry-run` to preview without performing any I/O. For continuous two-way sync, mutagen against the space's SSH endpoint remains the recommendation.
+
+- **`knot.space.find_entries`**: a metadata-rich variant of `knot.space.find` that returns `{path, size, mtime, is_dir}` per match — enough to decide whether an entry has changed without re-reading the bytes (e.g. for differential sync tools). The agent stats every match in this mode, so it's opt-in; `knot.space.find` retains its original fast path (no per-entry stat when size/mtime filters are inactive).
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- **`FindResponse` shape**: now carries both `paths` (default, cheap) and `entries` (only when the request sets `include_metadata=true`). Callers that only need path strings — including `knot.space.find`, the MCP `find` tool, and `knot space find` without `--long` — get the original hot path back. The CLI `knot space find` gains a `--long`/`-l` flag for `ls`-style output with size, mtime, and type.
+
+- **File uploads preserve source metadata**: the agent applies the source file's mtime (`os.Chtimes`) and permission bits (`os.Chmod`) after the content write, so a re-upload of an unchanged file is detectable on the next pass. Affects `knot space mirror`, the `WriteSpaceFile` HTTP endpoint, and the `knot.space.write_file` scriptling function via optional new fields.
 {{< /changelog-item >}}
 
 ---
