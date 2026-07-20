@@ -187,6 +187,9 @@ knot space mirror --verify ./src <space>:/var/www/html
 
 # Verbose output — show every action per file
 knot space mirror --verbose ./src <space>:/var/www/html
+
+# Watch for local changes and sync them live (Ctrl+C to stop)
+knot space mirror --watch --exclude node_modules ./src <space>:/var/www/html
 ```
 
 `knot space mirror` uploads a local directory tree to a space in parallel (default 8 workers, configurable via `--parallel N`). Each file's mtime and permission bits are preserved on the destination. After the uploads complete, any file on the space that doesn't exist locally is removed (subject to `--exclude`) — the destination ends up as a one-way mirror of the source.
@@ -196,6 +199,8 @@ knot space mirror --verbose ./src <space>:/var/www/html
 By default mirror decides whether a file needs uploading by comparing mtime and size (fast, uses stat only). To force content-based comparison, pass `--hash`: each file is crc64-hashed locally before upload and remotely during the walk — only truly different bytes are transferred. Pass `--verify` for a read-only check: every file is hashed on both sides and mismatches are reported without uploading.
 
 `--verbose` prints every file action (upload, skip, delete, hash, verify) to stderr as the mirror progresses.
+
+`--watch` keeps mirror running after the initial sync. It watches the local tree for file creations, modifications, and deletions, and syncs each change to the space in real time (one-way: local → space). Excludes are honoured — excluded paths are never watched or uploaded. New directories are picked up automatically, including their contents. Vim swap files (`.*.swp`) are excluded by default. Events are debounced (300ms) so editors that save atomically (write temp → rename) produce a single upload, not a burst. Press Ctrl+C to stop.
 
 Mirror is one-directional (local → space) and always performs deletes — that's what "mirror" means. For continuous two-way sync, mutagen against the space's SSH endpoint is the recommendation.
 
