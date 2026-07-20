@@ -11,6 +11,34 @@ navSection: docs
 
 ## July 2026
 
+{{< version "v0.31.0" >}}
+
+{{< changelog-item "added" >}}
+- **Direct agent-to-agent connections** {{< pro-badge >}}: agents in the same zone can now connect directly to each other for port-forwarded traffic, bypassing the server relay for better performance. Falls back to relay automatically when direct isn't available. Port forwards show their connection mode (`direct` or `relay`) in `knot port list` and the UI. Enabled by default in Pro for Docker, Podman, and Apple Containers.
+
+- **Port forward throttling**: simulate real-world network conditions by applying latency, jitter, and bandwidth limits to any port forward. Configure with `knot port throttle` from inside a space or via the web UI {{< pro-badge >}}.
+
+- **`knot space delete-file`**: remove a file or directory in a running space from the desktop CLI. Safe to use in scripts — deleting a missing path is treated as success. Mirrored by `knot.space.delete_file` in the [scripting library](../reference/libraries/space/).
+
+- **`knot space mirror`**: mirror a local directory tree to a space in one shot, with parallel uploads, glob exclusions, and an optional `--watch` mode for real-time one-way sync on file changes. For continuous two-way sync, mutagen against the space's SSH endpoint remains the recommendation.
+
+- **`knot.space.find_entries`**: a metadata-rich variant of `knot.space.find` that returns size, mtime, and type alongside each path — useful for differential sync without re-reading file contents.
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- **`FindResponse` shape**: the response now includes a fast `paths` field (default) and a metadata-rich `entries` field (opt-in). The CLI gains `--long`/`-l` for ls-style output.
+
+- **File uploads preserve source metadata**: uploaded files now retain their original modification time and permissions, making re-upload detection reliable across mirror, API, and script operations.
+
+- **Space template capabilities in API**: API responses now expose template-level capability flags (SSH, terminal, code server, VS Code tunnel), available even when the space is stopped. `knot ssh-config update` uses these to keep entries for stopped spaces with SSH — only deleted spaces are removed.
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- **Login redirect on expired session**: fixed a 503 error that occurred when a session cookie was stale after a server restart — you're now correctly redirected to the login page.
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.30.1" >}}
 
 {{< changelog-item "added" >}}

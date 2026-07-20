@@ -120,6 +120,7 @@ auth:
 
 - **Ports**: The `ports` section is optional. It is only required if the ports need to be accessed directly, rather than through **knot**.
 - **Environment Variables**: Environment variables can be used to pass dynamic information, such as user details, server URLs, and space-specific configurations.
+- **Direct Connections**: The server automatically injects `KNOT_PEER_EXTERNAL_PORT` for direct agent-to-agent connections (Pro). `KNOT_PEER_PORT` (the in-container listen port, default 12202) is read from the template environment — set `KNOT_PEER_PORT=0` to disable. See [Direct Agent-to-Agent Connections](/docs/spaces/space-space-port-forwarding/#direct-agent-to-agent-connections).
 
 ---
 

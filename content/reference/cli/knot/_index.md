@@ -167,6 +167,57 @@ knot space copy <source-space>:/app/build <dest-space>:/var/www/html
 
 `--workdir`, `-w`: working directory for relative paths in a space.
 
+### Uploading a directory tree
+
+```shell
+# Mirror a local directory to a space: upload the tree AND delete remote files not present locally
+knot space mirror ./src <space>:/var/www/html
+
+# Preview what would be uploaded/deleted without doing it
+knot space mirror --dry-run ./src <space>:/var/www/html
+
+# Skip patterns (repeatable); basename, full relative path, or ancestor match
+knot space mirror --exclude node_modules --exclude '*.log' ./src <space>:/var/www/html
+
+# Content-based comparison (crc64) — upload only when bytes differ
+knot space mirror --hash ./src <space>:/var/www/html
+
+# Read-only integrity check — report mismatches without uploading
+knot space mirror --verify ./src <space>:/var/www/html
+
+# Verbose output — show every action per file
+knot space mirror --verbose ./src <space>:/var/www/html
+
+# Watch for local changes and sync them live (Ctrl+C to stop)
+knot space mirror --watch --exclude node_modules ./src <space>:/var/www/html
+```
+
+`knot space mirror` uploads a local directory tree to a space in parallel (default 8 workers, configurable via `--parallel N`). Each file's mtime and permission bits are preserved on the destination. After the uploads complete, any file on the space that doesn't exist locally is removed (subject to `--exclude`) — the destination ends up as a one-way mirror of the source.
+
+`--dry-run` lists every intended upload and delete without performing any I/O against the space.
+
+By default mirror decides whether a file needs uploading by comparing mtime and size (fast, uses stat only). To force content-based comparison, pass `--hash`: each file is crc64-hashed locally before upload and remotely during the walk — only truly different bytes are transferred. Pass `--verify` for a read-only check: every file is hashed on both sides and mismatches are reported without uploading.
+
+`--verbose` prints every file action (upload, skip, delete, hash, verify) to stderr as the mirror progresses.
+
+`--watch` keeps mirror running after the initial sync. It watches the local tree for file creations, modifications, and deletions, and syncs each change to the space in real time (one-way: local → space). Excludes are honoured — excluded paths are never watched or uploaded. New directories are picked up automatically, including their contents. Vim swap files (`.*.swp`) are excluded by default. Events are debounced (300ms) so editors that save atomically (write temp → rename) produce a single upload, not a burst. Press Ctrl+C to stop.
+
+Mirror is one-directional (local → space) and always performs deletes — that's what "mirror" means. For continuous two-way sync, mutagen against the space's SSH endpoint is the recommendation.
+
+### Deleting files
+
+```shell
+# Remove a single file
+knot space delete-file <space> /var/www/old.html
+
+# Remove a directory and its contents
+knot space delete-file --recursive <space> /var/www/old_dir
+
+# Non-recursive delete on a non-empty directory fails (matches os.Remove semantics)
+```
+
+Missing paths are treated as success — safe to call from scripts and CI that computed their delete list against a slightly stale snapshot. `--recursive` uses os.RemoveAll semantics; without it, a non-empty directory delete fails rather than silently descending.
+
 ### Reading and writing files
 
 ```shell
@@ -183,6 +234,21 @@ echo "data" | knot space write-file <space> <path> --content -
 # Append or prepend instead of overwriting
 knot space write-file <space> /app/log.txt --content "new entry" --mode append
 knot space write-file <space> /app/header.py --content "# License" --mode prepend
+```
+
+`knot.space.write_file` (scriptling) and the underlying HTTP endpoint also accept optional `mtime_ns` (Unix nanoseconds) and `file_perm` (int bits like `0o644`) for callers that need the destination file to match a known source's metadata — used internally by `copy --recursive`.
+
+### Finding files
+
+```shell
+# Names only — fast (no per-entry stat on the space when filters are inactive)
+knot space find web --name '*.php'
+
+# ls-style output with size, mtime, and type — incurs a per-entry stat
+knot space find web --long
+
+# Structured JSON (entries when --long, otherwise paths)
+knot space find web --long --json | jq .
 ```
 
 ### Custom fields and port forwards

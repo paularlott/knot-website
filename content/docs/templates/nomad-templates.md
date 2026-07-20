@@ -129,6 +129,10 @@ job "${{.space.name}}-${{.user.username}}" {
 }
 ```
 
+{{< tip >}}
+**Direct agent-to-agent connections** {{< pro-badge >}}: To enable direct peer connections for Nomad spaces, add a `network` block with `mode = "bridge"` to the group and declare your service ports. The server automatically injects the peer port (`knot_agent_peer`), adds it to the task's `config.ports`, and registers a `knot-agent-<space-id>` service. Without bridge mode, port-forwarded traffic uses server relay. See [Direct Agent-to-Agent Connections](/docs/spaces/space-space-port-forwarding/#direct-agent-to-agent-connections).
+{{< /tip >}}
+
 ---
 
 ### Volumes

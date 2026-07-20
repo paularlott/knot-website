@@ -50,13 +50,15 @@ The `knot.space` library provides space management functions for scripts.
 | `eval(space_name, code, args=None)` | Execute inline Scriptling code in a space |
 | `run(space_name, command, args=[], timeout=30, workdir='')` | Execute a command in a space |
 | `read_file(space_name, file_path, offset=0, limit=0)` | Read file contents (or a 1-based line range) from a space |
-| `write_file(space_name, file_path, content, mode='overwrite')` | Write content to a file (overwrite/append/prepend) |
+| `write_file(space_name, file_path, content, mode='overwrite', ...)` | Write content to a file (overwrite/append/prepend; optional mtime + perm) |
 | `grep(space_name, pattern, path, ...)` | Search file contents (regex or literal) |
 | `find(space_name, path='.', ...)` | Find files/directories by name, type, mtime, size |
+| `find_entries(space_name, path='.', ...)` | Like `find()` but each entry includes size, mtime, is_dir; opt-in hash, link_target, file_perm |
 | `sed_replace(space_name, old, new, path, ...)` | Replace literal string in files (in-place) |
 | `sed_replace_pattern(space_name, pattern, new, path, ...)` | Replace regex matches in files (in-place) |
 | `sed_extract(space_name, pattern, path, ...)` | Extract regex capture groups from files |
 | `edit_file(space_name, file_path, search, replace, ...)` | Targeted search-and-replace edit (unique match required) |
+| `delete_file(space_name, file_path, recursive=False, ...)` | Delete a file or directory (idempotent on missing paths) |
 | `port_forward(source_space, local_port, remote_space, remote_port, persistent=False, force=False)` | Forward a port between spaces |
 | `port_apply(source_space, forwards)` | Replace all port forwards with the given list |
 | `port_list(space)` | List active port forwards |
@@ -238,7 +240,7 @@ chunk = space.read_file("web", "/var/log/app.log", offset=100, limit=20)
 
 ---
 
-### write_file(space_name, file_path, content, mode='overwrite')
+### write_file(space_name, file_path, content, mode='overwrite', mtime_ns=None, file_perm=None)
 
 Write content to a file in a running space. By default the file is overwritten;
 pass `mode='append'` to add to the end, or `mode='prepend'` to add to the
@@ -249,6 +251,8 @@ beginning of an existing file.
 - `file_path` (string): Path to the file
 - `content` (string): Content to write
 - `mode` (string, optional): `"overwrite"` (default), `"append"`, or `"prepend"`
+- `mtime_ns` (int, optional): Modification time as Unix nanoseconds. When set, the agent applies it via `os.Chtimes` after the write so the destination file carries the same mtime as the source — useful for sync tools that compare mtimes to detect changes.
+- `file_perm` (int, optional): Permission bits as an int (e.g. `0o644`, `0o755`). When set, the agent applies them via `os.Chmod` after the write. Pass the raw int, not a string.
 
 **Returns:** `bool` - True on success
 
@@ -301,6 +305,28 @@ or size. Runs in the space's agent via a concurrent walker; recursive by default
 - `workdir` (string, optional): Resolve relative `path` against this directory
 
 **Returns:** `list` of matching path strings (arbitrary order)
+
+---
+
+### find_entries(space_name, path='.', recursive=True, type='any', name_glob='', mtime_min=None, mtime_max=None, size_min=None, size_max=None, include_hidden=False, follow_links=False, max_depth=0, include_hash=False, include_symlinks=False, workdir='')
+
+Same search semantics as `find()`, but each entry is returned as a dict with
+`path`, `size`, `mtime`, and `is_dir` — enough to decide whether an entry has
+changed without re-reading the bytes (e.g. for differential sync). If you only
+need paths, prefer `find()`.
+
+**Parameters:** Same as `find()`, plus:
+- `include_hash` (bool): When `True`, each file is crc64-hashed and the hex checksum is returned in `hash`. Use for definitive change detection — two entries with matching `hash` have identical bytes.
+- `include_symlinks` (bool): When `True`, symlink entries are yielded with their `link_target` instead of being followed.
+
+**Returns:** `list` of entry dicts (arbitrary order), each containing:
+- `path` (str): Matching path
+- `size` (int): Size in bytes (`0` for directories)
+- `mtime` (float): Modification time, epoch seconds
+- `is_dir` (bool): `True` if the entry is a directory
+- `file_perm` (int): File permission bits (e.g. `420` for `0o644`).
+- `hash` (str, optional): Hex-encoded crc64 checksum (only with `include_hash=True`)
+- `link_target` (str, optional): Symlink target path (only with `include_symlinks=True`)
 
 ---
 
@@ -395,6 +421,22 @@ n = space.edit_file("web", "src/app.py",
     search="def get_user(id):\n    pass",
     replace="def fetch_user(user_id):\n    return User(user_id)")
 ```
+
+---
+
+### delete_file(space_name, file_path, recursive=False, workdir='')
+
+Delete a file or directory in a running space. Missing paths return success
+(idempotent), which lets sync tools feed it a delete list computed against a
+slightly stale remote snapshot without race-condition errors.
+
+**Parameters:**
+- `space_name` (string): Name or ID of the space
+- `file_path` (string): File or directory to delete (relative to `workdir` if given)
+- `recursive` (bool, optional): When `True` and `file_path` is a directory, remove it and its entire contents. When `False` (the default), a non-empty directory delete fails.
+- `workdir` (string, optional): Resolve relative `file_path` against this directory
+
+**Returns:** `int` — number of entries removed (`0` if path did not exist, `1` for a single file, `N` for a recursive directory delete).
 
 ---
 
