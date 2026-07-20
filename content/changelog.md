@@ -14,27 +14,27 @@ navSection: docs
 {{< version "v0.31.0" >}}
 
 {{< changelog-item "added" >}}
-- **Direct agent-to-agent connections** {{< pro-badge >}}: agents in the same zone can now connect directly to each other for port-forwarded traffic, bypassing the server relay. The server coordinates the introduction (resolving the target's address), the agents authenticate with a user-scoped shared secret, and a single connection per peer carries all forwarded traffic. Relay through the server remains the automatic fallback when direct isn't available or fails. Port forwards show their connection mode (`direct` or `relay`) in `knot port list` and the UI. Enabled by default in Pro for Docker, Podman, and Apple Containers.
+- **Direct agent-to-agent connections** {{< pro-badge >}}: agents in the same zone can now connect directly to each other for port-forwarded traffic, bypassing the server relay for better performance. Falls back to relay automatically when direct isn't available. Port forwards show their connection mode (`direct` or `relay`) in `knot port list` and the UI. Enabled by default in Pro for Docker, Podman, and Apple Containers.
 
-- **Port forward throttling**: apply latency, jitter, and bandwidth limits to any port forward to simulate real-world network conditions. Use `knot port throttle <port> --latency 50ms --jitter 10ms --bandwidth 1024` from inside a space, or `knot space port throttle` / the web UI {{< pro-badge >}}. Settings are runtime-only (not persisted), apply to both relay and direct connections, and show in `knot port list`. Clear with `--reset`.
+- **Port forward throttling**: simulate real-world network conditions by applying latency, jitter, and bandwidth limits to any port forward. Configure with `knot port throttle` from inside a space or via the web UI {{< pro-badge >}}.
 
-- **`knot space delete-file`**: remove a file or directory in a running space from the desktop CLI. `--recursive` removes a directory and its contents (os.RemoveAll semantics); a non-recursive delete on a non-empty directory fails. Missing paths return success so the call is idempotent — safe to use in scripts and CI that computed their delete list against a slightly stale snapshot. Mirrored by `knot.space.delete_file` in the [scripting library](../reference/libraries/space/).
+- **`knot space delete-file`**: remove a file or directory in a running space from the desktop CLI. Safe to use in scripts — deleting a missing path is treated as success. Mirrored by `knot.space.delete_file` in the [scripting library](../reference/libraries/space/).
 
-- **`knot space mirror`**: mirror a local directory tree to a space in one shot. Walks the source, uploads files in parallel (default 8 workers, configurable via `--parallel`), preserves each file's mtime and permission bits on the destination, and deletes any remote file that doesn't exist locally — the destination ends up as a one-way mirror of the source. Supports `--exclude`/`-x` glob patterns (repeatable), `--dry-run` to preview without performing any I/O, `--hash` for crc64-based content comparison, and `--verify` for read-only integrity checks. Pass `--watch` to keep mirror running after the initial sync — it watches for local file changes and syncs them to the space in real time (one-way, Ctrl+C to stop). For continuous two-way sync, mutagen against the space's SSH endpoint remains the recommendation.
+- **`knot space mirror`**: mirror a local directory tree to a space in one shot, with parallel uploads, glob exclusions, and an optional `--watch` mode for real-time one-way sync on file changes. For continuous two-way sync, mutagen against the space's SSH endpoint remains the recommendation.
 
-- **`knot.space.find_entries`**: a metadata-rich variant of `knot.space.find` that returns `{path, size, mtime, is_dir}` per match — enough to decide whether an entry has changed without re-reading the bytes (e.g. for differential sync tools). The agent stats every match in this mode, so it's opt-in; `knot.space.find` retains its original fast path (no per-entry stat when size/mtime filters are inactive).
+- **`knot.space.find_entries`**: a metadata-rich variant of `knot.space.find` that returns size, mtime, and type alongside each path — useful for differential sync without re-reading file contents.
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
-- **`FindResponse` shape**: now carries both `paths` (default, cheap) and `entries` (only when the request sets `include_metadata=true`). Callers that only need path strings — including `knot.space.find`, the MCP `find` tool, and `knot space find` without `--long` — get the original hot path back. The CLI `knot space find` gains a `--long`/`-l` flag for `ls`-style output with size, mtime, and type.
+- **`FindResponse` shape**: the response now includes a fast `paths` field (default) and a metadata-rich `entries` field (opt-in). The CLI gains `--long`/`-l` for ls-style output.
 
-- **File uploads preserve source metadata**: the agent applies the source file's mtime (`os.Chtimes`) and permission bits (`os.Chmod`) after the content write, so a re-upload of an unchanged file is detectable on the next pass. Affects `knot space mirror`, the `WriteSpaceFile` HTTP endpoint, and the `knot.space.write_file` scriptling function via optional new fields.
+- **File uploads preserve source metadata**: uploaded files now retain their original modification time and permissions, making re-upload detection reliable across mirror, API, and script operations.
 
-- **Space template capabilities in API**: the spaces API response now includes `template_has_ssh`, `template_has_terminal`, `template_has_code_server`, and `template_has_vscode_tunnel` — booleans reflecting the template's declared capabilities, available whether the space is running or stopped. The existing `has_ssh` / `has_terminal` / etc. fields remain runtime-only (true only when the service is live). `knot ssh-config update` now uses the template fields, so it keeps entries for stopped spaces whose templates have SSH — only deleted spaces are removed.
+- **Space template capabilities in API**: API responses now expose template-level capability flags (SSH, terminal, code server, VS Code tunnel), available even when the space is stopped. `knot ssh-config update` uses these to keep entries for stopped spaces with SSH — only deleted spaces are removed.
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
-- **Login redirect on expired session**: when using in-memory session storage, a stale session cookie (e.g. after a server restart) caused a 503 "Service Unavailable" instead of redirecting to the login page. The memory session driver now returns a clean not-found result consistent with Redis, and the auth middleware checks for a missing session before treating lookup errors as transient failures.
+- **Login redirect on expired session**: fixed a 503 error that occurred when a session cookie was stale after a server restart — you're now correctly redirected to the login page.
 {{< /changelog-item >}}
 
 ---
