@@ -29,6 +29,8 @@ navSection: docs
 - **`FindResponse` shape**: now carries both `paths` (default, cheap) and `entries` (only when the request sets `include_metadata=true`). Callers that only need path strings — including `knot.space.find`, the MCP `find` tool, and `knot space find` without `--long` — get the original hot path back. The CLI `knot space find` gains a `--long`/`-l` flag for `ls`-style output with size, mtime, and type.
 
 - **File uploads preserve source metadata**: the agent applies the source file's mtime (`os.Chtimes`) and permission bits (`os.Chmod`) after the content write, so a re-upload of an unchanged file is detectable on the next pass. Affects `knot space mirror`, the `WriteSpaceFile` HTTP endpoint, and the `knot.space.write_file` scriptling function via optional new fields.
+
+- **Space template capabilities in API**: the spaces API response now includes `template_has_ssh`, `template_has_terminal`, `template_has_code_server`, and `template_has_vscode_tunnel` — booleans reflecting the template's declared capabilities, available whether the space is running or stopped. The existing `has_ssh` / `has_terminal` / etc. fields remain runtime-only (true only when the service is live). `knot ssh-config update` now uses the template fields, so it keeps entries for stopped spaces whose templates have SSH — only deleted spaces are removed.
 {{< /changelog-item >}}
 
 ---
