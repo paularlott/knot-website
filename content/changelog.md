@@ -33,6 +33,10 @@ navSection: docs
 - **Space template capabilities in API**: the spaces API response now includes `template_has_ssh`, `template_has_terminal`, `template_has_code_server`, and `template_has_vscode_tunnel` — booleans reflecting the template's declared capabilities, available whether the space is running or stopped. The existing `has_ssh` / `has_terminal` / etc. fields remain runtime-only (true only when the service is live). `knot ssh-config update` now uses the template fields, so it keeps entries for stopped spaces whose templates have SSH — only deleted spaces are removed.
 {{< /changelog-item >}}
 
+{{< changelog-item "fixed" >}}
+- **Login redirect on expired session**: when using in-memory session storage, a stale session cookie (e.g. after a server restart) caused a 503 "Service Unavailable" instead of redirecting to the login page. The memory session driver now returns a clean not-found result consistent with Redis, and the auth middleware checks for a missing session before treating lookup errors as transient failures.
+{{< /changelog-item >}}
+
 ---
 
 {{< version "v0.30.1" >}}
