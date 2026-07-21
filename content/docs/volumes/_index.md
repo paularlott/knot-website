@@ -150,5 +150,5 @@ In a cluster, the stop request is automatically forwarded to the server where th
 ## Deleting a Volume
 
 Only stopped volumes can be deleted. To delete a volume:
-1. From the dropdown menu next to the volume, select **`Delete`**.
+1. Select **`Delete`** next to the volume to delete.
 2. Confirm the deletion to permanently remove the volume.
