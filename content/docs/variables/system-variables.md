@@ -34,6 +34,7 @@ To use a system variable, simply specify it in the format `${{ .<group>.<name> }
 |              | `server.wildcard_domain`| The wildcard domain without the leading `*`                                    |
 |              | `server.zone`          | The server zone string                                                         |
 |              | `server.timezone`      | The server timezone                                                            |
+|              | `server.base_image_registry` | The configured base image registry prefix (default `docker.io/paularlott`). Used by the [template spec wizard](../templates/spec-wizard.md) to prefix manifest entries, and available to any job/volume template that wants to reference the same registry. |
 | **nomad**    | `nomad.dc`             | The Nomad datacenter the server is running in (from the `NOMAD_DC` environment variable) |
 |              | `nomad.region`         | The Nomad region the server is running in (from the `NOMAD_REGION` environment variable) |
 

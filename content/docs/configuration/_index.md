@@ -93,6 +93,9 @@ Expose services to the internet securely through tunnels.
 ### [Local Containers](local-containers)
 Configure Docker, Podman, or Apple Container for local execution.
 
+### [Template Spec Wizard](spec-wizard)
+Configure the base image registry and catalog that power the template spec wizard.
+
 ### [Two Factor Authentication](2fa)
 Enable TOTP-based 2FA for enhanced security.
 

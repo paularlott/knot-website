@@ -198,3 +198,60 @@ volumes:
       clusterID: "b13bf70b-253c-4691-b3f2-46df86f4318c"
       fsName: "cephfs"
 ```
+
+---
+
+## Example Usage in a Nomad Job
+
+The volume is referenced from a job using a `volume` stanza with `type = "csi"`, where `attachment_mode` and `access_mode` must match the volume's capabilities. It is then mounted into the task with a `volume_mount` stanza:
+
+```hcl
+job "${{.user.username}}-${{.space.name}}" {
+  datacenters = ["dc1"]
+
+  update {
+    max_parallel     = 1
+    min_healthy_time = "30s"
+    healthy_deadline = "1m"
+    auto_revert      = false
+  }
+
+  group "example" {
+    count = 1
+
+    volume "data_volume" {
+      type            = "csi"
+      source          = "test-volume"
+      read_only       = false
+      attachment_mode = "file-system"
+      access_mode     = "multi-node-multi-writer"
+    }
+
+    task "example" {
+      driver = "docker"
+      config {
+        image    = "paularlott/knot-ubuntu:24.04"
+        hostname = "${{ .space.name }}"
+      }
+
+      env {
+        KNOT_SERVER         = "${{.server.url}}"
+        KNOT_AGENT_ENDPOINT = "${{.server.agent_endpoint}}"
+        KNOT_SPACEID        = "${{.space.id}}"
+        KNOT_USER           = "${{.user.username}}"
+        TZ                  = "${{.user.timezone}}"
+      }
+
+      volume_mount {
+        volume      = "data_volume"
+        destination = "/data"
+      }
+
+      resources {
+        cores  = 1
+        memory = 512
+      }
+    }
+  }
+}
+```

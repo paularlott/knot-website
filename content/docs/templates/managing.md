@@ -35,6 +35,8 @@ To create a new template:
 - **`Nomad Job (HCL)`** or **`Container Specification (YAML)`**:
   Provide the job description in either Nomad HCL or YAML format, depending on the selected platform. This field is not shown for `Manual` templates.
 
+  Next to the label is a wand icon that opens the **template spec wizard** — a UI-driven builder that picks a base image from the [catalog](../configuration/spec-wizard/), sets memory/CPU, ports, environment variables, and bind mounts, then writes the spec for you. The wizard only enables for specs it can safely round-trip (single-task Nomad `docker` jobs, or any well-formed container spec); multi-task Nomad jobs disable the wizard with an explanatory tooltip.
+
 ---
 
 ### Volume Definition

@@ -38,3 +38,42 @@ volumes:
       uid: 1000
       gid: 1000
 ```
+
+---
+
+## Example Usage in a Nomad Job
+
+The volume is referenced from a job by its `name` using a `volume` stanza in the group, then mounted into the task with a `volume_mount` stanza:
+
+```hcl
+job "example" {
+  datacenters = ["dc1"]
+
+  group "example" {
+    count = 1
+
+    volume "data" {
+      type      = "host"
+      source    = "test-volume"
+      read_only = false
+    }
+
+    task "example" {
+      driver = "docker"
+      config {
+        image = "paularlott/knot-ubuntu:24.04"
+      }
+
+      volume_mount {
+        volume      = "data"
+        destination = "/data"
+      }
+
+      resources {
+        cores  = 1
+        memory = 512
+      }
+    }
+  }
+}
+```

@@ -11,6 +11,20 @@ navSection: docs
 
 ## July 2026
 
+{{< version "v0.32.0" >}}
+
+{{< changelog-item "added" >}}
+- **Simplified template editing mode**: a visual spec wizard for picking a base image, setting resources, ports, env vars, mounts, and capabilities, knot writes the spec for you. Hand-written content outside the wizard is preserved character-for-character, including `${{ }}` template directives. For multi-task jobs, non-docker drivers, or unparseable YAML the wizard disables with an explanation. See [the configuration guide](docs/configuration/spec-wizard/).
+
+- **Base image registry & manifest**: `${{ .server.base_image_registry }}` (default `docker.io/paularlott`) lets specs reference a configurable registry prefix. The catalog can be replaced with a custom TOML manifest via `server.base_images_manifest` in `knot.toml`.
+
+- **UI improvements**: consistent + button placement against labels across template, space, variable, script, skill, command, and event-sink forms.
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- **Read-only container volumes validate**: `:ro` mounts (and `rw`, `z`, `Z`, `nocopy`) are now accepted by the spec validator — the runtimes already supported them.
+{{< /changelog-item >}}
+
 {{< version "v0.31.0" >}}
 
 {{< changelog-item "added" >}}

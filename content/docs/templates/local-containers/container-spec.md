@@ -21,7 +21,7 @@ auth:
 ports:
   - <host port>:<container port>/<transport>
 volumes:
-  - <host path>:<container path>
+  - <host path>:<container path>[:<mode>]
 command: [
   "<1>",
   "<2>"
@@ -73,6 +73,8 @@ Defines port mappings between the host and container in the format `<host port>:
 
 ### **volumes**
 Specifies volume mappings in the format `<host path>:<container path>`. This ensures data persists beyond the container's lifecycle.
+
+An optional third field sets the mount mode: `ro`, `rw`, `z`, `Z` or `nocopy` (comma-separated combinations such as `ro,z` are allowed). For example `/etc/hosts:/etc/hosts:ro` mounts the host file read-only.
 
 ### **command**
 Overrides the default command specified in the container image. Provide commands as a list of strings.
