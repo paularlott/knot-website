@@ -16,7 +16,7 @@ navSection: docs
 {{< changelog-item "added" >}}
 - **Simplified template editing mode**: a visual spec wizard for picking a base image, setting resources, ports, env vars, mounts, and capabilities, knot writes the spec for you. Hand-written content outside the wizard is preserved character-for-character, including `${{ }}` template directives. For multi-task jobs, non-docker drivers, or unparseable YAML the wizard disables with an explanation. See [the configuration guide](docs/configuration/spec-wizard/).
 
-- **Base image registry & manifest**: `${{ .server.base_image_registry }}` (default `docker.io/paularlott`) lets specs reference a configurable registry prefix. The catalog can be replaced with a custom TOML manifest via `server.base_images_manifest` in `knot.toml`.
+- **Base image registry & manifest**: `${{ .server.base_image_registry }}` (default `docker.io/paularlott`) lets specs reference a configurable registry prefix. The catalog can be replaced with a custom TOML manifest. When `registry_user` and `registry_password` are also set under `[server.base_image]`, the wizard injects an auth block using `${{ .server.base_image_registry_user }}` / `${{ .server.base_image_registry_password }}` when picking a base image, existing auth blocks are left untouched.
 
 - **UI improvements**: consistent + button placement against labels across template, space, variable, script, skill, command, and event-sink forms.
 {{< /changelog-item >}}

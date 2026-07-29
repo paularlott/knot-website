@@ -27,10 +27,16 @@ The wizard's image picker shows a curated catalog of base images (Ubuntu, PHP, M
 **Default:** `docker.io/paularlott`
 
 ```toml
-[server]
+[server.base_image]
 # Prefix prepended to relative image references in specs and the bundled
 # base image manifest. Exposed to templates as ${{ .server.base_image_registry }}.
-base_image_registry = "docker.io/paularlott"
+registry_url = "docker.io/paularlott"
+manifest = "/etc/knot/base-images.toml"
+# Optional: when both are set, the wizard injects an auth block into specs
+# when the user picks a base image from the catalog. Exposed as
+# ${{ .server.base_image_registry_user }} and ${{ .server.base_image_registry_password }}.
+registry_user = ""
+registry_password = ""
 ```
 
 Common overrides:
@@ -51,9 +57,9 @@ Absolute image references in specs (e.g. `ghcr.io/foo/bar:1`) bypass the prefix 
 The catalog itself comes from a TOML manifest. By default knot uses a manifest compiled into the binary (covering the [knot-base-images](https://github.com/paularlott/knot-base-images) catalog). To replace it — for example to add private images, use different icons, or restrict the picker to a curated subset — point at an external file:
 
 ```toml
-[server]
-base_image_registry = "docker.io/paularlott"
-base_images_manifest = "/etc/knot/base-images.toml"
+[server.base_image]
+registry_url = "docker.io/paularlott"
+manifest = "/etc/knot/base-images.toml"
 ```
 
 ### Manifest format
@@ -98,18 +104,22 @@ category        = "internal"
 
 ### Building a manifest from the knot-base-images repo
 
-The default manifest's metadata mirrors the OCI labels in [`docker-bake.hcl`](https://github.com/paularlott/knot-base-images/blob/main/docker-bake.hcl). If you maintain a fork that adds images, copy the corresponding `org.opencontainers.image.*` labels into `[[image]]` entries and reload with `base_images_manifest` pointing at your file. The bundled manifest is regenerated on each knot release.
+The default manifest's metadata mirrors the OCI labels in [`docker-bake.hcl`](https://github.com/paularlott/knot-base-images/blob/main/docker-bake.hcl). If you maintain a fork that adds images, copy the corresponding `org.opencontainers.image.*` labels into `[[image]]` entries and reload with `server.base_image.manifest` pointing at your file. The bundled manifest is regenerated on each knot release.
 
 ---
 
 ## CLI flags
 
-Both options are also available as CLI flags or environment variables:
+All options are available as CLI flags or environment variables:
 
-| Flag | Env var | Default |
-|------|---------|---------|
-| `--base-image-registry` | `KNOT_BASE_IMAGE_REGISTRY` | `docker.io/paularlott` |
-| `--base-images-manifest` | `KNOT_BASE_IMAGES_MANIFEST` | (bundled) |
+| Flag | Env var | Config path | Default |
+|------|---------|-------------|---------|
+| `--base-image-registry` | `KNOT_BASE_IMAGE_REGISTRY` | `server.base_image.registry_url` | `docker.io/paularlott` |
+| `--base-images-manifest` | `KNOT_BASE_IMAGES_MANIFEST` | `server.base_image.manifest` | (bundled) |
+| `--base-image-registry-user` | `KNOT_BASE_IMAGE_REGISTRY_USER` | `server.base_image.registry_user` | (none) |
+| `--base-image-registry-password` | `KNOT_BASE_IMAGE_REGISTRY_PASSWORD` | `server.base_image.registry_password` | (none) |
+
+When both `registry_user` and `registry_password` are set, the wizard injects an auth block into the spec when the user picks a base image from the catalog — using `${{ .server.base_image_registry_user }}` and `${{ .server.base_image_registry_password }}` so credentials resolve at deploy time. If the spec already has an auth block, it's left untouched.
 
 ## Storage
 
