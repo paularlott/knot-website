@@ -14,16 +14,20 @@ navSection: docs
 {{< version "v0.32.0" >}}
 
 {{< changelog-item "added" >}}
-- **Simplified template editing mode**: a visual spec wizard for picking a base image, setting resources, ports, env vars, mounts, and capabilities, knot writes the spec for you. Hand-written content outside the wizard is preserved character-for-character, including `${{ }}` template directives. For multi-task jobs, non-docker drivers, or unparseable YAML the wizard disables with an explanation. See [the configuration guide](docs/configuration/spec-wizard/).
+- **Template export/import**: `knot template export <name>` produces a portable YAML file containing the full template definition (metadata, job spec, volume definitions, schedule, custom fields, features). `knot template import [--file path] [--name override]` creates a template from a YAML file or stdin. Scripts are referenced by name (not UUID) for cross-instance portability. Template variables (`${{ }}`) are preserved verbatim.
 
-- **Base image registry & manifest**: `${{ .server.base_image_registry }}` (default `docker.io/paularlott`) lets specs reference a configurable registry prefix. The catalog can be replaced with a custom TOML manifest. When `registry_user` and `registry_password` are also set under `[server.base_image]`, the wizard injects an auth block using `${{ .server.base_image_registry_user }}` / `${{ .server.base_image_registry_password }}` when picking a base image, existing auth blocks are left untouched.
+- **Simplified template editing mode**: a visual spec wizard for picking a base image, setting resources, ports, env vars, mounts, and capabilities, knot writes the spec for you. Hand-written content outside the wizard is preserved character-for-character, including `${{ }}` template directives. For multi-task jobs, non-docker drivers, or unparseable YAML the wizard disables with an explanation. See [the configuration guide](../docs/configuration/spec-wizard/).
+{{< /changelog-item >}}
 
+{{< changelog-item "changed" >}}
 - **UI improvements**: consistent + button placement against labels across template, space, variable, script, skill, command, and event-sink forms.
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
 - **Read-only container volumes validate**: `:ro` mounts (and `rw`, `z`, `Z`, `nocopy`) are now accepted by the spec validator — the runtimes already supported them.
 {{< /changelog-item >}}
+
+---
 
 {{< version "v0.31.0" >}}
 

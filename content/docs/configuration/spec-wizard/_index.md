@@ -166,7 +166,7 @@ Names are stored canonically (`CAP_NET_ADMIN`) and written in the form each runt
 | Docker / Podman | `cap_add: [CAP_NET_ADMIN]` |
 | Nomad | `cap_add = ["net_admin"]`, the form the [docker task driver documents](https://developer.hashicorp.com/nomad/docs/job-declare/task-driver/docker). If the job already uses the `CAP_`-prefixed form, that style is kept. |
 
-The picker is available for every platform the wizard supports. Bear in mind that some runtimes ignore capabilities — Apple Containers, for example — exactly as they do when the field is written by hand.
+The picker is available for every platform the wizard supports. Bear in mind that some runtimes ignore capabilities, Apple Containers, for example, exactly as they do when the field is written by hand.
 
 {{< tip >}}
 Nomad clients restrict which capabilities a job may request via the docker plugin's `allow_caps` setting. A capability the wizard writes is only granted if the client allows it.
