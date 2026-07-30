@@ -101,6 +101,8 @@ category        = "internal"
 | `default_cores` | no | Nomad: whole CPU cores to reserve (`cores = N`). Containers: number of CPUs (`--cpus`). Pre-filled only when the CPUs field is empty. |
 | `recommended` | no | Renders a "recommended" badge in the picker. |
 | `tags` | no | List of strings, reserved for future filtering. |
+| `default_env` | no | List of `KEY=value` env vars pre-filled when picking this image (only if the key doesn't already exist). e.g. `["KNOT_VNC_HTTP_PORT=5680"]` for desktop images. |
+| `default_port` | no | Array of template-level ports pre-filled when picking this image (only if the port doesn't already exist). Each entry has `name`, `port`, and `protocol`. e.g. `[[image.default_port]]` with `name = "Web"`, `port = 80`, `protocol = "http"` for PHP images. These are template port metadata used for routing, not the Nomad/Docker network ports in the spec. |
 
 ### Building a manifest from the knot-base-images repo
 
