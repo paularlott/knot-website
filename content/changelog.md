@@ -25,6 +25,8 @@ navSection: docs
 
 {{< changelog-item "changed" >}}
 - **UI improvements**: consistent + button placement against labels across template, space, variable, script, skill, command, and event-sink forms.
+
+- **Unsaved-changes guard on all forms**: closing (Esc or the close button) a create/edit form with unsaved changes now prompts a discard confirmation across space, volume, variable, script, event-sink, skill, slash-command, MCP-server, user, group, and role forms (templates and stack templates already had it). Code editors are tracked too.
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
