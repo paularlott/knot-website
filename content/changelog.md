@@ -17,6 +17,10 @@ navSection: docs
 - **Template export/import**: `knot template export <name>` produces a portable YAML file containing the full template definition (metadata, job spec, volume definitions, schedule, custom fields, features). `knot template import [--file path] [--name override]` creates a template from a YAML file or stdin. Scripts are referenced by name (not UUID) for cross-instance portability. Template variables (`${{ }}`) are preserved verbatim.
 
 - **Simplified template editing mode**: a visual spec wizard for picking a base image, setting resources, ports, env vars, mounts, and capabilities, knot writes the spec for you. Hand-written content outside the wizard is preserved character-for-character, including `${{ }}` template directives. For multi-task jobs, non-docker drivers, or unparseable YAML the wizard disables with an explanation. See [the configuration guide](../docs/configuration/spec-wizard/).
+
+- **Pinnable sidebar navigation**: star any menu item to pin it to the top of the sidebar for quick access. The first pin switches the sidebar to a compact layout where pinned items sit on top (drag the handle to reorder them) and everything else collapses into **More**; the default Spaces/Tunnels/API Tokens/Volumes entries demote to the top of **More**. Unpin everything to return to the original layout. Pins are saved to your profile and persist across sessions.
+
+- **Global search (⇧⌘K / Shift+Ctrl+K)**: a Spotlight-style palette for jumping straight to any space, template, variable, volume, stack, script, skill, slash command, MCP server, event sink, user, group, role, or API token. Results are grouped by type, scoped to what you can see (your own spaces, the entities you manage, in-zone), and capped per group. Arrow-key to a result and press Enter to open it straight into edit mode for everything except spaces, which land on the filtered spaces list. `⌘/Ctrl+K` still focuses the current page's own search box. The palette is hidden on touch devices.
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
