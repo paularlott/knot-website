@@ -107,21 +107,19 @@ Web images (PHP, FrankenPHP) also pre-fill a template port labelled **Web** on c
 
 ## Keeping the catalog up to date
 
-The catalog compiled into the binary is a snapshot taken at release time. knot can fetch a published catalog from `https://getknot.dev/base-images.toml` (the default), or a URL of your choosing:
+The catalog compiled into the binary is a snapshot taken at release time. knot can fetch a published catalog from `https://getknot.dev/base-images.toml` (the default), or a URL of your choosing. Updates are gated by a master flag, **off by default**:
 
 ```toml
 [server.base_image]
-# Off by default; gates the startup fetch.
-auto_update = true
-# Optional; defaults to https://getknot.dev/base-images.toml when no manifest
-# file is set.
-update_url = "https://your-mirror/base-images.toml"
+update_enabled = true                          # master gate; off by default
+update_url     = "https://your-mirror/base-images.toml"  # optional; defaults to getknot.dev
 ```
 
-The fetch happens **once on startup** and **on demand via the admin command** — there's no periodic loop, so the catalog only changes on restart or an explicit refresh.
+When the gate is on, the server fetches once on startup and on demand via the admin command — there's no periodic loop, so the catalog only changes on restart or an explicit refresh.
 
-- **No manifest file configured** → the server fetches on startup (when `auto_update` is on) and on manual refresh, from your `update_url` or the default URL. A fetched catalog overlays the bundled one only when its `manifest_version` is newer.
-- **Manifest file configured** → the file is used and **read from disk on every request**, so editing it takes effect immediately. The server only fetches a remote when *both* `auto_update` and an explicit `update_url` are set; otherwise the file is authoritative. When a remote is fetched, it overlays the file only when newer — bump the file's version and it wins again straight away.
+- **Gate off** → no remote fetch at all (not on startup, not via the admin command); the bundled or file catalog is used as-is.
+- **No manifest file configured** → the server fetches from your `update_url` (or the default URL). A fetched catalog overlays the bundled one only when its `manifest_version` is newer.
+- **Manifest file configured** → the file is used and **read from disk on every request**, so editing it takes effect immediately. The server only fetches a remote when an explicit `update_url` is also set; otherwise the file is authoritative. When a remote is fetched, it overlays the file only when newer — bump the file's version and it wins again straight away.
 - **Every node fetches independently** (full members and leaves alike), so the fleet converges on identical content with no cluster coordination.
 
 To update a running cluster without restarting, the admin command fans the refresh out to every server:
@@ -130,7 +128,7 @@ To update a running cluster without restarting, the admin command fans the refre
 knot admin refresh-base-images --server https://knot.example.com --token <admin-token>
 ```
 
-A server with no manifest file always refreshes; a server with a manifest file refreshes only when both `auto_update` and `update_url` are set (otherwise it keeps using its file). Pass `--local-only` to refresh just the connected server. See [Template Spec Wizard → Auto-update](../configuration/spec-wizard/#auto-update) for the full rules.
+Each server must have `update_enabled` on; a server using a manifest file must also have `update_url` set, otherwise it reports a conflict and keeps its file. Pass `--local-only` to refresh just the connected server. See [Template Spec Wizard → Base image updates](../configuration/spec-wizard/#base-image-updates) for the full rules.
 
 ---
 
