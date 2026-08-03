@@ -1,0 +1,139 @@
+---
+title: Base Images
+description: The base image catalog knot ships, as a visual grid of image families with their versions.
+type: Overview
+tags: [templates, configuration]
+weight: 45
+---
+
+knot ships a curated catalog of base images that the [template spec wizard](../configuration/spec-wizard/) presents as a picker. Each is an ordinary OCI image built from [`knot-base-images`](https://github.com/paularlott/knot-base-images), preloaded with the knot entrypoint, an agent, and common dev tooling. You can also use any image (private or public) by typing its reference directly.
+
+The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can [keep it up to date](#keeping-the-catalog-up-to-date) automatically from `https://getknot.dev/base-images.toml`.
+
+<div class="not-prose my-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/ubuntu-linux-alt.svg" alt="Ubuntu" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">Ubuntu</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Base Ubuntu shell with code-server and dev tools.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">24.04</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">26.04</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/ubuntu-linux-alt.svg" alt="Ubuntu Desktop" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">Ubuntu Desktop</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Ubuntu + XFCE desktop over web VNC.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">24.04</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">26.04</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/php.svg" alt="PHP" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">PHP</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Caddy + PHP-FPM, Composer, Node. Serves <code class="text-xs">~/public_html</code>.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.3</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.4</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.5</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/frankenphp.svg" alt="FrankenPHP" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">FrankenPHP</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Caddy + PHP in a single FrankenPHP process.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.4</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.5</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/mariadb.svg" alt="MariaDB" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">MariaDB</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">MariaDB LTS releases with knot tooling.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">10.11</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">11.4</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">11.8</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">12.3</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/valkey.svg" alt="Valkey" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">Valkey</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Valkey — the Redis fork.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">9.0</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">9.1</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/redis.svg" alt="Redis" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">Redis</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Redis with the knot entrypoint and syslog logging.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.10</span>
+    </div>
+  </div>
+
+</div>
+
+All images are multi-arch (`linux/amd64`, `linux/arm64`). The versions above are image **tags**; older tags are kept in the catalog for compatibility, and the wizard marks the current default for new spaces as *recommended*.
+
+---
+
+## Volumes
+
+Each image declares the mount point(s) it expects to survive a space restart. When you pick an image in the spec wizard, a storage row is added for each — you then choose the backing kind (managed named volume, managed path, or bind).
+
+| Image family | Persistent path | What lives there |
+|--------------|-----------------|-------------------|
+| Ubuntu / Ubuntu Desktop | `/home` | User files, projects, shell config. |
+| PHP / FrankenPHP | `/home` | As above; the web root is `~/public_html`. |
+| MariaDB | `/var/lib/mysql` | The database data directory. |
+| Valkey / Redis | `/data` | RDB snapshots / AOF. |
+
+Web images (PHP, FrankenPHP) also pre-fill a template port labelled **Web** on container port **80 (http)** — that's template routing metadata, not the raw network port in the spec.
+
+---
+
+## Keeping the catalog up to date
+
+The catalog compiled into the binary is a snapshot taken at release time. knot can fetch a published catalog from `https://getknot.dev/base-images.toml` (the default), or a URL of your choosing:
+
+```toml
+[server.base_image]
+# Off by default; gates the startup fetch.
+auto_update = true
+# Optional; defaults to https://getknot.dev/base-images.toml when no manifest
+# file is set.
+update_url = "https://your-mirror/base-images.toml"
+```
+
+The fetch happens **once on startup** and **on demand via the admin command** — there's no periodic loop, so the catalog only changes on restart or an explicit refresh.
+
+- **No manifest file configured** → the server fetches on startup (when `auto_update` is on) and on manual refresh, from your `update_url` or the default URL. A fetched catalog overlays the bundled one only when its `manifest_version` is newer.
+- **Manifest file configured** → the file is used and **read from disk on every request**, so editing it takes effect immediately. The server only fetches a remote when *both* `auto_update` and an explicit `update_url` are set; otherwise the file is authoritative. When a remote is fetched, it overlays the file only when newer — bump the file's version and it wins again straight away.
+- **Every node fetches independently** (full members and leaves alike), so the fleet converges on identical content with no cluster coordination.
+
+To update a running cluster without restarting, the admin command fans the refresh out to every server:
+
+```bash
+knot admin refresh-base-images --server https://knot.example.com --token <admin-token>
+```
+
+A server with no manifest file always refreshes; a server with a manifest file refreshes only when both `auto_update` and `update_url` are set (otherwise it keeps using its file). Pass `--local-only` to refresh just the connected server. See [Template Spec Wizard → Auto-update](../configuration/spec-wizard/#auto-update) for the full rules.
+
+---
+
+## Source
+
+All of these images are built from source in [`knot-base-images`](https://github.com/paularlott/knot-base-images). Each image's directory there has its own README covering bundled tools, entrypoint behaviour, and build instructions.

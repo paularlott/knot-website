@@ -22,7 +22,7 @@ The wizard doesn't replace hand-editing — it patches only the fields it contro
 
 ## Base Image Registry
 
-The wizard's image picker shows a curated catalog of base images (Ubuntu, PHP, MariaDB, Valkey, etc.). Each catalog entry references the registry via the `${{ .server.base_image_registry }}` [system variable](../../variables/system-variables/), which resolves at deploy time to the configured value.
+The wizard's image picker shows a curated catalog of base images (Ubuntu, PHP, MariaDB, Valkey, etc.). See the [base images reference](../../base-images/) for the full grid of supplied images and their versions. Each catalog entry references the registry via the `${{ .server.base_image_registry }}` [system variable](../../variables/system-variables/), which resolves at deploy time to the configured value.
 
 **Default:** `docker.io/paularlott`
 
@@ -79,6 +79,12 @@ default_memory  = "2G"
 default_cpus    = "1"
 recommended     = true
 
+# Optional: mount points the image expects to be persistent. The wizard
+# pre-fills one storage row per entry when the image is picked.
+[[image.volume]]
+path        = "/home"
+description = "Persistent home directory."
+
 [[image]]
 name            = "custom-app"
 display_name    = "Internal App"
@@ -90,6 +96,9 @@ category        = "internal"
 
 | Field | Required | Description |
 |-------|----------|-------------|
+| `version` | yes | Manifest schema version (currently 1). Bumped only on structural changes. |
+| `manifest_version` | no* | Catalog revision in `yyyymmddbb` form (date + same-day build counter). Used to decide whether a fetched manifest is newer than the bundled one — omit only for custom file-based catalogs that are never fetched. |
+| `description` | no | Free-form description of the catalog. |
 | `name` | yes | Stable identifier used as the picker key. |
 | `display_name` | yes | Shown in the picker. |
 | `description` | yes | One-line description shown under the name. |
@@ -102,11 +111,51 @@ category        = "internal"
 | `recommended` | no | Renders a "recommended" badge in the picker. |
 | `tags` | no | List of strings, reserved for future filtering. |
 | `default_env` | no | List of `KEY=value` env vars pre-filled when picking this image (only if the key doesn't already exist). e.g. `["KNOT_VNC_HTTP_PORT=5680"]` for desktop images. |
-| `default_port` | no | Array of template-level ports pre-filled when picking this image (only if the port doesn't already exist). Each entry has `name`, `port`, and `protocol`. e.g. `[[image.default_port]]` with `name = "Web"`, `port = 80`, `protocol = "http"` for PHP images. These are template port metadata used for routing, not the Nomad/Docker network ports in the spec. |
+| `default_port` | no | Array of template-level ports pre-filled when picking this image (if the port doesn't already exist). Each entry has `name`, `port`, and `protocol`. e.g. `[[image.default_port]]` with `name = "Web"`, `port = 80`, `protocol = "http"` for PHP images. These are template port metadata used for routing, not the Nomad/Docker network ports in the spec. |
+| `volume` | no | Array of mount points the image expects to be persistent (`[[image.volume]]`). Each entry has a `path` (the in-container mount point, e.g. `/home`, `/data`, `/var/lib/mysql`) and an optional `description`. The wizard pre-fills one storage row per entry when the image is picked; the backing kind (named volume / managed path / bind) is chosen in the wizard. |
 
 ### Building a manifest from the knot-base-images repo
 
 The default manifest's metadata mirrors the OCI labels in [`docker-bake.hcl`](https://github.com/paularlott/knot-base-images/blob/main/docker-bake.hcl). If you maintain a fork that adds images, copy the corresponding `org.opencontainers.image.*` labels into `[[image]]` entries and reload with `server.base_image.manifest` pointing at your file. The bundled manifest is regenerated on each knot release.
+
+---
+
+## Auto-update
+
+The catalog compiled into the binary is a snapshot taken at release time. To pick up new images and versions, knot can fetch a published manifest (`https://getknot.dev/base-images.toml` by default, which mirrors the [bundled catalog](https://getknot.dev/base-images.toml)). There is no periodic loop — the fetch happens once on startup, and on demand via the admin command — so the catalog only ever changes on restart or an explicit refresh.
+
+Two flags control it:
+
+```toml
+[server.base_image]
+auto_update = true                       # off by default; gates the STARTUP fetch
+update_url  = "https://your_mirror/base-images.toml"  # optional; defaults to getknot.dev
+```
+
+Whether a fetch happens depends on whether a `manifest` file is configured (M), `auto_update` is on (A), and an explicit `update_url` is set (U):
+
+| Configured file (M) | Startup fetch | Manual refresh (`knot admin refresh-base-images`) |
+|---|---|---|
+| **No file** | only if `auto_update` is on; fetches from `update_url`, or the default URL if none is set | always; fetches from `update_url`, or the default URL if none is set |
+| **File set** | only if `auto_update` is on **and** an explicit `update_url` is set; fetches from `update_url` | only if `auto_update` is on **and** an explicit `update_url` is set; fetches from `update_url` |
+
+In short: without a file you always get a fetch (default URL is fine); with a file, the file is used unless you've explicitly opted into remote updates with both `auto_update` and `update_url`.
+
+In every case where a fetch happens, the fetched manifest **overlays the baseline only when its `manifest_version` (yyyymmddbb) is strictly newer** — so the baseline is never silently downgraded, and bumping a file's version keeps it ahead of the remote. If the fetch fails, the server falls back to the baseline and logs a warning.
+
+While a configured file is the active catalog it is **read from disk on every request**, so editing it takes effect immediately (no restart). Every node (full members and leaves) fetches independently from the same URL, so the fleet converges on identical content with no cluster coordination.
+
+### Manual refresh (cluster-wide)
+
+To update a running fleet without restarting, run the admin command — it fans the refresh out to every server in the cluster and reports each one:
+
+```bash
+knot admin refresh-base-images --server https://knot.example.com --token <token>
+```
+
+Each server applies the "Manual refresh" row above: a server with no manifest file always fetches; a server with a manifest file fetches only if both `auto_update` and `update_url` are set (otherwise it reports a conflict and keeps using its file). Pass `--local-only` to refresh just the connected server. Leaf nodes aren't gossip members and won't be reached by the fan-out — refresh them individually (they also fetch on their own startup).
+
+Or via the API — `POST /api/base-images/refresh` (requires the `manage-templates` permission) refreshes a single server.
 
 ---
 
@@ -118,6 +167,8 @@ All options are available as CLI flags or environment variables:
 |------|---------|-------------|---------|
 | `--base-image-registry` | `KNOT_BASE_IMAGE_REGISTRY` | `server.base_image.registry_url` | `docker.io/paularlott` |
 | `--base-images-manifest` | `KNOT_BASE_IMAGES_MANIFEST` | `server.base_image.manifest` | (bundled) |
+| `--base-images-auto-update` | `KNOT_BASE_IMAGES_AUTO_UPDATE` | `server.base_image.auto_update` | `false` |
+| `--base-images-update-url` | `KNOT_BASE_IMAGES_UPDATE_URL` | `server.base_image.update_url` | `https://getknot.dev/base-images.toml` (only used when no manifest file is set) |
 | `--base-image-registry-user` | `KNOT_BASE_IMAGE_REGISTRY_USER` | `server.base_image.registry_user` | (none) |
 | `--base-image-registry-password` | `KNOT_BASE_IMAGE_REGISTRY_PASSWORD` | `server.base_image.registry_password` | (none) |
 
