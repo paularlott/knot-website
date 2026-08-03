@@ -93,6 +93,15 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     </div>
   </div>
 
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/mailpit.svg" alt="Mailpit" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">Mailpit</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">SMTP mail catcher with a web UI for inspecting captured mail.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">1.30</span>
+    </div>
+  </div>
+
 </div>
 
 All images are multi-arch (`linux/amd64`, `linux/arm64`). The versions above are image **tags**; older tags are kept in the catalog for compatibility, and the wizard marks the current default for new spaces as *recommended*.
@@ -110,6 +119,7 @@ Each image declares the mount point(s) it expects to survive a space restart. Wh
 | MariaDB | `/var/lib/mysql` | The database data directory. |
 | MySQL | `/var/lib/mysql` | The database data directory. |
 | Valkey / Redis | `/data` | RDB snapshots / AOF. |
+| Mailpit | `/data` | SQLite database of captured mail. |
 
 Web images (PHP, FrankenPHP) also pre-fill a template port labelled **Web** on container port **80 (http)** — that's template routing metadata, not the raw network port in the spec.
 
