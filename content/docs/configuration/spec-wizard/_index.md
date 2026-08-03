@@ -112,7 +112,7 @@ category        = "internal"
 | `tags` | no | List of strings, reserved for future filtering. |
 | `default_env` | no | List of `KEY=value` env vars pre-filled when picking this image (only if the key doesn't already exist). e.g. `["KNOT_VNC_HTTP_PORT=5680"]` for desktop images. |
 | `default_port` | no | Array of template-level ports pre-filled when picking this image (if the port doesn't already exist). Each entry has `name`, `port`, and `protocol`. e.g. `[[image.default_port]]` with `name = "Web"`, `port = 80`, `protocol = "http"` for PHP images. These are template port metadata used for routing, not the Nomad/Docker network ports in the spec. |
-| `volume` | no | Array of mount points the image expects to be persistent (`[[image.volume]]`). Each entry has a `path` (the in-container mount point, e.g. `/home`, `/data`, `/var/lib/mysql`) and an optional `description`. The wizard pre-fills one storage row per entry when the image is picked; the backing kind (named volume / managed path / bind) is chosen in the wizard. |
+| `volume` | no | Array of mount points the image expects to be persistent (`[[image.volume]]`). Each entry has a `path` (the in-container mount point, e.g. `/home`, `/data`, `/var/lib/mysql`), an optional `kind` (`bind`, `volume`, or `path`; defaults to `volume` — the backing kind the wizard pre-fills, which the user can still change), and an optional `description`. The wizard pre-fills one storage row per entry when the image is picked. |
 
 ### Building a manifest from the knot-base-images repo
 
