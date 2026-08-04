@@ -54,6 +54,34 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
   </div>
 
   <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/go.svg" alt="Go" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">Go</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Ubuntu + the Go toolchain. Pure runtime image.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">1.26</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/python.svg" alt="Python" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">Python</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Ubuntu + Python, pip and uv. Pure runtime image.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">3.14</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/nodejs.svg" alt="Node.js" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">Node.js</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Ubuntu + Node.js, npm and corepack. Pure runtime image.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">24</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">26</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
     <img src="/icons/mariadb.svg" alt="MariaDB" class="h-12 w-12 mb-3" />
     <div class="font-semibold text-gray-900 dark:text-gray-100">MariaDB</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">MariaDB LTS releases with knot tooling.</div>
@@ -125,6 +153,7 @@ Each image declares the mount point(s) it expects to survive a space restart. Wh
 |--------------|-----------------|-------------------|
 | Ubuntu / Ubuntu Desktop | `/home` | User files, projects, shell config. |
 | PHP / FrankenPHP | `/home` | As above; the web root is `~/public_html`. |
+| Go / Python / Node.js | `/home` | Projects, `GOPATH`, virtualenvs, `node_modules`. |
 | MariaDB | `/var/lib/mysql` | The database data directory. |
 | MySQL | `/var/lib/mysql` | The database data directory. |
 | Valkey / Redis | `/data` | RDB snapshots / AOF. |
