@@ -103,6 +103,15 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
   </div>
 
   <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/postgres.svg" alt="PostgreSQL" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">PostgreSQL</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">PostgreSQL with knot tooling.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">18</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
     <img src="/icons/valkey.svg" alt="Valkey" class="h-12 w-12 mb-3" />
     <div class="font-semibold text-gray-900 dark:text-gray-100">Valkey</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Valkey — the Redis fork.</div>
@@ -156,6 +165,7 @@ Each image declares the mount point(s) it expects to survive a space restart. Wh
 | Go / Python / Node.js | `/home` | Projects, `GOPATH`, virtualenvs, `node_modules`. |
 | MariaDB | `/var/lib/mysql` | The database data directory. |
 | MySQL | `/var/lib/mysql` | The database data directory. |
+| PostgreSQL | `/var/lib/postgresql/data` | The database data directory (`PGDATA`). |
 | Valkey / Redis | `/data` | RDB snapshots / AOF. |
 | Mailpit | `/data` | SQLite database of captured mail. |
 | VictoriaLogs | `/data` | Log storage directory. |
