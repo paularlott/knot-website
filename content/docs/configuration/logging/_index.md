@@ -58,6 +58,11 @@ All options can be set in `knot.toml`, via CLI flags, or through environment var
     url = "http://localhost:9428/insert/jsonline"
     format = "ndjson"    # ndjson | loki | elasticsearch
     stream = "knot"      # stream name / identifier
+
+    # Optional authentication (see "Authentication" below)
+    username = ""        # HTTP basic auth username
+    password = ""        # HTTP basic auth password
+    token = ""           # bearer token (Authorization: Bearer); takes precedence over basic auth
 ```
 
 #### CLI Flags
@@ -66,6 +71,9 @@ All options can be set in `knot.toml`, via CLI flags, or through environment var
 - **`--log-output-url`** — HTTP URL to send log output to
 - **`--log-output-format`** — Log format: ndjson, loki, or elasticsearch (default: `ndjson`)
 - **`--log-output-stream`** — Stream name / identifier sent with each record (default: `knot`)
+- **`--log-output-username`** — Optional username for HTTP basic auth
+- **`--log-output-password`** — Optional password for HTTP basic auth
+- **`--log-output-token`** — Optional bearer token (`Authorization: Bearer`); takes precedence over basic auth
 
 #### Environment Variables
 
@@ -73,6 +81,24 @@ All options can be set in `knot.toml`, via CLI flags, or through environment var
 - **`KNOT_LOG_OUTPUT_URL`** — Maps to `--log-output-url`
 - **`KNOT_LOG_OUTPUT_FORMAT`** — Maps to `--log-output-format`
 - **`KNOT_LOG_OUTPUT_STREAM`** — Maps to `--log-output-stream`
+- **`KNOT_LOG_OUTPUT_USERNAME`** — Maps to `--log-output-username`
+- **`KNOT_LOG_OUTPUT_PASSWORD`** — Maps to `--log-output-password`
+- **`KNOT_LOG_OUTPUT_TOKEN`** — Maps to `--log-output-token`
+
+---
+
+## Authentication
+
+When forwarding logs to a secured endpoint, **knot** supports two optional authentication methods, both compatible with every output format:
+
+| Method     | Configured via                          | Sent on each request            |
+| ---------- | --------------------------------------- | ------------------------------- |
+| Basic Auth | `username` + `password`                 | `Authorization: Basic <base64>` |
+| Bearer     | `token`                                 | `Authorization: Bearer <token>` |
+
+If a `token` is configured it takes precedence over basic auth. Only one `Authorization` header is ever sent.
+
+> **Tip:** Basic auth credentials may also be embedded directly in the URL (e.g. `https://user:pass@host/...`); Go's HTTP client sends them automatically. The explicit `username`/`password` fields are clearer in config files and keep secrets out of access logs.
 
 ---
 
@@ -119,6 +145,55 @@ Logs are encoded as a Loki push payload. The `stream` value is used as the `job`
 ```
 
 Logs are encoded as an Elasticsearch bulk payload. The `stream` value is used as the index name. If no stream is configured, the index defaults to `knot`.
+
+---
+
+## Authenticated Providers
+
+The authentication options above work with every format. The most common hosted setups are shown below.
+
+### Grafana Cloud (Loki) — Bearer Token
+
+```toml
+[log]
+  level = "info"
+
+  [log.output]
+    url = "https://logs-prod-XXX.grafana.net/loki/api/v1/push"
+    format = "loki"
+    stream = "knot"
+    token = "<Grafana Cloud API key>"   # sent as Authorization: Bearer
+```
+
+Grafana Cloud also accepts basic auth using your instance username as the `username` and the API key as the `password` — either field set works.
+
+### Elasticsearch — Basic Auth
+
+```toml
+[log]
+  level = "info"
+
+  [log.output]
+    url = "https://elastic.example.com:9200/_bulk"
+    format = "elasticsearch"
+    stream = "knot"
+    username = "elastic"
+    password = "<password>"
+```
+
+### VictoriaLogs — Basic Auth
+
+```toml
+[log]
+  level = "info"
+
+  [log.output]
+    url = "https://logs.example.com/insert/jsonline"
+    format = "ndjson"
+    stream = "knot"
+    username = "<tenant>"
+    password = "<token>"
+```
 
 ---
 

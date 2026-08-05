@@ -27,7 +27,7 @@ The **knot** agent supports two interfaces for sending logs:
 
 ### Default Ports:
 - **HTTP API**: `12201`
-- **Syslog Interface**: `514`
+- **Syslog Interface**: `1514`
 
 ---
 

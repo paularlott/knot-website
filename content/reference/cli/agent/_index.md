@@ -34,7 +34,7 @@ Usually started automatically by the container entrypoint. Key options:
 | `--https-port` | | HTTPS ports to expose via the web UI (repeatable) |
 | `--vnc-http-port` | `0` | Port for VNC over HTTP |
 | `--methods-file` | | `.toml` or `.py` file registering JSON-RPC methods at startup |
-| `--syslog-port` | `514` | Syslog listen port; `0` disables |
+| `--syslog-port` | `1514` | Syslog listen port; `0` disables |
 | `--api-port` | `12201` | API/log listen port; `0` disables |
 | `--update-authorized-keys` | `true` | Keep the user's SSH authorized_keys up to date |
 | `--vscode-tunnel` | `vscodetunnel` | Screen running the VS Code tunnel; blank disables |
