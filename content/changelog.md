@@ -31,6 +31,8 @@ navSection: docs
 - **UI improvements**: consistent + button placement against labels across template, space, variable, script, skill, command, and event-sink forms.
 
 - **Unsaved-changes guard on all forms**: closing (Esc or the close button) a create/edit form with unsaved changes now prompts a discard confirmation across space, volume, variable, script, event-sink, skill, slash-command, MCP-server, user, group, and role forms (templates and stack templates already had it). Code editors are tracked too.
+
+- **Configurable Nomad datacenter/region + default job placement**: `${{ .nomad.dc }}` / `${{ .nomad.region }}` are now sourced from `server.nomad.dc` / `server.nomad.region` (flags `--nomad-dc` / `--nomad-region`, env `KNOT_NOMAD_DC` / `KNOT_NOMAD_REGION`), defaulting to the `NOMAD_DC` / `NOMAD_REGION` environment variables so existing deployments are unchanged. New Nomad jobs created by the spec wizard now emit `datacenters` so they schedule in the server's datacenter rather than the Nomad default.
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}

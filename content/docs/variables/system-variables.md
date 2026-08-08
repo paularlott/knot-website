@@ -37,8 +37,8 @@ To use a system variable, simply specify it in the format `${{ .<group>.<name> }
 |              | `server.base_image_registry` | The configured base image registry prefix (default `docker.io/paularlott`). Used by the [template spec wizard](../configuration/spec-wizard/) to prefix manifest entries, and available to any job/volume template that wants to reference the same registry. |
 |              | `server.base_image_registry_user` | The configured base image registry username (empty if not set). |
 |              | `server.base_image_registry_password` | The configured base image registry password (empty if not set). |
-| **nomad**    | `nomad.dc`             | The Nomad datacenter the server is running in (from the `NOMAD_DC` environment variable) |
-|              | `nomad.region`         | The Nomad region the server is running in (from the `NOMAD_REGION` environment variable) |
+| **nomad**    | `nomad.dc`             | The Nomad datacenter the server is running in. Defaults to the `NOMAD_DC` environment variable (set automatically when knot runs as a Nomad job); override with `server.nomad.dc` / `--nomad-dc`. |
+|              | `nomad.region`         | The Nomad region the server is running in. Defaults to the `NOMAD_REGION` environment variable (set automatically when knot runs as a Nomad job); override with `server.nomad.region` / `--nomad-region`. |
 
 ---
 

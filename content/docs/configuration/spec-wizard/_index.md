@@ -231,7 +231,7 @@ Nomad clients restrict which capabilities a job may request via the docker plugi
 ## How the wizard modifies specs
 
 - **Container specs (Docker/Podman/Apple):** the YAML is patched in place. Comments on fields the wizard doesn't rewrite survive, as do fields outside the wizard's schema. Comments *inside* a list the wizard replaces (ports, volumes, environment, capabilities) are lost, because the whole list is re-emitted.
-- **Nomad specs:** the wizard's fields are patched into the existing HCL via constrained text surgery on the first task block. Comments, heredoc templates, and any HCL outside wizard-controlled blocks (constraints, services, meta) survive untouched. If the original HCL is empty, a complete default job is emitted using `${{ .space.name }}` / `${{ .user.username }}` placeholders.
+- **Nomad specs:** the wizard's fields are patched into the existing HCL via constrained text surgery on the first task block. Comments, heredoc templates, and any HCL outside wizard-controlled blocks (constraints, services, meta) survive untouched. If the original HCL is empty, a complete default job is emitted using `${{ .space.name }}` / `${{ .user.username }}` placeholders, with `datacenters` pre-filled from the `${{ .nomad.dc }}` [system variable](../../variables/system-variables/) (which defaults to the `NOMAD_DC` environment variable, or `server.nomad.dc` when set).
 - The wizard never invents values it can't see: a `network` block with no `mode`, or a spec with no `privileged` flag, stays that way after Apply.
 
 ### When the wizard refuses
