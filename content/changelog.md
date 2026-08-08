@@ -9,7 +9,7 @@ weight: 100
 navSection: docs
 ---
 
-## July 2026
+## August 2026
 
 {{< version "v0.32.0" >}}
 
@@ -21,6 +21,10 @@ navSection: docs
 - **Pinnable sidebar navigation**: star any menu item to pin it to the top of the sidebar for quick access. The first pin switches the sidebar to a compact layout where pinned items sit on top (drag the handle to reorder them) and everything else collapses into **More**; the default Spaces/Tunnels/API Tokens/Volumes entries demote to the top of **More**. Unpin everything to return to the original layout. Pins are saved to your profile and persist across sessions.
 
 - **Global search (⇧⌘K / Shift+Ctrl+K)**: a Spotlight-style palette for jumping straight to any space, template, variable, volume, stack, script, skill, slash command, MCP server, event sink, user, group, role, or API token. Results are grouped by type, scoped to what you can see (your own spaces, the entities you manage, in-zone), and capped per group. Arrow-key to a result and press Enter to open it straight into edit mode for everything except spaces, which land on the filtered spaces list. `⌘/Ctrl+K` still focuses the current page's own search box. The palette is hidden on touch devices.
+
+- **`knot agent wait-for-start`**: a new agent subcommand that blocks until the daemon is running and accepting commands on its unix socket (timeout configurable via `--timeout` / `KNOT_WAIT_TIMEOUT`, default 60s). All base image entrypoints now call it right after launching the agent, so startup scripts and user commands never race the agent coming up.
+
+- **In-space DNS resolution via the agent**: enabling the DNS server (`server.dns.enabled`) now also routes every space's DNS through its in-container agent — each space gets `--dns 127.0.0.1` so the agent's resident resolver on `127.0.0.1:53` forwards every query to the knot server's own DNS server (via `KNOT_SERVER_DNS`, addressed on the agent-endpoint host). The server is the single DNS point for the space: authoritative for `*.<wildcard>` (from `dns-records`) and forwarding the rest upstream (using `resolver.nameservers`, or the system default when unset). Because the agent fetch can't use DNS before the resolver is up, the server injects `KNOT_SERVER_RESOLVE` and the entrypoint passes it to `curl --resolve` (correct SNI/Host, no lookup). The server refuses to start a space if it can't resolve the URL or agent-endpoint hostname. Works on Docker, Podman, Apple Containers, and Nomad (docker/podman drivers). The `dns-enable-upstream` flag is now implied by `dns-enabled`. See [DNS Server](../docs/configuration/dns-server/).
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
@@ -34,6 +38,8 @@ navSection: docs
 {{< /changelog-item >}}
 
 ---
+
+## July 2026
 
 {{< version "v0.31.0" >}}
 
