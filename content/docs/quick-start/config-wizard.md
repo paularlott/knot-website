@@ -56,7 +56,7 @@ Expose services running inside spaces to the public internet for testing — web
 Enable TOTP two-factor authentication (works with Google Authenticator, Microsoft Authenticator, etc.) and Gravatar avatars.
 
 ### 8. Optional Features
-Enable AI/Chat (Ollama, OpenAI, Claude, Gemini, Mistral, ZAI) and MCP server.
+Enable AI/Chat (OpenAI, Anthropic, Google, Ollama) and MCP server.
 
 ### 9. Review
 The generated `knot.toml` is shown in an embedded TOML editor with syntax highlighting. Edit anything directly, then click **write to disk** or **copy to clipboard**.
