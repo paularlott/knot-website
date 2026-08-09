@@ -46,8 +46,8 @@ Enter the server URL, wildcard domain (auto-derived from the URL), agent endpoin
 ### 4. DNS Resolution
 Choose system nameservers or specify custom ones (for Consul SRV lookups, etc.). Optionally enable the built-in DNS server with A/AAAA/CNAME records to serve your wildcard domain locally.
 
-### 5. Deployment Platforms
-Enable Nomad, Docker, Podman, and/or Apple Containers. Each platform writes a config section with `allow_in_template_create` to control whether new templates of that type can be created in the template editor.
+### 5. Container Runtimes
+Configure Nomad, Docker, and Podman. Leave a field blank to skip that runtime.
 
 ### 6. Tunnel Server
 Expose services running inside spaces to the public internet for testing — webhooks, preview URLs, external integrations. Disabled by default.
