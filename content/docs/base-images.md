@@ -54,6 +54,16 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
   </div>
 
   <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/frankenscriptling.svg" alt="FrankenScriptling" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">FrankenScriptling</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">FrankenPHP with the Scriptling scripting/agent extension.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.4</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.5</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
     <img src="/icons/go.svg" alt="Go" class="h-12 w-12 mb-3" />
     <div class="font-semibold text-gray-900 dark:text-gray-100">Go</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Ubuntu + the Go toolchain. Pure runtime image.</div>
@@ -161,7 +171,7 @@ Each image declares the mount point(s) it expects to survive a space restart. Wh
 | Image family | Persistent path | What lives there |
 |--------------|-----------------|-------------------|
 | Ubuntu / Ubuntu Desktop | `/home` | User files, projects, shell config. |
-| PHP / FrankenPHP | `/home` | As above; the web root is `~/public_html`. |
+| PHP / FrankenPHP / FrankenScriptling | `/home` | As above; the web root is `~/public_html`. |
 | Go / Python / Node.js | `/home` | Projects, `GOPATH`, virtualenvs, `node_modules`. |
 | MariaDB | `/var/lib/mysql` | The database data directory. |
 | MySQL | `/var/lib/mysql` | The database data directory. |
@@ -170,7 +180,7 @@ Each image declares the mount point(s) it expects to survive a space restart. Wh
 | Mailpit | `/data` | SQLite database of captured mail. |
 | VictoriaLogs | `/data` | Log storage directory. |
 
-Web images (PHP, FrankenPHP) also pre-fill a template port labelled **Web** on container port **80 (http)** — that's template routing metadata, not the raw network port in the spec.
+Web images (PHP, FrankenPHP, FrankenScriptling) also pre-fill a template port labelled **Web** on container port **80 (http)** — that's template routing metadata, not the raw network port in the spec.
 
 ---
 
