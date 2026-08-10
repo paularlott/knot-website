@@ -42,11 +42,12 @@ See [Tool Modes](../mcp/#tool-modes) for configuration details.
 
 ## Templates
 
-Templates are read-only via MCP — authoring and editing happens through the **knot** web UI or CLI. `list_templates` returns active templates only, including each template's custom field definitions (name and description) so callers have what they need to set custom fields when creating a space.
+`list_templates` returns active templates only, including each template's custom field definitions (name and description) so callers have what they need to set custom fields when creating a space. `create_template` builds a template from a simplified, wizard-style spec — the AI provides an image, environment variables, ports, resources, and feature toggles, and knot writes the native Nomad HCL or container YAML for it (the same model as the UI [spec wizard](../configuration/spec-wizard/)). Full template editing — health checks, schedules, advanced spec features — still happens through the **knot** web UI or CLI.
 
 | Tool | Description | Visibility |
 |------|-------------|------------|
 | `list_templates` | List active space templates, including their custom field definitions. | On-demand |
+| `create_template` | Create a space template from a container image using a simplified spec (image, env vars, ports, memory, CPU, features); knot builds the native spec. | On-demand |
 
 ---
 
