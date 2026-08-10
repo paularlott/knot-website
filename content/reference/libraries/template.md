@@ -27,6 +27,7 @@ The `knot.template` library provides template management functions. Templates de
 | `list()` | List all templates |
 | `get(template_id)` | Get template by ID or name |
 | `validate(platform, job='', volumes='')` | Validate template job and volume specs without saving |
+| `build_spec(platform, spec, original_job='', original_volumes='')` | Build native job/volume text from a unified spec (image, env, ports, storage, resources). The same conversion the [UI spec wizard](../../docs/configuration/spec-wizard/) uses. |
 | `nodes(template_id)` | List available nodes for a local-container template |
 | `create(name, ...)` | Create a new template |
 | `update(template_id, ...)` | Update template properties |
@@ -56,6 +57,17 @@ print(icons)
 # Validate a template spec before saving
 result = template.validate("docker", job="image: ubuntu:24.04")
 print(result["valid"])
+
+# Build a spec from a unified description, then create a template from it
+built = template.build_spec("nomad", {
+    "image": "nginx:latest",
+    "environment": [{"key": "NGINX_HOST", "value": "${{ .space.name }}"}],
+    "ports": [{"host_port": 8080, "container_port": 80, "protocol": "tcp"}],
+    "memory": "512M",
+    "cpus": "1",
+    "cpu_type": "cores",
+})
+template.create("nginx", job=built["job"], volumes=built["volumes"], platform="nomad")
 ```
 
 ---
@@ -112,6 +124,38 @@ For `health_check_type="agent"`, no `health_check_config` value is required.
 `validate(platform, job='', volumes='')` returns:
 - `valid` - Whether the specification is valid
 - `errors` - List of validation errors with `field` and `message`
+
+## Building Specs
+
+`build_spec(platform, spec, original_job='', original_volumes='')` converts a runtime-agnostic **unified spec** into the platform's native job definition (Nomad HCL or container YAML) plus volume-definition text. It's the same conversion the [UI spec wizard](../../docs/configuration/spec-wizard/) applies — useful when you want to assemble a template programmatically without hand-writing HCL or YAML.
+
+`spec` is a dict with any of these keys (only `image` is required):
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `image` | string | Container image to run. |
+| `hostname` | string | Container hostname (template variables supported). |
+| `name` | string | Container name (`container_name`) or the Nomad job label. Unrelated to `hostname`. |
+| `command` | list\[string\] | Command used to start the container. |
+| `environment` | list\[{key, value}\] | Environment variables. |
+| `ports` | list\[{host_port, container_port, protocol, label}\] | Host-to-container port mappings. `protocol` defaults to `tcp`. |
+| `storage` | list\[StorageEntry\] | Mounts — see the spec wizard docs; each entry expands to the bind mount, volume definition, and (Nomad only) the `volume {}` / `volume_mount {}` stanzas. |
+| `devices` | list\[{host_path, container_path, cgroup_permissions}\] | Host device mappings. |
+| `memory` | string | Memory limit, e.g. `512M`, `1G`. |
+| `memory_max` | string | Max memory limit (Nomad only). |
+| `cpus` | string | CPU allocation; interpret with `cpu_type`. |
+| `cpu_type` | string | Nomad only: `"cores"` (whole cores) or `"mhz"` (default). Ignored by container platforms. |
+| `cap_add` / `cap_drop` | list\[string\] | Linux capabilities, e.g. `["CAP_SYS_PTRACE"]`. |
+| `network` | string | Network mode. |
+| `privileged` | bool | Run privileged. |
+| `auth` | {username, password} | Optional registry pull credentials. |
+| `templates` | list\[NomadTemplate\] | Nomad `template {}` blocks (Nomad only). |
+
+When `original_job` / `original_volumes` are provided, the server patches the unified spec into them field-by-field, preserving any hand-written content outside the wizard's surface (just like the UI wizard's "Apply"). Pass empty strings (the default) to build from scratch.
+
+`build_spec()` returns:
+- `job` - Native job definition text (HCL for Nomad, YAML for container platforms)
+- `volumes` - Volume definition text (YAML)
 
 ## Nodes
 

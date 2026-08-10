@@ -26,7 +26,7 @@ OAuth providers are configured in `knot.toml` using the `[[server.auth_providers
 
 ## Prerequisites
 
-- A valid **knot Pro** license
+- **knot Pro** (free for up to 2 users; a license is only needed beyond that)
 - OAuth application credentials from your chosen provider(s)
 - Your **knot** server must be accessible at a public or internal URL (configured via `server.url`)
 

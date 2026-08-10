@@ -9,6 +9,10 @@ weight: 11
 
 Knot Pro includes additional features such as OAuth authentication, visual port forwarding, and advanced networking. {{< pro-badge >}}
 
+{{< tip >}}
+**Free for up to 2 users.** Knot Pro runs with all features enabled for up to 2 users — no license key required. A license only raises the user limit, so install Pro and add a key when your team grows past two.
+{{< /tip >}}
+
 ---
 
 ## Installing Knot Pro
@@ -83,7 +87,7 @@ Knot Pro includes additional features such as OAuth authentication, visual port 
 
 ## Configuring the License Key
 
-Knot Pro requires a license key in your configuration file. Add the `license` section to the `[server]` block in your `knot.toml`:
+A license key is only required once you have more than 2 users. To add one, add the `license` section to the `[server]` block in your `knot.toml`:
 
 ```toml {filename=knot.toml}
 [server]

@@ -28,8 +28,9 @@ hideSidebar: true
     <h3>Advanced controls for growing teams</h3>
     <p>Add commercial features that help larger teams standardize login, access, activity visibility, and secret handling.</p>
     <ul>
+      <li>Free for up to 2 users, including all Pro features</li>
       <li>Includes everything in Core</li>
-      <li>License-gated server features</li>
+      <li>License only required beyond 2 users</li>
       <li>Commercial binaries and container images</li>
     </ul>
     <div class="compare-pro-cta">
@@ -57,6 +58,11 @@ hideSidebar: true
         <td><strong>License</strong></td>
         <td>Apache 2.0 open source</td>
         <td>Commercial licensed edition</td>
+      </tr>
+      <tr>
+        <td><strong>Free use</strong></td>
+        <td>Unlimited users</td>
+        <td>Up to 2 users with all Pro features; license required for more</td>
       </tr>
       <tr>
         <td><strong>Deployment models</strong></td>
@@ -183,7 +189,7 @@ hideSidebar: true
   <div>
     <p class="compare-kicker">Upgrade to Pro</p>
     <h3>Unlock commercial features</h3>
-    <p>Use Knot Pro if you need OAuth, secret providers, activity views, and other advanced operational features.</p>
+    <p>Use Knot Pro if you need OAuth, secret providers, activity views, and other advanced operational features. It's free for up to 2 users with every feature enabled — install it and try everything, no license key required.</p>
     <div class="compare-cta-pro-buttons">
       <a href="https://github.com/sponsors/paularlott" class="compare-cta-pro-btn compare-cta-pro-btn--github">Get a license via GitHub Sponsors</a>
       <a href="https://clients.clearfusion.support/store/developer-tools" class="compare-cta-pro-btn compare-cta-pro-btn--store">Get a license via clearFusion Digital</a>

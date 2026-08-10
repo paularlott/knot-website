@@ -9,6 +9,42 @@ weight: 100
 navSection: docs
 ---
 
+## August 2026
+
+{{< version "v0.32.0" >}}
+
+{{< changelog-item "added" >}}
+- **Template export/import**: `knot template export <name>` produces a portable YAML file containing the full template definition (metadata, job spec, volume definitions, schedule, custom fields, features). `knot template import [--file path] [--name override]` creates a template from a YAML file or stdin. Scripts are referenced by name (not UUID) for cross-instance portability. Template variables (`${{ }}`) are preserved verbatim.
+
+- **Simplified template editing mode**: a visual spec wizard for picking a base image, setting resources, ports, env vars, mounts, and capabilities, knot writes the spec for you. Hand-written content outside the wizard is preserved character-for-character, including `${{ }}` template directives. For multi-task jobs, non-docker drivers, or unparseable YAML the wizard disables with an explanation. See [the configuration guide](../docs/configuration/spec-wizard/).
+
+- **Pinnable sidebar navigation**: star any menu item to pin it to the top of the sidebar for quick access. The first pin switches the sidebar to a compact layout where pinned items sit on top (drag the handle to reorder them) and everything else collapses into **More**; the default Spaces/Tunnels/API Tokens/Volumes entries demote to the top of **More**. Unpin everything to return to the original layout. Pins are saved to your profile and persist across sessions.
+
+- **Global search (⇧⌘K / Shift+Ctrl+K)**: a Spotlight-style palette for jumping straight to any space, template, variable, volume, stack, script, skill, slash command, MCP server, event sink, user, group, role, or API token. Results are grouped by type, scoped to what you can see (your own spaces, the entities you manage, in-zone), and capped per group. Arrow-key to a result and press Enter to open it straight into edit mode for everything except spaces, which land on the filtered spaces list. `⌘/Ctrl+K` still focuses the current page's own search box. The palette is hidden on touch devices.
+
+- **`knot agent wait-for-start`**: a new agent subcommand that blocks until the daemon is running and accepting commands on its unix socket (timeout configurable via `--timeout` / `KNOT_WAIT_TIMEOUT`, default 60s). All base image entrypoints now call it right after launching the agent, so startup scripts and user commands never race the agent coming up.
+
+- **In-space DNS resolution via the agent**: enabling the DNS server (`server.dns.enabled`) now also routes every space's DNS through its in-container agent — each space gets `--dns 127.0.0.1` so the agent's resident resolver on `127.0.0.1:53` forwards every query to the knot server's own DNS server (via `KNOT_SERVER_DNS`, addressed on the agent-endpoint host). The server is the single DNS point for the space: authoritative for `*.<wildcard>` (from `dns-records`) and forwarding the rest upstream (using `resolver.nameservers`, or the system default when unset). Because the agent fetch can't use DNS before the resolver is up, the server injects `KNOT_SERVER_RESOLVE` and the entrypoint passes it to `curl --resolve` (correct SNI/Host, no lookup). The server refuses to start a space if it can't resolve the URL or agent-endpoint hostname. Works on Docker, Podman, Apple Containers, and Nomad (docker/podman drivers). The `dns-enable-upstream` flag is now implied by `dns-enabled`. See [DNS Server](../docs/configuration/dns-server/).
+
+- **Config wizard (`knot server config-wizard`)**: a guided web-based wizard that generates a `knot.toml` through a step-by-step interview covering deployment type, database (with optional Redis for session storage), networking, DNS, container runtimes, tunnel server, security (TOTP), UI (Gravatar), and optional features (AI/Chat, MCP). The generated config is shown in an embedded TOML editor for final review before writing to disk. Defaults match the chosen deployment type — single server and cluster default to MySQL/MariaDB with Redis sessions; leaf nodes default to BadgerDB. Chat config now uses a `type` field (`openai`, `anthropic`, `google`, `ollama`, default `openai`) to select the API protocol. See [Config Wizard](../docs/quick-start/config-wizard/).
+
+- **`create_template` MCP tool**: AI assistants can now create space templates from a simplified, wizard-style spec — provide a container image plus optional environment variables, ports, memory, CPU, and feature toggles, and knot builds the native Nomad HCL or container YAML (using the same spec model as the UI [spec wizard](../docs/configuration/spec-wizard/)). Manual-orchestration templates are also supported by setting `platform` to `manual`. See [MCP Tools](../docs/ai/mcp-tools/#templates).
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- **UI improvements**: consistent + button placement against labels across template, space, variable, script, skill, command, and event-sink forms.
+
+- **Unsaved-changes guard on all forms**: closing (Esc or the close button) a create/edit form with unsaved changes now prompts a discard confirmation across space, volume, variable, script, event-sink, skill, slash-command, MCP-server, user, group, and role forms (templates and stack templates already had it). Code editors are tracked too.
+
+- **Configurable Nomad datacenter/region + default job placement**: `${{ .nomad.dc }}` / `${{ .nomad.region }}` are now sourced from `server.nomad.dc` / `server.nomad.region` (flags `--nomad-dc` / `--nomad-region`, env `KNOT_NOMAD_DC` / `KNOT_NOMAD_REGION`), defaulting to the `NOMAD_DC` / `NOMAD_REGION` environment variables so existing deployments are unchanged. New Nomad jobs created by the spec wizard now emit `datacenters` so they schedule in the server's datacenter rather than the Nomad default.
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- **Read-only container volumes validate**: `:ro` mounts (and `rw`, `z`, `Z`, `nocopy`) are now accepted by the spec validator — the runtimes already supported them.
+{{< /changelog-item >}}
+
+---
+
 ## July 2026
 
 {{< version "v0.31.0" >}}

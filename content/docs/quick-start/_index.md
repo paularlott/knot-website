@@ -10,7 +10,16 @@ Get **knot** running in minutes. Choose the deployment path that matches your ne
 
 ---
 
-## Deployment Options
+## Recommended: Config Wizard
+
+### [Using the Config Wizard](config-wizard/)
+**Fastest way to get started**
+
+Run `knot server config-wizard` to generate a `knot.toml` through a guided web UI that walks you through each decision — database, networking, DNS, platforms, tunnel, security, and optional features. Sensible defaults are applied based on your deployment type.
+
+---
+
+## Manual Setup
 
 ### [Local Containers](local-containers/)
 **Recommended for most users**
