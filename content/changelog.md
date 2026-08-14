@@ -11,6 +11,16 @@ navSection: docs
 
 ## August 2026
 
+{{< version "v0.32.2" >}}
+
+{{< changelog-item "added" >}}
+- **Desktop mode**: running `knot` with no arguments starts the server in the background with a system tray icon (**Open knot UI** / **Quit**). Closing the browser doesn't stop the server. Installable as a macOS app via `brew install --cask paularlott/tap/knot`; on Windows the binary detaches from the console and carries an application icon. See [Desktop Client](../docs/quick-start/client/).
+
+- **First-run setup wizard**: when no config exists (or it has no database backend), desktop mode opens a guided wizard in the browser pre-filled with sensible local defaults. It writes `~/.knot/knot.toml` — then quit and reopen so the new config loads. Also re-runnable from the running server at `/setup` (tray menu → **Setup**, admin login). Desktop/Leaf setups can optionally join an existing cluster via an origin server URL and access token (`[server.origin]`).
+
+- **`${{ host_ip }}` in config addresses**: values like `server.agent_endpoint` can now use `${{ host_ip }}`, resolved to the host's IP on every start — needed because agents in containers can't reach the host via `127.0.0.1`. macOS and Windows desktop builds also ship with proper app icons.
+{{< /changelog-item >}}
+
 {{< version "v0.32.0" >}}
 
 {{< changelog-item "added" >}}
