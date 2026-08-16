@@ -108,6 +108,9 @@ Customize the web interface with logos and Gravatar support.
 ### [Logging](logging)
 Forward structured logs to VictoriaLogs, Grafana Loki, or Elasticsearch.
 
+### [Anomaly Detection](anomaly-detection)
+Detect failed-login bursts, credential spraying and event sink failures over the audit stream. {{< pro-badge >}}
+
 ---
 
 ## Quick Configuration Examples

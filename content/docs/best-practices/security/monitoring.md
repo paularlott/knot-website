@@ -13,12 +13,21 @@ Security monitoring, auditing, and compliance.
 
 ## Audit Logging
 
-Enable comprehensive audit logging:
+Audit events (authentication attempts, user and permission changes, template modifications, space lifecycle, configuration changes) are recorded automatically. Route them to your external logging service for long-term retention and compliance — the internal audit store is a convenience window that expires entries after the retention period:
 
 ```toml {filename=knot.toml}
-[server.audit]
-enabled = true
+[server]
+audit_routing = "both"     # internal | external | both
+audit_retention = 90       # days to keep audit logs in the internal store
+
+[log.output]
+url = "http://victorialogs:9428/insert/jsonline"
+format = "ndjson"
 ```
+
+See [Logging](../../../configuration/logging/) for the output options.
+
+Audit events use the **username** as the actor for all authenticated actions; failed logins use the **submitted email address** (the identifier isn't known to be valid), and successful logins additionally carry the email in their properties — so you can correlate a failed-attempt burst with the account that eventually authenticated.
 
 **What to monitor**:
 - Authentication attempts (success and failure)
@@ -27,6 +36,10 @@ enabled = true
 - Space creation and deletion
 - API access
 - Configuration changes
+
+{{< tip >}}
+Knot Pro adds built-in [anomaly detection](../../../configuration/anomaly-detection/) over the audit stream — failed-login bursts per user, credential spraying per source IP, and event sink failures — emitting `Anomaly Detected` audit events. It works with any `audit_routing` setting.
+{{< /tip >}}
 
 ---
 

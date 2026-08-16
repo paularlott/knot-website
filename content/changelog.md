@@ -11,15 +11,37 @@ navSection: docs
 
 ## August 2026
 
-{{< version "v0.32.2" >}}
+{{< version "v0.33.0" >}}
 
 {{< changelog-item "added" >}}
+- **Native VictoriaLogs endpoint on the agent**: `POST /insert/jsonline` on the agent's localhost API accepts VictoriaLogs jsonline inserts, honouring the standard `_msg_field` / `_time_field` / `_stream_fields` query parameters — shippers configured for VictoriaLogs work unchanged when pointed at the agent. The agent already spoke the Loki and GELF protocols. See [Logging from Spaces](../docs/spaces/logging/).
+
+- **Space log forwarding** {{< pro-badge >}}: new `log.forward_space_logs` option writes logs received from spaces into the server's log output, so they reach the same destination as the server's own logs — including an external logging service configured via `[log.output]`. Records are tagged with `stream = "space"`, `space_id`, `space_name`, `user` (the space owner), `service` and level. Off by default. See [Logging Configuration](../docs/configuration/logging/).
+
+- **Log delivery retries + stderr failover**: batches sent to `[log.output]` are now retried with backoff on transport errors and 5xx/429 responses (4xx responses are not retried). While the endpoint is healthy, stderr stays silent apart from a startup line naming the external service; when a batch fails after all retries an ERROR marker and the failed records are written to stderr and every new record is mirrored there until delivery recovers — the failure window is always fully visible locally, with recovery/transition markers only on state changes.
+
+- **GELF log output format**: `[log.output]` now speaks GELF (`format = "gelf"`) in addition to ndjson, Loki and Elasticsearch, so server (and forwarded space) logs can go straight to Graylog's GELF HTTP input. Stream becomes the GELF `host`, levels map to syslog severities, and extra fields ride along as underscore-prefixed additional fields.
+
+- **Config wizard logging credentials**: the wizard's external logging section now offers basic auth username/password (e.g. VictoriaLogs tenant + token) in addition to the bearer token, and the format picker includes GELF/Graylog.
+
+- **On-disk log spooling** {{< pro-badge >}}: undeliverable log batches are spooled to disk while the external logging service is unreachable and replayed oldest-first once it recovers — no lost records during outages. Bounded by size with oldest-first eviction; configured via `[log.spool]` (`enabled`, `path`, `max_mb`).
+
+- **Audit anomaly detection** {{< pro-badge >}}: Knot Pro can now detect failed-login bursts per user, credential spraying per source IP, and event sink delivery failures over the audit event stream, emitting its own `Anomaly Detected` audit events. Detection taps the stream in-process so it works with any `audit_routing` — the internal audit store is not required — and the alerts flow through normal routing to your external logging service. In clusters, events are gossiped between servers so detection counts the cluster-wide stream (bursts split across servers still trip), with zone-leader coordination ensuring exactly one alert per burst. Configured via `[server.detection]`. See [Anomaly Detection](../docs/configuration/anomaly-detection/). The internal audit store remains a convenience window that expires entries — long-term retention stays the job of the external logging service.
+
+- **Logging & audit step in the config wizard**: a new wizard page configures external log output (URL, format, auth token), audit routing and retention; the Pro wizard also configures space log forwarding {{< pro-badge >}}.
+
+- **Space log sinks** {{< pro-badge >}}: a space can register to receive a mirror of the log records of the owner's other spaces in the zone — run VictoriaLogs in a space and query your other spaces' logs with LogsQL. Any space can advertise a sink via the `KNOT_LOG_SINK_*` agent env vars — `PORT` (the trigger), `FORMAT` (VictoriaLogs jsonline, Loki, GELF or native JSON) and optional `TOKEN` / `USERNAME` / `PASSWORD` credentials for the local log service (agent-side only, never sent to the server); off by default, including in the knot-victoria-logs base image. Owner-scoped by design (never other users' logs), gated by the new **Use Log Sinks** permission, zone-local, with batching and retries but no disk buffering. Works in the free built-in Pro tier (2 users). In multi-server zones the zone leader delivers exactly one copy of each record. See [Log Sinks](../docs/spaces/log-sinks/).
+
+- **Space log forwarding is now single-copy in multi-server zones** {{< pro-badge >}}: agents dial every server in a zone, so each log record arrives on all of them — forwarding (`log.forward_space_logs`) is now funnelled through the zone leader so the external logging service receives exactly one copy of each record.
+
 - **Desktop mode**: running `knot` with no arguments starts the server in the background with a system tray icon (**Open knot UI** / **Quit**). Closing the browser doesn't stop the server. Installable as a macOS app via `brew install --cask paularlott/tap/knot`; on Windows the binary detaches from the console and carries an application icon. See [Desktop Client](../docs/quick-start/client/).
 
-- **First-run setup wizard**: when no config exists (or it has no database backend), desktop mode opens a guided wizard in the browser pre-filled with sensible local defaults. It writes `~/.knot/knot.toml` — then quit and reopen so the new config loads. Also re-runnable from the running server at `/setup` (tray menu → **Setup**, admin login). Desktop/Leaf setups can optionally join an existing cluster via an origin server URL and access token (`[server.origin]`).
+- **First-run setup wizard**: when no config exists (or it has no database backend), desktop mode opens a guided wizard in the browser pre-filled with sensible local defaults. It writes `~/.knot/knot.toml` — then quit and reopen so the new config loads. Also re-runnable from the running server at `/setup` (tray menu → **Setup**, admin login); when editing an existing config the deployment type is inferred from the current settings instead of being asked again, and the review step shows the merged result — sections the wizard doesn't manage (e.g. `[server.base_image]`) are preserved, as are hand edits, comments and unknown keys. The review step is a full editor: anything you change or delete there is written exactly as shown, so removing a field or section actually removes it from the config. Desktop/Leaf setups can optionally join an existing cluster via an origin server URL and access token (`[server.origin]`).
 
 - **`${{ host_ip }}` in config addresses**: values like `server.agent_endpoint` can now use `${{ host_ip }}`, resolved to the host's IP on every start — needed because agents in containers can't reach the host via `127.0.0.1`. macOS and Windows desktop builds also ship with proper app icons.
 {{< /changelog-item >}}
+
+---
 
 {{< version "v0.32.0" >}}
 

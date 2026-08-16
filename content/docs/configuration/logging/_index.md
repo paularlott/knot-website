@@ -43,6 +43,7 @@ When a log output URL is configured, **knot** sends structured JSON log records 
 | `ndjson`        | VictoriaLogs   | `application/stream+json` |
 | `loki`          | Grafana Loki   | `application/json`        |
 | `elasticsearch` | Elasticsearch  | `application/x-ndjson`    |
+| `gelf`          | Graylog        | `application/json`        |
 
 ### Configuration
 
@@ -69,7 +70,7 @@ All options can be set in `knot.toml`, via CLI flags, or through environment var
 
 - **`--log-level`** — Log level: trace, debug, info, warn, error, fatal (default: `info`)
 - **`--log-output-url`** — HTTP URL to send log output to
-- **`--log-output-format`** — Log format: ndjson, loki, or elasticsearch (default: `ndjson`)
+- **`--log-output-format`** — Log format: ndjson, loki, elasticsearch, or gelf (default: `ndjson`)
 - **`--log-output-stream`** — Stream name / identifier sent with each record (default: `knot`)
 - **`--log-output-username`** — Optional username for HTTP basic auth
 - **`--log-output-password`** — Optional password for HTTP basic auth
@@ -181,6 +182,20 @@ Grafana Cloud also accepts basic auth using your instance username as the `usern
     password = "<password>"
 ```
 
+### Graylog (GELF)
+
+```toml
+[log]
+  level = "info"
+
+  [log.output]
+    url = "http://graylog.example.com:12201/gelf"
+    format = "gelf"
+    stream = "knot"
+```
+
+Each record is encoded as a GELF JSON message (newline-delimited batches, as accepted by Graylog's GELF HTTP input). The `stream` value becomes the GELF `host`, slog levels map to syslog severities, and all other fields (`space_id`, `service`, …) are sent as underscore-prefixed additional fields.
+
 ### VictoriaLogs — Basic Auth
 
 ```toml
@@ -194,6 +209,62 @@ Grafana Cloud also accepts basic auth using your instance username as the `usern
     username = "<tenant>"
     password = "<token>"
 ```
+
+---
+
+## Delivery Retries and Stderr Failover
+
+Batches are delivered with retries: transport errors and server-side failures (HTTP 5xx / 429) are retried with increasing backoff before a batch is given up on. A client error (HTTP 4xx) means the endpoint rejected the payload itself, so those batches are not retried.
+
+When external logging is configured, **stderr stays silent while the endpoint is healthy** (one startup line notes where logs are being sent). If a batch fails after all retries, the server writes an `ERROR` marker to stderr followed by the records of the failed batch, and from then on mirrors every new record to stderr as well — the failure window is always fully visible locally. The first successful flush writes a recovery line and the mirroring stops. State markers only appear on transitions, so a flapping endpoint doesn't spam. In Pro, the on-disk spool still takes a copy of failed batches for replay, with stderr as the live view of the same window.
+
+{{< tip "info" >}}
+For compliance-sensitive deployments (e.g. SOC 2), treat the external logging service as the long-term log store: configure retention, immutability and alerting there. Knot's internal audit-log store is a convenience window that expires entries after `server.audit_retention` days — set `server.audit_routing = "both"` or `"external"` so audit events reach the external service regardless.
+{{< /tip >}}
+
+---
+
+## On-Disk Spool {{< pro-badge >}}
+
+Knot Pro can spool undeliverable batches on disk while the external logging service is unreachable, then replay them (oldest first) once delivery succeeds — no lost records during outages. The spool is bounded: when it reaches its maximum size the oldest batches are evicted first.
+
+```toml
+[log]
+  level = "info"
+
+  [log.output]
+    url = "http://localhost:9428/insert/jsonline"
+    format = "ndjson"
+
+    [log.spool]
+      enabled = true
+      path = "./log-spool/"   # directory for spooled batches
+      max_mb = 256            # evict oldest batches beyond this size
+```
+
+- **`--log-spool-enabled`** / **`KNOT_LOG_SPOOL_ENABLED`** — enable the spool
+- **`--log-spool-path`** / **`KNOT_LOG_SPOOL_PATH`** — spool directory (default: `./log-spool/`)
+- **`--log-spool-max-mb`** / **`KNOT_LOG_SPOOL_MAX_MB`** — maximum spool size in MB (default: `256`)
+
+---
+
+## Forwarding Space Logs {{< pro-badge >}}
+
+{{< pro-badge >}} Services running inside spaces ship their logs to the in-space agent (syslog, GELF, Loki, or VictoriaLogs format — see [Logging from Spaces](../../spaces/logging/)). By default the server keeps those logs in memory for the web log window only. Enable forwarding (Pro) to write them into the server's log output, so they reach the same destination as the server's own logs — including the external logging service configured above:
+
+```toml
+[log]
+  level = "info"
+  forward_space_logs = true
+```
+
+Forwarded records are tagged with `stream = "space"`, `type = "space_log"`, plus `space_id`, `service` and `log_level` fields, so they can be filtered downstream. Off by default — development spaces can produce a lot of log volume. Space logs are never written to knot's internal database; long-term retention is the job of the external logging service.
+
+---
+
+## Audit Anomaly Detection {{< pro-badge >}}
+
+{{< pro-badge >}} Knot Pro can run anomaly detection over the audit event stream — failed-login bursts per user, credential spraying per source IP, and event sink delivery failures — emitting its own `Anomaly Detected` audit events when a rule fires. Detection works with any `server.audit_routing` (the internal audit store is not required). See [Anomaly Detection](../anomaly-detection/) for rules, configuration and the interaction with audit routing.
 
 ---
 
