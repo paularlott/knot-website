@@ -53,7 +53,7 @@ Configure Nomad, Docker, and Podman. Leave a field blank to skip that runtime.
 Expose services running inside spaces to the public internet for testing — webhooks, preview URLs, external integrations. Disabled by default.
 
 ### 7. Security & UI
-Enable TOTP two-factor authentication (works with Google Authenticator, Microsoft Authenticator, etc.), Gravatar avatars, and failed-login blocking. The block parameters are configurable: failures allowed, the counting window, and how long auth stays blocked (defaults: 10 failures per minute, 5-minute block).
+Enable TOTP two-factor authentication (works with Google Authenticator, Microsoft Authenticator, etc.), Gravatar avatars, and failed-login blocking. The block parameters are configurable: failures allowed, the counting window, and how long auth stays blocked (defaults: 10 failures per minute, 5-minute block). Tracking and blocking are cluster-wide — failures and blocks are shared between servers, in and out of zone; desktop leaf nodes keep local state.
 
 ### 8. Optional Features
 Enable AI/Chat (OpenAI, Anthropic, Google, Ollama) and MCP server.
