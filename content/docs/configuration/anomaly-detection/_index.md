@@ -6,7 +6,7 @@ tags: [security, configuration, audit]
 weight: 71
 ---
 
-{{< pro-badge >}} Anomaly detection watches **knot**'s audit event stream and raises an **`Anomaly Detected`** audit event when a rule fires — failed-login bursts, successful logins after failure bursts, attempts while blocked, admin role grants, bulk deletions, distinct login IPs per account, bursts of script executions, space shares and log sink changes, and event sink delivery failures.
+{{< pro-badge >}} Anomaly detection watches **knot**'s audit event stream and raises an **`Anomaly Detected`** audit event when a rule fires — failed-login bursts, successful logins after failure bursts, attempts while blocked, admin role grants, bulk creations, edits and deletions, distinct login IPs per account, bursts of script executions, space shares and log sink changes, and event sink delivery failures.
 
 Detection is a layer on top of [audit logging](../logging/), not a replacement: the raw audit stream (login successes and failures, config changes, space lifecycle) is always the evidence trail, and long-term retention belongs in your external logging service. Detection adds an in-product signal for teams that don't run a full SIEM.
 
@@ -40,6 +40,8 @@ For compliance deployments, use `both` (or `external`): the internal store is a 
 | `blocked_login_ip`      | `Login Blocked` events — attempts arriving while already rate-limit blocked | `source_ip`            | 10 within 10 min |
 | `admin_grant`           | `User Create` / `User Update` entries carrying `granted_admin`          | Granting admin              | 1 (every grant)  |
 | `bulk_delete`           | Delete events of any object type (spaces, templates, users, variables…)  | Actor                        | 10 within 10 min |
+| `bulk_update`           | Update events of any object type (users, roles, templates, variables…)   | Actor                        | 10 within 10 min |
+| `bulk_create`           | Create events of any object type (users, roles, templates, variables…)    | Actor                        | 10 within 10 min |
 | `login_distinct_ips`    | `Login Success` events                                                  | Distinct `source_ip` per account | 5 within 60 min |
 | `script_burst`          | `Script Execute` events                                                 | Actor                        | 100 within 10 min |
 | `share_burst`           | `Space Shared` events                                                   | Actor                        | 10 within 10 min |
@@ -78,6 +80,8 @@ Query alerts in VictoriaLogs with e.g. `{stream="audit"} | event="Anomaly Detect
   blocked_attempt_threshold = 10      # attempts while blocked before an alert (0 disables)
   admin_grant_threshold = 1           # admin role grants before an alert (0 disables)
   bulk_delete_threshold = 10          # deletions of any type before an alert (0 disables)
+  bulk_update_threshold = 10          # updates of any type before an alert (0 disables)
+  bulk_create_threshold = 10          # creations of any type before an alert (0 disables)
   distinct_ip_threshold = 5           # distinct login IPs per account before an alert (0 disables)
   distinct_ip_window = 60       # minutes
   script_burst_threshold = 100  # script executions by one user before an alert (0 disables)
@@ -98,6 +102,8 @@ Or via flags / environment variables:
 - **`--detection-blocked-attempt-threshold`** / **`KNOT_DETECTION_BLOCKED_ATTEMPT_THRESHOLD`**
 - **`--detection-admin-grant-threshold`** / **`KNOT_DETECTION_ADMIN_GRANT_THRESHOLD`**
 - **`--detection-bulk-delete-threshold`** / **`KNOT_DETECTION_BULK_DELETE_THRESHOLD`**
+- **`--detection-bulk-update-threshold`** / **`KNOT_DETECTION_BULK_UPDATE_THRESHOLD`**
+- **`--detection-bulk-create-threshold`** / **`KNOT_DETECTION_BULK_CREATE_THRESHOLD`**
 - **`--detection-distinct-ip-threshold`** / **`KNOT_DETECTION_DISTINCT_IP_THRESHOLD`**
 - **`--detection-distinct-ip-window`** / **`KNOT_DETECTION_DISTINCT_IP_WINDOW`**
 - **`--detection-script-burst-threshold`** / **`KNOT_DETECTION_SCRIPT_BURST_THRESHOLD`**

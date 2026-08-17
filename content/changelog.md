@@ -28,7 +28,7 @@ navSection: docs
 
 - **Cluster-wide failed-login blocking**: blocking is now configurable and applies cluster-wide (defaults: 10 failed logins / 60s → 300s block), so attempts spread across servers behind a load balancer still trip one shared budget.
 
-- **Audit anomaly detection** {{< pro-badge >}}: detects failed-login bursts, credential spraying, admin grants, bulk deletions, etc., emitting `Anomaly Detected` audit events routed to your external logging.
+- **Audit anomaly detection** {{< pro-badge >}}: detects failed-login bursts, credential spraying, admin grants, bulk creations, edits and deletions, etc., emitting `Anomaly Detected` audit events routed to your external logging.
 
 - **Richer user audit entries**: `User Create` / `User Update` events now record the target's roles and a `granted_admin` flag.
 
