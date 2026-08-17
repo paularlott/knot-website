@@ -194,7 +194,7 @@ Grafana Cloud also accepts basic auth using your instance username as the `usern
     stream = "knot"
 ```
 
-Each record is encoded as a GELF JSON message (newline-delimited batches, as accepted by Graylog's GELF HTTP input). The `stream` value becomes the GELF `host`, slog levels map to syslog severities, and all other fields (`space_id`, `service`, …) are sent as underscore-prefixed additional fields.
+Each record is posted as its own GELF JSON message — one HTTP request per message, which works with a stock Graylog GELF HTTP input (newline batching would require enabling the input's non-default bulk-receiving option). The `stream` value becomes the GELF `host`, slog levels map to syslog severities, and all other fields (`space_id`, `service`, …) are sent as underscore-prefixed additional fields.
 
 ### VictoriaLogs — Basic Auth
 
