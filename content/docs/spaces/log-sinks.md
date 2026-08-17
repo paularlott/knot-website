@@ -86,8 +86,10 @@ Any other image works too — point `KNOT_LOG_SINK_PORT` at any log service that
 3. The leader checks which sinks belong to the **same user** as the space that produced the record (and skips the sink's own space). Matching records are batched and pushed to each sink space's agent, which writes them to the local log service on `KNOT_LOG_SINK_PORT` in the configured format, retrying transient failures.
 4. When a sink space stops or crashes, its agent connection drops — the knot servers detect this immediately, **drop any records still waiting in that sink's buffers**, and remove the sink registration. Nothing is spooled to disk. When the space starts again the agent re-registers and mirroring resumes from that point (records emitted while the sink was down are not replayed). Register and deregister appear in the audit log.
 
-Mirrored records are tagged with the source space (`space_id` and `space_name`), the space owner (`user`), `service` and level, so you can filter by space, owner or service in queries. Multiple sinks per user are allowed — each receives its own copy.
+Mirrored records are tagged with the source space (`space_id` and `space_name`), the space owner (`user`), `service` and level, so you can filter by space, owner or service in queries. These tags take precedence: a structured field logged by the application with the same name (`service`, `user`, …) is dropped from the mirrored copy rather than overwriting the origin tags. Multiple sinks per user are allowed — each receives its own copy.
 
 {{< tip "warning" >}}
 Log sinks are a **developer helper, not a compliance channel**. Delivery is best-effort: bounded buffers, no disk spool, drops when the local service is down, and no replay of records missed while a sink was absent. For compliance-grade log retention use the server-side [`forward_space_logs`](../configuration/logging/) option (Pro) into an external logging service instead.
+
+Sinks and `forward_space_logs` are **independent features** that happen to trigger from the same log handling: enabling one does not enable the other. A server can forward space logs to its external logging service with no sinks registered, and sinks work with forwarding off — both can also run side by side, each with its own delivery path.
 {{< /tip >}}
