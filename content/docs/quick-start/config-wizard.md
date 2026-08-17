@@ -59,7 +59,7 @@ Enable TOTP two-factor authentication (works with Google Authenticator, Microsof
 Enable AI/Chat (OpenAI, Anthropic, Google, Ollama) and MCP server.
 
 ### 9. Logging & Audit
-Configure external log output (VictoriaLogs, Loki, Elasticsearch or Graylog endpoint, with optional basic auth or bearer token credentials) and audit log routing/retention. The Pro wizard additionally configures space log forwarding {{< pro-badge >}}, the on-disk log spool {{< pro-badge >}} and audit anomaly detection {{< pro-badge >}} (failed-login threshold and window). The external logging service is the long-term log store — the internal audit store expires entries after the retention period. See [Logging Configuration](../configuration/logging/).
+Configure external log output (VictoriaLogs, Loki, Elasticsearch or Graylog endpoint, with optional basic auth or bearer token credentials) and audit log routing/retention. The Pro wizard additionally configures space log forwarding {{< pro-badge >}}, the on-disk log spool {{< pro-badge >}} and audit anomaly detection {{< pro-badge >}} (per-rule thresholds and windows — failed logins, successes after failure bursts, blocked attempts, admin grants, bulk deletions, distinct login IPs, and more). The external logging service is the long-term log store — the internal audit store expires entries after the retention period. See [Logging Configuration](../configuration/logging/).
 
 ### 10. Review
 The generated `knot.toml` is shown in an embedded TOML editor with syntax highlighting. Edit anything directly, then click **write to disk** or **copy to clipboard**.

@@ -132,7 +132,7 @@ hideSidebar: true
       <tr>
         <td><strong>Audit anomaly detection</strong></td>
         <td><span class="compare-no">Not included</span> stream audit events to an external service for detection</td>
-        <td><span class="compare-yes">Included</span> built-in detection of failed-login bursts, credential spraying and event sink failures, emitting its own audit events</td>
+        <td><span class="compare-yes">Included</span> built-in detection of failed-login bursts, successful logins after failure bursts, attempts while blocked, admin grants, bulk deletions, distinct login IPs and event sink failures, emitting its own audit events</td>
       </tr>
       <tr>
         <td><strong>Space log forwarding</strong></td>
