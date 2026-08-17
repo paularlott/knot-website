@@ -59,6 +59,8 @@ The native JSON or msgpack format uses a simple JSON object with the following f
 - **`level`**: The log level (`debug`, `info`, or `error`).
 - **`message`**: The log message content.
 
+Any additional keys are carried through to log sinks and space log forwarding as structured fields, so this endpoint supports structured data too — e.g. `{"service":"api","level":"info","message":"done","request_id":"req-5","status":201}`.
+
 Send the message using `curl`:
 
 ```bash
@@ -93,7 +95,7 @@ curl -X POST http://localhost:12201/gelf \
 ```
 
 {{< tip >}}
-The interface accepts GELF messages but does not validate them, so non-conforming messages may still be sent.
+The interface accepts GELF messages but does not validate them, so non-conforming messages may still be sent. Additional fields (the `_`-prefixed kind) are carried through to log sinks and space log forwarding as structured data — e.g. `"_request_id":"req-9"`.
 {{< /tip >}}
 
 ---
@@ -128,6 +130,7 @@ curl -X POST http://localhost:12201/loki/api/v1/push \
 {{< tip >}}
 - The interface accepts Loki messages but does not validate them, so non-conforming messages may still be sent.
 - Only JSON-formatted log messages are supported.
+- When a log line is a JSON object with a `msg` or `message` field, the remaining keys are carried through to log sinks and space log forwarding as structured data; plain lines pass through verbatim.
 {{< /tip >}}
 
 ---
@@ -155,6 +158,42 @@ curl -X POST "http://localhost:12201/insert/jsonline?_msg_field=message&_stream_
   -H "Content-Type: application/stream+json" \
   -d '{"message": "Logging a test message", "service": "my-app"}'
 ```
+
+#### Structured data
+
+Any extra fields on the line ride along through the agent to the server — they reach a log sink's VictoriaLogs as flat fields and space log forwarding as top-level record keys — so there is no schema to declare, and multiple lines can be sent in one request:
+
+```json
+{"_time":"2026-08-17T10:00:00Z","_msg":"request completed","service":"api","level":"info","method":"POST","path":"/v1/orders","status":201,"duration_ms":42,"request_id":"req-7f3a"}
+{"_time":"2026-08-17T10:00:01Z","_msg":"request completed","service":"api","level":"error","method":"GET","path":"/v1/users","status":500,"duration_ms":873,"request_id":"req-8b1c"}
+```
+
+```bash
+curl -X POST "http://localhost:12201/insert/jsonline" \
+  -H "Content-Type: application/stream+json" \
+  --data-binary @requests.jsonl
+```
+
+To make a field a stream field, name it in `_stream_fields` when inserting — the same batch with `service` and `level` as streams:
+
+```bash
+curl -X POST "http://localhost:12201/insert/jsonline?_stream_fields=service,level" \
+  -H "Content-Type: application/stream+json" \
+  --data-binary @requests.jsonl
+```
+
+Fields are then queryable in LogsQL, e.g. slow requests and errors:
+
+```sql
+service:="api" AND duration_ms > 100          -- slow requests
+status:>=500 | stats by (path) count() _time  -- error counts per path
+```
+
+With `service` declared as a stream field the first query can also use the cheaper stream filter — `{service="api"} AND duration_ms > 100` — which VictoriaLogs can resolve without scanning field indexes.
+
+{{< tip >}}
+When mirrored to a log sink, `service` and `level` are automatically declared as stream fields in the sink's VictoriaLogs, so stream-filter queries work out of the box. Other fields arrive as regular (indexed) fields.
+{{< /tip >}}
 
 {{< tip >}}
 - The service name shown in the log window is taken from a `service` field if present, else from the first `_stream_fields` field, else defaults to `victorialogs`.

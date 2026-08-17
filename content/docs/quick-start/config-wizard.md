@@ -41,7 +41,7 @@ Never use the same database (same MySQL database name or Redis DB number) for mu
 {{< /tip >}}
 
 ### 3. Server Address
-Enter the server URL, wildcard domain (auto-derived from the URL), agent endpoint, timezone (searchable), listen addresses, and encryption key. The wizard explains what each field is for.
+Enter the server URL, wildcard domain (auto-derived from the URL), agent endpoint, timezone (searchable), listen addresses, and encryption key. The wizard explains what each field is for. For **Cluster** deployments a cluster section appears: advertise address, shared cluster key (with regen), peer addresses, and the allow-leaf-nodes toggle.
 
 ### 4. DNS Resolution
 Choose system nameservers or specify custom ones (for Consul SRV lookups, etc.). Optionally enable the built-in DNS server with A/AAAA/CNAME records to serve your wildcard domain locally.
@@ -53,13 +53,13 @@ Configure Nomad, Docker, and Podman. Leave a field blank to skip that runtime.
 Expose services running inside spaces to the public internet for testing — webhooks, preview URLs, external integrations. Disabled by default.
 
 ### 7. Security & UI
-Enable TOTP two-factor authentication (works with Google Authenticator, Microsoft Authenticator, etc.) and Gravatar avatars.
+Enable TOTP two-factor authentication (works with Google Authenticator, Microsoft Authenticator, etc.), Gravatar avatars, and failed-login blocking. The block parameters are configurable: failures allowed, the counting window, and how long auth stays blocked (defaults: 10 failures per minute, 5-minute block).
 
 ### 8. Optional Features
 Enable AI/Chat (OpenAI, Anthropic, Google, Ollama) and MCP server.
 
 ### 9. Logging & Audit
-Configure external log output (VictoriaLogs, Loki, Elasticsearch or Graylog endpoint, with optional basic auth or bearer token credentials) and audit log routing/retention. The Pro wizard additionally configures space log forwarding {{< pro-badge >}}. The external logging service is the long-term log store — the internal audit store expires entries after the retention period. See [Logging Configuration](../configuration/logging/).
+Configure external log output (VictoriaLogs, Loki, Elasticsearch or Graylog endpoint, with optional basic auth or bearer token credentials) and audit log routing/retention. The Pro wizard additionally configures space log forwarding {{< pro-badge >}}, the on-disk log spool {{< pro-badge >}} and audit anomaly detection {{< pro-badge >}} (failed-login threshold and window). The external logging service is the long-term log store — the internal audit store expires entries after the retention period. See [Logging Configuration](../configuration/logging/).
 
 ### 10. Review
 The generated `knot.toml` is shown in an embedded TOML editor with syntax highlighting. Edit anything directly, then click **write to disk** or **copy to clipboard**.

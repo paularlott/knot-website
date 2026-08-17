@@ -226,7 +226,7 @@ For compliance-sensitive deployments (e.g. SOC 2), treat the external logging se
 
 ## On-Disk Spool {{< pro-badge >}}
 
-Knot Pro can spool undeliverable batches on disk while the external logging service is unreachable, then replay them (oldest first) once delivery succeeds — no lost records during outages. The spool is bounded: when it reaches its maximum size the oldest batches are evicted first.
+Knot Pro can spool undeliverable batches on disk while the external logging service is unreachable, then replay them (oldest first) once delivery succeeds — no lost records during outages. The spool is bounded: when it reaches its maximum size (256 MB) **or** its maximum file count (`max_files`, default 1024 batches) the oldest batches are evicted first. When delivery recovers, up to 32 spooled batches are replayed per flush cycle, so a backlog clears in seconds rather than one batch at a time.
 
 ```toml
 [log]
@@ -240,11 +240,15 @@ Knot Pro can spool undeliverable batches on disk while the external logging serv
       enabled = true
       path = "./log-spool/"   # directory for spooled batches
       max_mb = 256            # evict oldest batches beyond this size
+      max_files = 1024        # ... or beyond this many batch files
+      max_files = 1024        # ... or beyond this many batch files
 ```
 
 - **`--log-spool-enabled`** / **`KNOT_LOG_SPOOL_ENABLED`** — enable the spool
 - **`--log-spool-path`** / **`KNOT_LOG_SPOOL_PATH`** — spool directory (default: `./log-spool/`)
 - **`--log-spool-max-mb`** / **`KNOT_LOG_SPOOL_MAX_MB`** — maximum spool size in MB (default: `256`)
+- **`--log-spool-max-files`** / **`KNOT_LOG_SPOOL_MAX_FILES`** — maximum number of spooled batch files (default: `1024`)
+- **`--log-spool-max-files`** / **`KNOT_LOG_SPOOL_MAX_FILES`** — maximum number of spooled batch files (default: `1024`)
 
 ---
 
