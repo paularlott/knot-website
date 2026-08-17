@@ -175,7 +175,7 @@ Secret values are cached per provider alias, path, and field.
 ## Notes
 
 - Secret providers are a **knot Pro** feature.
-- Vault addresses must use `https://`.
+- Vault addresses support both `http://` (e.g. a local dev Vault) and `https://` — use `insecure_skip_tls = true` to skip certificate verification for self-signed certificates.
 - 1Password Connect supports both `http://` and `https://` addresses.
 - Resolved secret values are not written to the database.
 - Secret values are never logged.
