@@ -278,7 +278,7 @@ Forwarded records are tagged with `stream = "space"`, `type = "space_log"`, plus
 
 - **`--log-tunnel-requests`** / **`KNOT_LOG_TUNNEL_REQUESTS`** — enable tunnel request logging (Pro)
 
-Off by default, matching space log forwarding. A VictoriaLogs query such as `tunnel:my-tunnel` or `type:tunnel_request` filters the records downstream.
+Off by default, matching space log forwarding. A VictoriaLogs query such as `tunnel:my-tunnel`, `service:tunnel` or `type:tunnel_request` filters the records downstream.
 
 Tunnel lifecycle is audited rather than logged: tunnels opening and closing (web and port, including CLI/desktop tunnels) emit `Tunnel Create` / `Tunnel Close` audit events carrying the tunnel name, owning user, and — for port tunnels — the space and port, so they land in the audit trail like other user actions.
 
@@ -300,6 +300,8 @@ When forwarding logs, **knot** maps standard `slog` field names to the expected 
 | ---------- | --------- | ------------------------------ |
 | `msg`      | `_msg`    | Log message                    |
 | `time`     | `_time`   | Timestamp (RFC 3339 Nano)      |
-| `stream`   | `stream`  | Stream identifier (if set)     |
+| `service`  | `service` | Origin service (see below)     |
+
+`service` names the origin of a record — `knot` for the server itself, `audit` for audit events, `tunnel` for tunnel traffic, or the in-space service name for forwarded space logs. For VictoriaLogs destinations, `service` and `level` are indexed as stream fields, so both are trivially selectable (`service:tunnel`, `level:ERROR`) — the same field name and selectors as the agent's in-space ingest and [log sinks](../../spaces/log-sinks/).
 
 For Loki, the `time` field is converted to a Unix nanosecond timestamp in the values array rather than included in the log line body.
