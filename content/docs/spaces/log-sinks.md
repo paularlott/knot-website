@@ -13,6 +13,7 @@ weight: 115
 ## The Rules
 
 - **Owner-scoped, period.** A sink only ever receives the logs of spaces owned by the **same user** — never other users' logs, no exceptions.
+- **Tunnels included.** A user's sinks also receive the logs of requests proxied through that user's [web tunnels](../../configuration/logging/#tunnel-request-logging) — tagged with the tunnel name instead of a space — plus the tunnels opening and closing (`tunnel_open` / `tunnel_close` records), automatically, no extra configuration.
 - **Off by default.** A space becomes a sink only when it explicitly advertises one (below); the base images ship with sink support but don't enable it.
 - **Zone-local.** Sinks receive logs from spaces in their own zone only.
 - **Permission-gated.** Registration requires the **Use Log Sinks** permission on the user's role; without it the registration is ignored (with a warning in the server log). Works in the free built-in Pro tier (2 users) — the licence only lifts the user cap.

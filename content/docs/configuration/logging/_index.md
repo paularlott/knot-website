@@ -266,6 +266,26 @@ Forwarded records are tagged with `stream = "space"`, `type = "space_log"`, plus
 
 ---
 
+## Tunnel Request Logging {{< pro-badge >}}
+
+{{< pro-badge >}} Each request proxied through a web tunnel can be logged to the server's log output — the access-log equivalent for tunnels. Records carry the method, path, host, response status and duration, tagged with `stream = "tunnel"`, `type = "tunnel_request"`, plus `tunnel` (the tunnel name) and `actor` (the owning user) fields. Tunnels have no space identity by design — a tunnel can be run from the user's desktop — so records are always tagged with the tunnel name and user:
+
+```toml
+[log]
+  level = "info"
+  tunnel_requests = true
+```
+
+- **`--log-tunnel-requests`** / **`KNOT_LOG_TUNNEL_REQUESTS`** — enable tunnel request logging (Pro)
+
+Off by default, matching space log forwarding. A VictoriaLogs query such as `tunnel:my-tunnel` or `type:tunnel_request` filters the records downstream.
+
+Tunnel lifecycle is audited rather than logged: tunnels opening and closing (web and port, including CLI/desktop tunnels) emit `Tunnel Create` / `Tunnel Close` audit events carrying the tunnel name, owning user, and — for port tunnels — the space and port, so they land in the audit trail like other user actions.
+
+[Log sinks](../../spaces/log-sinks/) are separate: a user's sinks **always** receive tunnel request logs for their tunnels — and the tunnels opening and closing — regardless of this setting; running a sink is itself the opt-in.
+
+---
+
 ## Audit Anomaly Detection {{< pro-badge >}}
 
 {{< pro-badge >}} Knot Pro can run anomaly detection over the audit event stream — failed-login bursts per user, credential spraying per source IP, and event sink delivery failures — emitting its own `Anomaly Detected` audit events when a rule fires. Detection works with any `server.audit_routing` (the internal audit store is not required). See [Anomaly Detection](../anomaly-detection/) for rules, configuration and the interaction with audit routing.
