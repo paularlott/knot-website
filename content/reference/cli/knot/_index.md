@@ -399,6 +399,19 @@ knot space tunnel list <space>
 knot space tunnel stop <space> <name>
 ```
 
+### `knot space jobs`
+
+Manage the scheduled jobs defined in a space's `~/.knot-jobs.toml` (see [Space Jobs](/docs/spaces/jobs/)). The space must be running.
+
+```shell
+knot space jobs list <space>
+knot space jobs run <space> <job>
+knot space jobs enable <space>
+knot space jobs disable <space>
+```
+
+`enable`/`disable` start and stop the space's job runner (scheduled firing). The state is in memory only — on the next space start the runner defaults to running when the jobs file exists, stopped when it does not.
+
 ### `knot tunnel`
 
 Expose a local port on your machine publicly via the knot server.

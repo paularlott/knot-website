@@ -1,5 +1,5 @@
 baseURL = 'https://getknot.dev/'
-languageCode = 'en-US'
+locale = 'en-US'
 title = 'knot'
 
 # OKF frontmatter uses `tags` as dormant metadata (consumed by scripts/okf.py and
@@ -40,6 +40,12 @@ disableKinds = ['taxonomy', 'term']
     # [[params.navigation.static]]
     #   name = 'Changelog'
     #   url = '/changelog'
+
+# The css.TailwindCSS transform executes the tailwindcss binary, which is not
+# in Hugo's default security.exec allowlist.
+[security]
+  [security.exec]
+    allow = ['^(dart-)?sass$', '^go$', '^git$', '^node$', '^postcss$', '^tailwindcss$']
 
 [build]
   [build.buildStats]

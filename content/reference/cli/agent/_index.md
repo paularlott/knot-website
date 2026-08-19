@@ -128,6 +128,21 @@ knot methods unregister
 
 ---
 
+## `knot jobs`
+
+Manage the scheduled jobs defined in this space's `~/.knot-jobs.toml` (see [Space Jobs](/docs/spaces/jobs/)).
+
+```shell
+knot jobs list
+knot jobs run <job>
+knot jobs enable
+knot jobs disable
+```
+
+`run` triggers a job immediately — it works for disabled and manual-only jobs too. `enable`/`disable` start and stop the job runner (scheduled firing); the state is in memory only and resets on the next agent start.
+
+---
+
 ## `knot port`
 
 Forward ports from this space to ports in other spaces. Both spaces must be running, in the same zone, and owned by the same user.
