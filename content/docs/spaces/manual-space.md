@@ -19,7 +19,7 @@ Manual spaces allow you to run the **knot** agent manually on a virtual machine 
 
 ## Connecting the Agent to the Server
 
-Once the manual space is created, the **Space ID** will be displayed. This ID is required for the agent to connect to the **knot** server. Clicking the ID will copy it to the clipboard.
+Once the manual space is created, the **Space ID** and an **agent registration key** are displayed. Both are required for the agent to connect to the **knot** server; clicking either copies it to the clipboard.
 
 ### Download the Agent
 
@@ -62,17 +62,20 @@ Assuming the **knot** server is running on `192.168.1.100` with the agent interf
 
 ```shell
 # Using the dedicated agent binary
-./knot-agent --endpoint 192.168.1.100:3010 --space-id=0198384f-59f3-74c2-8a88-3a6b4302b391 --syslog-port=0
+./knot-agent --endpoint 192.168.1.100:3010 --space-id=0198384f-59f3-74c2-8a88-3a6b4302b391 --registration-key=<key> --syslog-port=0
 
 # Or using the full knot binary
-./knot agent start --endpoint 192.168.1.100:3010 --space-id=0198384f-59f3-74c2-8a88-3a6b4302b391 --syslog-port=0
+./knot agent start --endpoint 192.168.1.100:3010 --space-id=0198384f-59f3-74c2-8a88-3a6b4302b391 --registration-key=<key> --syslog-port=0
 ```
 
 - **`--endpoint`**: The IP address and port of the **knot** server. Adjust this value based on your environment.
 - **`--space-id`**: The unique ID of the space, as displayed in the web interface.
+- **`--registration-key`**: The space's registration key, displayed next to the Space ID. The agent proves possession of this key when it registers; without it the server refuses the registration.
 - **`--syslog-port=0`**: Disables the syslog port (optional).
 
 This is the minimum configuration required for the agent to connect to the **knot** server.
+
+The agent's connection to the server is always TLS. The server's certificate is generated from the zone's encryption key, so the same key value applies to every server in the zone. For strict verification pass `--server-cert-fingerprint` (the certificate fingerprint from the space's API details); without it the connection is still TLS-encrypted and registration-key verified.
 
 ---
 

@@ -126,6 +126,10 @@ url = "http://knot.local:3000"
 wildcard_domain = "*.knot.local:3000"
 encrypt = "<generate with: knot genkey>"
 
+# Required. All members of a zone must use the same encryption key: it
+# derives agent registration keys, agent tokens and the zone's agent TLS
+# certificate.
+
 [server.badgerdb]
 enabled = true
 path = "./badgerdb/"

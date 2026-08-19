@@ -41,6 +41,20 @@ navSection: docs
 - **`${{ host_ip }}` in config addresses**: values like `server.agent_endpoint` can now use `${{ host_ip }}`, resolved to the host's IP on every start — needed because agents in containers can't reach the host via `127.0.0.1`. macOS and Windows desktop builds also ship with proper app icons.
 {{< /changelog-item >}}
 
+{{< changelog-item "changed" >}}
+- **Agent listener is now TLS-only** (breaking): the agent port always speaks TLS using a certificate derived from the server's encryption key — every server in a zone presents the same certificate, so agents verify one fingerprint for any of them. Agents are provisioned automatically; running spaces pick the new agent up on their next restart. The `--agent-use-tls` flag is gone. Manual agents must pass `--registration-key` (shown in the web UI next to the space ID); see [Manual Space](../docs/spaces/manual-space/).
+
+- **Encryption key required at startup** (breaking): the encryption key (`server.encrypt`) now derives agent registration keys, agent tokens, and the zone's agent TLS certificate, and the server refuses to start without it. All members of a zone must share the same key.
+
+- **Faster space start and stop**: stops cap the container grace period instead of always waiting it out — deployments, restarts, and stack operations are several times faster. Space starts are also more robust: a failed image pull (unreachable registry, missing credentials) now falls back to the local image instead of failing the start.
+{{< /changelog-item >}}
+
+{{< changelog-item "security" >}}
+- **Agent registration now requires a per-space key**: previously any peer that could reach the agent listener could register as any space and receive the owner's SSH private key and a full-access agent token. Registration now runs as a challenge–response proving possession of the space's registration key (provisioned into containers automatically; shown next to the space ID for manual agents). Failed registrations no longer disturb a connected agent.
+
+- **Template export and node listing enforce template visibility**: `GET /api/templates/{id}/export` and `/nodes` returned full job YAML (including any registry credentials) for templates the caller has no access to; both now apply the same visibility check as the template read and 404 otherwise. Deleted templates are no longer returned.
+{{< /changelog-item >}}
+
 ---
 
 {{< version "v0.32.0" >}}

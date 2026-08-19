@@ -77,6 +77,8 @@ compression = true
 - **`advertise_addr`**: The address this server advertises to the cluster. Other servers will use this address to connect.
 - **`bind_addr`**: The address and port this server binds to for cluster communication.
 - **`key`**: A key used to encrypt data between cluster members. Generate it using `knot genkey`.
+
+Every member of a zone must also be configured with the **same `encrypt` key** (`server.encrypt`, generated with `knot genkey`): it derives agent registration keys, agent tokens and the zone's agent TLS certificate. knot refuses to start without it.
 - **`peers`**: A list of known servers. These should be the most stable servers, as they are used by nodes during startup to find existing cluster members. Once a server joins the cluster, it discovers other members dynamically. If all connections are lost, the server will retry the peers listed here.
 - **`compression`**: Enables or disables data compression for communication between cluster members. Compression is enabled by default and should work in most cases.
 

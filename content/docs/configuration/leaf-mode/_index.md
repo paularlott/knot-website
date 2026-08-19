@@ -49,6 +49,8 @@ A personal access token is required for the leaf server to connect to the cluste
 
 ### 3. Configure the Leaf Node
 
+Give the leaf its own `server.encrypt` key (any `knot genkey` output — it is not shared with the cluster): the leaf's agent registration keys and its agent TLS certificate are derived from it, and the server refuses to start without one.
+
 Add the token and server information to the `knot.toml` configuration file of the leaf node:
 
 ```toml
