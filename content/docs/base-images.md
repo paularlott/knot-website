@@ -33,6 +33,15 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
   </div>
 
   <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/alpine-linux.svg" alt="Alpine" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">Alpine</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Base Alpine shell with the knot toolchain and dev tools. Smaller footprint than Ubuntu.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">3.24</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
     <img src="/icons/php.svg" alt="PHP" class="h-12 w-12 mb-3" />
     <div class="font-semibold text-gray-900 dark:text-gray-100">PHP</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Caddy + PHP-FPM, Composer, Node. Serves <code class="text-xs">~/public_html</code>.</div>
@@ -54,7 +63,7 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
   </div>
 
   <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
-    <img src="/icons/frankenscriptling.svg" alt="FrankenScriptling" class="h-12 w-12 mb-3" />
+    <img src="/icons/scriptling.svg" alt="FrankenScriptling" class="h-12 w-12 mb-3" />
     <div class="font-semibold text-gray-900 dark:text-gray-100">FrankenScriptling</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">FrankenPHP with the Scriptling scripting/agent extension.</div>
     <div class="flex flex-wrap justify-center gap-1">
@@ -88,6 +97,15 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="flex flex-wrap justify-center gap-1">
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">24</span>
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">26</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/scriptling.svg" alt="Scriptling" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">Scriptling</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Ubuntu + the Scriptling interpreter and CLI. Pure runtime image.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">0.20</span>
     </div>
   </div>
 
@@ -171,8 +189,9 @@ Each image declares the mount point(s) it expects to survive a space restart. Wh
 | Image family | Persistent path | What lives there |
 |--------------|-----------------|-------------------|
 | Ubuntu / Ubuntu Desktop | `/home` | User files, projects, shell config. |
+| Alpine | `/home` | User files, projects, shell config. |
 | PHP / FrankenPHP / FrankenScriptling | `/home` | As above; the web root is `~/public_html`. |
-| Go / Python / Node.js | `/home` | Projects, `GOPATH`, virtualenvs, `node_modules`. |
+| Go / Python / Node.js / Scriptling | `/home` | Projects, `GOPATH`, virtualenvs, `node_modules`, scripts. |
 | MariaDB | `/var/lib/mysql` | The database data directory. |
 | MySQL | `/var/lib/mysql` | The database data directory. |
 | PostgreSQL | `/var/lib/postgresql/data` | The database data directory (`PGDATA`). |
