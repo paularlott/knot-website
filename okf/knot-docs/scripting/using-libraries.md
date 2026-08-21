@@ -1,0 +1,144 @@
+---
+description: Use knot.* libraries across built-in, CLI, and external Scriptling execution contexts.
+generated:
+    by: knot-website/okf.py
+resource: https://getknot.dev/docs/scripting/using-libraries/
+sources:
+    - resource: https://getknot.dev/docs/scripting/using-libraries/
+status: stable
+tags:
+    - scripting
+    - api
+title: Using knot.* Libraries
+type: Guide
+---
+# Using knot.* Libraries
+
+The `knot.*` namespace provides libraries for interacting with Knot from scripts. These libraries work differently depending on where your script is running.
+
+---
+
+## Execution Contexts
+
+| Context | Configuration | Authentication |
+|---------|---------------|----------------|
+| **Built-in** | None required | Automatic (context token) |
+| **Knot CLI** | None required | Uses `~/.knot/config` |
+| **External Scriptling** | `knot.apiclient` required | Manual (env vars or explicit) |
+
+---
+
+## Built-in
+
+Scripts running inside Knot (startup scripts, shutdown scripts, MCP tools, space scripts) have automatic access to all libraries:
+
+```python
+import knot.space as space
+
+spaces = space.list()
+for s in spaces:
+    status = "running" if s['is_running'] else "stopped"
+    print(f"{s['name']}: {status}")
+```
+
+For `scriptling.secret`, local Knot CLI runs can opt in to host-owned secret providers with the same TOML format used by standalone Scriptling:
+
+```bash
+knot run-script --secret-config ./secrets.toml myscript.py
+```
+
+```python
+import scriptling.secret as secret
+
+db_password = secret.get("vault", "secret/data/prod/database", "password")
+```
+
+No configuration is needed — the library uses the execution context for authentication.
+
+---
+
+## Knot CLI
+
+When running scripts locally with the Knot CLI, the `knot.*` libraries make API calls automatically using the token from `~/.knot/config`:
+
+```bash
+knot run-script myscript.py
+```
+
+```python
+import knot.space as space
+
+spaces = space.list()
+for s in spaces:
+    status = "running" if s['is_running'] else "stopped"
+    print(f"{s['name']}: {status}")
+```
+
+---
+
+## External Scriptling
+
+For standalone [scriptling](https://scriptling.dev/) scripts using the `knot.zip` package, configure `knot.apiclient` before using any `knot.*` library. The simplest approach is environment variables, which are read automatically on first use:
+
+```bash
+export KNOT_URL=https://knot.example.com
+export KNOT_TOKEN=your-api-token
+
+# AI options (if using knot.ai):
+export KNOT_AI_MODEL=gpt-4o
+export KNOT_AI_PROVIDER=openai   # optional, defaults to openai
+```
+
+All environment variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `KNOT_URL` | Knot server URL | required |
+| `KNOT_TOKEN` | Access token | required |
+| `KNOT_INSECURE` | Skip TLS verification (`true`/`1`/`yes`) | `false` |
+| `KNOT_AI_URL` | AI endpoint URL | `KNOT_URL + /v1` |
+| `KNOT_AI_TOKEN` | AI access token | `KNOT_TOKEN` |
+| `KNOT_AI_MODEL` | Default AI model name | `""` |
+| `KNOT_AI_PROVIDER` | AI provider (`openai`, `claude`, `gemini`, `ollama`, `mistral`) | `openai` |
+
+```python
+import knot.space as space
+
+# Auto-configured from KNOT_URL / KNOT_TOKEN
+spaces = space.list()
+for s in spaces:
+    status = "running" if s['is_running'] else "stopped"
+    print(f"{s['name']}: {status}")
+```
+
+Or configure explicitly in the script:
+
+```python
+import knot.apiclient
+import knot.space as space
+
+knot.apiclient.configure(
+    "https://knot.example.com",
+    "your-api-token",
+    ai_model="gpt-4o",      # optional: for knot.ai
+    ai_provider="openai",   # optional: for knot.ai
+)
+
+spaces = space.list()
+```
+
+Load the package with scriptling:
+
+```bash
+scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
+```
+
+
+In production environments include the sha256 hash in the package URL to improve security.
+
+
+See [knot.apiclient](../../knot-reference/libraries/apiclient.md) for the full list of configuration options and environment variables.
+
+---
+
+For the full list of available libraries and their documentation, see the [Library Reference](../../knot-reference/libraries.md).

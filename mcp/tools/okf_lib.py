@@ -1,11 +1,11 @@
 # Shared helpers for the OKF MCP tools. Lives next to the tool scripts so each
-# can `import okf_lib`. All paths are relative to OKF_ROOT (default mcp/okf).
+# can `import okf_lib`. All paths are relative to OKF_ROOT (default okf).
 import os
 import os.path
 import re
 import yaml
 
-OKF_ROOT = os.getenv("OKF_ROOT", "mcp/okf")
+OKF_ROOT = os.getenv("OKF_ROOT", "okf")
 BUNDLE_ORDER = ["knot-docs", "knot-reference"]
 VECTORS_DIMS = 768
 VECTOR_FILE = ".vector.json"

@@ -1,0 +1,161 @@
+---
+description: Standalone volumes persist independently of spaces and can be attached to multiple spaces for shared storage.
+generated:
+    by: knot-website/okf.py
+resource: https://getknot.dev/docs/volumes/
+sources:
+    - resource: https://getknot.dev/docs/volumes/
+status: stable
+tags:
+    - storage
+title: Volumes
+type: Overview
+---
+# Volumes
+
+Standalone volumes can be created and managed independently of spaces. This flexibility allows volumes to be created and attached to multiple spaces, such as providing shared storage for `/home`. These volumes are persistent and are not affected by the lifespan of the spaces they are attached to. Even if all spaces are deleted, standalone volumes and their data will continue to exist.
+
+For **Nomad** volumes, any Container Storage Interface (CSI) driver supported by Nomad can be used, as **knot** places no additional requirements on this.
+
+Standalone volumes do not count toward a user's **Storage Units** quota.
+
+---
+
+## Creating a Volume
+
+1. From the menu, select **`Volumes`**, then click **`New Volume`**.
+2. The following form will be displayed:
+3. Fill in the required fields:
+   - **`Name`**: A descriptive name to identify the volume.
+   - **`Platform`**: The platform the volume is for (e.g., Nomad, Docker, or Podman).
+   - **`Server`**: For local container platforms (Docker, Podman, Apple, Container), select which server in the cluster should host the volume. If only one server supports the platform it is selected automatically. This can be changed later while the volume is stopped.
+   - **`Volume Definition`**: The YAML definition of the volume.
+
+---
+
+### Nomad CSI Volume
+
+For Nomad volumes:
+- The **`Name`** field is purely descriptive and is not used within the volume definition.
+- The **`Volume Definition`** field must contain YAML defining a single Nomad volume. Save validation checks the YAML before the volume is stored.
+- Set the **`Platform`** to **`Nomad`**.
+
+Example YAML for a volume named `test_home`:
+
+```yaml
+volumes:
+  - id: "test_home"
+    name: "test_home"
+    plugin_id: "hostpath"
+    capacity_min: 10G
+    capacity_max: 10G
+    mount_options:
+      fs_type: "ext4"
+      mount_flags:
+        - rw
+        - noatime
+    capabilities:
+      - access_mode: "single-node-writer"
+        attachment_mode: "file-system"
+```
+
+For detailed descriptions of the fields, refer to the Nomad [Volume Specification](https://developer.hashicorp.com/nomad/docs/other-specifications/volume).
+
+Once the name and definition are entered, click **`Create Volume`** to define the volume.
+
+---
+
+### Nomad Host Volume
+
+For Nomad host volumes:
+- **`Name`**: A descriptive name to identify the volume.
+- The **`Volume Definition`** field must contain a `volumes` map with exactly one local volume entry. Save validation checks the YAML before the volume is stored.
+- Set the **`Platform`** to **`Nomad`**.
+
+Example YAML for a volume named `test_home`:
+
+```yaml
+volumes:
+  - name: "test_home"
+    type: "host"
+    plugin_id: "mkdir"
+    parameters:
+      mode: "0755"
+      uid: 1000
+      gid: 1000
+```
+
+For detailed descriptions of the fields, refer to the Nomad [Host Volume Specification](https://developer.hashicorp.com/nomad/docs/other-specifications/volume/host).
+
+Once the name and definition are entered, click **`Create Volume`** to define the volume.
+
+---
+
+### Docker / Podman Volume
+
+For Docker or Podman volumes:
+1. From the menu, select **`Volumes`**, then click **`New Volume`**.
+2. Choose **`Docker`** or **`Podman`** for the **`Platform`** option (this cannot be changed later).
+3. Define the volume using the following YAML format:
+
+```yaml
+volumes:
+  test_home:
+```
+
+---
+
+### Apple Containers Volume
+
+For Apple Containers volumes:
+1. From the menu, select **`Volumes`**, then click **`New Volume`**.
+2. Choose **`Apple`** for the **`Platform`** option.
+3. Define the volume using the following YAML format:
+
+```yaml
+volumes:
+  test_home:
+    size: 20G
+```
+
+The `size` field is optional. If omitted, the default size is used. Sizes can be specified in bytes or with a suffix such as `M` (megabytes) or `G` (gigabytes).
+
+The same `size` field is also supported in the **Volumes** section of a template when using the Apple Containers platform:
+
+```yaml
+volumes:
+  workspace:
+    size: 20G
+```
+
+---
+
+## Starting a Volume
+
+A volume must be started to make it available within the cluster.
+
+1. From the **`Volumes`** page, click the menu next to the volume you want to start.
+2. Select **`Start`**.
+
+The volume will be started on the server it was assigned to when it was created or last edited.
+
+---
+
+## Stopping a Volume
+
+
+Stopping a volume will destroy all data on the volume.
+
+
+Stopping a volume releases the resources it is using, but it also destroys all data stored on the volume. To stop a volume:
+1. Click **`Stop`** in the volume's menu.
+
+In a cluster, the stop request is automatically forwarded to the server where the volume is running.
+
+---
+
+## Deleting a Volume
+
+Only stopped volumes can be deleted. To delete a volume:
+1. Select **`Delete`** next to the volume to delete.
+2. Confirm the deletion to permanently remove the volume.
