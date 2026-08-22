@@ -115,7 +115,7 @@ Does the script run in the knot server?
 
 **Used by:** MCP tool scripts and event sink scripts, executed inside the knot server.
 
-The restricted environment. No system access libraries (`os`, `pathlib`, `subprocess`, `sys`), no `scriptling.runtime`, no `knot.methods`, `fs` only when `script-fs-allowed-paths` is configured, and an HTTP-only plugin scope. Libraries are fetched from the server only (including user `lib` scripts). Event sinks additionally expose the `knot.event` accessors instead of `emit()`, which prevents sink → event → sink recursion.
+The restricted environment. No system access libraries (`os`, `pathlib`, `subprocess`, `sys`), no `scriptling.runtime`, no `knot.methods`, and `fs` only when `server.script_fs_allowed_paths` is configured. Libraries are fetched from the server only (including user `lib` scripts). Event sinks additionally expose the `knot.event` accessors instead of `emit()`, which prevents sink → event → sink recursion.
 
 ```python
 import scriptling.mcp.tool as tool
@@ -146,19 +146,6 @@ Scripts running outside knot entirely, using the published `knot.zip` package. R
 scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 ```
 
-### Plugin Scopes
-
-Every script execution in knot's embedded environments (MCP, Remote) gets its own **isolated plugin scope** via the [`scriptling.plugin`](https://scriptling.dev/) library. A plugin that a script loads at runtime with `scriptling.plugin.load()` is visible only to that execution — it cannot leak into another user's script or another tool invocation. The scope is released automatically when the script finishes.
-
-The transports a scope will accept depend on the environment:
-
-| Environment                | HTTP(S) plugins | Stdio executable plugins |
-| -------------------------- | --------------- | ------------------------ |
-| MCP / event sink / health  | ✓               | ✗                        |
-| Remote (in-space)          | ✓               | ✓                        |
-
-Server-side scripts (MCP tools, event sinks, health checks) run on the knot server and are restricted to HTTP(S) plugin endpoints — they cannot spawn arbitrary executables on the server. In-space (Remote) scripts already run inside a container with subprocess access, so both transports are permitted.
-
 ---
 
 ## Library Availability
@@ -172,7 +159,7 @@ Server-side scripts (MCP tools, event sinks, health checks) run on the knot serv
 | secrets            | ✓   | ✓      | ✓        |
 | yaml / toml        | ✓   | ✓      | ✓        |
 | shlex              | ✓   | ✓      | ✓        |
-| fs                 | ✓ \* | ✓      | ✓        |
+| fs                 | ✓ ¹ | ✓      | ✓        |
 | html.parser        | ✓   | ✓      | ✓        |
 | logging            | ✓   | ✓      | ✓        |
 | subprocess         | ✗   | ✓      | ✓        |
@@ -184,44 +171,33 @@ Server-side scripts (MCP tools, event sinks, health checks) run on the knot serv
 | tarfile            | ✗   | ✓      | ✓        |
 | sys                | ✗   | ✓      | ✓        |
 
-\* On the knot server (MCP tool execution and event sink scripts) `fs` is only registered when the admin configures `script-fs-allowed-paths` (`KNOT_SCRIPT_FS_ALLOWED_PATHS`); without it, server-side scripts have no local filesystem access. In spaces (Remote) `fs` is always available, scoped to the container.
+¹ On the knot server (MCP tool execution and event sink scripts) `fs` is only registered when the admin configures `server.script_fs_allowed_paths` (flag `--script-fs-allowed-paths`, env `KNOT_SCRIPT_FS_ALLOWED_PATHS`); without it, server-side scripts have no local filesystem access. In spaces (Remote) `fs` is always available, scoped to the container.
 
 ### scriptling.\* Libraries
 
 | Library                              | MCP                 | Remote              | External |
 | ------------------------------------ | ------------------- | ------------------- | -------- |
-| scriptling.secret                    | {{< pro-badge >}}\* | {{< pro-badge >}}\* | ✓        |
+| scriptling.secret                    | {{< pro-badge >}}\* | ✗                   | ✓        |
 | scriptling.ai                        | ✓                   | ✓                   | ✓        |
 | scriptling.ai.agent                  | ✓                   | ✓                   | ✓        |
-| scriptling.ai.agent.interact         | ✗                   | ✓ ‡                 | ✓        |
 | scriptling.ai.tools                  | ✓                   | ✓                   | ✓        |
+| scriptling.ai.memory                 | ✗                   | ✓                   | ✓        |
 | scriptling.mcp / scriptling.mcp.tool | ✓                   | ✓                   | ✓        |
 | scriptling.toon                      | ✓                   | ✓                   | ✓        |
-| scriptling.console                   | ✗                   | ✓                   | ✓        |
+| scriptling.messaging (telegram / discord / slack) | ✓       | ✓                   | ✓        |
 | scriptling.grep                      | ✗                   | ✓                   | ✓        |
 | scriptling.find                      | ✗                   | ✓                   | ✓        |
 | scriptling.csv                       | ✓                   | ✓                   | ✓        |
 | scriptling.xml                       | ✓                   | ✓                   | ✓        |
 | scriptling.sed                       | ✗                   | ✓                   | ✓        |
 | scriptling.similarity                | ✓                   | ✓                   | ✓        |
-| scriptling.markdown                  | ✓                   | ✓                   | ✓        |
 | scriptling.wait_for                  | ✓                   | ✓                   | ✓        |
-| scriptling.runtime                   | ✗                   | ✓ ††                 | ✓        |
-| scriptling.net.websocket             | ✓                   | ✓                   | ✓        |
 | scriptling.template.html             | ✓                   | ✓                   | ✓        |
 | scriptling.template.text             | ✓                   | ✓                   | ✓        |
-| scriptling.net.resolve               | ✓                   | ✓                   | ✓        |
 | scriptling.provision.file            | ✗                   | ✓                   | ✓        |
 | scriptling.provision.fetch           | ✗                   | ✓                   | ✓        |
-| scriptling.plugin                    | ✓ †                 | ✓                   | ✓        |
 
 \* Requires a Pro license for secret provider access (Vault, 1Password). Standalone scriptling has built-in secret support.
-
-† In server-side environments (MCP, event sink, and health check scripts) the plugin scope is **HTTP(S) only** — scripts may connect to remote HTTP(S) plugin endpoints but cannot spawn local executables on the knot server. Remote (in-space) scripts may load both HTTP(S) and stdio executable plugins. Each script execution gets its own isolated plugin scope, so plugins loaded by one execution are invisible to every other user and execution. In the External environment, plugin transport and scoping are governed by [scriptling](https://scriptling.dev/) itself, not knot.
-
-‡ Interactive sessions only: `scriptling.ai.agent.interact` is registered for streaming space scripts, not for one-shot script runs. (`scriptling.console` is available in every Space-environment script; interactive sessions get the console UI stub.)
-
-†† Every Space-environment script gets the same runtime set: `scriptling.runtime` with the `.kv`, `.sync`, `.sandbox`, and `.plugin` sub-libraries, along with `scriptling.messaging.*`, `scriptling.net.multicast`/`unicast`/`gossip`, and `scriptling.ai.memory`. The serving sub-libraries (`.http`, `.jsonrpc`, `.mcp`) and `scriptling.container`/`scriptling.nomad` are standalone-scriptling only — in knot, serving runs on the real Scriptling CLI and container management goes through `knot.space` etc.
 
 ### knot.\* Libraries
 
@@ -248,17 +224,13 @@ In MCP and Remote contexts the Go runtime provides the transport automatically �
 | knot.mcp                | ✓             | ✓             | ✓                 |
 | knot.apiclient          | ✓ (automatic) | ✓ (automatic) | ✓ (configure first) |
 | knot.event              | emit only †   | emit only †   | emit only †       |
-| knot.methods            | ✗ ‡           | ✓             | ✗                 |
-| knot.methods.schema     | ✗ ‡           | ✓             | ✗                 |
-| knot.healthcheck        | ✗ §           | ✓             | ✗                 |
+| knot.methods            | ✗             | ✓             | ✗                 |
+| knot.methods.schema     | ✗             | ✓             | ✗                 |
+| knot.healthcheck        | ✗             | ✓             | ✗                 |
 
 \* `knot.audit` requires a Pro license.
 
 † `knot.event` is context-sensitive: `emit()` is available in space scripts, MCP tool scripts, and external scripts. The payload/metadata accessors (`get_string()`, `type()`, `space()`, …) are only available in event sink scripts — see [Events](../../../reference/events/).
-
-‡ Agent-side only: available in remote/space scripts and all `knot run-script` modes (including `--json-rpc`/`--listen`/`--mcp-tools`). Not available in MCP tool execution or event sink scripts.
-
-§ `knot.healthcheck` is available in every agent-side (Space) script — health check scripts, startup scripts, `knot run-script` — but not in the Server environment. See [knot.healthcheck](../../../reference/libraries/healthcheck/).
 
 Event sink scripts follow the MCP column, except `knot.event` exposes the sink accessors instead of `emit()` and `knot.methods` is not registered. Health check scripts run agent-side in the space and share the full Space environment, including `knot.healthcheck`.
 

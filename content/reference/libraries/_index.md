@@ -77,7 +77,7 @@ Each library's availability depends on where the script runs. Not every library 
 Summary of the embedded execution contexts:
 
 - **MCP tool execution**, **event sink scripts**, **remote/space scripts**, and **`knot run-script`** register the Go-provided `knot.apiclient` transport, so the API libraries (`knot.space`, `knot.user`, `knot.group`, `knot.role`, `knot.audit`, `knot.permission`, `knot.vars`, `knot.volume`, `knot.script`, `knot.skill`, `knot.slash_command`, `knot.server`, `knot.template`, `knot.stack`, `knot.pool`), plus `knot.ai` and `knot.mcp`, are available and authenticated automatically.
-- **`knot.methods` / `knot.methods.schema`** are agent-side only: remote/space scripts and `knot run-script`. They are not available in MCP tool execution, event sink scripts, or `knot run-script` server mode.
+- **`knot.methods` / `knot.methods.schema`** are agent-side only: remote/space scripts, `knot run-script`, and `knot methods register`. They are not available in MCP tool execution or event sink scripts.
 - **`knot.event`** is context-sensitive: `emit()` runs in space-side scripts, MCP tool execution, and external standalone scripts; the payload/metadata accessors run only in event sink scripts.
 - **`knot.healthcheck`** runs in every agent-side (space) script — health check scripts, startup scripts, `knot run-script` — but not in MCP tool execution or event sink scripts.
 - **Health check scripts** run agent-side in the space and share the full Space environment; they have no `knot.apiclient` transport, so the API libraries are not usable there.
