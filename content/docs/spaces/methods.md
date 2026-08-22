@@ -238,7 +238,7 @@ Method servers run on the real Scriptling CLI in the space. Use a template built
 
 `Server("/usr/local/bin/scriptling", args=["--json-rpc", "./setup.py"], mode="concurrent")`
 
-The agent's embedded runtime is for setup work only (writing files, launching the server, calling `register()`) — it does not serve. Two agent-provided package endpoints keep the space self-contained: `http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip` (the `knot.*` libraries) and `http://127.0.0.1:$KNOT_API_PORT/packages/libs.zip` (your `lib` scripts and global libraries, rebuilt automatically when they change). The Scriptling base image prewires both in scriptling's `packages` config, and `knot.apiclient` auto-configures itself from the agent's `/connect` endpoint — no URLs or tokens needed inside a space.
+The agent's embedded runtime is for setup work only (writing files, launching the server, calling `register()`) — it does not serve. Two agent-provided package endpoints keep the space self-contained: `http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip` (the `knot.*` libraries) and `http://127.0.0.1:$KNOT_API_PORT/packages/libs.zip` (your `lib` scripts and global libraries, rebuilt automatically when they change) — pass both to scriptling via `--package`, or put them in a scriptling config file (see [Using knot.* Libraries](../../scripting/using-libraries/)). `knot.apiclient` auto-configures itself from the agent's `/connect` endpoint — no URLs or tokens needed inside a space.
 {{< /tip >}}
 
 TOML form (`methods.toml`) — running on the Scriptling CLI:

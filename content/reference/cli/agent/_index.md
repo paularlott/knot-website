@@ -204,7 +204,7 @@ knot run-script <script-or-file> [args...]
 Options:
 - `--no-fail`: exit successfully if the named script does not exist
 
-Serving (JSON-RPC / HTTP / MCP) and the interactive REPL belong to the real Scriptling CLI in the space — use a template built from a Scriptling base image (for example `paularlott/knot-scriptling:0.21-alpine`). Scriptling picks up the `knot.*` libraries and your `lib` scripts automatically via the agent's package endpoints (`http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip` and `.../libs.zip`, prewired by the base image), and `knot.apiclient` configures itself from the agent's `/connect` endpoint.
+Serving (JSON-RPC / HTTP / MCP) and the interactive REPL belong to the real Scriptling CLI in the space — use a template built from a Scriptling base image (for example `paularlott/knot-scriptling:0.21-alpine`). Load the `knot.*` libraries and your `lib` scripts via the agent's package endpoints (`--package http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip --package http://127.0.0.1:$KNOT_API_PORT/packages/libs.zip`, or a scriptling config file), and `knot.apiclient` configures itself from the agent's `/connect` endpoint.
 
 ---
 
