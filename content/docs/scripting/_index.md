@@ -126,7 +126,7 @@ tool.return_string(f"Hello, {name}!")
 
 ### Space Environment
 
-**Used by:** every script that runs in a space under the agent — startup/shutdown scripts, user scripts (`knot space run-script`, eval), `knot run-script` (eval and server modes), health check scripts, and `knot methods register`.
+**Used by:** every script that runs in a space under the agent — startup/shutdown scripts, user scripts (`knot space run-script`, eval), `knot run-script` (eval), health check scripts, and `knot methods register`. Serving and the interactive REPL run on the real Scriptling CLI in the space (Scriptling base images), not the embedded runtime.
 
 Scripts run inside the container with full capabilities within that container's isolation, and every agent-side context shares the same library surface (the scriptling CLI set minus container/nomad, plus all `knot.*` libraries including `knot.methods` and `knot.healthcheck`). All libraries are loaded on-demand from the server.
 
@@ -219,9 +219,9 @@ Server-side scripts (MCP tools, event sinks, health checks) run on the knot serv
 
 † In server-side environments (MCP, event sink, and health check scripts) the plugin scope is **HTTP(S) only** — scripts may connect to remote HTTP(S) plugin endpoints but cannot spawn local executables on the knot server. Remote (in-space) scripts may load both HTTP(S) and stdio executable plugins. Each script execution gets its own isolated plugin scope, so plugins loaded by one execution are invisible to every other user and execution. In the External environment, plugin transport and scoping are governed by [scriptling](https://scriptling.dev/) itself, not knot.
 
-‡ Interactive sessions only: `scriptling.ai.agent.interact` is registered for streaming space scripts and `knot run-script --interactive`, not for one-shot script runs. (`scriptling.console` is available in every Space-environment script; interactive sessions get the console UI stub.)
+‡ Interactive sessions only: `scriptling.ai.agent.interact` is registered for streaming space scripts, not for one-shot script runs. (`scriptling.console` is available in every Space-environment script; interactive sessions get the console UI stub.)
 
-†† Every Space-environment script gets the same runtime set: `scriptling.runtime` with the `.kv`, `.sync`, `.sandbox`, `.plugin`, `.http`, `.jsonrpc`, and `.mcp` sub-libraries, along with `scriptling.messaging.*`, `scriptling.net.multicast`/`unicast`/`gossip`, and `scriptling.ai.memory`. (`scriptling.container` and `scriptling.nomad` exist in standalone scriptling but are unavailable in all knot environments — container management goes through `knot.space` etc.)
+†† Every Space-environment script gets the same runtime set: `scriptling.runtime` with the `.kv`, `.sync`, `.sandbox`, and `.plugin` sub-libraries, along with `scriptling.messaging.*`, `scriptling.net.multicast`/`unicast`/`gossip`, and `scriptling.ai.memory`. The serving sub-libraries (`.http`, `.jsonrpc`, `.mcp`) and `scriptling.container`/`scriptling.nomad` are standalone-scriptling only — in knot, serving runs on the real Scriptling CLI and container management goes through `knot.space` etc.
 
 ### knot.\* Libraries
 

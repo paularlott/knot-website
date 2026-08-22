@@ -195,28 +195,16 @@ Creates a tunnel at `<user>-myapp.<tunnel-domain>`.
 
 ## `knot run-script`
 
-Execute a named script or a local `.py` file in this space, or start an interactive REPL.
+Execute a named script or a local `.py` file in this space (eval only).
 
 ```shell
 knot run-script <script-or-file> [args...]
 ```
 
 Options:
-- `--interactive`: start an interactive REPL (omit the script argument)
 - `--no-fail`: exit successfully if the named script does not exist
 
-### Server modes
-
-`run-script` can also run a script as a long-running server:
-
-- `--json-rpc`: run as a JSON-RPC server over stdin/stdout
-- `--listen <addr>`: run as an HTTP server (e.g. `:8080`)
-- `--mcp-tools <dir>`: run as an MCP server exposing tools from a directory (implies HTTP)
-- `--mcp-exec`: enable the MCP code-execution tool
-- `--web-root <dir|zip>`: serve static files alongside the HTTP server
-- `--bearer-token <token>`: require this bearer token on HTTP/MCP requests
-- `--allowed-path <path>`: restrict filesystem access (repeatable)
-- `--tls-cert` / `--tls-key` / `--tls-generate`: enable HTTPS
+Serving (JSON-RPC / HTTP / MCP) and the interactive REPL belong to the real Scriptling CLI in the space — use a template built from a Scriptling base image (for example `paularlott/knot-scriptling:0.21-alpine`). Scriptling picks up the `knot.*` libraries and your `lib` scripts automatically via the agent's package endpoints (`http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip` and `.../libs.zip`, prewired by the base image), and `knot.apiclient` configures itself from the agent's `/connect` endpoint.
 
 ---
 

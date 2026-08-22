@@ -13,6 +13,14 @@ navSection: docs
 
 {{< version "v0.33.0" >}}
 
+{{< changelog-item "breaking" >}}
+- `knot run-script` is eval-only — serving and the REPL moved to the real Scriptling CLI (use a Scriptling base image; method servers become `Server("/usr/local/bin/scriptling", args=["--json-rpc", ...])`).
+{{< /changelog-item >}}
+
+{{< changelog-item "added" >}}
+- Agent package endpoints: in-space Scriptling gets `knot.*` libs and user/global `lib` scripts as cached zip packages (`/packages/knot.zip`, `/packages/libs.zip` on the agent API port), refreshed automatically on change; `knot.apiclient` self-configures in spaces via the agent.
+{{< /changelog-item >}}
+
 {{< changelog-item "added" >}}
 - **Scheduled space jobs**: spaces can define scheduled or manual jobs in `~/.knot-jobs.toml`, run by the agent while the space is running. List and trigger them from the web UI, `knot space jobs`, or `knot jobs` inside the space; output goes to the space's logs. See [Space Jobs](../docs/spaces/jobs/).
 
