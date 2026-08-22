@@ -236,7 +236,7 @@ A Scriptling script can be the method server process itself, using the `scriptli
 {{< tip >}}
 The Knot agent embeds the Scriptling runtime, so you do **not** need to install a separate `scriptling` binary in the space. Run the script through the agent instead: `knot run-script ./setup.py --json-rpc`.
 
-`knot run-script` mirrors the Scriptling CLI's run modes (container support excluded): `--json-rpc` (stdio JSON-RPC method server), `--listen :PORT` (HTTP server), and `--mcp-tools DIR` (MCP server), plus the sandbox flags (`--allowed-path`, `--disable-lib`, `--bearer-token`, `--web-root`, `--kv-storage`, `--tls-*`). Knot's own libraries (`knot.apiclient`, `knot.event`, …) are available both to evaluated scripts and to served handlers (json-rpc/http/mcp). Run `knot --version` to see the bundled Scriptling version.
+`knot run-script` mirrors the Scriptling CLI's run modes (container and nomad support excluded): `--json-rpc` (stdio JSON-RPC method server), `--listen :PORT` (HTTP server), and `--mcp-tools DIR` (MCP server), plus the sandbox flags (`--allowed-path`, `--disable-lib`, `--bearer-token`, `--web-root`, `--kv-storage`, `--tls-*`). Knot's own libraries (`knot.apiclient`, `knot.event`, …) are available both to evaluated scripts and to served handlers (json-rpc/http/mcp). Run `knot --version` to see the bundled Scriptling version.
 {{< /tip >}}
 
 TOML form (`methods.toml`) — using the agent's bundled runtime:

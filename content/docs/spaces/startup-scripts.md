@@ -122,11 +122,11 @@ space.run("myspace", "sync")
 
 Startup and shutdown scripts run in the **Remote** environment with access to:
 
-- All `knot.*` libraries (space, ai, mcp, etc.)
+- All `knot.*` libraries (space, ai, mcp, methods, healthcheck, etc.)
 - Standard scriptling libraries
 - Extended libraries (os, pathlib, subprocess, etc.)
 
-See [Scripting Environments](../../scripting/environments/) for complete library availability.
+See [Scripting](../../scripting/) for complete library availability.
 
 ---
 
