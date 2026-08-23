@@ -138,16 +138,14 @@ knot methods unregister
 
 ## `knot jobs`
 
-Manage the scheduled jobs defined in this space's `~/.knot-jobs.toml` (see [Space Jobs](../../knot-docs/spaces/jobs.md)).
+Inspect this space's jobs (see [Space Jobs](../../knot-docs/spaces/jobs.md)). Jobs are managed from the web UI, `knot space jobs` on your machine, or the scriptling `knot.jobs` library.
 
 ```shell
 knot jobs list
 knot jobs run <job>
-knot jobs enable
-knot jobs disable
 ```
 
-`run` triggers a job immediately — it works for disabled and manual-only jobs too. `enable`/`disable` start and stop the job runner (scheduled firing); the state is in memory only and resets on the next agent start.
+`run` triggers a job immediately — it works for disabled and manual-only jobs too.
 
 ---
 
@@ -203,28 +201,16 @@ Creates a tunnel at `<user>-myapp.<tunnel-domain>`.
 
 ## `knot run-script`
 
-Execute a named script or a local `.py` file in this space, or start an interactive REPL.
+Execute a named script or a local `.py` file in this space (eval only).
 
 ```shell
 knot run-script <script-or-file> [args...]
 ```
 
 Options:
-- `--interactive`: start an interactive REPL (omit the script argument)
 - `--no-fail`: exit successfully if the named script does not exist
 
-### Server modes
-
-`run-script` can also run a script as a long-running server:
-
-- `--json-rpc`: run as a JSON-RPC server over stdin/stdout
-- `--listen <addr>`: run as an HTTP server (e.g. `:8080`)
-- `--mcp-tools <dir>`: run as an MCP server exposing tools from a directory (implies HTTP)
-- `--mcp-exec`: enable the MCP code-execution tool
-- `--web-root <dir|zip>`: serve static files alongside the HTTP server
-- `--bearer-token <token>`: require this bearer token on HTTP/MCP requests
-- `--allowed-path <path>`: restrict filesystem access (repeatable)
-- `--tls-cert` / `--tls-key` / `--tls-generate`: enable HTTPS
+Serving (JSON-RPC / HTTP / MCP) and the interactive REPL belong to the real Scriptling CLI in the space — use a template built from a Scriptling base image (for example `paularlott/knot-scriptling:0.21-alpine`). Load the `knot.*` libraries and your `lib` scripts via the agent's package endpoints (`--package http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip --package http://127.0.0.1:$KNOT_API_PORT/packages/libs.zip`, or a scriptling config file), and `knot.apiclient` configures itself from the agent's `/connect` endpoint.
 
 ---
 

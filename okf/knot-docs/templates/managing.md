@@ -101,6 +101,9 @@ To create a new template:
   - **`Variable Name`**: The name of the variable for the field.
   - **`Field Label / Description`**: A description of the field, displayed in the space creation and edit forms.
 
+- **`Jobs`**:
+  Define scheduled or manual jobs that are copied into spaces created from the template, where each space can edit or remove its own copy. Each job has a name, a shell command and an optional 5-field cron schedule; see [Space Jobs](../spaces/jobs.md).
+
 - **`Features`**:
   Define the features available to the space (e.g., Visual Studio Code Tunnels). Users require the appropriate role permissions to access these features.
 

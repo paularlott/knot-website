@@ -25,6 +25,7 @@ For standalone use outside knot, configure it explicitly or set environment vari
 | Environment | Behaviour |
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Go runtime provides the transport. `configure()` is a no-op and tokens are never exposed to scripts. |
+| Real Scriptling in a space (via `knot.zip`) | Auto-configured: `knot.apiclient` fetches the server URL and token from the agent's `/connect` endpoint on `127.0.0.1:$KNOT_API_PORT` and talks to the server directly as the space owner. No `configure()` needed. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation. Call `configure()` or set the `KNOT_*` environment variables. |
 

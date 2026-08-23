@@ -130,11 +130,11 @@ The same `[[server.secret_providers]]` configuration is also exposed to server-s
 
 Available in:
 
-- MCP tool scripts
-- remote scripts, including startup and shutdown scripts
+- Server-side scripts (MCP tool scripts, event sinks)
 
 Not available in:
 
+- agent-side scripts (the agent has no secret providers)
 - standalone external `scriptling` runs unless you configure that host separately
 
 ```python

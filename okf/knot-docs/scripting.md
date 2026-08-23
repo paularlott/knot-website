@@ -102,27 +102,27 @@ echo "data" | knot space run-script <space-name> <script-name>
 
 ## Execution Environments
 
-Knot provides three distinct execution environments, each tailored for specific use cases with different library availability and security constraints.
+Knot has two embedded execution environments — one per execution location — plus standalone scriptling:
 
-| Environment  | Used By               | System Access         | Best For                              |
-| ------------ | --------------------- | --------------------- | ------------------------------------- |
-| **MCP**      | AI tool scripts       | None                  | Safe AI tool execution                |
-| **Remote**   | Space execution       | Full (container)      | Scripts in user spaces/containers     |
-| **External** | Standalone scriptling | Host (scriptling-cli) | Scripts outside knot using `knot.zip` |
+| Environment  | Runs                | Used By                                                                    | System Access         |
+| ------------ | ------------------- | -------------------------------------------------------------------------- | --------------------- |
+| **Server**   | In the knot server  | MCP tool scripts, event sink scripts                                       | None                  |
+| **Space**    | In the space (agent)| Startup/shutdown scripts, user scripts, `knot run-script`, health checks, `knot methods register` | Full (container) |
+| **External** | Host (scriptling-cli) | Scripts outside knot using `knot.zip`                                   | Host                  |
 
 ```
-Is it an MCP tool for AI?
-├─ YES → MCP Environment
+Does the script run in the knot server?
+├─ YES → Server environment (MCP tools, event sinks)
 └─ NO → Is it running in a space/container?
-    ├─ YES → Remote Environment
-    └─ NO → External Environment
+    ├─ YES → Space environment (one shared library surface for every agent-side context)
+    └─ NO → External environment
 ```
 
-### MCP Environment
+### Server Environment
 
-**Used by:** AI assistants executing MCP tools
+**Used by:** MCP tool scripts and event sink scripts, executed inside the knot server.
 
-The most restricted environment. System access libraries (`os`, `pathlib`, `subprocess`, `sys`) are not available. Libraries are fetched from the server only.
+The restricted environment. No system access libraries (`os`, `pathlib`, `subprocess`, `sys`), no `scriptling.runtime`, no `knot.methods`, and `fs` only when `server.script_fs_allowed_paths` is configured. Libraries are fetched from the server only (including user `lib` scripts). Event sinks additionally expose the `knot.event` accessors instead of `emit()`, which prevents sink → event → sink recursion.
 
 ```python
 import scriptling.mcp.tool as tool
@@ -131,11 +131,11 @@ name = tool.get_string("name", "World")
 tool.return_string(f"Hello, {name}!")
 ```
 
-### Remote Environment
+### Space Environment
 
-**Command:** `knot space run-script`
+**Used by:** every script that runs in a space under the agent — startup/shutdown scripts, user scripts (`knot space run-script`, eval), `knot run-script` (eval), health check scripts, and `knot methods register`. Serving and the interactive REPL run on the real Scriptling CLI in the space (Scriptling base images), not the embedded runtime.
 
-Scripts run inside the container with full capabilities within that container's isolation. All libraries are loaded on-demand from the server.
+Scripts run inside the container with full capabilities within that container's isolation, and every agent-side context shares the same library surface (the scriptling CLI set minus container/nomad, plus all `knot.*` libraries including `knot.methods` and `knot.healthcheck`). All libraries are loaded on-demand from the server.
 
 ```bash
 knot space run-script myspace myscript arg1 arg2
@@ -153,19 +153,6 @@ Scripts running outside knot entirely, using the published `knot.zip` package. R
 scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 ```
 
-### Plugin Scopes
-
-Every script execution in knot's embedded environments (MCP, Remote) gets its own **isolated plugin scope** via the [`scriptling.plugin`](https://scriptling.dev/) library. A plugin that a script loads at runtime with `scriptling.plugin.load()` is visible only to that execution — it cannot leak into another user's script or another tool invocation. The scope is released automatically when the script finishes.
-
-The transports a scope will accept depend on the environment:
-
-| Environment                | HTTP(S) plugins | Stdio executable plugins |
-| -------------------------- | --------------- | ------------------------ |
-| MCP / event sink / health  | ✓               | ✗                        |
-| Remote (in-space)          | ✓               | ✓                        |
-
-Server-side scripts (MCP tools, event sinks, health checks) run on the knot server and are restricted to HTTP(S) plugin endpoints — they cannot spawn arbitrary executables on the server. In-space (Remote) scripts already run inside a container with subprocess access, so both transports are permitted.
-
 ---
 
 ## Library Availability
@@ -179,6 +166,9 @@ Server-side scripts (MCP tools, event sinks, health checks) run on the knot serv
 | secrets            | ✓   | ✓      | ✓        |
 | yaml / toml        | ✓   | ✓      | ✓        |
 | shlex              | ✓   | ✓      | ✓        |
+| fs                 | ✓ ¹ | ✓      | ✓        |
+| html.parser        | ✓   | ✓      | ✓        |
+| logging            | ✓   | ✓      | ✓        |
 | subprocess         | ✗   | ✓      | ✓        |
 | os / pathlib       | ✗   | ✓      | ✓        |
 | glob               | ✗   | ✓      | ✓        |
@@ -188,51 +178,68 @@ Server-side scripts (MCP tools, event sinks, health checks) run on the knot serv
 | tarfile            | ✗   | ✓      | ✓        |
 | sys                | ✗   | ✓      | ✓        |
 
+¹ On the knot server (MCP tool execution and event sink scripts) `fs` is only registered when the admin configures `server.script_fs_allowed_paths` (flag `--script-fs-allowed-paths`, env `KNOT_SCRIPT_FS_ALLOWED_PATHS`); without it, server-side scripts have no local filesystem access. In spaces (Remote) `fs` is always available, scoped to the container.
+
 ### scriptling.\* Libraries
 
 | Library                              | MCP                 | Remote              | External |
 | ------------------------------------ | ------------------- | ------------------- | -------- |
-| scriptling.secret                    | \* | \* | ✓        |
+| scriptling.secret                    | \* | ✗                   | ✓        |
 | scriptling.ai                        | ✓                   | ✓                   | ✓        |
 | scriptling.ai.agent                  | ✓                   | ✓                   | ✓        |
-| scriptling.ai.agent.interact         | ✗                   | ✓                   | ✓        |
+| scriptling.ai.tools                  | ✓                   | ✓                   | ✓        |
+| scriptling.ai.memory                 | ✗                   | ✓                   | ✓        |
 | scriptling.mcp / scriptling.mcp.tool | ✓                   | ✓                   | ✓        |
-| scriptling.console                   | ✗                   | ✓                   | ✓        |
+| scriptling.toon                      | ✓                   | ✓                   | ✓        |
+| scriptling.messaging (telegram / discord / slack) | ✓       | ✓                   | ✓        |
 | scriptling.grep                      | ✗                   | ✓                   | ✓        |
 | scriptling.find                      | ✗                   | ✓                   | ✓        |
 | scriptling.csv                       | ✓                   | ✓                   | ✓        |
 | scriptling.xml                       | ✓                   | ✓                   | ✓        |
 | scriptling.sed                       | ✗                   | ✓                   | ✓        |
-| scriptling.runtime                   | ✗                   | ✓                   | ✓        |
-| scriptling.websocket                 | ✓                   | ✓                   | ✓        |
+| scriptling.similarity                | ✓                   | ✓                   | ✓        |
+| scriptling.wait_for                  | ✓                   | ✓                   | ✓        |
 | scriptling.template.html             | ✓                   | ✓                   | ✓        |
 | scriptling.template.text             | ✓                   | ✓                   | ✓        |
-| scriptling.net.resolve               | ✓                   | ✓                   | ✓        |
 | scriptling.provision.file            | ✗                   | ✓                   | ✓        |
-| scriptling.plugin                    | ✓ †                 | ✓                   | ✓        |
+| scriptling.provision.fetch           | ✗                   | ✓                   | ✓        |
 
 \* Requires a Pro license for secret provider access (Vault, 1Password). Standalone scriptling has built-in secret support.
 
-† In server-side environments (MCP, event sink, and health check scripts) the plugin scope is **HTTP(S) only** — scripts may connect to remote HTTP(S) plugin endpoints but cannot spawn local executables on the knot server. Remote (in-space) scripts may load both HTTP(S) and stdio executable plugins. Each script execution gets its own isolated plugin scope, so plugins loaded by one execution are invisible to every other user and execution. In the External environment, plugin transport and scoping are governed by [scriptling](https://scriptling.dev/) itself, not knot.
-
 ### knot.\* Libraries
 
-All `knot.*` libraries are available in all three environments. In MCP and Remote contexts the Go runtime provides the transport automatically — no configuration needed. In External contexts `knot.apiclient` must be configured.
+In MCP and Remote contexts the Go runtime provides the transport automatically — no configuration needed. In External contexts `knot.apiclient` must be configured. Most `knot.*` libraries are available everywhere, but a few are context-restricted — the [library reference](../../../reference/libraries/) documents the exact Execution Environment for each.
 
-| Library         | MCP | Remote | External |
-| --------------- | --- | ------ | -------- |
-| knot.space      | ✓   | ✓      | ✓        |
-| knot.ai         | ✓   | ✓      | ✓        |
-| knot.mcp        | ✓   | ✓      | ✓        |
-| knot.user       | ✓   | ✓      | ✓        |
-| knot.group      | ✓   | ✓      | ✓        |
-| knot.role       | ✓   | ✓      | ✓        |
-| knot.template   | ✓   | ✓      | ✓        |
-| knot.vars       | ✓   | ✓      | ✓        |
-| knot.volume     | ✓   | ✓      | ✓        |
-| knot.skill      | ✓   | ✓      | ✓        |
-| knot.permission | ✓   | ✓      | ✓        |
-| knot.stack      | ✓   | ✓      | ✓        |
+| Library                 | MCP           | Remote        | External          |
+| ----------------------- | ------------- | ------------- | ----------------- |
+| knot.space              | ✓             | ✓             | ✓                 |
+| knot.user               | ✓             | ✓             | ✓                 |
+| knot.group              | ✓             | ✓             | ✓                 |
+| knot.role               | ✓             | ✓             | ✓                 |
+| knot.template           | ✓             | ✓             | ✓                 |
+| knot.vars               | ✓             | ✓             | ✓                 |
+| knot.volume             | ✓             | ✓             | ✓                 |
+| knot.permission         | ✓             | ✓             | ✓                 |
+| knot.stack              | ✓             | ✓             | ✓                 |
+| knot.pool               | ✓             | ✓             | ✓                 |
+| knot.script             | ✓             | ✓             | ✓                 |
+| knot.skill              | ✓             | ✓             | ✓                 |
+| knot.slash_command      | ✓             | ✓             | ✓                 |
+| knot.server             | ✓             | ✓             | ✓                 |
+| knot.audit              | ✓ \* | ✓ \* | ✓ \* |
+| knot.ai                 | ✓             | ✓             | ✓                 |
+| knot.mcp                | ✓             | ✓             | ✓                 |
+| knot.apiclient          | ✓ (automatic) | ✓ (automatic) | ✓ (configure first) |
+| knot.event              | emit only †   | emit only †   | emit only †       |
+| knot.methods            | ✗             | ✓             | ✗                 |
+| knot.methods.schema     | ✗             | ✓             | ✗                 |
+| knot.healthcheck        | ✗             | ✓             | ✗                 |
+
+\* `knot.audit` requires a Pro license.
+
+† `knot.event` is context-sensitive: `emit()` is available in space scripts, MCP tool scripts, and external scripts. The payload/metadata accessors (`get_string()`, `type()`, `space()`, …) are only available in event sink scripts — see [Events](../../../reference/events/).
+
+Event sink scripts follow the MCP column, except `knot.event` exposes the sink accessors instead of `emit()` and `knot.methods` is not registered. Health check scripts run agent-side in the space and share the full Space environment, including `knot.healthcheck`.
 
 ---
 

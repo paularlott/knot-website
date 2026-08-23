@@ -130,16 +130,14 @@ knot methods unregister
 
 ## `knot jobs`
 
-Manage the scheduled jobs defined in this space's `~/.knot-jobs.toml` (see [Space Jobs](/docs/spaces/jobs/)).
+Inspect this space's jobs (see [Space Jobs](/docs/spaces/jobs/)). Jobs are managed from the web UI, `knot space jobs` on your machine, or the scriptling `knot.jobs` library.
 
 ```shell
 knot jobs list
 knot jobs run <job>
-knot jobs enable
-knot jobs disable
 ```
 
-`run` triggers a job immediately — it works for disabled and manual-only jobs too. `enable`/`disable` start and stop the job runner (scheduled firing); the state is in memory only and resets on the next agent start.
+`run` triggers a job immediately — it works for disabled and manual-only jobs too.
 
 ---
 

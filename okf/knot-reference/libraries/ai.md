@@ -15,7 +15,7 @@ type: API Reference
 ---
 # knot.ai
 
-The `knot.ai` library provides access to an AI client for scripts. In embedded contexts (MCP, remote, local scripts) it returns a pre-configured client connected to the server's AI provider. For standalone use outside knot, configure `knot.apiclient` with AI connection details.
+The `knot.ai` library provides access to an AI client for scripts. In embedded contexts (MCP tool execution, remote/space scripts, `knot run-script`) it returns a pre-configured client connected to the server's AI provider. For standalone use outside knot, configure `knot.apiclient` with AI connection details.
 
 ---
 

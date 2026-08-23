@@ -22,8 +22,8 @@ Register JSON-RPC methods for the current space from startup scripts or `knot me
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Remote/space scripts (startup scripts), `knot methods register`, `knot run-script` | Available (agent-side). The agent installs the registrar that `register()` calls to publish methods to the server. |
-| MCP tool execution, event sink scripts, `knot run-script` server mode | Not available. `register()` returns an error if called. |
+| Remote/space scripts (startup scripts), `knot methods register`, `knot run-script` (eval) | Available (agent-side). The agent installs the registrar that `register()` calls to publish methods to the server. |
+| MCP tool execution, event sink scripts | Not available. `register()` returns an error if called. |
 | Health check scripts, external standalone | Not available. |
 
 ---

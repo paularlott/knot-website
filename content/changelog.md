@@ -22,7 +22,7 @@ navSection: docs
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
-- **Scheduled space jobs**: spaces can define scheduled or manual jobs in `~/.knot-jobs.toml`, run by the agent while the space is running. List and trigger them from the web UI, `knot space jobs`, or `knot jobs` inside the space; output goes to the space's logs. See [Space Jobs](../docs/spaces/jobs/).
+- **Scheduled space jobs**: spaces can define scheduled or manual jobs, run by the agent while the space is running. Definitions are stored on the space and pushed to the agent, so they survive restarts and can be edited from the web UI (Edit Jobs in the space's menu), `knot space jobs`, or the scriptling `knot.jobs` library — also while the space is stopped. Templates can define jobs that are copied into new spaces. Output goes to the space's logs. See [Space Jobs](../docs/spaces/jobs/).
 
 - **Space log forwarding** {{< pro-badge >}}: space logs now flow into the server's log output, external services included, as a single copy per zone. Off by default. See [Logging Configuration](../docs/configuration/logging/).
 

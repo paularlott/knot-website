@@ -409,16 +409,19 @@ knot space tunnel stop <space> <name>
 
 ### `knot space jobs`
 
-Manage the scheduled jobs defined in a space's `~/.knot-jobs.toml` (see [Space Jobs](../../knot-docs/spaces/jobs.md)). The space must be running.
+Manage the jobs defined on a space (see [Space Jobs](../../knot-docs/spaces/jobs.md)). Definitions are stored on the space and pushed to the agent, so they survive restarts and can be edited while the space is stopped.
 
 ```shell
 knot space jobs list <space>
+knot space jobs add <space> <job> --command <cmd> [--schedule <cron>] [--disabled]
+knot space jobs update <space> <job> [--command <cmd>] [--schedule <cron>] [--enable|--disable]
+knot space jobs remove <space> <job>
 knot space jobs run <space> <job>
 knot space jobs enable <space>
 knot space jobs disable <space>
 ```
 
-`enable`/`disable` start and stop the space's job runner (scheduled firing). The state is in memory only — on the next space start the runner defaults to running when the jobs file exists, stopped when it does not.
+`run` triggers a job immediately — it works for disabled and manual-only jobs too, but needs the space running. `enable`/`disable` start and stop the space's job runner (scheduled firing); the state is persisted on the space. `--schedule` takes a 5-field cron expression; omit it for a manual-only job.
 
 ### `knot tunnel`
 

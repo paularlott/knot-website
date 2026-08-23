@@ -16,7 +16,7 @@ type: API Reference
 ---
 # knot.mcp
 
-The `knot.mcp` library provides MCP (Model Context Protocol) tool discovery and execution. It exposes the same flat function interface in all environments — in embedded contexts (Local, MCP, Remote) routing through the server's internal endpoint, and in External contexts connecting to the server's `/mcp` endpoint via `knot.apiclient` config.
+The `knot.mcp` library provides MCP (Model Context Protocol) tool discovery and execution. It exposes the same flat function interface in all environments — in embedded contexts (MCP tool execution, remote/space scripts, `knot run-script`) routing through the server's internal endpoint, and in External contexts connecting to the server's `/mcp` endpoint via `knot.apiclient` config.
 
 ---
 
