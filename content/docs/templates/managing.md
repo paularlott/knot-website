@@ -141,7 +141,7 @@ Templates can be exported to a portable YAML format for version control, backup,
 knot template export "Ubuntu Desktop" > ubuntu.yaml
 ```
 
-The YAML file contains the full template definition: metadata, job spec (HCL/YAML), volume definitions, schedule, custom fields, feature flags, and health check configuration. Template variables (`${{ .X }}`) are preserved verbatim. Scripts are referenced by name (not UUID) for portability.
+The YAML file contains the full template definition: metadata, job spec (HCL/YAML), volume definitions, schedule, custom fields, feature flags, health check configuration, and space jobs (including port definitions). Template variables (`${{ .X }}`) are preserved verbatim. Scripts are referenced by name (not UUID) for portability.
 
 ### Import
 
@@ -177,6 +177,11 @@ zones:
 max_uptime: 8
 max_uptime_unit: h
 startup_script: install-tools.sh
+jobs:
+  - name: backup
+    command: knot run-script backup
+    schedule: "0 2 * * *"
+    enabled: true
 job: |
   job "${{.space.name}}" {
     ...
