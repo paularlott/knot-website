@@ -6,7 +6,7 @@ tags: [installation, deployment]
 weight: 10
 ---
 
-The **knot** server requires a configuration file, environment variables, or command-line parameters for setup. In this tutorial, we'll use a configuration file and run the **knot** binary from the command line.
+The Knot server requires a configuration file, environment variables, or command-line parameters for setup. In this tutorial, we'll use a configuration file and run the Knot binary from the command line.
 
 ---
 
@@ -106,7 +106,7 @@ level = "info"
 
 #### DNS Resolution
 
-To allow access to websites hosted within spaces, **knot** uses a wildcard DNS. Spaces are created with URLs in the format `<user>--<space>--<port>.<wildcard_domain>`.
+To allow access to websites hosted within spaces, Knot uses a wildcard DNS. Spaces are created with URLs in the format `<user>--<space>--<port>.<wildcard_domain>`.
 
 Depending on your network setup, you may be able to point the domain names (`knot.internal` and `*.knot.internal`) to your computer's IP address. If not, you can enable the internal DNS server by adding the following to `knot.toml` and forwarding DNS requests to knot for resolution:
 
@@ -126,7 +126,7 @@ Depending on your network setup, you may be able to point the domain names (`kno
   {{< tab >}}
   ##### systemd-resolved
 
-  For systemd 246 or newer, create the following file to forward `.internal` requests to the **knot** server:
+  For systemd 246 or newer, create the following file to forward `.internal` requests to the Knot server:
 
   ```text {filename="/etc/systemd/resolved.conf.d/knot.internal.conf"}
   [Resolve]
@@ -158,7 +158,7 @@ Depending on your network setup, you may be able to point the domain names (`kno
   {{< /tab >}}
 
   {{< tab >}}
-  To forward `.internal` requests to **knot**, create the following file:
+  To forward `.internal` requests to Knot, create the following file:
 
   ```text {filename="/etc/resolver/knot.internal"}
   nameserver 127.0.0.1

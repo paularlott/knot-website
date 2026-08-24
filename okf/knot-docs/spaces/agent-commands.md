@@ -14,7 +14,7 @@ type: Guide
 ---
 # Agent Commands
 
-Within a space, the **knot** agent provides commands to control the space. These commands include:
+Within a space, the Knot agent provides commands to control the space. These commands include:
 - [`set-note`](notes.md)
 - `shutdown`
 - `restart`

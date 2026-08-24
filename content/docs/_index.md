@@ -6,7 +6,7 @@ type: Overview
 tags: [spaces, templates, configuration, deployment]
 ---
 
-**knot** is a lightweight, single-binary tool that simplifies managing development environments. Whether you need a single local setup or a globally distributed cluster, knot provides consistent, on-demand environments for your team.
+Knot is a lightweight, single-binary tool that simplifies managing development environments. Whether you need a single local setup or a globally distributed cluster, knot provides consistent, on-demand environments for your team.
 
 ## The Problem knot Solves
 
@@ -18,7 +18,7 @@ Development teams face common challenges:
 - QA teams need quick, isolated test environments
 - Onboarding new developers takes days instead of minutes
 
-**knot** solves these by providing instant, consistent environments that can run anywhere.
+Knot solves these by providing instant, consistent environments that can run anywhere.
 
 ---
 
@@ -55,13 +55,13 @@ knot runs on Docker, Podman, or Apple Containers—either as a single server or 
   Deploy across multiple servers using Docker, Podman, or Apple Containers with automatic load balancing and node selection. No Nomad or other orchestrator required.
 
 - **Distributed Architecture**:
-  **knot** supports a leaderless distributed cluster, allowing servers to be placed closer to developers. This reduces network latency while maintaining centralized management of templates and users. It's an ideal solution for globally distributed development teams.
+  Knot supports a leaderless distributed cluster, allowing servers to be placed closer to developers. This reduces network latency while maintaining centralized management of templates and users. It's an ideal solution for globally distributed development teams.
 
 - **Local and Cluster Modes**:
-  In addition to cluster mode, **knot** supports a hybrid setup where a local instance connects to a cluster member using a personal token. This allows templates to be managed centrally while running environments locally for maximum performance.
+  In addition to cluster mode, Knot supports a hybrid setup where a local instance connects to a cluster member using a personal token. This allows templates to be managed centrally while running environments locally for maximum performance.
 
 - **Versatility Across Teams**:
-  While originally designed for developers, **knot** has become a valuable tool for quality assurance teams. Its ability to quickly spawn and destroy test environments enables efficient testing workflows, including destructive testing without risk to production systems.
+  While originally designed for developers, Knot has become a valuable tool for quality assurance teams. Its ability to quickly spawn and destroy test environments enables efficient testing workflows, including destructive testing without risk to production systems.
 
 ## Core Features
 

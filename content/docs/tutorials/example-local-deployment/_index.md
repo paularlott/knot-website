@@ -6,7 +6,7 @@ tags: [deployment, installation]
 weight: 20
 ---
 
-Rather than deploying **knot** within a Nomad cluster, it can be deployed on a single server by running the binary directly (as shown in the quick start guide) or by using **Docker** or **Podman**. In this example, we’ll use **Docker** and **Docker Compose**, along with **Cloudflare** to provide valid SSL certificates.
+Rather than deploying Knot within a Nomad cluster, it can be deployed on a single server by running the binary directly (as shown in the quick start guide) or by using **Docker** or **Podman**. In this example, we’ll use **Docker** and **Docker Compose**, along with **Cloudflare** to provide valid SSL certificates.
 
 While this guide uses Cloudflare, other providers can also be used with **Caddy** to achieve the same results.
 
@@ -218,10 +218,10 @@ docker compose up -d
 
 ### Accessing Knot
 
-Access the web interface at `https://knot.getknot.dev`. If everything works as expected, you should see the setup screen for **knot**.
+Access the web interface at `https://knot.getknot.dev`. If everything works as expected, you should see the setup screen for Knot.
 
 ---
 
 ## Installing Knot
 
-Follow the quick start guide to [Create the Admin User](../../docs/quick-start/standalone/create-admin-user/).
+Follow the quick start guide to [Create the Admin User](/docs/quick-start/local-containers/create-admin-user/).

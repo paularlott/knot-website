@@ -140,7 +140,7 @@ Active port forwards:
 
 ---
 
-## Desktop Client Commands
+## Client Commands
 
 The following commands are run from your desktop machine using the knot CLI:
 
@@ -189,7 +189,7 @@ knot space port stop frontend 8080
 ```
 
 
-The desktop client commands require you to be authenticated with the knot server. Use `--server` and `--token` flags or configure them in your knot config file.
+The client commands require you to be authenticated with the knot server. Use `--server` and `--token` flags or configure them in your knot config file.
 
 
 ---

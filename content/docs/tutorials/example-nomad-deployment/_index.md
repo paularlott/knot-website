@@ -6,7 +6,7 @@ tags: [deployment, installation]
 weight: 10
 ---
 
-This section will guide you through deploying a Nomad cluster to run **knot** and the spaces it manages. While this is not a comprehensive guide to deploying multi-server clusters, it serves as a solid starting point.
+This section will guide you through deploying a Nomad cluster to run Knot and the spaces it manages. While this is not a comprehensive guide to deploying multi-server clusters, it serves as a solid starting point.
 
 ---
 

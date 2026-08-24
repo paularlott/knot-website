@@ -15,7 +15,7 @@ type: Overview
 ---
 # Reference
 
-Technical reference documentation for **knot**.
+Technical reference documentation for Knot.
 
 ## [CLI Reference](cli.md)
 

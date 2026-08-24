@@ -14,7 +14,7 @@ type: Guide
 ---
 # Creating a Template
 
-Once logged in to the **knot** web interface at `http://knot.internal` (or the domain you configured), you'll be presented with a list of available spaces. Initially, this list will be blank.
+Once logged in to the Knot web interface at `http://knot.internal` (or the domain you configured), you'll be presented with a list of available spaces. Initially, this list will be blank.
 
 
 

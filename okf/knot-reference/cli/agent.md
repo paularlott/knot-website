@@ -49,6 +49,20 @@ Usually started automatically by the container entrypoint. Key options:
 | `--use-tls` | `true` | Enable TLS |
 | `--cert-file` / `--key-file` | | PEM certificate and key |
 | `--tls-skip-verify` | `true` | Skip TLS verification when talking to the server |
+| `--registration-key` | | The space's registration key, required to register with the server (shown in the web UI next to the space ID) |
+| `--server-cert-fingerprint` | | SHA-256 fingerprint of the server's agent certificate public key, used to verify the TLS connection |
+| `--service-password` | | Password for the agent service |
+| `--peer-port` | `12202` | Port for direct peer-to-peer connections; `0` disables |
+| `--peer-external-port` | | External port peers should dial for direct connections |
+| `--dns-resolver` | | Run a resident DNS resolver on `127.0.0.1:53` forwarding queries to the server's DNS |
+
+### `knot agent wait-for-start`
+
+Block until the agent daemon is running and accepting commands, then exit. Used by the container entrypoint before running setup commands.
+
+```shell
+knot agent wait-for-start [--timeout SECONDS]
+```
 
 ---
 
@@ -179,6 +193,14 @@ knot port list
 knot port stop <local-port>
 ```
 
+### Throttle a forward
+
+Apply network simulation to an existing forward; `--reset` clears all limits.
+
+```shell
+knot port throttle <local-port> [--latency ms] [--jitter ms] [--bandwidth kb/s] [--timeout ms] [--down] [--reset]
+```
+
 ---
 
 ## `knot tunnel`
@@ -186,16 +208,20 @@ knot port stop <local-port>
 Expose a local port in this space publicly via the knot server.
 
 ```shell
-knot tunnel <protocol> <port> <name>
+knot tunnel http <port> <name> [--daemon]
+knot tunnel https <port> <name> [--daemon]
+knot tunnel list
+knot tunnel stop <name>
 ```
 
 - **Protocols**: `http`, `https`
+- `--daemon`: hand the tunnel to the knot agent and exit; the tunnel then lives for the life of the agent
 
 ```shell
 knot tunnel http 8080 myapp
 ```
 
-Creates a tunnel at `<user>-myapp.<tunnel-domain>`.
+Creates a tunnel at `<user>--myapp.<tunnel-domain>`.
 
 ---
 

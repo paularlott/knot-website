@@ -6,9 +6,9 @@ tags: [deployment, configuration]
 weight: 20
 ---
 
-The **knot** server supports a **leaderless cluster mode** built on the gossip protocol. This mode can operate within the same location/datacenter or across multiple geographic regions, providing flexibility and scalability.
+The Knot server supports a **leaderless cluster mode** built on the gossip protocol. This mode can operate within the same location/datacenter or across multiple geographic regions, providing flexibility and scalability.
 
-Cluster mode allows **knot** servers to be placed close to developers, minimizing latency and maximizing performance. Users and templates can be managed seamlessly from any location.
+Cluster mode allows Knot servers to be placed close to developers, minimizing latency and maximizing performance. Users and templates can be managed seamlessly from any location.
 
 Cluster mode supports communication over both `https` and `TCP / UDP` connections. While `TCP / UDP` is the preferred method for its performance and reliability, `https` can be used when direct connections are unavailable.
 
@@ -18,7 +18,7 @@ Mesh networks like [Netbird](https://netbird.io) or [Tailscale](https://tailscal
 
 ## Enabling Cluster Mode
 
-To enable cluster mode, configure the `server.zone` option in the `knot.toml` file for each server. The `zone` setting identifies the location of each **knot** server. For example, servers in Australia could use `zone = "au"`, while servers in the United Kingdom could use `zone = "gb"`. There are no restrictions on naming.
+To enable cluster mode, configure the `server.zone` option in the `knot.toml` file for each server. The `zone` setting identifies the location of each Knot server. For example, servers in Australia could use `zone = "au"`, while servers in the United Kingdom could use `zone = "gb"`. There are no restrictions on naming.
 
 {{< tip "warning" >}}
 All servers must be using either `https` or `TCP / UDP` for communication, at this time it's not possible to mix transports within the same cluster.
@@ -28,7 +28,7 @@ All servers must be using either `https` or `TCP / UDP` for communication, at th
 
 ### Configuring with HTTPS
 
-In this mode, **knot** servers communicate over `https`. All servers must be able to reach each other. Temporary network failures are handled gracefully, and depending on the number of servers in the cluster, data may be routed around the failure. If not, servers will catch up on missing data once connectivity is restored.
+In this mode, Knot servers communicate over `https`. All servers must be able to reach each other. Temporary network failures are handled gracefully, and depending on the number of servers in the cluster, data may be routed around the failure. If not, servers will catch up on missing data once connectivity is restored.
 
 To enable cluster mode over `https`, add the following configuration to your `knot.toml` file and adjust as needed:
 
@@ -49,14 +49,14 @@ peers = ['https://knot1.internal', 'https://knot2.internal', 'https://knot3.inte
 - **`peers`**: A list of known servers. These should be the most stable servers, as they are used by nodes during startup to find existing cluster members. Once a server joins the cluster, it discovers other members dynamically. If all connections are lost, the server will retry the peers listed here.
 
 {{< tip >}}
-Use this mode only when `TCP / UDP` connections between **knot** servers are unavailable.
+Use this mode only when `TCP / UDP` connections between Knot servers are unavailable.
 {{< /tip >}}
 
 ---
 
 ### Configuring with TCP / UDP
 
-In this mode, **knot** servers communicate over `TCP` or `UDP`. The protocol is chosen dynamically for each message to balance performance and reliability. As with `https` mode, temporary network failures are handled gracefully, and servers will catch up on missing data once connectivity is restored.
+In this mode, Knot servers communicate over `TCP` or `UDP`. The protocol is chosen dynamically for each message to balance performance and reliability. As with `https` mode, temporary network failures are handled gracefully, and servers will catch up on missing data once connectivity is restored.
 
 To enable cluster mode over `TCP / UDP`, add the following configuration to your `knot.toml` file and adjust as needed:
 
@@ -81,11 +81,13 @@ compression = true
 Every member of a zone must also be configured with the **same `encrypt` key** (`server.encrypt`, generated with `knot genkey`): it derives agent registration keys, agent tokens and the zone's agent TLS certificate. knot refuses to start without it.
 - **`peers`**: A list of known servers. These should be the most stable servers, as they are used by nodes during startup to find existing cluster members. Once a server joins the cluster, it discovers other members dynamically. If all connections are lost, the server will retry the peers listed here.
 - **`compression`**: Enables or disables data compression for communication between cluster members. Compression is enabled by default and should work in most cases.
+- **`tcp_only`**: Use `TCP` only for cluster communication — for environments where `UDP` is unavailable.
+- **`min_cluster_size`**: Leader-election quorum floor: the fewest nodes that must be visible before a zone leader can be elected or kept. Set it to the majority of the smallest zone you will run — `2` for two- or three-server production zones. The default of `1` suits single-machine testing, where a lone server must elect itself.
 
 ---
 
 ## Viewing Cluster Health
 
-When **knot** is running in cluster mode, a new menu item, `Cluster Info`, becomes available for admin users and those with the appropriate permissions. This menu displays a table of all servers in the cluster, including their zones and other relevant information.
+When Knot is running in cluster mode, a new menu item, `Cluster Info`, becomes available for admin users and those with the appropriate permissions. This menu displays a table of all servers in the cluster, including their zones and other relevant information.
 
 {{< picture src="images/cluster-info.webp" caption="Cluster Information" >}}

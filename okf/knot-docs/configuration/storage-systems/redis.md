@@ -14,7 +14,7 @@ type: Guide
 ---
 # Redis / Valkey
 
-The **knot** server can be configured to use Redis / Valkey as the database storage. It supports both single-server mode and high-availability cluster setups.
+The Knot server can be configured to use Redis / Valkey as the database storage. It supports both single-server mode and high-availability cluster setups.
 
 
 Redis / Valkey can be enabled alongside another storage system (e.g., MySQL). In such cases, Redis / Valkey is used exclusively for session data.
@@ -24,7 +24,7 @@ Redis / Valkey can be enabled alongside another storage system (e.g., MySQL). In
 
 ### Single Redis / Valkey Server
 
-To configure the **knot** server with a single Redis / Valkey server, set `redis.enabled` to `true` in the configuration file:
+To configure the Knot server with a single Redis / Valkey server, set `redis.enabled` to `true` in the configuration file:
 
 ```toml {{filename="knot.toml"}}
 [server.redis]

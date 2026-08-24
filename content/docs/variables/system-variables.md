@@ -6,7 +6,7 @@ tags: [variables, configuration]
 weight: 10
 ---
 
-System variables are accessible in both job templates and volume templates. These variables are automatically provided by **knot** and can be used to dynamically reference information about spaces, templates, users, servers, and more.
+System variables are accessible in both job templates and volume templates. These variables are automatically provided by Knot and can be used to dynamically reference information about spaces, templates, users, servers, and more.
 
 To use a system variable, simply specify it in the format `${{ .<group>.<name> }}`. For example:
 `${{ .space.name }}`
@@ -29,7 +29,7 @@ To use a system variable, simply specify it in the format `${{ .<group>.<name> }
 |              | `user.username`        | The username of the user running the space                                     |
 |              | `user.email`           | The user's email address                                                       |
 |              | `user.service_password`| Service password for the user                                                  |
-| **server**   | `server.url`           | The URL of the **knot** server                                                 |
+| **server**   | `server.url`           | The URL of the Knot server                                                 |
 |              | `server.agent_endpoint`| The endpoint agents should use to connect to the server                        |
 |              | `server.wildcard_domain`| The wildcard domain without the leading `*`                                    |
 |              | `server.zone`          | The server zone string                                                         |

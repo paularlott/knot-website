@@ -46,7 +46,7 @@ navSection: docs
 
 - **Config wizard**: new logging and cluster steps plus a login-rate-limiting toggle, with a visual refresh.
 
-- **Desktop mode**: running `knot` with no arguments starts the server in the background with a system tray icon. Installable as a macOS app via `brew install --cask paularlott/tap/knot`; Windows builds detach from the console. See [Desktop Client](../docs/quick-start/client/).
+- **Desktop mode**: running `knot` with no arguments starts the server in the background with a system tray icon. Installable as a macOS app via `brew install --cask paularlott/tap/knot`; Windows builds detach from the console. See [Client](../docs/quick-start/client/).
 
 - **First-run setup wizard**: starting desktop mode with no config opens a guided wizard in the browser that writes `~/.knot/knot.toml` — it can also join an existing cluster. It can be re-run at `/setup`, and it preserves hand edits and any config sections it doesn't manage.
 

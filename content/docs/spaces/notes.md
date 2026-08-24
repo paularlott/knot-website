@@ -6,7 +6,7 @@ tags: [spaces]
 weight: 140
 ---
 
-Spaces in **knot** allow for a description to be set during creation or editing, as well as a dynamic note that can be updated from within the space. Both the description and note are displayed on the **`Spaces`** page and can be used to provide important information about the space.
+Spaces in Knot allow for a description to be set during creation or editing, as well as a dynamic note that can be updated from within the space. Both the description and note are displayed on the **`Spaces`** page and can be used to provide important information about the space.
 
 ---
 

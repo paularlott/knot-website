@@ -6,7 +6,7 @@ tags: [spaces, logging]
 weight: 110
 ---
 
-Spaces built using the **knot** base images utilize `rsyslog` to collect logs from services running within the space. These logs are forwarded by the **knot** agent to the **knot** server for storage and viewing.
+Spaces built using the Knot base images utilize `rsyslog` to collect logs from services running within the space. These logs are forwarded by the Knot agent to the Knot server for storage and viewing.
 
 ---
 
@@ -21,7 +21,7 @@ Once a space is running, logs can be accessed directly from the **Spaces** page:
 
 ## Sending Logs
 
-The **knot** agent supports two interfaces for sending logs:
+The Knot agent supports two interfaces for sending logs:
 - **Syslog Interface**
 - **HTTP API** (supports native JSON, msgpack, Graylog GELF, and Loki formats)
 

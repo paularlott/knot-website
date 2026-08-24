@@ -6,13 +6,13 @@ tags: [networking]
 weight: 100
 ---
 
-**knot** tunnels allow HTTP and HTTPS services running on a local workstation or within a space to be exposed on the internet via a **knot** server.
+Knot tunnels allow HTTP and HTTPS services running on a local workstation or within a space to be exposed on the internet via a Knot server.
 
 ---
 
 ## Configuring the Server
 
-Before tunnels can be used, the **knot** server must be configured to allow tunneling. This is done by setting the `listen_tunnel` option in the server configuration:
+Before tunnels can be used, the Knot server must be configured to allow tunneling. This is done by setting the `listen_tunnel` option in the server configuration:
 
 ```toml
 [server]
@@ -20,7 +20,7 @@ listen_tunnel = 0.0.0.0:3001
 tunnel_domain = "*.knot-tunnel.internal:3001"
 ```
 
-- The `listen_tunnel` option specifies the address and port that the **knot** server will listen on for internet traffic to forward to user tunnels.
+- The `listen_tunnel` option specifies the address and port that the Knot server will listen on for internet traffic to forward to user tunnels.
 - A wildcard domain must be pointed to this address and port, e.g., `*.tunnel.knot.internal`.
 
 ### Domain Routing
@@ -46,7 +46,7 @@ Tunnels can be created either on a local machine (desktop) or within a space
 ### Creating a Tunnel on a Local Machine
 
 1. **Connect to the Knot Server**
-   Open a terminal and connect to the **knot** server by running the following command (replace the URL with the actual server address):
+   Open a terminal and connect to the Knot server by running the following command (replace the URL with the actual server address):
 
    ```shell
    knot connect https://knot.internal:3000

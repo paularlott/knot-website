@@ -14,7 +14,7 @@ type: Guide
 ---
 # Managing Groups
 
-In **knot**, groups are used to control access to templates and manage resource limits for users. For example, web developers may need access to PHP environments but not Go development environments used by DevOps teams.
+In Knot, groups are used to control access to templates and manage resource limits for users. For example, web developers may need access to PHP environments but not Go development environments used by DevOps teams.
 
 Groups can also define limits for Compute and Storage Units, as well as other resources. When a user belongs to multiple groups, the limits from all groups are combined.
 

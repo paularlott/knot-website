@@ -15,7 +15,7 @@ type: Overview
 
 Standalone volumes can be created and managed independently of spaces. This flexibility allows volumes to be created and attached to multiple spaces, such as providing shared storage for `/home`. These volumes are persistent and are not affected by the lifespan of the spaces they are attached to. Even if all spaces are deleted, standalone volumes and their data will continue to exist.
 
-For **Nomad** volumes, any Container Storage Interface (CSI) driver supported by Nomad can be used, as **knot** places no additional requirements on this.
+For **Nomad** volumes, any Container Storage Interface (CSI) driver supported by Nomad can be used, as Knot places no additional requirements on this.
 
 Standalone volumes do not count toward a user's **Storage Units** quota.
 

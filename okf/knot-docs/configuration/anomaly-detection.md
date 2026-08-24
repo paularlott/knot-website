@@ -15,7 +15,7 @@ type: Overview
 ---
 # Anomaly Detection
 
- Anomaly detection watches **knot**'s audit event stream and raises an **`Anomaly Detected`** audit event when a rule fires — failed-login bursts, successful logins after failure bursts, attempts while blocked, admin role grants, bulk creations, edits and deletions, distinct login IPs per account, bursts of script executions, space shares and log sink changes, and event sink delivery failures.
+ Anomaly detection watches Knot's audit event stream and raises an **`Anomaly Detected`** audit event when a rule fires — failed-login bursts, successful logins after failure bursts, attempts while blocked, admin role grants, bulk creations, edits and deletions, distinct login IPs per account, bursts of script executions, space shares and log sink changes, and event sink delivery failures.
 
 Detection is a layer on top of [audit logging](logging.md), not a replacement: the raw audit stream (login successes and failures, config changes, space lifecycle) is always the evidence trail, and long-term retention belongs in your external logging service. Detection adds an in-product signal for teams that don't run a full SIEM.
 

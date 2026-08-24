@@ -14,7 +14,7 @@ type: Guide
 ---
 # Nomad Templates
 
-Nomad templates in **knot** define environments using a Nomad job specification and optional volume definitions. When a developer creates and starts a space from a template, **knot** automatically provisions the required volumes and launches the job within the Nomad cluster.
+Nomad templates in Knot define environments using a Nomad job specification and optional volume definitions. When a developer creates and starts a space from a template, Knot automatically provisions the required volumes and launches the job within the Nomad cluster.
 
 The editor uses Nomad HCL completion for the job field and YAML completion for Nomad volume definitions. Save-time validation parses the job through Nomad and validates the volume YAML before the template is stored.
 
@@ -213,7 +213,7 @@ Nomad volume definitions can include both `csi` and `host` volume types.
 
 #### Example Managed Path Definition
 
-Use `paths` when a Nomad job should use a host directory that **knot** creates before the job starts and removes when the space is deleted:
+Use `paths` when a Nomad job should use a host directory that Knot creates before the job starts and removes when the space is deleted:
 
 ```yaml
 paths:

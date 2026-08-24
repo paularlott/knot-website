@@ -13,7 +13,7 @@ type: Overview
 ---
 # Best Practices
 
-Guidelines for deploying and managing **knot** effectively, organized by topic.
+Guidelines for deploying and managing Knot effectively, organized by topic.
 
 ---
 

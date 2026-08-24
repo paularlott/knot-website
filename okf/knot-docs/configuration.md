@@ -13,7 +13,7 @@ type: Overview
 ---
 # Configuration
 
-This section covers server configuration options for customizing your **knot** deployment.
+This section covers server configuration options for customizing your Knot deployment.
 
 ---
 

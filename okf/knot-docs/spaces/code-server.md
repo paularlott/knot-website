@@ -13,7 +13,7 @@ type: Guide
 ---
 # Code Server
 
-**knot** provides access to the web-based Code Server, offering a browser-accessible development environment similar to Visual Studio Code.
+Knot provides access to the web-based Code Server, offering a browser-accessible development environment similar to Visual Studio Code.
 
 ---
 

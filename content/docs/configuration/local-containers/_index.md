@@ -6,7 +6,7 @@ tags: [deployment, configuration]
 weight: 50
 ---
 
-**knot** supports Docker, Podman, and Apple Containers (on macOS) locally and simultaneously. This flexibility allows you to configure and use multiple container runtimes as needed. The socket used to communicate with each service can be specified in the **knot** configuration file.
+Knot supports Docker, Podman, and Apple Containers (on macOS) locally and simultaneously. This flexibility allows you to configure and use multiple container runtimes as needed. The socket used to communicate with each service can be specified in the Knot configuration file.
 
 ---
 
@@ -25,7 +25,7 @@ Native macOS container runtime available on Apple Silicon machines. This uses th
 
 ## Runtime Detection
 
-**knot** automatically detects which container runtimes are available on your system:
+Knot automatically detects which container runtimes are available on your system:
 
 1. **Docker**: Detected via `docker info`
 2. **Podman**: Detected via `podman info`
@@ -37,7 +37,7 @@ The detected runtimes are used for:
 - **[Cluster Operations](../cluster-mode/)**: Exposing runtime capabilities across the cluster
 
 {{< tip "warning" >}}
-**Important**: Container runtime daemons must be running for detection to work. If a runtime daemon is not running or is unresponsive, **knot** will not detect it as available.
+**Important**: Container runtime daemons must be running for detection to work. If a runtime daemon is not running or is unresponsive, Knot will not detect it as available.
 {{< /tip >}}
 
 ---
@@ -76,7 +76,7 @@ Apple Containers use the native macOS container runtime and typically require no
 
 ## Example Configuration
 
-Below is an example of how to configure **knot** to support multiple container runtimes:
+Below is an example of how to configure Knot to support multiple container runtimes:
 
 ```toml {filename="knot.toml"}
 [server]
@@ -98,7 +98,7 @@ Below is an example of how to configure **knot** to support multiple container r
 
 ## Runtime Preference Order
 
-When a template doesn't specify a container runtime, **knot** uses the following preference order:
+When a template doesn't specify a container runtime, Knot uses the following preference order:
 
 1. **Docker**
 2. **Podman**

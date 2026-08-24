@@ -6,7 +6,7 @@ tags: [storage, configuration]
 weight: 10
 ---
 
-The **knot** server supports multiple storage systems for managing data. Each storage option is designed to cater to different use cases and deployment requirements. Below is an overview of the supported storage systems:
+The Knot server supports multiple storage systems for managing data. Each storage option is designed to cater to different use cases and deployment requirements. Below is an overview of the supported storage systems:
 
 ---
 

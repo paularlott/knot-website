@@ -70,7 +70,7 @@ job "${{.user.username}}-${{.space.name}}" {
 
 ### Connecting to Valkey
 
-The space exports the **Valkey port 6379** via the TCP proxy, allowing it to be connected to using [port forwarding](../../spaces/port-forwarding.md) within the desktop client. For example:
+The space exports the **Valkey port 6379** via the TCP proxy, allowing it to be connected to using [port forwarding](../../spaces/port-forwarding.md) from the client CLI. For example:
 
 ```shell
 knot forward port 127.0.0.1:6379 <space> 6379
@@ -78,7 +78,7 @@ knot forward port 127.0.0.1:6379 <space> 6379
 
 Where `<space>` is the name of the space.
 
-Once the above command is running, any desktop **Redis/Valkey client** should be able to connect to port `6379` on `localhost`. **knot** will handle forwarding the data to the Valkey server running within the space.
+Once the above command is running, any desktop **Redis/Valkey client** should be able to connect to port `6379` on `localhost`. Knot will handle forwarding the data to the Valkey server running within the space.
 
 ---
 

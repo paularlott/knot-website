@@ -6,7 +6,7 @@ tags: [installation, deployment]
 weight: 30
 ---
 
-In this section, you'll learn how to deploy **knot** to a Nomad cluster and walk through creating a simple template to deploy a space.
+In this section, you'll learn how to deploy Knot to a Nomad cluster and walk through creating a simple template to deploy a space.
 
 ---
 
@@ -15,7 +15,7 @@ In this section, you'll learn how to deploy **knot** to a Nomad cluster and walk
 To complete this tutorial, ensure you have the following:
 
 - A working **Nomad cluster**.
-- The **knot** binary installed on your operating system.
+- The Knot binary installed on your operating system.
 - Storage drivers accessible via **Container Storage Interface (CSI)** or space available for use via bind mounts.
 - A working **ingress controller**.
 

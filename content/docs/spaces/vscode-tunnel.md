@@ -6,7 +6,7 @@ tags: [spaces, networking]
 weight: 40
 ---
 
-**knot** enables the management of Visual Studio Code Tunnels directly from its web interface, providing seamless access to a fully-featured VSCode editor for your spaces.
+Knot enables the management of Visual Studio Code Tunnels directly from its web interface, providing seamless access to a fully-featured VSCode editor for your spaces.
 
 ---
 

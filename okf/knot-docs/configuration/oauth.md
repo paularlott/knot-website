@@ -15,7 +15,7 @@ type: Overview
 ---
 # OAuth Authentication
 
- **knot** supports OAuth authentication through external identity providers, allowing users to sign in with their existing GitHub, GitLab, Google, or Auth0 accounts — or any OpenID Connect compatible provider.
+ Knot supports OAuth authentication through external identity providers, allowing users to sign in with their existing GitHub, GitLab, Google, or Auth0 accounts — or any OpenID Connect compatible provider.
 
 OAuth providers are configured in `knot.toml` using the `[[server.auth_providers]]` TOML array-of-tables. Multiple providers can be enabled simultaneously.
 
@@ -37,7 +37,7 @@ OAuth providers are configured in `knot.toml` using the `[[server.auth_providers
 
 - **knot Pro** (free for up to 2 users; a license is only needed beyond that)
 - OAuth application credentials from your chosen provider(s)
-- Your **knot** server must be accessible at a public or internal URL (configured via `server.url`)
+- Your Knot server must be accessible at a public or internal URL (configured via `server.url`)
 
 ---
 
@@ -48,7 +48,7 @@ OAuth providers are configured in `knot.toml` using the `[[server.auth_providers
 1. Go to **Settings** > **Developer settings** > **OAuth Apps** > **New OAuth App** (or visit [github.com/settings/developers](https://github.com/settings/developers)).
 2. Fill in the application details:
    - **Application name** — A descriptive name (e.g., "Knot")
-   - **Homepage URL** — Your **knot** server URL (e.g., `https://knot.example.com`)
+   - **Homepage URL** — Your Knot server URL (e.g., `https://knot.example.com`)
    - **Authorization callback URL** — `{your-knot-url}/auth/github/callback` (e.g., `https://knot.example.com/auth/github/callback`)
 3. Click **Register application**.
 4. Note the **Client ID**.
@@ -65,7 +65,7 @@ client_id = "your-github-client-id"
 client_secret = "your-github-client-secret"
 ```
 
-Restart **knot** to apply the configuration.
+Restart Knot to apply the configuration.
 
 GitHub is currently integrated using a GitHub OAuth App. GitHub OAuth Apps return an access token, but do not provide refresh tokens in this flow. GitHub refresh tokens are available with GitHub Apps using expiring user-to-server tokens, which is a different integration model.
 
@@ -94,7 +94,7 @@ client_id = "your-gitlab-application-id"
 client_secret = "your-gitlab-secret"
 ```
 
-Restart **knot** to apply the configuration.
+Restart Knot to apply the configuration.
 
 ### Self-Hosted GitLab
 
@@ -136,9 +136,9 @@ client_id = "your-google-client-id.apps.googleusercontent.com"
 client_secret = "your-google-client-secret"
 ```
 
-Restart **knot** to apply the configuration.
+Restart Knot to apply the configuration.
 
-**knot** requests offline access for Google automatically so refresh tokens can be issued. Google may only return a refresh token the first time the user consents, or after the app has been revoked and consent is granted again.
+Knot requests offline access for Google automatically so refresh tokens can be issued. Google may only return a refresh token the first time the user consents, or after the app has been revoked and consent is granted again.
 
 ---
 
@@ -169,9 +169,9 @@ client_secret = "your-auth0-client-secret"
 
 The `base_url` is your Auth0 tenant domain. It can be the Auth0 domain (e.g., `your-tenant.us.auth0.com`) or a custom domain.
 
-Restart **knot** to apply the configuration.
+Restart Knot to apply the configuration.
 
-**knot** requests the `offline_access` scope for Auth0 automatically so refresh tokens can be issued.
+Knot requests the `offline_access` scope for Auth0 automatically so refresh tokens can be issued.
 
 ---
 
@@ -209,9 +209,9 @@ scopes = ["openid", "profile", "email", "offline_access"]
 
 The `name` field is a unique slug used in URLs (e.g., `/auth/okta/callback`). The `display_name` is shown in the UI and is optional — it defaults to the capitalized `name`.
 
-On startup, **knot** fetches the discovery document to configure the authorization, token, and userinfo endpoints automatically.
+On startup, Knot fetches the discovery document to configure the authorization, token, and userinfo endpoints automatically.
 
-Restart **knot** to apply the configuration.
+Restart Knot to apply the configuration.
 
 ### Example: Multiple OIDC Providers
 
@@ -251,7 +251,7 @@ Each provider is defined as a `[[server.auth_providers]]` entry with the followi
 | `discovery_url` | string | Yes for `oidc` | OIDC discovery document URL (e.g., `/.well-known/openid-configuration`) |
 | `scopes` | string[] | No | Override the scopes requested during login. Useful for OIDC providers that require `offline_access` for refresh tokens |
 | `allowed_domains` | string[] | No | Restrict login to users with email addresses in these domains |
-| `auto_create_users` | bool | No | Automatically create a **knot** user account on first login |
+| `auto_create_users` | bool | No | Automatically create a Knot user account on first login |
 | `default_roles` | string[] | No | Role names assigned to auto-created users |
 | `default_groups` | string[] | No | Group names assigned to auto-created users |
 
@@ -312,11 +312,11 @@ default_groups = ["Developers"]
 
 When OAuth providers are configured:
 
-- **Sign-in buttons** for each enabled provider appear on the **knot** login page alongside the standard email/password form.
-- On first login via OAuth, **knot** either matches the user by email address or creates a new account (if `auto_create_users` is enabled).
+- **Sign-in buttons** for each enabled provider appear on the Knot login page alongside the standard email/password form.
+- On first login via OAuth, Knot either matches the user by email address or creates a new account (if `auto_create_users` is enabled).
 - Users can **link** and **unlink** OAuth providers from their profile settings.
 - Users created via OAuth are prompted to set a password for CLI access.
-- When a provider returns a refresh token, **knot** stores it encrypted alongside the linked provider so future token refresh flows can be supported cleanly.
+- When a provider returns a refresh token, Knot stores it encrypted alongside the linked provider so future token refresh flows can be supported cleanly.
 - GitHub is the exception in the current implementation because the built-in GitHub provider uses a GitHub OAuth App flow rather than a GitHub App user-token flow.
 
 ### Domain Restrictions

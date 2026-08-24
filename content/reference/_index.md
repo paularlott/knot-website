@@ -6,7 +6,7 @@ type: Overview
 tags: [api, architecture, scripting]
 ---
 
-Technical reference documentation for **knot**.
+Technical reference documentation for Knot.
 
 ## [CLI Reference](cli/)
 

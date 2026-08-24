@@ -6,7 +6,7 @@ tags: [configuration]
 weight: 70
 ---
 
-Customize the **knot** web interface with your organization's branding, including custom logos and Gravatar integration.
+Customize the Knot web interface with your organization's branding, including custom logos and Gravatar integration.
 
 ---
 
@@ -29,7 +29,22 @@ public_files_path = "/var/knot/public"
 enable_gravatar = true
 logo_invert = true
 logo_url = "/public-files/logo.svg"
+hide_support_links = false
+hide_api_tokens = false
+enable_builtin_icons = true
+# icons = ["/var/knot/public/extra-icons.json"]
 ```
+
+---
+
+## Interface options
+
+| Key | Default | Description |
+| --- | ------- | ----------- |
+| `hide_support_links` | `false` | Hide the support and documentation links from the web UI |
+| `hide_api_tokens` | `false` | Hide the API Tokens page and navigation entry from regular users; tokens keep working through the CLI and API |
+| `enable_builtin_icons` | `true` | Serve the built-in icon set used when picking icons for templates |
+| `icons` | | Extra icon definition files to load (repeatable list of file paths) |
 
 ---
 
@@ -82,18 +97,9 @@ logo_invert = true
 
 **When not to use**:
 - Logo already works on both themes
-- Using separate light/dark logos
 - Logo has complex colors
 
-### Multiple Logo Files
-
-For best results, provide separate logos for light and dark themes:
-
-```toml
-[server.ui]
-logo_url = "/public-files/logo-light.svg"
-logo_dark_url = "/public-files/logo-dark.svg"
-```
+A single logo file serves both themes: set `logo_url`, and enable `logo_invert` when the logo needs inverting for the dark theme. Separate light/dark logo files are not supported.
 
 ---
 

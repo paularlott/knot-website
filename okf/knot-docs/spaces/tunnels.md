@@ -14,16 +14,16 @@ type: Guide
 ---
 # Tunnels
 
-Tunnels allow a space to access a service running on your local workstation. This requires the **knot** [client](../quick-start/client.md) to be installed on your computer, as it handles forwarding traffic from the remote space to a local port.
+Tunnels allow a space to access a service running on your local workstation. This requires the Knot [client](../quick-start/client.md) to be installed on your computer, as it handles forwarding traffic from the remote space to a local port.
 
 ---
 
 ## Setting Up a Tunnel
 
-### Step 1: Connect to the **knot** Server
+### Step 1: Connect to the Knot Server
 
 1. Open a terminal on your local workstation.
-2. Run the following command, replacing the URL with the address of your **knot** server:
+2. Run the following command, replacing the URL with the address of your Knot server:
 
    ```shell
    knot connect https://knot.internal:3000

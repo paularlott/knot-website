@@ -14,7 +14,7 @@ type: Guide
 ---
 # Sharing Spaces
 
-Spaces can be shared between users on the same **knot** server, allowing users to access and manage the space collaboratively. Shared spaces enable users to:
+Spaces can be shared between users on the same Knot server, allowing users to access and manage the space collaboratively. Shared spaces enable users to:
 - SSH into the space.
 - Access its web interface.
 - Use its web terminal.

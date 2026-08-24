@@ -6,7 +6,7 @@ tags: [security, authentication]
 weight: 30
 ---
 
-Access control in **knot** uses a combination of users, roles, and groups to manage permissions and resource access.
+Access control in Knot uses a combination of users, roles, and groups to manage permissions and resource access.
 
 ---
 

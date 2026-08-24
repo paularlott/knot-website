@@ -7,7 +7,7 @@ tags: [spaces]
 weight: 30
 ---
 
-The web-based terminal in **knot** provides users with shell access to their spaces directly from a browser. This feature is accessible from the `Spaces` page and offers a seamless way to interact with running spaces.
+The web-based terminal in Knot provides users with shell access to their spaces directly from a browser. This feature is accessible from the `Spaces` page and offers a seamless way to interact with running spaces.
 
 ---
 
@@ -22,7 +22,7 @@ The web-based terminal in **knot** provides users with shell access to their spa
 ## Terminal Behavior
 
 - The terminal will attempt to use the shell specified in the space configuration.
-- If the specified shell is unavailable within the container, the **knot** agent will search for an alternative shell in the following order:
+- If the specified shell is unavailable within the container, the Knot agent will search for an alternative shell in the following order:
   1. `bash`
   2. `zsh`
   3. `fish`

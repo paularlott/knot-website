@@ -13,7 +13,7 @@ type: Overview
 ---
 # Backup and Restore
 
-Protect your **knot** configuration and data with backups.
+Protect your Knot configuration and data with backups.
 
 ---
 

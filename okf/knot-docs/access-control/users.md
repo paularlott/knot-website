@@ -14,7 +14,7 @@ type: Guide
 ---
 # User Management
 
-This guide covers how to create, edit, and delete users in **knot**, as well as manage their roles, groups, and resource limits.
+This guide covers how to create, edit, and delete users in Knot, as well as manage their roles, groups, and resource limits.
 
 ---
 

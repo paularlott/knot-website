@@ -14,7 +14,7 @@ type: Guide
 ---
 # Port Forwarding
 
-Port forwarding allows you to securely access ports within a remote space from your local machine. This requires the **knot** [client](../quick-start/client.md) to be installed on your computer, as it handles forwarding a local port to a port within the remote container.
+Port forwarding allows you to securely access ports within a remote space from your local machine. This requires the Knot [client](../quick-start/client.md) to be installed on your computer, as it handles forwarding a local port to a port within the remote container.
 
 ---
 
@@ -29,10 +29,10 @@ Port forwarding allows you to securely access ports within a remote space from y
 
 ## Setting Up Port Forwarding
 
-### Step 1: Connect to the **knot** Server
+### Step 1: Connect to the Knot Server
 
 1. Open a terminal on your local machine.
-2. Run the following command, replacing the URL with the address of your **knot** server:
+2. Run the following command, replacing the URL with the address of your Knot server:
 
    ```shell
    knot connect https://knot.internal:3000
@@ -63,7 +63,7 @@ Port forwarding allows you to securely access ports within a remote space from y
 ## Important Notes
 
 - **Authentication**: Ports forwarded in this way require authentication and are not publicly accessible.
-- **Security**: The **knot** client ensures secure communication between your local machine and the remote space.
+- **Security**: The Knot client ensures secure communication between your local machine and the remote space.
 
 
 Port forwarding is a secure way to access services within a space without exposing them publicly.

@@ -14,7 +14,7 @@ type: Tutorial
 ---
 # Deploy Knot
 
-Below is the Nomad job specification for deploying the **knot** server using **Podman**:
+Below is the Nomad job specification for deploying the Knot server using **Podman**:
 
 ```hcl {filename="knot.hcl"}
 job "knot-server" {
@@ -161,7 +161,7 @@ EOF
 
 ## Deploy the Knot Server
 
-To deploy the **knot** server, run the following command:
+To deploy the Knot server, run the following command:
 
 ```shell
 nomad run knot.hcl

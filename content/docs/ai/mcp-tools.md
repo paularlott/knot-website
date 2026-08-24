@@ -6,9 +6,9 @@ tags: [ai, mcp]
 weight: 12
 ---
 
-The **knot** MCP server exposes a set of built-in tools that AI assistants and MCP clients can use to manage spaces, templates, stack definitions, and the files and commands inside running spaces. The exact tools available to a given caller depend on the user's permissions.
+The Knot MCP server exposes a set of built-in tools that AI assistants and MCP clients can use to manage spaces, templates, stack definitions, and the files and commands inside running spaces. The exact tools available to a given caller depend on the user's permissions.
 
-Write-capable tools (create, update, delete, start, stop, share, transfer, run, write) require approval when called from the **knot** web assistant. Read-only tools run without a confirmation prompt. External MCP clients connected to `/mcp` are not prompted.
+Write-capable tools (create, update, delete, start, stop, share, transfer, run, write) require approval when called from the Knot web assistant. Read-only tools run without a confirmation prompt. External MCP clients connected to `/mcp` are not prompted.
 
 ---
 
@@ -42,7 +42,7 @@ See [Tool Modes](../mcp/#tool-modes) for configuration details.
 
 ## Templates
 
-`list_templates` returns active templates only, including each template's custom field definitions (name and description) so callers have what they need to set custom fields when creating a space. `create_template` builds a template from a simplified, wizard-style spec — the AI provides an image, environment variables, ports, resources, and feature toggles, and knot writes the native Nomad HCL or container YAML for it (the same model as the UI [spec wizard](../configuration/spec-wizard/)). Full template editing — health checks, schedules, advanced spec features — still happens through the **knot** web UI or CLI.
+`list_templates` returns active templates only, including each template's custom field definitions (name and description) so callers have what they need to set custom fields when creating a space. `create_template` builds a template from a simplified, wizard-style spec — the AI provides an image, environment variables, ports, resources, and feature toggles, and knot writes the native Nomad HCL or container YAML for it (the same model as the UI [spec wizard](../configuration/spec-wizard/)). Full template editing — health checks, schedules, advanced spec features — still happens through the Knot web UI or CLI.
 
 | Tool | Description | Visibility |
 |------|-------------|------------|
@@ -53,7 +53,7 @@ See [Tool Modes](../mcp/#tool-modes) for configuration details.
 
 ## Stack Definitions
 
-Stack definitions (called **stack templates** in the web UI) are blueprints that describe a set of components (template bindings) and the dependencies between them. They are instantiated into running stacks via `create_stack`. Definitions are authored through the **knot** web UI or CLI; MCP exposes read access so AI assistants can discover what's available to instantiate.
+Stack definitions (called **stack templates** in the web UI) are blueprints that describe a set of components (template bindings) and the dependencies between them. They are instantiated into running stacks via `create_stack`. Definitions are authored through the Knot web UI or CLI; MCP exposes read access so AI assistants can discover what's available to instantiate.
 
 | Tool | Description | Visibility |
 |------|-------------|------------|

@@ -13,7 +13,7 @@ type: Overview
 ---
 # Templates
 
-Templates are the foundation of **knot**. They define reusable environment configurations that users can deploy as spaces with a single click. Think of templates as blueprints for development environments, complete with compute resources, storage, networking, and tooling.
+Templates are the foundation of Knot. They define reusable environment configurations that users can deploy as spaces with a single click. Think of templates as blueprints for development environments, complete with compute resources, storage, networking, and tooling.
 
 ---
 

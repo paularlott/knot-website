@@ -14,7 +14,7 @@ type: Guide
 ---
 # Creating a Template
 
-Once logged in to the **knot** web interface at `http://knot.internal:3000`, you'll be presented with a list of available spaces. Initially, this list will be blank.
+Once logged in to the Knot web interface at `http://knot.internal:3000`, you'll be presented with a list of available spaces. Initially, this list will be blank.
 
 
 
@@ -43,7 +43,7 @@ The icon selected here will be the default icon for new spaces created from this
 
 Next, define the job for the template. In this case, we'll create a Docker-based space.
 
-- The default for the platform is `Local Container` when this is selected **knot** will attempt to use Docker, Podman or Apple Containers depending on which runtimes are installed on your machine.
+- The default for the platform is `Local Container` when this is selected Knot will attempt to use Docker, Podman or Apple Containers depending on which runtimes are installed on your machine.
 - In the **Container Specification** field, enter the following YAML configuration:
 
 ```yaml

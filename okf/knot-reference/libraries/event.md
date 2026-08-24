@@ -79,7 +79,7 @@ Available only in scripts running as event sinks (server-side).
 | `id()` | Event UUIDv7 id |
 | `ts()` | Event HLC timestamp string |
 | `space()` | Source space dict |
-| `space_urls()` | Source space URL dict |
+| `space_urls()` | Source space URL dict, keyed by the template's port names |
 | `actor()` | Actor dict (id, username, kind) |
 | `custom()` | Custom fields dict |
 

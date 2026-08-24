@@ -22,7 +22,7 @@ Knot provides multiple ways to run scripts when spaces start or stop. These scri
 
 ### Container Scripts (File-Based)
 
-When using **knot**-supplied container images, startup scripts are executed automatically during container initialization:
+When using Knot-supplied container images, startup scripts are executed automatically during container initialization:
 
 1. **System-Level Scripts**: Scripts in `/etc/knot-startup.d/` are executed as `root`. Ideal for configuring system-level settings or services.
 

@@ -22,7 +22,7 @@ In a production cluster, the setup would include:
 - Multiple servers to ensure **high availability**.
 - An **ingress controller** for managing external access.
 - Proper **DNS handling**.
-- **Two-Factor Authentication (2FA)** enabled for **knot**.
+- **Two-Factor Authentication (2FA)** enabled for Knot.
 
 ---
 

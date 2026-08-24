@@ -6,7 +6,7 @@ tags: [spaces, scripting]
 weight: 150
 ---
 
-Within a space, the **knot** agent provides commands to control the space. These commands include:
+Within a space, the Knot agent provides commands to control the space. These commands include:
 - [`set-note`](../notes/)
 - `shutdown`
 - `restart`

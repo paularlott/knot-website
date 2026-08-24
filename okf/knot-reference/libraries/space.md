@@ -72,6 +72,7 @@ The `knot.space` library provides space management functions for scripts.
 | `port_apply(source_space, forwards)` | Replace all port forwards with the given list |
 | `port_list(space)` | List active port forwards |
 | `port_stop(space, local_port)` | Stop a port forward |
+| `port_throttle(space, local_port, latency_ms=0, jitter_ms=0, bandwidth_kb=0, timeout_ms=0, down=False, reset=False)` | Apply latency, jitter, and/or bandwidth limits to a port forward |
 | `tunnel_start(space, protocol, port, name)` | Start an agent-owned web tunnel in a space |
 | `tunnel_list(space)` | List agent-owned web tunnels in a space |
 | `tunnel_stop(space, name)` | Stop an agent-owned web tunnel in a space |
@@ -597,6 +598,32 @@ Replace all port forwards for a space with the given list. Any existing forwards
 - `applied` (list): List of forwards that were started
 - `stopped` (list): List of forwards that were stopped
 - `errors` (list): List of error messages (if any)
+
+---
+
+### port_throttle(space, local_port, latency_ms=0, jitter_ms=0, bandwidth_kb=0, timeout_ms=0, down=False, reset=False)
+
+Apply network simulation to an existing port forward in a space. All values are optional; pass `reset=True` to clear all limits.
+
+**Parameters:**
+- `space` (string): Space name or ID
+- `local_port` (int): Local port of the forward to throttle
+- `latency_ms` (int): Latency in milliseconds (default: 0)
+- `jitter_ms` (int): Jitter in milliseconds (default: 0)
+- `bandwidth_kb` (int): Bandwidth limit in KB/s (default: 0, unlimited)
+- `timeout_ms` (int): Connection timeout in milliseconds — kills the connection after this duration (default: 0, none)
+- `down` (bool): Block all traffic on this forward; the port definition stays (default: False)
+- `reset` (bool): Clear all throttle settings (default: False)
+
+```python
+import knot.space as space
+
+# Simulate a slow, lossy link
+space.port_throttle("web", 8080, latency_ms=200, jitter_ms=50, bandwidth_kb=1024)
+
+# Clear all limits
+space.port_throttle("web", 8080, reset=True)
+```
 
 ---
 

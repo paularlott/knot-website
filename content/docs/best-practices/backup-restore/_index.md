@@ -7,7 +7,7 @@ tags: [backup]
 weight: 170
 ---
 
-Protect your **knot** configuration and data with backups.
+Protect your Knot configuration and data with backups.
 
 ---
 

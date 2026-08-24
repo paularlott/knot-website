@@ -6,22 +6,22 @@ tags: [ai, mcp]
 weight: 10
 ---
 
-The Model Context Protocol (MCP) server can be enabled on the **knot** server by adding the following configuration to the `knot.toml` file:
+The Model Context Protocol (MCP) server can be enabled on the Knot server by adding the following configuration to the `knot.toml` file:
 
 ```toml
 [server.mcp]
 enabled = true
 ```
 
-This configuration enables the MCP server at the path `/mcp`. Notably, it does not require **knot** to have access to a Large Language Model (LLM).
+This configuration enables the MCP server at the path `/mcp`. Notably, it does not require Knot to have access to a Large Language Model (LLM).
 
 ---
 
 ## Connecting a Client
 
-The **knot** MCP server operates over HTTP transport and is accessible at the URL: `https://<your-knot-domain.com>/mcp`
+The Knot MCP server operates over HTTP transport and is accessible at the URL: `https://<your-knot-domain.com>/mcp`
 
-For example, if your **knot** installation is hosted at `knot.getknot.dev`, the MCP server URL would be: `https://knot.getknot.dev/mcp`
+For example, if your Knot installation is hosted at `knot.getknot.dev`, the MCP server URL would be: `https://knot.getknot.dev/mcp`
 
 ### OAuth2-Supported Clients
 If your client supports OAuth2, it will connect to the MCP server and allow you to log in using your standard credentials. During this process, an [API token](/docs/api-tokens/) will be generated for use.
@@ -91,7 +91,7 @@ create_space({...}) → Direct tool call
 
 ## Tools
 
-The **knot** MCP server exposes built-in tools for managing spaces, templates, stack definitions, stacks, files, commands, and skills. Write-capable tools require approval when called from the web assistant; read-only tools run without a confirmation. External MCP clients connected to `/mcp` are not prompted.
+The Knot MCP server exposes built-in tools for managing spaces, templates, stack definitions, stacks, files, commands, and skills. Write-capable tools require approval when called from the web assistant; read-only tools run without a confirmation. External MCP clients connected to `/mcp` are not prompted.
 
 For the full list grouped by what each tool operates on — plus whether each is **native** or **on-demand** — see [MCP Tools](mcp-tools/).
 

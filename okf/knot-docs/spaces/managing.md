@@ -13,7 +13,7 @@ type: Guide
 ---
 # Managing a Space
 
-This guide explains how to create, start, stop, update, edit, and delete spaces in **knot**.
+This guide explains how to create, start, stop, update, edit, and delete spaces in Knot.
 
 ---
 

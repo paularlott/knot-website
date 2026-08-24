@@ -16,6 +16,6 @@ type: Overview
 
 In this section we'll cover various tutorials.
 
-- [Example Nomad Deployment](tutorials/example-nomad-deployment.md): Guides on how to install a Nomad cluster to run **knot**
+- [Example Nomad Deployment](tutorials/example-nomad-deployment.md): Guides on how to install a Nomad cluster to run Knot
 - [Example Templates](tutorials/example-templates.md): Ready-to-use template examples for common use cases
-- [Example Local Deployment](tutorials/example-local-deployment.md): Setting up **knot** with Docker and Podman
+- [Example Local Deployment](tutorials/example-local-deployment.md): Setting up Knot with Docker and Podman

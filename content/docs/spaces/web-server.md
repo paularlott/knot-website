@@ -25,7 +25,7 @@ When a space is configured to expose web ports (e.g., for a web server), the **`
 
 ## Example: Caddy File Browser
 
-If the space is running the **knot** PHP image, clicking **port 80** will open the Caddy file browser.
+If the space is running the Knot PHP image, clicking **port 80** will open the Caddy file browser.
 
 Other container images may display different content depending on their configuration.
 

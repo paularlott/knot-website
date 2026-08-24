@@ -14,7 +14,7 @@ type: Tutorial
 ---
 # Install Knot
 
-To install and set up **knot**, follow the [Nomad Server Setup Guide](../../../docs/quick-start/nomad/server-setup/). This guide will walk you through the following steps:
+To install and set up Knot, follow the [Nomad Server Setup Guide](../../../docs/quick-start/nomad/server-setup/). This guide will walk you through the following steps:
 
 - Creating the **admin user**.
 - Setting up a **template**.

@@ -7,7 +7,7 @@ tags: [security, authentication, configuration]
 weight: 60
 ---
 
-To enhance the security of **knot** installations, **knot** supports **Two-Factor Authentication (2FA)** through applications like **Google Authenticator**, **Microsoft Authenticator**, and even **1Password**.
+To enhance the security of Knot installations, Knot supports **Two-Factor Authentication (2FA)** through applications like **Google Authenticator**, **Microsoft Authenticator**, and even **1Password**.
 
 ---
 
@@ -24,7 +24,7 @@ issuer = 'Knot'
 - The `enabled` field must be set to `true` to activate 2FA.
 - The `issuer` field can be set to a string to identify your installation (e.g., "Knot").
 
-After making these changes, restart **knot** to apply the configuration.
+After making these changes, restart Knot to apply the configuration.
 
 ---
 

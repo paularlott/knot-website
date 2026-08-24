@@ -6,7 +6,7 @@ tags: [security, authentication, api]
 weight: 35
 ---
 
-API tokens are automatically created when logging in with the **knot** client. Additionally, tokens can be manually created and used to access the API from external applications.
+API tokens are automatically created when logging in with the Knot client. Additionally, tokens can be manually created and used to access the API from external applications.
 
 ---
 

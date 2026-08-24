@@ -6,7 +6,7 @@ tags: [configuration]
 weight: 20
 ---
 
-This section covers server configuration options for customizing your **knot** deployment.
+This section covers server configuration options for customizing your Knot deployment.
 
 ---
 

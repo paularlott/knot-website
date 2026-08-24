@@ -14,7 +14,7 @@ Skills are knowledge base content for AI assistants. They are markdown documents
 
 Skills provide context and instructions to AI assistants, helping them understand how to perform specific tasks. Skills can be used by:
 
-- The built-in **knot** web assistant
+- The built-in Knot web assistant
 - External AI tools that connect via MCP
 - Any AI system that supports the Agent Skills format
 

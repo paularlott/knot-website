@@ -15,7 +15,7 @@ type: Overview
 ---
 # Leaf Node
 
-Leaf node mode allows a **knot** server to run on a local machine while maintaining access to templates and resources configured within the cluster. This setup is ideal for scenarios where performance is critical or when accessing resources that are only available in a local configuration.
+Leaf node mode allows a Knot server to run on a local machine while maintaining access to templates and resources configured within the cluster. This setup is ideal for scenarios where performance is critical or when accessing resources that are only available in a local configuration.
 
 By default, support for leaf mode is enabled. However, it can be disabled by setting `server.cluster.allow_leaf_nodes` to `false` in the `knot.toml` configuration file.
 
@@ -39,7 +39,7 @@ To configure a leaf server, follow these steps:
 
 ### 1. Set Up the Local Server
 
-Begin by setting up a **knot** server on the local workstation. Follow the [Local Containers Server Setup Guide](../quick-start/local-containers/server-setup.md), but **do not start the server yet**. Once the setup is complete, return to this guide.
+Begin by setting up a Knot server on the local workstation. Follow the [Local Containers Server Setup Guide](../quick-start/local-containers/server-setup.md), but **do not start the server yet**. Once the setup is complete, return to this guide.
 
 ---
 
@@ -47,7 +47,7 @@ Begin by setting up a **knot** server on the local workstation. Follow the [Loca
 
 A personal access token is required for the leaf server to connect to the cluster. To create one:
 
-1. Log in to the **knot** server that the leaf will connect to.
+1. Log in to the Knot server that the leaf will connect to.
 2. Click on `API Tokens` in the menu. If this option is unavailable, request permission from your site administrator.
 3. Click `New Token` and provide a name for the token (e.g., `Leaf Test`) to identify it.
    
@@ -70,14 +70,14 @@ token = "dp2IlH_wQWIA_ad_UApHjAGYLZMcvn4vsH383N-AB2I="
 
 #### Configuration Parameters
 
-- **`server`**: The URL of the **knot** server that the leaf will connect to.
+- **`server`**: The URL of the Knot server that the leaf will connect to.
 - **`token`**: The API token generated in the previous step. Click the token in the list to copy it to your clipboard for easy pasting.
 
 ---
 
 ### 4. Start the Leaf Server
 
-Start the **knot** server on the local machine using the following command:
+Start the Knot server on the local machine using the following command:
 
 ```shell
 knot server --config knot.toml

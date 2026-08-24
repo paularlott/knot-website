@@ -31,7 +31,7 @@ reasoning_effort = "low"
   - `avatar` (default)
   - `icon`
 - **`enabled`**: Must be set to `true` to activate the web assistant.
-- **`openai_endpoints`**: If set to `true`, the **knot** server will expose an OpenAI-compatible endpoint at the `/v1/` path. This allows any client to connect to the **knot** server, chat with the assistant, and use tools.
+- **`openai_endpoints`**: If set to `true`, the Knot server will expose an OpenAI-compatible endpoint at the `/v1/` path. This allows any client to connect to the Knot server, chat with the assistant, and use tools.
 - **`openai_base_url`**: Specifies the address of the server hosting the LLM.
 - **`openai_api_key`**: The API key required to authenticate with the LLM server.
 - **`model`**: The model to be used. The assistant's performance depends on the selected model.

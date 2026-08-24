@@ -14,7 +14,7 @@ type: Guide
 ---
 # Transfer Spaces
 
-Spaces can be transferred between users on the same **knot** server. This feature allows ownership of a space to be reassigned to another user.
+Spaces can be transferred between users on the same Knot server. This feature allows ownership of a space to be reassigned to another user.
 
 ---
 

@@ -7,7 +7,7 @@ tags: [spaces]
 weight: 10
 ---
 
-This guide explains how to create, start, stop, update, edit, and delete spaces in **knot**.
+This guide explains how to create, start, stop, update, edit, and delete spaces in Knot.
 
 ---
 

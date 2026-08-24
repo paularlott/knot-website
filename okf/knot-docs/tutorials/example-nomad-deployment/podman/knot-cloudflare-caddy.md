@@ -57,7 +57,7 @@ To configure the required DNS records, go to your Cloudflare dashboard, select y
 
 ## Deploying Caddy
 
-We’ll deploy a Nomad job to handle traffic on ports 80 and 443. This job will manage SSL certificates and forward traffic to the **knot** server.
+We’ll deploy a Nomad job to handle traffic on ports 80 and 443. This job will manage SSL certificates and forward traffic to the Knot server.
 
 Below is the Nomad job specification for deploying **Caddy** using **Podman**:
 
@@ -223,4 +223,4 @@ EOF
 
 ## Verify the Setup
 
-If everything is working correctly, accessing **https://knot.getknot.dev** will display the setup screen for **knot**.
+If everything is working correctly, accessing **https://knot.getknot.dev** will display the setup screen for Knot.

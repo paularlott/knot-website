@@ -14,7 +14,7 @@ type: Guide
 ---
 # BadgerDB
 
-The **knot** server can be configured to use the embedded BadgerDB for its database. BadgerDB is production-ready and works well for single-server and multi-server deployments (data is synced between servers via gossip protocol). To enable BadgerDB, update the configuration file as shown below.
+The Knot server can be configured to use the embedded BadgerDB for its database. BadgerDB is production-ready and works well for single-server and multi-server deployments (data is synced between servers via gossip protocol). To enable BadgerDB, update the configuration file as shown below.
 
 ---
 
@@ -34,4 +34,4 @@ To use BadgerDB, set `badgerdb.enabled` to `true` in the configuration file and 
 
 - **`enabled`**: Must be set to `true` to enable the use of BadgerDB.
 
-- **`path`**: The directory where BadgerDB files will be stored. This directory **must** be mounted to persistent storage to ensure configurations are preserved between restarts of the **knot** server.
+- **`path`**: The directory where BadgerDB files will be stored. This directory **must** be mounted to persistent storage to ensure configurations are preserved between restarts of the Knot server.

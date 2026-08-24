@@ -6,11 +6,16 @@ tags: [installation, deployment]
 weight: 10
 ---
 
-Get **knot** running in minutes. Choose the deployment path that matches your needs.
+Get Knot running in minutes. Choose the deployment path that matches your needs.
 
 ---
 
-## Recommended: Config Wizard
+## Recommended
+
+### [Desktop Mode](desktop-mode/)
+**Easiest way to get started**
+
+Run `knot` with no subcommand on your desktop: the full server starts with a system tray icon, and the first run launches a setup wizard in your browser that writes a complete `knot.toml`. Ideal for laptops, desktops, and trying Knot out.
 
 ### [Using the Config Wizard](config-wizard/)
 **Fastest way to get started**

@@ -6,7 +6,7 @@ tags: [security, authentication]
 weight: 20
 ---
 
-In **knot**, roles are used to control access to features. Each role is assigned one or more permissions, which define what a user can do within the system. When a user is assigned multiple roles, the permissions from all roles are combined, granting the user access to all associated features.
+In Knot, roles are used to control access to features. Each role is assigned one or more permissions, which define what a user can do within the system. When a user is assigned multiple roles, the permissions from all roles are combined, granting the user access to all associated features.
 
 ---
 

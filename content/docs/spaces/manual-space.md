@@ -6,7 +6,7 @@ tags: [spaces]
 weight: 20
 ---
 
-Manual spaces allow you to run the **knot** agent manually on a virtual machine or physical server and connect it to the **knot** web interface. This provides flexibility for environments where fully managed spaces are not suitable.
+Manual spaces allow you to run the Knot agent manually on a virtual machine or physical server and connect it to the Knot web interface. This provides flexibility for environments where fully managed spaces are not suitable.
 
 ---
 
@@ -19,16 +19,16 @@ Manual spaces allow you to run the **knot** agent manually on a virtual machine 
 
 ## Connecting the Agent to the Server
 
-Once the manual space is created, the **Space ID** and an **agent registration key** are displayed. Both are required for the agent to connect to the **knot** server; clicking either copies it to the clipboard.
+Once the manual space is created, the **Space ID** and an **agent registration key** are displayed. Both are required for the agent to connect to the Knot server; clicking either copies it to the clipboard.
 
 ### Download the Agent
 
-The **knot** agent is available for download directly from your **knot** server. Agents are available for:
+The Knot agent is available for download directly from your Knot server. Agents are available for:
 
 - Linux (amd64, arm64)
 - macOS (amd64, arm64)
 
-Download the appropriate agent for your platform from your **knot** server:
+Download the appropriate agent for your platform from your Knot server:
 
 ```shell
 # Linux amd64
@@ -52,13 +52,13 @@ unzip knot_agent_darwin_arm64.zip
 chmod +x knot-agent
 ```
 
-For Windows, download the full **knot** binary from the [client download](../quick-start/client) page and use `knot agent start` with the same flags shown below.
+For Windows, download the full Knot binary from the [client download](../quick-start/client) page and use `knot agent start` with the same flags shown below.
 
-Replace `your-knot-server` with the actual address of your **knot** server.
+Replace `your-knot-server` with the actual address of your Knot server.
 
 ### Start the Agent
 
-Assuming the **knot** server is running on `192.168.1.100` with the agent interface on port `3010`, use the following command to start the agent and connect it to the server:
+Assuming the Knot server is running on `192.168.1.100` with the agent interface on port `3010`, use the following command to start the agent and connect it to the server:
 
 ```shell
 # Using the dedicated agent binary
@@ -68,12 +68,12 @@ Assuming the **knot** server is running on `192.168.1.100` with the agent interf
 ./knot agent start --endpoint 192.168.1.100:3010 --space-id=0198384f-59f3-74c2-8a88-3a6b4302b391 --registration-key=<key> --syslog-port=0
 ```
 
-- **`--endpoint`**: The IP address and port of the **knot** server. Adjust this value based on your environment.
+- **`--endpoint`**: The IP address and port of the Knot server. Adjust this value based on your environment.
 - **`--space-id`**: The unique ID of the space, as displayed in the web interface.
 - **`--registration-key`**: The space's registration key, displayed next to the Space ID. The agent proves possession of this key when it registers; without it the server refuses the registration.
 - **`--syslog-port=0`**: Disables the syslog port (optional).
 
-This is the minimum configuration required for the agent to connect to the **knot** server.
+This is the minimum configuration required for the agent to connect to the Knot server.
 
 The agent's connection to the server is always TLS. The server's certificate is generated from the zone's encryption key, so the same key value applies to every server in the zone. For strict verification pass `--server-cert-fingerprint` (the certificate fingerprint from the space's API details); without it the connection is still TLS-encrypted and registration-key verified.
 
@@ -83,7 +83,7 @@ The agent's connection to the server is always TLS. The server's certificate is 
 
 Once the agent is successfully started:
 
-1. The **knot** web interface will update to show the space as running.
+1. The Knot web interface will update to show the space as running.
 2. Services such as the web terminal will become available.
 
 The web terminal for a manual space functions the same way as it does for a fully managed space, providing shell access and other features.

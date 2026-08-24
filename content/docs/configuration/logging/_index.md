@@ -6,13 +6,13 @@ tags: [logging, configuration]
 weight: 70
 ---
 
-**knot** supports two logging modes: **console** output for local development and **structured HTTP output** for forwarding logs to centralized log aggregation services such as VictoriaLogs, Grafana Loki, and Elasticsearch.
+Knot supports two logging modes: **console** output for local development and **structured HTTP output** for forwarding logs to centralized log aggregation services such as VictoriaLogs, Grafana Loki, and Elasticsearch.
 
 ---
 
 ## Console Logging
 
-By default, **knot** writes logs to stderr in a human-readable format. Configure the log level in your `knot.toml`:
+By default, Knot writes logs to stderr in a human-readable format. Configure the log level in your `knot.toml`:
 
 ```toml
 [log]
@@ -34,7 +34,7 @@ By default, **knot** writes logs to stderr in a human-readable format. Configure
 
 ## Structured HTTP Output
 
-When a log output URL is configured, **knot** sends structured JSON log records to an HTTP endpoint instead of writing to stderr. Logs are batched for efficiency — up to 100 records or every 2 seconds, whichever comes first.
+When a log output URL is configured, Knot sends structured JSON log records to an HTTP endpoint instead of writing to stderr. Logs are batched for efficiency — up to 100 records or every 2 seconds, whichever comes first.
 
 ### Supported Formats
 
@@ -90,7 +90,7 @@ All options can be set in `knot.toml`, via CLI flags, or through environment var
 
 ## Authentication
 
-When forwarding logs to a secured endpoint, **knot** supports two optional authentication methods, both compatible with every output format:
+When forwarding logs to a secured endpoint, Knot supports two optional authentication methods, both compatible with every output format:
 
 | Method     | Configured via                          | Sent on each request            |
 | ---------- | --------------------------------------- | ------------------------------- |
@@ -117,7 +117,7 @@ If a `token` is configured it takes precedence over basic auth. Only one `Author
     stream = "knot"
 ```
 
-**knot** automatically appends VictoriaLogs field-mapping query parameters (`_msg_field`, `_time_field`, `_stream_fields`) if they are not already present on the URL.
+Knot automatically appends VictoriaLogs field-mapping query parameters (`_msg_field`, `_time_field`, `_stream_fields`) if they are not already present on the URL.
 
 ### Grafana Loki
 
@@ -294,7 +294,7 @@ Tunnel lifecycle is audited rather than logged: tunnels opening and closing (web
 
 ## Field Mappings
 
-When forwarding logs, **knot** maps standard `slog` field names to the expected names for each backend:
+When forwarding logs, Knot maps standard `slog` field names to the expected names for each backend:
 
 | slog field | Mapped to | Notes                          |
 | ---------- | --------- | ------------------------------ |

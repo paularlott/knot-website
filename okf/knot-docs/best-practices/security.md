@@ -13,7 +13,7 @@ type: Overview
 ---
 # Security
 
-Security considerations for deploying **knot**.
+Security considerations for deploying Knot.
 
 ---
 

@@ -30,7 +30,7 @@ To create a new template:
 
 - **`Platform`**:
   Choose the platform to run the template: Docker, Podman, Nomad, or Manual.
-  - **Manual templates**: Require the **knot** agent to be started manually on the remote server.
+  - **Manual templates**: Require the Knot agent to be started manually on the remote server.
 
 - **`Nomad Job (HCL)`** or **`Container Specification (YAML)`**:
   Provide the job description in either Nomad HCL or YAML format, depending on the selected platform. This field is not shown for `Manual` templates.

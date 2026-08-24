@@ -45,7 +45,7 @@ Spaces with jobs show a **clock icon** in the space row while running — green 
 
 The space's action menu (⋯) has an **Edit Jobs** entry that opens the same panel. Jobs are added, changed and removed from there — each row has an enable toggle, an edit and a delete action, and **Add Job** opens a form with the schedule validation described above.
 
-### From your machine (desktop client)
+### From your machine (client CLI)
 
 ```shell
 knot space jobs list my-space

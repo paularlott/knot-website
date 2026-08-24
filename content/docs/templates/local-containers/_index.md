@@ -6,9 +6,9 @@ tags: [templates, deployment]
 weight: 30
 ---
 
-Local spaces in **knot** can be defined using Local Container templates, which support Docker, Podman, and Apple Container runtimes. These templates specify the environment users will work within and can include optional volume definitions.
+Local spaces in Knot can be defined using Local Container templates, which support Docker, Podman, and Apple Container runtimes. These templates specify the environment users will work within and can include optional volume definitions.
 
-When a user creates an instance of a `Template` (a `Space`) and starts it, **knot** automatically provisions any required volumes and launches the container on the local machine.
+When a user creates an instance of a `Template` (a `Space`) and starts it, Knot automatically provisions any required volumes and launches the container on the local machine.
 
 ---
 
@@ -23,7 +23,7 @@ When creating a template, you can specify the container runtime:
 
 #### Automatic Runtime Selection
 
-When set to **Local Container**, **knot** will attempt to use container runtimes in the following default order:
+When set to **Local Container**, Knot will attempt to use container runtimes in the following default order:
 
 1. Docker
 2. Podman
@@ -36,7 +36,7 @@ This order can be customized in the server configuration:
 runtime_pref = ["podman", "apple"]
 ```
 
-The above example configures **knot** to prefer Podman first, then Apple Container.
+The above example configures Knot to prefer Podman first, then Apple Container.
 
 ---
 
@@ -118,7 +118,7 @@ auth:
 
 #### Notes:
 
-- **Ports**: The `ports` section is optional. It is only required if the ports need to be accessed directly, rather than through **knot**.
+- **Ports**: The `ports` section is optional. It is only required if the ports need to be accessed directly, rather than through Knot.
 - **Environment Variables**: Environment variables can be used to pass dynamic information, such as user details, server URLs, and space-specific configurations.
 - **Direct Connections**: The server automatically injects `KNOT_PEER_EXTERNAL_PORT` for direct agent-to-agent connections (Pro). `KNOT_PEER_PORT` (the in-container listen port, default 12202) is read from the template environment — set `KNOT_PEER_PORT=0` to disable. See [Direct Agent-to-Agent Connections](/docs/spaces/space-space-port-forwarding/#direct-agent-to-agent-connections).
 

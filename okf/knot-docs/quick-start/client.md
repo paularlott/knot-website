@@ -1,5 +1,5 @@
 ---
-description: Covers the installation of the desktop client.
+description: Install the Knot client CLI for SSH access, tunnels, and exposing ports from spaces.
 generated:
     by: knot-website/okf.py
 resource: https://getknot.dev/docs/quick-start/client/
@@ -8,12 +8,12 @@ sources:
 status: stable
 tags:
     - deployment
-title: Desktop Client
+title: Client
 type: Overview
 ---
-# Desktop Client
+# Client
 
-While not required to use the **knot** web interface, the desktop client provides additional functionality, including:
+While not required to use the Knot web interface, the client CLI provides additional functionality, including:
 
 - **SSH Access**: Seamlessly connect to spaces via SSH.
 - **Local Tunnels**: Create tunnels between your local machine and spaces.
@@ -45,27 +45,26 @@ While not required to use the **knot** web interface, the desktop client provide
   
   ### macOS Installation
 
-  The preferred installation method for macOS is the Homebrew cask, which installs the **Knot** desktop app (menu bar tray) and the `knot` command:
+  The preferred installation method for macOS is the Homebrew cask, which installs the Knot desktop app (menu bar tray) and the `knot` command:
 
   ```bash
   brew install --cask paularlott/tap/knot
+  ```
+
+  For **Knot Pro** , use:
+
+  ```bash
+  brew install --cask paularlott/tap/knot-pro
   ```
 
   If you only need the CLI, install the formula instead:
 
   ```bash
   brew install paularlott/tap/knot
-  ```
-
-  For **Knot Pro** , use:
-
-  ```bash
   brew install paularlott/tap/knot-pro
   ```
 
-  Or download from the [knot-pro releases](https://github.com/paularlott/knot-pro/releases) page.
-
-  Alternatively, you can download the latest **Knot.app** bundle from [GitHub releases](https://github.com/paularlott/knot/releases).
+  Or download the latest release from the [knot releases](https://github.com/paularlott/knot/releases) or [knot-pro releases](https://github.com/paularlott/knot-pro/releases) pages.
 
   **Note:** The app is not notarized with Apple, so a manually downloaded bundle may be blocked on first launch. The Homebrew cask removes the quarantine flag automatically, but for manual downloads run:
 
