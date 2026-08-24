@@ -3,7 +3,7 @@ title: Tunnels
 description: Expose local or in-space HTTP and HTTPS services on the internet via a knot server.
 type: Overview
 tags: [networking]
-weight: 100
+weight: 50
 ---
 
 Knot tunnels allow HTTP and HTTPS services running on a local workstation or within a space to be exposed on the internet via a Knot server.

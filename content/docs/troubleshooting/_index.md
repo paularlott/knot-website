@@ -3,7 +3,7 @@ title: Troubleshooting
 description: Common issues and solutions organized by topic.
 type: Overview
 tags: [troubleshooting]
-weight: 130
+weight: 90
 ---
 
 Common issues and solutions organized by topic.

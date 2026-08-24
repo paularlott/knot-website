@@ -24,6 +24,10 @@ The `knot.*` scripting libraries exposed to Scriptling — space, template, user
 
 The events system: webhook sinks, script sinks, and JSON-RPC sinks for reacting to space lifecycle and custom events.
 
+## [API](api/)
+
+The HTTP API used by the CLI, the web interface, and third-party integrations — rendered from the same OpenAPI spec that powers the in-product `/api-docs` page.
+
 ## [Glossary](glossary/)
 
 Definitions of terms and concepts used throughout knot documentation.

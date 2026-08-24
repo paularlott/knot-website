@@ -3,7 +3,7 @@ title: Spaces
 description: Spaces are running instances of templates, each an isolated environment with its own compute, storage, and network configuration.
 type: Overview
 tags: [spaces]
-weight: 70
+weight: 20
 ---
 
 Spaces are running instances of templates. Each space is an isolated environment with its own compute resources, storage, and network configuration.

@@ -23,30 +23,39 @@ To enable the chat interface, add the following configuration to the `knot.toml`
 
 ```toml
 [server.chat]
-ui_style = "avatar"
 enabled = true
-openai_endpoints = true
-openai_base_url = "http://localhost:8085/v1/"
-openai_api_key = ""
+type = "openai"                              # API protocol: openai, anthropic, google, ollama
+provider = "ollama"                          # provider preset: openai, claude, gemini, ollama, mistral, zai
+base_url = "http://localhost:8085/v1/"
+api_key = ""
 model = "Qwen3-4B-Thinking-2507-GGUF:Q4_0"
+max_tokens = 4096
+temperature = 0.7
 reasoning_effort = "low"
+ui_style = "avatar"
+openai_endpoints = true
 ```
 
 ### Configuration Options
 
-- **`ui_style`**: Defines the style of the assistant's chat icon. Options are:
-  - `avatar` (default)
-  - `icon`
 - **`enabled`**: Must be set to `true` to activate the web assistant.
-- **`openai_endpoints`**: If set to `true`, the Knot server will expose an OpenAI-compatible endpoint at the `/v1/` path. This allows any client to connect to the Knot server, chat with the assistant, and use tools.
-- **`openai_base_url`**: Specifies the address of the server hosting the LLM.
-- **`openai_api_key`**: The API key required to authenticate with the LLM server.
+- **`type`**: The AI API protocol used to talk to the LLM — `openai` (default), `anthropic`, `google`, or `ollama`.
+- **`provider`**: A provider preset that fills in sensible defaults — `openai`, `claude`, `gemini`, `ollama`, `mistral`, or `zai`.
+- **`base_url`**: The address of the server hosting the LLM. (`openai_base_url` is a deprecated alias.)
+- **`api_key`**: The API key required to authenticate with the LLM server. (`openai_api_key` is a deprecated alias.)
 - **`model`**: The model to be used. The assistant's performance depends on the selected model.
+- **`max_tokens`**: The maximum number of tokens the model may generate per response.
+- **`temperature`**: Sampling temperature (0–1).
+- **`system_prompt_file`**: Path to a file whose contents are used as the system prompt (see [System Prompt](system-prompt.md)).
 - **`reasoning_effort`**: Controls the level of effort applied by the model for reasoning, there's no default. Options are:
   - `none`
   - `low`
   - `medium`
   - `high`
+- **`ui_style`**: Defines the style of the assistant's chat icon. Options are:
+  - `avatar` (default)
+  - `icon`
+- **`openai_endpoints`**: If set to `true`, the Knot server will expose an OpenAI-compatible endpoint at the `/v1/` path. This allows any client to connect to the Knot server, chat with the assistant, and use tools.
 
 
 If you are using a non-thinking model then do not set `reasoning_effort` in the configuration as usually this will stop the model from working.

@@ -3,7 +3,7 @@ title: Base Images
 description: The base image catalog knot ships, as a visual grid of image families with their versions.
 type: Overview
 tags: [templates, configuration]
-weight: 55
+weight: 32
 ---
 
 knot ships a curated catalog of base images that the [template spec wizard](../configuration/spec-wizard/) presents as a picker. Each is an ordinary OCI image built from [`knot-base-images`](https://github.com/paularlott/knot-base-images), preloaded with the knot entrypoint, an agent, and common dev tooling. You can also use any image (private or public) by typing its reference directly.

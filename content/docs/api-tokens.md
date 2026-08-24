@@ -3,7 +3,7 @@ title: API Tokens
 description: Create and manage API tokens to access the knot API from external applications.
 type: Overview
 tags: [security, authentication, api]
-weight: 35
+weight: 75
 ---
 
 API tokens are automatically created when logging in with the Knot client. Additionally, tokens can be manually created and used to access the API from external applications.

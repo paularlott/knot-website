@@ -3,7 +3,7 @@ title: Best Practices
 description: Guidelines for deploying and managing knot effectively, organized by topic.
 type: Overview
 tags: [configuration]
-weight: 150
+weight: 95
 ---
 
 Guidelines for deploying and managing Knot effectively, organized by topic.

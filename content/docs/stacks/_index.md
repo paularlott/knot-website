@@ -3,7 +3,7 @@ title: Stack Templates
 description: Stack templates bundle multiple spaces into a single deployable unit with dependencies and port forwarding.
 type: Overview
 tags: [stacks, templates]
-weight: 75
+weight: 35
 ---
 
 Stack templates let you define and manage multi-space application environments as a single unit. A stack template is a reusable blueprint that describes which spaces make up an application, how they depend on each other, and how they are wired together with port forwarding.

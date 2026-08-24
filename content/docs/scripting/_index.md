@@ -3,7 +3,7 @@ title: Scripting
 description: Automate knot with Scriptling, a Python-like scripting language exposed as MCP tools and libraries.
 type: Overview
 tags: [scripting]
-weight: 85
+weight: 45
 ---
 
 Knot includes a powerful scripting system based on **Scriptling**, a Python-like scripting language. Scripts can automate tasks, extend functionality, and be exposed as MCP tools for AI assistants.

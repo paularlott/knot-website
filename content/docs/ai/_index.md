@@ -3,7 +3,7 @@ title: AI
 description: knot's AI features include an MCP server and a web-based assistant powered by an external LLM.
 type: Overview
 tags: [ai]
-weight: 120
+weight: 60
 ---
 
 Starting with version 0.19.0, Knot introduces AI support through two key features:

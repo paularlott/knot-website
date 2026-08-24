@@ -23,7 +23,7 @@ To create a Nomad template:
 1. Navigate to `Templates` and select `New Template`.
 2. Complete the form, ensuring the `Name` and `Nomad Job` fields are filled.
    - `Nomad` must be selected under `Platform`.
-   - The `Nomad Job` field requires an HCL job specification. See [example environments](/docs/examples-environments/) for reference.
+   - The `Nomad Job` field requires an HCL job specification. See [example environments](/docs/tutorials/example-templates/) for reference.
 
 {{< tip >}}
 When a template is updated, all running spaces are marked as having an update available. However, spaces are not automatically restarted. Restarting a space applies the updated template.

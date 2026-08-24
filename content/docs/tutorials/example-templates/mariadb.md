@@ -139,7 +139,7 @@ volumes:
 
 ### Connecting to MariaDB
 
-The space exports the **MariaDB port 3306** via the TCP proxy, allowing it to be connected to using [port forwarding](/docs/spaces/port-forwarding). For example:
+The space exports the **MariaDB port 3306** via the TCP proxy, allowing it to be connected to using [port forwarding](/docs/spaces/port-forwarding/). For example:
 
 ```shell
 knot forward port 127.0.0.1:3306 <space> 3306

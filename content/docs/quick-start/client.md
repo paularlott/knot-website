@@ -1,17 +1,10 @@
 ---
-description: Install the Knot client CLI for SSH access, tunnels, and exposing ports from spaces.
-generated:
-    by: knot-website/okf.py
-resource: https://getknot.dev/docs/quick-start/client/
-sources:
-    - resource: https://getknot.dev/docs/quick-start/client/
-status: stable
-tags:
-    - deployment
 title: Client
+description: Install the Knot client CLI for SSH access, tunnels, and exposing ports from spaces.
 type: Overview
+tags: [deployment]
+weight: 5
 ---
-# Client
 
 While not required to use the Knot web interface, the client CLI provides additional functionality, including:
 
@@ -23,9 +16,9 @@ While not required to use the Knot web interface, the client CLI provides additi
 
 ## Installation
 
+{{< tabs items="Linux,macOS,Windows" >}}
 
-
-  
+  {{< tab >}}
   ### Linux Installation
 
   The Linux client can be installed via Homebrew or by downloading the latest binary from [GitHub releases](https://github.com/paularlott/knot/releases).
@@ -34,15 +27,15 @@ While not required to use the Knot web interface, the client CLI provides additi
   brew install paularlott/tap/knot
   ```
 
-  For **Knot Pro** , use:
+  For **Knot Pro** {{< pro-badge >}}, use:
 
   ```bash
   brew install paularlott/tap/knot-pro
   ```
   Or download from the [knot-pro releases](https://github.com/paularlott/knot-pro/releases) page.
-  
+  {{< /tab >}}
 
-  
+  {{< tab >}}
   ### macOS Installation
 
   The preferred installation method for macOS is the Homebrew cask, which installs the Knot desktop app (menu bar tray) and the `knot` command:
@@ -51,7 +44,7 @@ While not required to use the Knot web interface, the client CLI provides additi
   brew install --cask paularlott/tap/knot
   ```
 
-  For **Knot Pro** , use:
+  For **Knot Pro** {{< pro-badge >}}, use:
 
   ```bash
   brew install --cask paularlott/tap/knot-pro
@@ -71,16 +64,16 @@ While not required to use the Knot web interface, the client CLI provides additi
   ```shell
   sudo xattr -dr com.apple.quarantine /Applications/Knot.app
   ```
-  
+  {{< /tab >}}
 
-  
+  {{< tab >}}
   ### Windows Installation
 
-  The latest binary for Windows can be downloaded from [GitHub releases](https://github.com/paularlott/knot/releases). For Knot Pro , download from the [knot-pro releases](https://github.com/paularlott/knot-pro/releases) page.
-  
+  The latest binary for Windows can be downloaded from [GitHub releases](https://github.com/paularlott/knot/releases). For Knot Pro {{< pro-badge >}}, download from the [knot-pro releases](https://github.com/paularlott/knot-pro/releases) page.
+  {{< /tab >}}
 
-
+{{< /tabs >}}
 
 ## Desktop Mode
 
-On macOS and Windows, running `knot` with no arguments starts **desktop mode**: the full Knot server runs in the background with a tray icon in the menu bar or notification area, and the first run opens the setup wizard automatically. See [Desktop Mode](desktop-mode.md) for the tray menu, the first-run wizard, and re-running setup.
+On macOS and Windows, running `knot` with no arguments starts **desktop mode**: the full Knot server runs in the background with a tray icon in the menu bar or notification area, and the first run opens the setup wizard automatically. See [Desktop Mode](/docs/quick-start/desktop-mode/) for the tray menu, the first-run wizard, and re-running setup.

@@ -19,6 +19,10 @@ knot server config-wizard
 This starts a local web server on `http://127.0.0.1:8080`. Open the URL in your browser.
 
 {{< tip >}}
+In [desktop mode](/docs/quick-start/desktop-mode/) the wizard runs automatically on the first run — no command needed. Afterwards it stays available from the tray menu's **Setup** entry, served at `/setup` while the server runs.
+{{< /tip >}}
+
+{{< tip >}}
 The wizard binds to loopback (`127.0.0.1`) by default. Use `--port` to change the port, `--listen` to change the address, and `--config` to target a specific output path.
 {{< /tip >}}
 

@@ -52,16 +52,29 @@ Users configure 2FA in their profile using authenticator apps.
 
 ## Rate Limiting
 
-IP-based rate limiting protects against brute force attacks:
+Failed-login rate limiting is always on and protects against brute force attacks. After too many failed logins for an IP address or email within the window, further attempts from that source are blocked for the block duration:
 
 ```toml {filename=knot.toml}
-[server.rate_limit]
-enabled = true
-max_attempts = 5
-window = "15m"
+[server]
+auth_rate_limit_attempts = 10  # failed attempts before blocking (default 10)
+auth_rate_limit_window = 60    # seconds failures are counted over (default 60)
+auth_rate_limit_block = 300    # seconds auth stays blocked (default 300)
 ```
 
 Failed authentication attempts are logged for monitoring.
+
+---
+
+## Disabling Password Authentication
+
+In Knot Pro {{< pro-badge >}} username and password authentication can be disabled entirely, requiring OAuth providers instead:
+
+```toml {filename=knot.toml}
+[server]
+disable_password_auth = true
+```
+
+With password auth disabled, a user unlinking one of their own OAuth providers must have at least two providers linked — otherwise they would lock themselves out.
 
 ---
 

@@ -8,6 +8,7 @@ Technical reference: architecture, CLI, events, scripting libraries, API tokens,
 ## Concepts
 
 - [Reference](knot-reference.md)
+- [API](api.md)
 - [Architecture](architecture.md)
 - [CLI Reference](cli.md)
 - [Events](events.md)

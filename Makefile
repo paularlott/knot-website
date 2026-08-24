@@ -56,7 +56,12 @@ release:
 	gh release create v$$V dist/knot-kb.zip dist/knot-okf-bundles.zip \
 		-t "Release $$V" -n "Knot knowledge bundles and MCP server $$V"
 
-.PHONY: help okf mcp-server pack bundle-pack okf-sync release
+## Sync the OpenAPI spec from the pro repo into static/api-reference/ (committed;
+## the site builds on Cloudflare, which cannot read sibling repos)
+api-spec:
+	cp ../knot-pro-src/internal/api/spec/knot-openapi.yaml static/api-reference/knot-openapi.yaml
+
+.PHONY: help okf mcp-server pack bundle-pack okf-sync release api-spec
 ## This help screen
 help:
 	@printf "Available targets:\n\n"

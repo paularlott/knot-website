@@ -22,16 +22,16 @@ disableKinds = ['taxonomy', 'term']
       url = '/'
     [[params.navigation.header]]
       name = 'Docs'
-      url = '/docs'
+      url = '/docs/'
     [[params.navigation.header]]
       name = 'Reference'
-      url = '/reference'
+      url = '/reference/'
     [[params.navigation.header]]
       name = 'Core vs Pro'
-      url = '/core-vs-pro'
+      url = '/core-vs-pro/'
     [[params.navigation.header]]
       name = 'Changelog'
-      url = '/changelog'
+      url = '/changelog/'
 
     # Static navigation links
     # [[params.navigation.static]]
@@ -39,7 +39,7 @@ disableKinds = ['taxonomy', 'term']
     #   url = '/testing'
     # [[params.navigation.static]]
     #   name = 'Changelog'
-    #   url = '/changelog'
+    #   url = '/changelog/'
 
 # The css.TailwindCSS transform executes the tailwindcss binary, which is not
 # in Hugo's default security.exec allowlist.

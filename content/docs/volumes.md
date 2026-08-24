@@ -3,7 +3,7 @@ title: Volumes
 description: Standalone volumes persist independently of spaces and can be attached to multiple spaces for shared storage.
 type: Overview
 tags: [storage]
-weight: 80
+weight: 40
 ---
 
 Standalone volumes can be created and managed independently of spaces. This flexibility allows volumes to be created and attached to multiple spaces, such as providing shared storage for `/home`. These volumes are persistent and are not affected by the lifespan of the spaces they are attached to. Even if all spaces are deleted, standalone volumes and their data will continue to exist.
