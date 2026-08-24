@@ -24,6 +24,8 @@ Jobs only fire while the space is running. Occurrences that pass while the space
 
 Each job has a name (unique within the space), a shell command, an optional schedule, and an enabled flag. Jobs are defined from the web UI, the CLI, or a scriptling — see [Running Jobs](#running-jobs) below. A template can also define jobs that are copied into each space created from it, giving every space its own editable copy (see [Managing Templates](../templates/managing.md)).
 
+Editing job definitions (adding, changing, removing, toggling) requires the **Edit Space Jobs** permission; without it users can still view their jobs and trigger them manually. A user the space is shared with can edit its jobs when they hold the permission, just like the owner. The **Manage Spaces** permission also allows editing the jobs of any space, and leaf nodes imply the permission for their local spaces.
+
 A job with **no schedule is manual only** — it never fires automatically but can always be triggered on demand. A job with `enabled = false` is listed but never fires automatically; manual triggering works regardless.
 
 ### Schedule syntax

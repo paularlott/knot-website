@@ -8,6 +8,8 @@ weight: 17
 
 The `knot.jobs` library manages the scheduled jobs of a space. Job definitions are stored on the space and pushed to its agent, so they survive restarts and can be changed while the space is stopped.
 
+Functions that change definitions (`add`, `update`, `remove`, `enable`, `disable`, `enable_runner`, `disable_runner`) require the **Edit Space Jobs** permission; `list` and `run` are available to the space owner regardless.
+
 ---
 
 ## Execution Environment

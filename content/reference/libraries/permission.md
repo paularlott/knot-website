@@ -54,6 +54,7 @@ The library provides constants for all permissions:
 | `TRANSFER_SPACES` | 10 | Transfer spaces |
 | `SHARE_SPACES` | 11 | Share spaces |
 | `USE_TUNNELS` | 8 | Use tunnels |
+| `EDIT_SPACE_JOBS` | 43 | Edit the scheduled jobs of your own spaces |
 
 ### System & Audit
 | Constant | ID | Description |
