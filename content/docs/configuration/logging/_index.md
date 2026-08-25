@@ -212,6 +212,12 @@ Each record is posted as its own GELF JSON message — one HTTP request per mess
 
 ---
 
+## Log Level and Delivered Data
+
+`log.level` filters the server's own diagnostics — at `warn`, info-level server chatter never reaches stderr or the external service. It deliberately does **not** filter data the external service was promised: audit events, forwarded space logs and tunnel request records flow through a separate always-on pipeline that shares the same delivery path (batching, retries, spool, stderr failover). Turning the level down to reduce noise can never silence the audit trail.
+
+---
+
 ## Delivery Retries and Stderr Failover
 
 Batches are delivered with retries: transport errors and server-side failures (HTTP 5xx / 429) are retried with increasing backoff before a batch is given up on. A client error (HTTP 4xx) means the endpoint rejected the payload itself, so those batches are not retried.

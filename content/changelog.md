@@ -62,6 +62,8 @@ navSection: docs
 
 - **Encryption key required at startup** (breaking): the server now refuses to start without an encryption key (`server.encrypt`). The key derives agent registration keys, agent tokens, and the zone's agent TLS certificate, so every member of a zone must share the same one.
 
+- **The audit trail ignores the log level**: raising `log.level` to cut diagnostic noise no longer stops audit events (or forwarded space logs / tunnel requests) from reaching the external logging service — they travel their own always-on pipeline.
+
 - **Audit settings moved to `[server.audit]`**: routing, retention and the new data-access options now live in one section; configs using the older flat `server.audit_*` keys keep working.
 
 - **Faster space start and stop**: spaces now start and stop several times faster — deployments, restarts, and stack operations included. A failed image pull falls back to the local image instead of failing the start.
