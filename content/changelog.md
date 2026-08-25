@@ -62,6 +62,8 @@ navSection: docs
 
 - **Encryption key required at startup** (breaking): the server now refuses to start without an encryption key (`server.encrypt`). The key derives agent registration keys, agent tokens, and the zone's agent TLS certificate, so every member of a zone must share the same one.
 
+- **Sifting knot records on a shared logging service**: every record knot delivers now carries `source: knot`, and knot's own services are prefixed — `knot_audit`, `knot_tunnel`, `knot_syslog` for ingested records with no service of their own — while application-chosen service names are left alone. One selector (`source:knot`) finds everything a knot shipped.
+
 - **The audit trail ignores the log level**: raising `log.level` to cut diagnostic noise no longer stops audit events (or forwarded space logs / tunnel requests) from reaching the external logging service — they travel their own always-on pipeline.
 
 - **Audit settings moved to `[server.audit]`**: routing, retention and the new data-access options now live in one section; configs using the older flat `server.audit_*` keys keep working.

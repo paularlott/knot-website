@@ -338,6 +338,8 @@ When forwarding logs, Knot maps standard `slog` field names to the expected name
 | `time`     | `_time`   | Timestamp (RFC 3339 Nano)      |
 | `service`  | `service` | Origin service (see below)     |
 
-`service` names the origin of a record — `knot` for the server itself, `audit` for audit events, `tunnel` for tunnel traffic, or the in-space service name for forwarded space logs. For VictoriaLogs destinations, `service` and `level` are indexed as stream fields, so both are trivially selectable (`service:tunnel`, `level:ERROR`) — the same field name and selectors as the agent's in-space ingest and [log sinks](../../spaces/log-sinks/).
+Every record knot delivers carries `source: knot`, so on a shared logging service one selector — `source:knot` — sifts everything this knot shipped from everything else the service holds (WAF logs, docker logs, and so on).
+
+`service` names the origin of a record: `knot` for the server itself, `knot_audit` for audit events, `knot_tunnel` for tunnel traffic, `knot_syslog` when an ingested record carries no service of its own, the in-space service name for forwarded space logs (application-chosen names are never prefixed), and `knot_<name>` for knot's in-space subsystems — `knot_jobs`, `knot_script`, `knot_method_server`. For VictoriaLogs destinations, `source`, `service` and `level` are indexed as stream fields, so all are trivially selectable (`source:knot`, `service:knot_audit`, `level:ERROR`) — the same field names and selectors as the agent's in-space ingest and [log sinks](../../spaces/log-sinks/).
 
 For Loki, the `time` field is converted to a Unix nanosecond timestamp in the values array rather than included in the log line body.

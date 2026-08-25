@@ -65,7 +65,7 @@ An anomaly is a normal audit event, so it flows through audit routing, cluster g
 - **Details:** human-readable summary, e.g. `failed_login_user: 10 events within 10m0s`
 - **Properties:** `rule`, `subject` (user or IP), `count`, `window`, and `source_ip` when known
 
-Query alerts in VictoriaLogs with e.g. `{stream="audit"} | event="Anomaly Detected"`.
+Query alerts in VictoriaLogs with e.g. `source:knot service:knot_audit event:"Anomaly Detected"`.
 
 ---
 
