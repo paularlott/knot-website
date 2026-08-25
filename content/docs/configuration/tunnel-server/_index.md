@@ -18,7 +18,7 @@ To enable tunneling, the Knot server must be configured to allow tunnel traffic.
 [server]
 listen_tunnel = "0.0.0.0:3001"
 # tunnel_server = "https://knot.internal:3001"
-tunnel_domain = "*.knot-tunnel.internal:3001"
+tunnel_domain = "*.tunnel.knot.internal"
 ```
 
 ### Configuration Parameters
@@ -27,4 +27,4 @@ tunnel_domain = "*.knot-tunnel.internal:3001"
 
 - **`tunnel_server`** *(optional)*: The address of the tunnel server. By default, this is the URL of the Knot server instance. This setting is only required when multiple Knot instances are behind a load balancer. In such cases, this URL should point to each individual Knot server.
 
-- **`tunnel_domain`**: The wildcard domain name under which tunnels will appear. For example: `<user>--<tunnel name>.knot-tunnel.internal:3001`.
+- **`tunnel_domain`**: The wildcard domain name under which tunnels will appear. For example: `<user>--<tunnel name>.tunnel.knot.internal`.

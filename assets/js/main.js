@@ -369,6 +369,10 @@ class ImageModal {
     this.imageModalImg.alt = '';
     this.imageModalCaption.innerHTML = '';
     this.imageModalCaption.classList.add('hidden');
+    const active = document.activeElement;
+    if (active && (this.imageModal.contains(active) || active.classList.contains('zoom-trigger'))) {
+      active.blur();
+    }
   }
 }
 

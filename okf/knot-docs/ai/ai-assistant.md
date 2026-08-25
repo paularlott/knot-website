@@ -13,7 +13,9 @@ type: Guide
 ---
 # AI Assistant
 
-The AI assistant operates within the browser interface and also provides a Command Line Interface (CLI) that can be accessed either from the host or within a space. The assistant requires access to an external Large Language Model (LLM) that supports the OpenAI API.
+The AI assistant operates within the browser interface and also provides a Command Line Interface (CLI) that can be accessed either from the host or within a space.
+
+ The assistant requires access to an external Large Language Model (LLM) that supports the OpenAI API.
 
 ---
 

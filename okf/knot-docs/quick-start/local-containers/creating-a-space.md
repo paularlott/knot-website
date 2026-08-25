@@ -65,6 +65,8 @@ echo "<?php phpinfo();" > public_html/index.php
 
 1. Click the `Web (80)` item in the `Ports` menu. The web page will open, running the new script and displaying the PHP information.
 
+
+
 ---
 
 ### Step 5: Stop and Restart the Space

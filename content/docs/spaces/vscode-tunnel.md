@@ -13,7 +13,7 @@ Knot enables the management of Visual Studio Code Tunnels directly from its web 
 ## Accessing the VSCode Tunnel
 
 1. Start a space from the `Spaces` page.
-2. Once the space is running, the **`VSCode Tunnel`** icon (#3) will appear.
+2. Once the space is running, the **`VSCode Tunnel`** icon  will appear.
 
 ---
 

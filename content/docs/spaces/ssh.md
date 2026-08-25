@@ -18,6 +18,8 @@ SSH access allows you to securely connect to your spaces for advanced management
    - All listed keys will be used for your SSH-enabled spaces, enabling passwordless authentication from any matching private key.
 3. Alternatively, automatically fetch your public keys from GitHub by entering your GitHub username in the **`GitHub Username`** field.
 
+{{< zoom-picture src="/docs/quick-start/local-containers/images/profile-ssh.webp" caption="Profile: Remote Access" >}}
+
 {{< tip >}}
 When using the SSH server built into the Knot agent, the keys are stored in the agent's memory. When using an SSH server within the space, the keys are written to `~/.ssh/authorized_keys`, one key per line. Profile key changes are also pushed to running SSH-enabled spaces.
 {{< /tip >}}
@@ -86,7 +88,7 @@ Host knot.phptest
 Once added, you can connect to the space with a shorter command:
 
 ```bash
-ssh user@phptest
+ssh knot.phptest
 ```
 
 ### Automating `.ssh/config` Updates

@@ -23,6 +23,8 @@ Each stack template specifies:
 - **Port forwards** — how traffic is routed between spaces
 - **Custom fields** — environment variables and configuration for each space
 
+{{< zoom-picture src="/docs/stacks/images/stacks.webp" caption="The Stack Templates Page" >}}
+
 ---
 
 ## Stack Lifecycle

@@ -16,17 +16,17 @@ Before tunnels can be used, the Knot server must be configured to allow tunnelin
 
 ```toml
 [server]
-listen_tunnel = 0.0.0.0:3001
-tunnel_domain = "*.knot-tunnel.internal:3001"
+listen_tunnel = "0.0.0.0:3001"
+tunnel_domain = "*.tunnel.knot.internal"
 ```
 
 - The `listen_tunnel` option specifies the address and port that the Knot server will listen on for internet traffic to forward to user tunnels.
-- A wildcard domain must be pointed to this address and port, e.g., `*.tunnel.knot.internal`.
+- A wildcard DNS record for the tunnel domain must point at the server, e.g., `*.tunnel.knot.internal`.
 
 ### Domain Routing
 
 The leftmost component of the host determines the username and tunnel name. For example:
-- `example-tunnel1.tunnel.knot.internal` routes traffic to the tunnel named `tunnel1` for the user `example`.
+- `example--tunnel1.tunnel.knot.internal` routes traffic to the tunnel named `tunnel1` for the user `example`.
 
 ---
 
@@ -61,7 +61,7 @@ Tunnels can be created either on a local machine (desktop) or within a space
    knot tunnel http 8080 test1
    ```
 
-   - This creates a tunnel to the local port `8080` with the tunnel name `example-test1.tunnels.knot.internal`.
+   - This creates a tunnel to the local port `8080` with the address `example--test1.tunnel.knot.internal`.
    - Stopping the `knot tunnel` command will stop and remove the tunnel.
 
 ---

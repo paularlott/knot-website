@@ -24,4 +24,8 @@ name = "<licensed organisation or individual>"
 - **`key`**: The license key that unlocks licensed features.
 - **`name`**: The licensed individual or organisation name bound to the license key.
 
-The same values can be provided through environment variables — `KNOT_LICENSE` and `KNOT_LICENSE_NAME` — for container-based deployments where the config file is generated from the environment.
+The same values can be provided as server flags or through environment variables — `--license` / `--license-name`, and `KNOT_LICENSE` / `KNOT_LICENSE_NAME` — for container-based deployments where the config file is generated from the environment.
+
+To confirm a license is active, check the server log at startup — an invalid or missing key logs a warning and the server continues on the open-source edition — or the web UI footer, which shows the licensed name on a licensed server.
+
+See [Pro Installation](../quick-start/pro-installation.md) for obtaining a license key.

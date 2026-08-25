@@ -20,7 +20,7 @@ Knot provides access to the web-based Code Server, offering a browser-accessible
 ## Starting Code Server
 
 1. Ensure the space is running.
-2. Click the **`Code Server`** icon (#2) next to the running space.
+2. Click the **`Code Server`** icon  next to the running space.
 3. A new window will open, launching the Code Server interface.
 
 ---

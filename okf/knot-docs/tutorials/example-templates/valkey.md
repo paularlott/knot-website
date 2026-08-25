@@ -22,7 +22,7 @@ Add a port in the template's **Ports** section with name `Valkey`, port `6379`, 
 
 ## Nomad Cluster
 
-The job assumes **Docker** is being used for container management. If **Podman** is being used, change the `driver` to `podman` and update the `image` to `registry-1.docker.io/paularlott/knot-valkey:latest` to enable spaces to be created using **Podman**.
+The job assumes **Docker** is being used for container management. If **Podman** is being used, change the `driver` to `podman` and update the `image` to `registry-1.docker.io/paularlott/knot-valkey:9.1` to enable spaces to be created using **Podman**.
 
 ---
 
@@ -53,7 +53,7 @@ job "${{.user.username}}-${{.space.name}}" {
 
       driver = "docker"
       config {
-        image = "paularlott/knot-valkey:latest"
+        image = "paularlott/knot-valkey:9.1"
         hostname = "${{ .space.name }}"
       }
 
@@ -90,12 +90,12 @@ The following defines the same **Valkey server template** for deployment using *
 
 ### Container Specification
 
-> **Note**: If using **Podman**, the `image` must be fully qualified as `registry-1.docker.io/paularlott/knot-valkey:latest`.
+> **Note**: If using **Podman**, the `image` must be fully qualified as `registry-1.docker.io/paularlott/knot-valkey:9.1`.
 
 ```yaml
 container_name: ${{ .user.username }}-${{ .space.name }}
 hostname: "${{ .space.name }}"
-image: paularlott/knot-valkey:latest
+image: paularlott/knot-valkey:9.1
 volumes:
   - ubuntu_${{.space.id}}_home:/home/
 

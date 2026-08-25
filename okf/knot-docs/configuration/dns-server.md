@@ -165,6 +165,8 @@ On **Nomad**, the server injects the environment signal into every task and sets
 
 ## Client Configuration
 
+The examples below route the whole `.internal` suffix to the Knot DNS server, which includes `knot.internal` and every space subdomain under it.
+
 ### Linux (systemd-resolved)
 
 ```text {filename="/etc/systemd/resolved.conf.d/knot.conf"}

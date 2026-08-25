@@ -49,8 +49,6 @@ Enter your username and password to log in. After logging in, click your name in
 
 From the profile menu, select `My Profile`. Here, you can edit your user information, including setting your timezone.
 
-
-
 ---
 
 ## What's Next

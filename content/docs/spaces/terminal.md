@@ -14,8 +14,10 @@ The web-based terminal in Knot provides users with shell access to their spaces 
 ## Accessing the Web Terminal
 
 1. Navigate to the `Spaces` page.
-2. Click the **`Terminal`** icon (#1) next to the running space.
+2. Click the **`Terminal`** icon next to the running space.
 3. A new browser window will open, displaying the web-based terminal.
+
+{{< zoom-picture src="/docs/quick-start/local-containers/images/terminal.webp" caption="Web Terminal" >}}
 
 ---
 

@@ -106,6 +106,15 @@ Configure the base image registry and catalog that power the template spec wizar
 ### [Two Factor Authentication](configuration/2fa.md)
 Enable TOTP-based 2FA for enhanced security.
 
+### [DNS Server](configuration/dns-server.md)
+Serve the wildcard domain locally so space addresses resolve.
+
+### [Node Selection](configuration/node-selection.md)
+Control which server in a cluster runs each space.
+
+### [Licensing](configuration/licensing.md)
+Activate a Knot Pro license on the server. 
+
 ### [OAuth Authentication](configuration/oauth.md)
 Allow users to sign in with GitHub or Google accounts. 
 
@@ -182,4 +191,4 @@ peers = [
 - Regular backups of database
 - Keep knot updated
 
-See [Security](../security/) for detailed guidance.
+See [Security](best-practices/security.md) for detailed guidance.

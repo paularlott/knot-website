@@ -41,9 +41,9 @@ A personal access token is required for the leaf server to connect to the cluste
 1. Log in to the Knot server that the leaf will connect to.
 2. Click on `API Tokens` in the menu. If this option is unavailable, request permission from your site administrator.
 3. Click `New Token` and provide a name for the token (e.g., `Leaf Test`) to identify it.
-   {{< picture src="images/create-token.webp" caption="New Token Form" >}}
+   {{< zoom-picture src="/docs/api-tokens/images/token-form.webp" caption="New Token Form" >}}
 4. Click `Create Token` to generate the access token.
-   {{< picture src="images/token-list.webp" caption="List of Available Tokens" >}}
+   {{< zoom-picture src="/docs/api-tokens/images/token-list.webp" caption="List of Available Tokens" >}}
 
 ---
 

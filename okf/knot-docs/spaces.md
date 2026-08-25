@@ -28,6 +28,8 @@ Each space includes:
 - Access to configured features (SSH, terminal, Code Server)
 - Isolated resources
 
+
+
 ---
 
 ## Space Lifecycle

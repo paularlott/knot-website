@@ -27,6 +27,8 @@ knot server config-wizard
 This starts a local web server on `http://127.0.0.1:8080`. Open the URL in your browser.
 
 
+
+
 In [desktop mode](desktop-mode.md) the wizard runs automatically on the first run — no command needed. Afterwards it stays available from the tray menu's **Setup** entry, served at `/setup` while the server runs.
 
 
@@ -40,7 +42,9 @@ If a config file already exists at the target path, the wizard still runs — th
 
 ## What the Wizard Covers
 
-The wizard walks through ten steps:
+The wizard walks through ten steps, starting with the server settings:
+
+
 
 ### 1. Deployment Type
 Choose **Single Server**, **Cluster**, or **Leaf Node**. This sets sensible defaults for the remaining steps (storage backend, platforms, DNS).

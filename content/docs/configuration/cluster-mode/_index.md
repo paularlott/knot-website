@@ -90,4 +90,4 @@ Every member of a zone must also be configured with the **same `encrypt` key** (
 
 When Knot is running in cluster mode, a new menu item, `Cluster Info`, becomes available for admin users and those with the appropriate permissions. This menu displays a table of all servers in the cluster, including their zones and other relevant information.
 
-{{< picture src="images/cluster-info.webp" caption="Cluster Information" >}}
+{{< zoom-picture src="images/cluster-info.webp" caption="Cluster Information" >}}

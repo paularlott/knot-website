@@ -29,7 +29,7 @@ Caddy requires the ability to create DNS records for your domain to handle SSL c
 2. Navigate to **Profile** > **API Tokens**.
 3. Click **Create Token** and select the preset template for "Edit Zone DNS."
 4. Under **Zone Resources**, select the domain you'll use for this project.
-   {{< picture src="../../docker/images/zone-records.webp" caption="Cloudflare DNS Records" >}}
+   {{< zoom-picture src="../../docker/images/zone-records.webp" caption="Cloudflare DNS Records" >}}
 5. Click **Continue to Summary** > **Create Token**.
 6. Copy the API token and save it—don’t lose this, as you’ll need it later.
 

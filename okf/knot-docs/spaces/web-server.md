@@ -28,9 +28,13 @@ When a space is configured to expose web ports (e.g., for a web server), the **`
 
 4. For example, clicking **port 80** will open the web interface exposed by the space.
 
+
+
 ---
 
 ## Example: Caddy File Browser
+
+
 
 If the space is running the Knot PHP image, clicking **port 80** will open the Caddy file browser.
 

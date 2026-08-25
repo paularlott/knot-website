@@ -16,6 +16,8 @@ type: Guide
 
 Local Container templates use a single YAML container specification for `container`, `docker`, `podman`, and `apple` platforms. The same schema is used in the editor for all local runtimes, and runtimes ignore fields they do not support.
 
+
+
 Below is the unified container specification:
 
 ```yaml

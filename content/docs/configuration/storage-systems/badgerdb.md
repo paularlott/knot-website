@@ -20,6 +20,17 @@ To use BadgerDB, set `badgerdb.enabled` to `true` in the configuration file and 
   path = "/badgerdb/"
 ```
 
+The same settings via flags or environment variables:
+
+```shell
+knot server --badgerdb-enabled --badgerdb-path /var/lib/knot/badger
+```
+
+| Config | Flag | Environment |
+|---|---|---|
+| `server.badgerdb.enabled` | `--badgerdb-enabled` | `KNOT_BADGERDB_ENABLED` |
+| `server.badgerdb.path` | `--badgerdb-path` | `KNOT_BADGERDB_PATH` |
+
 ---
 
 ### Configuration Parameters

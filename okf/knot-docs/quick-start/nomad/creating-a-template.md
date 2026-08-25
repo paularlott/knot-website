@@ -71,7 +71,7 @@ job "${{.space.name}}-${{.user.username}}" {
     task "php" {
       driver = "docker"
       config {
-        image = "paularlott/knot-php:8.4"
+        image = "paularlott/knot-php:8.5"
         hostname = "${{ .space.name }}"
       }
 

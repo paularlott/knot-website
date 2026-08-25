@@ -13,6 +13,8 @@ To create a new template:
 1. Navigate to the `Templates` page via the `Administration` menu and select `+ Template`.
 2. Fill out the form presented:
 
+{{< zoom-picture src="/docs/quick-start/local-containers/images/template-general.webp" caption="Template General Section" >}}
+
 ### Template Information
 
 - **`Name`**:
@@ -38,6 +40,8 @@ To create a new template:
   Next to the label is a wand icon that opens the **template spec wizard** — a UI-driven builder that picks a base image from the [catalog](../configuration/spec-wizard/), sets memory/CPU, ports, environment variables, and bind mounts, then writes the spec for you. The wizard only enables for specs it can safely round-trip (single-task Nomad `docker` jobs, or any well-formed container spec); multi-task Nomad jobs disable the wizard with an explanatory tooltip.
 
 ---
+
+{{< zoom-picture src="/docs/quick-start/local-containers/images/template-spec.webp" caption="Container Spec, Volumes and Ports" >}}
 
 ### Volume Definition
 
@@ -197,4 +201,4 @@ volumes: |
 ## What's Next
 
 - [Nomad Templates](../nomad-templates/)
-- [Docker / Podman Templates](../docker-templates/)
+- [Local Container Templates](local-containers/)

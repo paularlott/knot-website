@@ -85,6 +85,30 @@ if util["combined_rps"] > 100:
 `set_size()` updates the target count immediately. The sweep loop handles
 draining, stopping, and deleting excess spaces within 1-2 cycles.
 
+## Creating a Pool
+
+Pools are created through the API (or a stack definition). A pool needs a name and a template; it starts stopped unless `active` is set:
+
+```shell
+curl -X POST -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "build-workers",
+    "template_id": "<template-uuid>",
+    "desired_count": 3,
+    "active": true
+  }' \
+  https://knot.internal:3000/api/pools
+```
+
+- **`name`**: Pool name, also used as the routing endpoint.
+- **`template_id`**: The template pool members are created from (required).
+- **`startup_script_id`**: Optional startup script for members.
+- **`desired_count`**: Runtime target member count (default 1).
+- **`active`**: Start the pool immediately when `true` (default `false`).
+
+---
+
 ## API
 
 The pool API is available to authenticated callers:

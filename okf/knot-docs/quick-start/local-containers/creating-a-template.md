@@ -49,7 +49,7 @@ Next, define the job for the template. In this case, we'll create a Docker-based
 ```yaml
 container_name: ${{ .user.username }}-${{ .space.name }}
 hostname: "${{ .space.name }}"
-image: paularlott/knot-php:8.4
+image: paularlott/knot-php:8.5
 volumes:
   - volume1:/home/${{ .user.username }}
 
@@ -61,6 +61,10 @@ environment:
   - "KNOT_SPACEID=${{.space.id}}"
   - "KNOT_SERVICE_PASSWORD=${{.user.service_password}}"
 ```
+
+The `Container Specification`, `Volume Definition` and `Ports` fields all live in the `Orchestration` section of the form:
+
+
 
 ---
 

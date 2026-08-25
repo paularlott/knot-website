@@ -17,6 +17,8 @@ Standalone volumes do not count toward a user's **Storage Units** quota.
 ## Creating a Volume
 
 1. From the menu, select **`Volumes`**, then click **`New Volume`**.
+{{< zoom-picture src="/docs/volumes/images/volumes.webp" caption="The Volumes Page" >}}
+
 2. The following form will be displayed:
 3. Fill in the required fields:
    - **`Name`**: A descriptive name to identify the volume.

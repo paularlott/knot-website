@@ -30,7 +30,7 @@ This endpoint uses tool discovery to minimize context window usage. All tools ar
 
 - **Use case**: Internal AI assistants and chat interfaces
 - **Tool access**: Tools are discovered on-demand using `tool_search`, then called via `execute_tool`
-- **Benefits**: Reduces token usage by up to 85% by not sending all tool definitions upfront
+- **Benefits**: Tool definitions are not sent upfront, so large toolsets use far fewer tokens
 - **Target**: Knot's internal AI features and scriptling environments
 
 Both endpoints provide access to the same tools - only the discovery mechanism differs.
@@ -85,6 +85,7 @@ talks to over stdin/stdout. stdio servers need no token.
 | | `native` - Full tool definitions sent immediately (default) |
 | | `on-demand` - Tools discovered on-demand via `tool_search`, reduces context usage |
 | | `discoverable` - Alias for `on-demand` |
+| `hidden` | Optional (default: `false`). When `true`, the server's tools are callable but not shown in tool listings — see [Hidden Tools](#hidden-tools). |
 | `notifications` | Optional (default: `false`). When `true`, Knot accepts `listChanged` notifications from this server and propagates them to its own clients, so tool changes on the remote are reflected automatically. stdio servers propagate automatically regardless. |
 
 ---

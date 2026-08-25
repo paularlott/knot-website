@@ -31,6 +31,8 @@ Each stack template specifies:
 - **Port forwards** — how traffic is routed between spaces
 - **Custom fields** — environment variables and configuration for each space
 
+
+
 ---
 
 ## Stack Lifecycle

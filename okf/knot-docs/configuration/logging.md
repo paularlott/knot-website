@@ -249,13 +249,11 @@ Knot Pro can spool undeliverable batches on disk while the external logging serv
       path = "./log-spool/"   # directory for spooled batches
       max_mb = 256            # evict oldest batches beyond this size
       max_files = 1024        # ... or beyond this many batch files
-      max_files = 1024        # ... or beyond this many batch files
 ```
 
 - **`--log-spool-enabled`** / **`KNOT_LOG_SPOOL_ENABLED`** — enable the spool
 - **`--log-spool-path`** / **`KNOT_LOG_SPOOL_PATH`** — spool directory (default: `./log-spool/`)
 - **`--log-spool-max-mb`** / **`KNOT_LOG_SPOOL_MAX_MB`** — maximum spool size in MB (default: `256`)
-- **`--log-spool-max-files`** / **`KNOT_LOG_SPOOL_MAX_FILES`** — maximum number of spooled batch files (default: `1024`)
 - **`--log-spool-max-files`** / **`KNOT_LOG_SPOOL_MAX_FILES`** — maximum number of spooled batch files (default: `1024`)
 
 ---

@@ -23,6 +23,8 @@ This guide covers how to create, edit, and delete users in Knot, as well as mana
 To create a new user:
 
 1. From the `Administration` menu, select `Users` and then click `New User`.
+
+
 2. Fill out the form presented:
 
 ### User Details

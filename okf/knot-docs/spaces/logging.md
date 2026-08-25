@@ -25,6 +25,8 @@ Once a space is running, logs can be accessed directly from the **Spaces** page:
 1. Click the **`Logs`** button next to the space whose logs you want to view.
 2. A window will open, tailing the logs in real-time.
 
+
+
 ---
 
 ## Sending Logs

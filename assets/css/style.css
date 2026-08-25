@@ -47,6 +47,12 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-nunito);
 }
 
+/* Screenshot zoom trigger: hide the click-focus outline that lingers after
+   the lightbox closes, but keep it for keyboard navigation. */
+.zoom-trigger:focus:not(:focus-visible) {
+  outline: none;
+}
+
 h1 {
   @apply text-3xl font-bold mb-6;
 }

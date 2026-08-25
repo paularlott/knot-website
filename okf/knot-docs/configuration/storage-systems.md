@@ -44,6 +44,6 @@ The Knot server supports multiple storage systems for managing data. Each storag
 
 Each storage system offers unique benefits, allowing you to choose the one that best fits your deployment needs. For detailed configuration instructions, refer to the respective guides:
 
-- [MySQL / MariaDB Configuration](../mysql-mariadb)
-- [BadgerDB Configuration](../badgerdb)
-- [Redis / Valkey Configuration](../redis-valkey)
+- [MySQL / MariaDB Configuration](storage-systems/mysql.md)
+- [BadgerDB Configuration](storage-systems/badgerdb.md)
+- [Redis / Valkey Configuration](storage-systems/redis.md)

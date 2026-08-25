@@ -20,7 +20,7 @@ Spaces in Knot allow for a description to be set during creation or editing, as 
 ### Viewing and Editing Space Notes
 
 1. On the **`Spaces`** page, the short form of the description is displayed.
-   - Clicking the short description (#1) opens a dialog showing the full description and note.
+   - Clicking the short description opens a dialog showing the full description and note.
 
 2. The dialog provides a detailed view of the description and note.
 

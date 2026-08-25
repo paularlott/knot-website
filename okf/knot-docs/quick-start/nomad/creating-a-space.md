@@ -30,6 +30,8 @@ Now that we have a usable template, we can create a space from it. You can creat
    - **Terminal**: Select the terminal you'd like to use.
    - **Icon**: Optionally, change the icon shown for the space.
 
+
+
 3. Leave the `Start Space on Create` option checked, then click `Create Space`. You'll be returned to the `Spaces` page, where the new space will now be visible.
 
 ---
@@ -38,6 +40,8 @@ Now that we have a usable template, we can create a space from it. You can creat
 
 - While the space is starting, its **Status** will show as `Starting`.
 - Once the space is running, the **Status** will change to `Running`, and icons will appear, allowing access to the space's features.
+
+
 
 Once the space is running the icons will show:
 

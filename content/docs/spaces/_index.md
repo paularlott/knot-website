@@ -21,6 +21,8 @@ Each space includes:
 - Access to configured features (SSH, terminal, Code Server)
 - Isolated resources
 
+{{< zoom-picture src="/docs/quick-start/local-containers/images/spaces-list.webp" caption="A Running Space in the Spaces List" >}}
+
 ---
 
 ## Space Lifecycle

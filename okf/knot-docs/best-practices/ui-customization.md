@@ -34,8 +34,13 @@ Fallback to PNG if SVG not available.
 Always test customizations on light and dark themes:
 - View logo in both themes
 - Check contrast and visibility
-- Use `logo_invert` if needed
-- Or provide separate logos for each theme
+- Use `logo_invert` to flip the logo for dark mode (separate light/dark logo files are not supported):
+
+```toml {filename="knot.toml"}
+[server.ui]
+  logo_url = "/icons/custom-logo.svg"
+  logo_invert = true
+```
 
 ---
 

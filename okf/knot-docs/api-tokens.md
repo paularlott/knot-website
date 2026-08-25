@@ -28,11 +28,25 @@ API tokens are automatically created when logging in with the Knot client. Addit
 3. Click **`Create Token`** to generate a new token.
 4. The list of available tokens will be displayed.
 
+
+
    - **Tip**: Clicking on a token will copy it to the clipboard for easy use.
 
 
 Tokens expire after two weeks of inactivity. Any API call made with the token will reset its lifespan.
 
+
+---
+
+## Using a Token
+
+Pass the token in the `Authorization` header of any API request:
+
+```shell
+curl -H "Authorization: Bearer <token>" https://knot.internal:3000/api/spaces
+```
+
+The token carries your permissions — it can do everything your account can do. See the [API reference](/api-reference/) for every endpoint.
 
 ---
 

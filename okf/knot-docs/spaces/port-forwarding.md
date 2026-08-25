@@ -25,6 +25,8 @@ Port forwarding allows you to securely access ports within a remote space from y
 3. The list of advertised ports will appear below the dividing line. These ports cannot be clicked but are available for port forwarding.
    - For example, **port 80** may be exposed for web access, and **port 22** (SSH) may also be advertised.
 
+
+
 ---
 
 ## Setting Up Port Forwarding

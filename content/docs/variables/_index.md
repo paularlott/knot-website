@@ -18,6 +18,8 @@ Automatically provided by knot. Include user information, space details, and ser
 **User-Defined Variables**
 Created by administrators in the web interface. Shared across templates for common configuration values.
 
+{{< zoom-picture src="/docs/variables/images/variables.webp" caption="The Variables Page" >}}
+
 **Custom Variables**
 Defined in templates. Users provide values when creating spaces for per-space customization.
 

@@ -44,7 +44,7 @@ The above example configures Knot to prefer Podman first, then Apple Container.
 
 To create a Local Container template:
 
-1. Navigate to `Templates` and select `New Template`.
+1. Navigate to `Templates` and select `+ Template`.
 2. Complete the form, selecting `Local Container` (or a specific runtime) under the `Platform` option.
 3. Fill out the `Container Specification` field with the container configuration.
 
