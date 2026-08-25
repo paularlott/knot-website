@@ -80,27 +80,4 @@ With password auth disabled, a user unlinking one of their own OAuth providers m
 
 ## Access Control
 
-### Principle of Least Privilege
-
-Grant users minimum necessary permissions:
-- Create specific roles for different functions
-- Assign users to appropriate groups
-- Limit admin access to essential personnel
-- Regular access reviews
-
-### Role-Based Access Control
-
-Define roles with specific permissions:
-- `developer`: Create and manage own spaces
-- `viewer`: Read-only access
-- `template-admin`: Manage templates
-- `user-admin`: Manage users and groups
-- `system-admin`: Full system access
-
-### Resource Quotas
-
-Prevent resource abuse:
-- Limit number of spaces per user
-- Set compute unit limits
-- Restrict storage allocation
-- Monitor quota usage
+Roles, groups, quotas, and the full permission reference are covered in [Access Control](/docs/access-control/).

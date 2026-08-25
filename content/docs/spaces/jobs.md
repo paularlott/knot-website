@@ -41,6 +41,8 @@ Scheduled firing is controlled by the job runner, a per-space switch that is sto
 
 ### From the web UI
 
+{{< zoom-picture src="images/space-jobs.webp" caption="The Space Jobs Panel" >}}
+
 Spaces with jobs show a **clock icon** in the space row while running — green when the job runner is enabled, grey when it is stopped. Clicking it opens the jobs panel: each job shows its schedule, next and last run, and a **Run now** button, and a **Job Runner Enabled** toggle starts and stops scheduled firing. Job output appears in the space's logs, each line prefixed with the job name.
 
 The space's action menu (⋯) has an **Edit Jobs** entry that opens the same panel. Jobs are added, changed and removed from there — each row has an enable toggle, an edit and a delete action, and **Add Job** opens a form with the schedule validation described above.

@@ -28,9 +28,11 @@ The wizard doesn't replace hand-editing — it patches only the fields it contro
 
 ---
 
+
+
 ## Base Image Registry
 
-The wizard's image picker shows a curated catalog of base images (Ubuntu, PHP, MariaDB, Valkey, etc.). See the [base images reference](../base-images.md) for the full grid of supplied images and their versions. Each catalog entry references the registry via the `${{ .server.base_image_registry }}` [system variable](../variables/system-variables.md), which resolves at deploy time to the configured value.
+The wizard's image picker shows a curated catalog of base images (Ubuntu, PHP, MariaDB, Valkey, etc.). See the [base images reference](../templates/base-images.md) for the full grid of supplied images and their versions. Each catalog entry references the registry via the `${{ .server.base_image_registry }}` [system variable](../variables/system-variables.md), which resolves at deploy time to the configured value.
 
 **Default:** `docker.io/paularlott`
 

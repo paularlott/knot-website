@@ -1,20 +1,13 @@
 ---
-description: The base image catalog knot ships, as a visual grid of image families with their versions.
-generated:
-    by: knot-website/okf.py
-resource: https://getknot.dev/docs/base-images/
-sources:
-    - resource: https://getknot.dev/docs/base-images/
-status: stable
-tags:
-    - templates
-    - configuration
 title: Base Images
+description: The base image catalog knot ships, as a visual grid of image families with their versions.
 type: Overview
+tags: [templates, configuration]
+weight: 5
+aliases: ["/docs/base-images/"]
 ---
-# Base Images
 
-knot ships a curated catalog of base images that the [template spec wizard](configuration/spec-wizard.md) presents as a picker. Each is an ordinary OCI image built from [`knot-base-images`](https://github.com/paularlott/knot-base-images), preloaded with the knot entrypoint, an agent, and common dev tooling. You can also use any image (private or public) by typing its reference directly.
+knot ships a curated catalog of base images that the [template spec wizard](../../configuration/spec-wizard/) presents as a picker. Each is an ordinary OCI image built from [`knot-base-images`](https://github.com/paularlott/knot-base-images), preloaded with the knot entrypoint, an agent, and common dev tooling. You can also use any image (private or public) by typing its reference directly.
 
 The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can [keep it up to date](#keeping-the-catalog-up-to-date) automatically from `https://getknot.dev/base-images.toml`.
 
@@ -234,7 +227,7 @@ To update a running cluster without restarting, the admin command fans the refre
 knot admin refresh-base-images --server https://knot.example.com --token <admin-token>
 ```
 
-Each server must have `update_enabled` on; a server using a manifest file must also have `update_url` set, otherwise it reports a conflict and keeps its file. Pass `--local-only` to refresh just the connected server. See [Template Spec Wizard → Base image updates](configuration/spec-wizard.md#base-image-updates) for the full rules.
+Each server must have `update_enabled` on; a server using a manifest file must also have `update_url` set, otherwise it reports a conflict and keeps its file. Pass `--local-only` to refresh just the connected server. See [Template Spec Wizard → Base image updates](../../configuration/spec-wizard/#base-image-updates) for the full rules.
 
 ---
 

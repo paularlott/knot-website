@@ -36,6 +36,8 @@ Spaces can be transferred between users on the same Knot server. This feature al
 - Only **stopped spaces** can be transferred. If the space is running, the transfer option will not be available.
 
 
+
+
 To give another user access to a running space without stopping it, use the **`Share`** space option instead.
 
 

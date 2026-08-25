@@ -85,6 +85,8 @@ if util["combined_rps"] > 100:
 `set_size()` updates the target count immediately. The sweep loop handles
 draining, stopping, and deleting excess spaces within 1-2 cycles.
 
+{{< zoom-picture src="images/pools.webp" caption="Creating a Pool from the Spaces Page" >}}
+
 ## Creating a Pool
 
 Pools are created through the API (or a stack definition). A pool needs a name and a template; it starts stopped unless `active` is set:

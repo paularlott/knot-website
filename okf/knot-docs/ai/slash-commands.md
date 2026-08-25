@@ -14,7 +14,9 @@ type: Guide
 ---
 # Slash Commands
 
-Slash commands are reusable prompt templates that users can invoke from the AI assistant chat window by typing `/<command-name>`. Each command has a markdown body with an optional `$ARGUMENTS` placeholder that is replaced with the user's input at invocation time.
+Slash commands are reusable prompt templates that users can invoke from the AI assistant chat window by typing `/<command-name>`.
+
+ Each command has a markdown body with an optional `$ARGUMENTS` placeholder that is replaced with the user's input at invocation time.
 
 ---
 

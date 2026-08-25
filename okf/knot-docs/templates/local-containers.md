@@ -14,9 +14,13 @@ type: Overview
 ---
 # Local Containers
 
-Local spaces in Knot can be defined using Local Container templates, which support Docker, Podman, and Apple Container runtimes. These templates specify the environment users will work within and can include optional volume definitions.
+Local Container templates run spaces directly on the server's machine using Docker, Podman, or Apple Containers — no orchestrator required. When a space is created and started, Knot provisions the template's volumes and launches the container locally.
 
-When a user creates an instance of a `Template` (a `Space`) and starts it, Knot automatically provisions any required volumes and launches the container on the local machine.
+The full reference for writing one:
+
+- [Container Specification](local-containers/container-spec.md) — every field of the job YAML with runtime-support notes
+- [Volume Specification](local-containers/volume-spec.md) — volume definitions and path resolution rules
+- For a walkthrough of creating your first template, see the [quick start](../quick-start/local-containers/creating-a-template.md)
 
 ---
 
@@ -46,99 +50,8 @@ runtime_pref = ["podman", "apple"]
 
 The above example configures Knot to prefer Podman first, then Apple Container.
 
----
+#### Runtime Notes
 
-### Container Specification
+**Docker and Podman** support all spec fields. Podman requires fully qualified image names (e.g., `registry-1.docker.io/image:tag`).
 
-To create a Local Container template:
-
-1. Navigate to `Templates` and select `+ Template`.
-2. Complete the form, selecting `Local Container` (or a specific runtime) under the `Platform` option.
-3. Fill out the `Container Specification` field with the container configuration.
-
-#### Example Container Specification
-
-```yaml
-container_name: ${{ .user.username }}-${{ .space.name }}
-hostname: "${{ .space.name }}"
-image: ${{.var.registry_url}}/knot-ubuntu:24.04
-auth:
-  username: "${{.var.registry_user}}"
-  password: "${{.var.registry_pass}}"
-ports:
-  - 8080:80/tcp
-volumes:
-  - /home/example:/myhome
-  - volume1:/volume1
-
-#cap_add:
-#  - CAP_AUDIT_WRITE
-
-#cap_drop:
-#  - CAP_MKNOD
-
-#devices:
-#  - "/dev/ttyUSB0:/dev/ttyUSB0"
-
-#command: [
-#  "./knot",
-#  "server"
-#]
-
-privileged: true
-#network: host # or none
-
-environment:
-  - "TZ=${{.user.timezone}}"
-  - "KNOT_LOGLEVEL=debug"
-  - "KNOT_SERVER=${{.server.url}}"
-  - "KNOT_AGENT_ENDPOINT=${{.server.agent_endpoint}}"
-  - "KNOT_SPACEID=${{.space.id}}"
-  - "KNOT_SSH_PORT=22"
-  - "KNOT_SERVICE_PASSWORD=${{.user.service_password}}"
-  - "KNOT_VNC_HTTP_PORT=5680"
-  - "KNOT_CODE_SERVER_PORT=49374"
-  - "KNOT_VSCODE_TUNNEL=vscodetunnel"
-  - "KNOT_USER=${{.user.username}}"
-```
-
-#### Runtime-Specific Considerations
-
-**Docker and Podman**:
-- Support all features shown in the example above
-- Podman requires fully qualified image names (e.g., `registry-1.docker.io/image:tag`)
-
-**Apple Container**:
-- Does not support: `privileged`, `cap_add`, `cap_drop`, `devices`, `add_host`
-- Does not support registry authentication (`auth`)
-- Image names without a domain are automatically prefixed with `registry-1.docker.io`
-
-#### Using Template Variables
-
-Template variables can store sensitive information or information that may need to be updated in all templates, such as registry login credentials. For example:
-
-```yaml
-image: ${{.var.registry_url}}/knot-ubuntu:24.04
-auth:
-  username: "${{.var.registry_user}}"
-  password: "${{.var.registry_pass}}"
-```
-
-#### Notes:
-
-- **Ports**: The `ports` section is optional. It is only required if the ports need to be accessed directly, rather than through Knot.
-- **Environment Variables**: Environment variables can be used to pass dynamic information, such as user details, server URLs, and space-specific configurations.
-- **Direct Connections**: The server automatically injects `KNOT_PEER_EXTERNAL_PORT` for direct agent-to-agent connections (Pro). `KNOT_PEER_PORT` (the in-container listen port, default 12202) is read from the template environment — set `KNOT_PEER_PORT=0` to disable. See [Direct Agent-to-Agent Connections](../spaces/space-space-port-forwarding.md#direct-agent-to-agent-connections).
-
----
-
-### Volumes
-
-Templates can define volumes to persist data for spaces. These volumes are created when the space is deployed and destroyed when the space is deleted. Starting and stopping the space does not affect the contents of the volumes unless the template is modified to remove a volume.
-
-#### Example Volume Definition
-
-```yaml
-volumes:
-  volume1:
-```
+**Apple Container** does not support `privileged`, `cap_add`, `cap_drop`, `devices`, or `add_host`, has no registry authentication (`auth`), and prefixes image names without a domain with `registry-1.docker.io`.

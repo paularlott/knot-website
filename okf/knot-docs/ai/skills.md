@@ -37,6 +37,8 @@ User skills with the same name override (shadow) global skills, allowing users t
 
 ## Managing Skills
 
+
+
 ### Via Web Interface
 
 Skills can be created and managed through the web interface under the Skills section. The editor supports:

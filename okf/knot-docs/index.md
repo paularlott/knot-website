@@ -11,7 +11,6 @@ Guides: quick start, configuration, spaces, templates, scripting, AI integration
 - [Access Control](access-control.md)
 - [AI](ai.md)
 - [API Tokens](api-tokens.md)
-- [Base Images](base-images.md)
 - [Best Practices](best-practices.md)
 - [Configuration](configuration.md)
 - [Quick Start](quick-start.md)

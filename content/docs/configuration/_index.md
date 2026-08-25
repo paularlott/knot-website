@@ -3,7 +3,7 @@ title: Configuration
 description: Server configuration options for customizing your knot deployment.
 type: Overview
 tags: [configuration]
-weight: 80
+weight: 15
 ---
 
 This section covers server configuration options for customizing your Knot deployment.

@@ -23,6 +23,8 @@ Spaces can be shared between users on the same Knot server, allowing users to ac
 
 ## How to Share a Space
 
+{{< zoom-picture src="images/share-space.webp" caption="The Share Space Dialog" >}}
+
 1. Navigate to the **`Spaces`** page.
 2. Select the space you want to share.
 3. Click the **`Share`** menu item.

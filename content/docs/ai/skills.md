@@ -29,6 +29,8 @@ User skills with the same name override (shadow) global skills, allowing users t
 
 ## Managing Skills
 
+{{< zoom-picture src="/docs/ai/images/skill-editor.webp" caption="The Skill Editor" >}}
+
 ### Via Web Interface
 
 Skills can be created and managed through the web interface under the Skills section. The editor supports:
