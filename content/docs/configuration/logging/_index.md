@@ -219,8 +219,40 @@ Batches are delivered with retries: transport errors and server-side failures (H
 When external logging is configured, **stderr stays silent while the endpoint is healthy** (one startup line notes where logs are being sent). If a batch fails after all retries, the server writes an `ERROR` marker to stderr followed by the records of the failed batch, and from then on mirrors every new record to stderr as well — the failure window is always fully visible locally. The first successful flush writes a recovery line and the mirroring stops. State markers only appear on transitions, so a flapping endpoint doesn't spam. In Pro, the on-disk spool still takes a copy of failed batches for replay, with stderr as the live view of the same window.
 
 {{< tip "info" >}}
-For compliance-sensitive deployments (e.g. SOC 2), treat the external logging service as the long-term log store: configure retention, immutability and alerting there. Knot's internal audit-log store is a convenience window that expires entries after `server.audit_retention` days — set `server.audit_routing = "both"` or `"external"` so audit events reach the external service regardless.
+For compliance-sensitive deployments (e.g. SOC 2), treat the external logging service as the long-term log store: configure retention, immutability and alerting there. Knot's internal audit-log store is a convenience window that expires entries after `server.audit.retention` days — set `server.audit.routing = "both"` or `"external"` so audit events reach the external service regardless.
 {{< /tip >}}
+
+---
+
+## Data-Access Auditing
+
+Developer and QA environments often hold copies of production data. Two audit options record who touched that data — **both are off by default** because they are noisy on a local dev machine:
+
+```toml
+[server.audit]
+# Audit space file read, write and copy operations: who moved which data in
+# or out of a space. Path and byte count only — file contents never enter
+# the audit trail.
+file_operations = true
+
+# Audit interactive session opens — web terminal, SSH and VS Code tunnel —
+# per space and user.
+space_sessions = true
+```
+
+All audit settings live under `[server.audit]` (`routing`, `retention`, `stream`, `file_operations`, `space_sessions`). The older flat keys (`server.audit_routing` etc.) are still accepted; the section wins when both are present.
+
+Or via flags / environment variables: `--audit-file-operations` / `KNOT_AUDIT_FILE_OPERATIONS` and `--audit-space-sessions` / `KNOT_AUDIT_SPACE_SESSIONS`. Both are fields in the config wizard's audit section.
+
+With file operations enabled, every file `read`, `write`, `grep`, `find`, `sed`, `edit`, `delete` against a space — and every `copy` in either direction via `knot copy` or the web file manager — emits a `Space File Op` audit event carrying the space (and its template), the operation, the path, a byte count where known, and the source IP. With sessions enabled, opening the web terminal or a VS Code tunnel emits a `Space Session Open` event with the method. SSH is recorded at authentication time by the agent-managed SSH server: every public-key attempt emits an event carrying the outcome (success or failed), the key fingerprint, the client address and the space's template — a client trying several keys produces one failure per key plus a success.
+
+Also recorded regardless of these switches:
+
+- **API token lifecycle** — `Token Create` / `Token Update` / `Token Delete` carry the token name, id and scopes. These are long-lived credentials, so their lifecycle is always audited (OAuth flow-internal tokens and session extensions are not).
+- **Runtime configuration changes** — saving configuration through the in-server setup wizard emits `Config Update`; changing `audit_routing` itself is therefore always visible.
+- **Auth provider** — every `Login Success` carries the provider (`password`, or the OAuth provider id such as `github`).
+
+Two SSH-adjacent cases are not covered: spaces whose template runs its own external SSH server (only the agent-managed SSH server can see authentication), and VNC sessions, which are served as a static app over the agent proxy with no distinct server-side open event.
 
 ---
 
@@ -286,7 +318,7 @@ Tunnel lifecycle is audited rather than logged: tunnels opening and closing (web
 
 ## Audit Anomaly Detection {{< pro-badge >}}
 
-{{< pro-badge >}} Knot Pro can run anomaly detection over the audit event stream — failed-login bursts per user, credential spraying per source IP, and event sink delivery failures — emitting its own `Anomaly Detected` audit events when a rule fires. Detection works with any `server.audit_routing` (the internal audit store is not required). See [Anomaly Detection](../anomaly-detection/) for rules, configuration and the interaction with audit routing.
+{{< pro-badge >}} Knot Pro can run anomaly detection over the audit event stream — failed-login bursts per user, credential spraying per source IP, and event sink delivery failures — emitting its own `Anomaly Detected` audit events when a rule fires. Detection works with any `server.audit.routing` (the internal audit store is not required). See [Anomaly Detection](../anomaly-detection/) for rules, configuration and the interaction with audit routing.
 
 ---
 

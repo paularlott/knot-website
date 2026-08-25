@@ -42,6 +42,10 @@ navSection: docs
 
 - **Audit anomaly detection** {{< pro-badge >}}: detects failed-login bursts, credential spraying and bulk admin changes, emitting `Anomaly Detected` audit events to your external logging.
 
+- **Data-access auditing**: environments holding copies of production data can now see who read, wrote or copied which file in a space, and who opened a terminal session — paths and sizes only, never file contents. SSH logins are recorded per key attempt, success or failure. Off by default. See [Logging Configuration](../docs/configuration/logging/).
+
+- **More actions always audited**: API tokens being created, updated or deleted, config changes made through the setup wizard, and the provider behind every login (password or OAuth) now land in the audit trail.
+
 - **Richer user audit entries**: `User Create` / `User Update` events now record the target's roles and a `granted_admin` flag.
 
 - **Config wizard**: new logging and cluster steps plus a login-rate-limiting toggle, with a visual refresh.
@@ -57,6 +61,8 @@ navSection: docs
 - **Agent listener is now TLS-only** (breaking): every server in a zone presents the same certificate, so agents verify one fingerprint for any of them. The `--agent-use-tls` flag has been removed, and manual agents must now pass `--registration-key` (shown in the web UI next to the space ID). See [Manual Space](../docs/spaces/manual-space/).
 
 - **Encryption key required at startup** (breaking): the server now refuses to start without an encryption key (`server.encrypt`). The key derives agent registration keys, agent tokens, and the zone's agent TLS certificate, so every member of a zone must share the same one.
+
+- **Audit settings moved to `[server.audit]`**: routing, retention and the new data-access options now live in one section; configs using the older flat `server.audit_*` keys keep working.
 
 - **Faster space start and stop**: spaces now start and stop several times faster — deployments, restarts, and stack operations included. A failed image pull falls back to the local image instead of failing the start.
 {{< /changelog-item >}}

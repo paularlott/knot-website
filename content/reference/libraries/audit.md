@@ -103,7 +103,7 @@ Each audit log entry contains:
 - `zone` - Server zone name
 - `actor` - Who performed the action
 - `actor_type` - Type of actor (`User`, `System`, `MCP`)
-- `event` - Event type (e.g. `Space Create`, `Login Success`)
+- `event` - Event type (e.g. `Space Create`, `Login Success`, `Space File Op`, `Token Create`)
 - `when` - Timestamp of the event
 - `details` - Additional details
 - `properties` - Dict of additional properties (may include `source_ip`, `user_agent`)

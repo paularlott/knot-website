@@ -14,18 +14,18 @@ Detection is a layer on top of [audit logging](../logging/), not a replacement: 
 
 ## Does it require the internal audit store?
 
-**No.** Detection taps audit events in-process as they are emitted — before they are routed — so it works with any `server.audit_routing` setting. The internal audit store can be off (`external`) without affecting detection.
+**No.** Detection taps audit events in-process as they are emitted — before they are routed — so it works with any `server.audit.routing` setting (previously `server.audit_routing`, still accepted). The internal audit store can be off (`external`) without affecting detection.
 
 What *does* change with routing is where the **alerts** land, because an anomaly alert is itself an audit event:
 
-| `server.audit_routing` | Alerts appear in the audit log UI | Alerts sent to `[log.output]` |
+| `server.audit.routing` | Alerts appear in the audit log UI | Alerts sent to `[log.output]` |
 | ---------------------- | --------------------------------- | ------------------------------ |
 | `internal` (default)  | Yes — until `audit_retention` expires them | No |
 | `external`            | No                                | Yes |
 | `both`                | Yes — until `audit_retention` expires them | Yes |
 
 {{< tip >}}
-For compliance deployments, use `both` (or `external`): the internal store is a convenience window that expires entries after `server.audit_retention` days, while your external logging service holds the durable copy of both the audit stream and the anomaly alerts.
+For compliance deployments, use `both` (or `external`): the internal store is a convenience window that expires entries after `server.audit.retention` days, while your external logging service holds the durable copy of both the audit stream and the anomaly alerts.
 {{< /tip >}}
 
 ---
