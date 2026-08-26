@@ -167,6 +167,15 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
   </div>
 
   <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+    <img src="/icons/adminer.svg" alt="Adminer" class="h-12 w-12 mb-3" />
+    <div class="font-semibold text-gray-900 dark:text-gray-100">Adminer</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Database management UI for MySQL, MariaDB, PostgreSQL, Redis and SQLite.</div>
+    <div class="flex flex-wrap justify-center gap-1">
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">6.0</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center text-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
     <img src="/icons/mailpit.svg" alt="Mailpit" class="h-12 w-12 mb-3" />
     <div class="font-semibold text-gray-900 dark:text-gray-100">Mailpit</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">SMTP mail catcher with a web UI for inspecting captured mail.</div>
