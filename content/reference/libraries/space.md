@@ -33,6 +33,7 @@ The `knot.space` library provides space management functions for scripts.
 | `restart(name)` | Restart a space |
 | `list(all_zones=False)` | List all spaces for the current user |
 | `is_running(name)` | Check if a space is running |
+| `wait_for_start(name, timeout=30, interval=2)` | Wait for a space to reach the running state; returns `False` on timeout, never stops an already-running space |
 | `usage_current(name)` | Get current resource usage for a space |
 | `usage_history(name, range='1h')` | Get historical resource usage for a space |
 | `get_description(name)` | Get the description of a space |

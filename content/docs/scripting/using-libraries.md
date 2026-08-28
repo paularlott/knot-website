@@ -66,6 +66,41 @@ for s in spaces:
 
 ---
 
+## The Knot Plugin (Recommended)
+
+The cleanest way to use knot libraries from the scriptling CLI is the knot plugin. Load the knot binary as a plugin and everything comes through it — libraries, scripts and API access — with no packages to download, no URLs to remember, and no tokens in scripts:
+
+```bash
+# Run a script stored on the knot server:
+scriptling --plugin /usr/local/bin/knot knot://myscript
+
+# Use knot libraries in a local script:
+scriptling --plugin /usr/local/bin/knot myscript.py
+
+# Inline code:
+scriptling --plugin /usr/local/bin/knot -c 'import knot.space; print(knot.space.list())'
+
+# Import a user library (e.g. a lib script named "mylib"):
+scriptling --plugin /usr/local/bin/knot -c 'import mylib; mylib.do_something()'
+```
+
+Inside a space the connection comes from the agent automatically. On the desktop it uses the credentials saved by `knot connect`. The knot binary detects when scriptling spawns it, so the path is the only argument needed.
+
+How it works:
+- `knot.*` libraries (space, user, template, ...) load from the plugin's embedded copies on demand
+- User library scripts (`Script Type: lib`) are importable by name: `import mylib`
+- Scripts stored on the server run as `knot://scriptname` sources
+- API calls made by `knot.*` libraries route through the plugin process, so the API token never appears in scripts
+- Nothing is cached by the host; the plugin decides what to cache behind its own reads
+
+For JSON-RPC or MCP server mode with a setup script from the server:
+
+```bash
+scriptling --plugin /usr/local/bin/knot --json-rpc knot://myserver/setup.py
+```
+
+The knot binary checks the `SCRIPTLING_PLUGIN_PEER` environment variable (which carries the scriptling version) and refuses to serve versions it does not support.
+
 ## External Scriptling
 
 For standalone [scriptling](https://scriptling.dev/) scripts using the `knot.zip` package, configure `knot.apiclient` before using any `knot.*` library. The simplest approach is environment variables, which are read automatically on first use:

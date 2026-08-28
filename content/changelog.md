@@ -13,6 +13,14 @@ navSection: docs
 
 {{< version "v0.33.0" >}}
 
+{{< changelog-item "added" >}}
+- **`knot.space.wait_for_start(name, timeout=30, interval=2)`**: waits for a space to reach the running state, returning True immediately if already running (the space is never stopped or restarted), or polling every `interval` seconds until running or `timeout` expires. Returns False on timeout rather than raising.
+{{< /changelog-item >}}
+
+{{< changelog-item "added" >}}
+- **`knot scriptling`: the knot plugin for the scriptling CLI.** The scriptling CLI loads the knot binary as a plugin and everything comes through it — knot libraries, user scripts and API access. `scriptling --plugin knot knot://myscript` runs a script from the knot server; `scriptling --plugin knot -c 'import mylib'` imports a user library; `import knot.space` and every other `knot.*` module load from the plugin's embedded copies with no `--package` flag. API calls route through the plugin process (`knot.apiclient` transparently switches to the plugin transport), so the token stays out of scripts. Inside a space the connection comes from the agent; on the desktop it comes from `knot connect`'s saved config. The knot binary auto-detects when scriptling spawns it (`SCRIPTLING_PLUGIN_PEER`), so bare `--plugin /usr/local/bin/knot` works without a subcommand. An explicit `knot scriptling` subcommand exists for manual testing.
+{{< /changelog-item >}}
+
 {{< changelog-item "breaking" >}}
 - `knot run-script` is now evaluation-only. Serving and the REPL have moved to the real Scriptling CLI — use a Scriptling base image, and start method servers with `Server("/usr/local/bin/scriptling", args=["--json-rpc", ...])`.
 {{< /changelog-item >}}
