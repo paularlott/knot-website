@@ -47,7 +47,6 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="font-semibold text-gray-900 dark:text-gray-100">PHP</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Caddy + PHP-FPM, Composer, Node. Serves <code class="text-xs">~/public_html</code>.</div>
     <div class="flex flex-wrap justify-center gap-1">
-      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.3</span>
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.4</span>
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.5</span>
     </div>
@@ -58,7 +57,6 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="font-semibold text-gray-900 dark:text-gray-100">FrankenPHP</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Caddy + PHP in a single FrankenPHP process.</div>
     <div class="flex flex-wrap justify-center gap-1">
-      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.4</span>
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.5</span>
     </div>
   </div>
@@ -68,7 +66,6 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="font-semibold text-gray-900 dark:text-gray-100">FrankenScriptling</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">FrankenPHP with the Scriptling scripting/agent extension.</div>
     <div class="flex flex-wrap justify-center gap-1">
-      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.4</span>
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.5</span>
     </div>
   </div>
