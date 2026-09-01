@@ -1,12 +1,12 @@
 ---
 title: Troubleshooting
-description: Common issues and solutions organized by topic.
+description: Common issues, the exact commands to diagnose them, and how to fix them.
 type: Overview
 tags: [troubleshooting]
-weight: 130
+weight: 90
 ---
 
-Common issues and solutions organized by topic.
+Every section below lists the symptom, the command or file to check first, and the fix. Dedicated guides exist for [DNS](dns/), [UI customisation](ui/), and [template variables](variables/).
 
 ---
 
@@ -14,30 +14,29 @@ Common issues and solutions organized by topic.
 
 ### Server Won't Start
 
-**Symptom**: Server exits immediately or fails to start.
+**Check first** — the fatal line at the end of the server output:
 
-**Common Causes**:
-- Missing or invalid configuration file
-- Port already in use
-- Database connection failure
-- Invalid encryption key
+```shell
+knot server 2>&1 | tail -5
+```
 
-**Solutions**:
-1. Check configuration file syntax
-2. Verify ports are available
-3. Check database connectivity (MySQL/Redis)
-4. Regenerate encryption key if needed: `knot genkey`
+| Log line | Cause | Fix |
+|---|---|---|
+| `address already in use` | Port 3000 (or your `listen`) is taken | `lsof -i :3000` and stop the other process, or change `--listen` |
+| `an encryption key is required` | No `server.encrypt` set | `knot genkey` and set it in the config |
+| `connection refused` to MySQL/Redis | Database down or wrong credentials | See [Database Connection Errors](#database-connection-errors) |
+| `invalid license key` | Pro license missing/expired | Server continues on the OSS edition — update `server.license.key` if Pro is expected |
 
 ### Database Connection Errors
 
-**Symptom**: Server logs show database connection failures.
+Test reachability before blaming Knot:
 
-**Solutions**:
-- Verify database credentials in configuration
-- Check database server is running and accessible
-- For MySQL: Ensure database exists and user has permissions
-- For Redis / Valkey: Verify host and port are correct
-- Test connection manually before starting knot
+```shell
+mysql -h <host> -u <user> -p -e "SELECT 1"        # MySQL / MariaDB
+redis-cli -h <host> -p 6379 ping                  # Redis / Valkey
+```
+
+Then confirm the credentials in `knot.toml` match, and that the database exists — each Knot instance needs its own database name or Redis DB number.
 
 ---
 
@@ -45,131 +44,84 @@ Common issues and solutions organized by topic.
 
 ### Space Won't Start
 
-**Symptom**: Space stays in "Starting" state or fails to start.
+**Check first** — the space's logs from the Spaces page (**Logs** button), and the server log for image or volume errors. For local-container spaces, inspect the container directly:
 
-**Common Causes**:
-- Insufficient resources in cluster
-- Volume creation failure
-- Image pull errors
-- Invalid template configuration
+```shell
+docker ps -a | grep <username>-<spacename>   # is it crash-looping?
+docker logs <username>-<spacename>           # entrypoint / agent errors
+```
 
-**Solutions**:
-1. Check space logs in the web interface
-2. For Nomad: Check Nomad UI for allocation errors
-3. Verify template variables are correctly set
-4. Ensure container image is accessible
-5. Check volume storage is available
+| Symptom in logs | Cause | Fix |
+|---|---|---|
+| `failed to fetch agent binary` | Container cannot reach the server URL | Use an address reachable from the container — see `${{ host_ip }}` in [Desktop Mode](/docs/quick-start/desktop-mode/) |
+| `image ... not found` | Wrong image name or tag | Verify the tag exists; Podman needs fully qualified names |
+| Volume errors | Bad volume YAML or missing storage | See [Volume Creation Fails](#volume-creation-fails) |
+
+For Nomad spaces, `nomad job status <job>` and the Nomad UI show allocation failures.
 
 ### Space Stops Unexpectedly
 
-**Symptom**: Running space stops without user action.
-
-**Common Causes**:
-- Maximum uptime reached
-- Outside scheduled hours
-- Resource limits exceeded
-- Container crashed
-
-**Solutions**:
-- Check template maximum uptime setting
-- Verify schedule allows current time
-- Review space logs for crash information
-- Check resource quotas
+Check the template's **Maximum Uptime** and **Schedule** settings first — they are the most common cause. Otherwise check the space logs for a crashed process, and the user's compute-unit quota if multiple spaces run.
 
 ### Cannot Connect to Space
 
-**Symptom**: Space is running but terminal/SSH won't connect.
-
-**Solutions**:
-1. Verify space status is "Running"
-2. Check knot agent is running inside container
-3. For SSH: Ensure SSH key is added to profile
-4. Test with web terminal first
-5. Check firewall rules and network connectivity
+1. Confirm the space shows **Running** with service icons.
+2. Try the web terminal first — if it works, the space is fine and the problem is the client side.
+3. For SSH: ensure your public key is in your [profile](/docs/spaces/ssh/).
+4. For port forwarding: run `knot connect` and check the local port is free.
 
 ---
 
 ## Authentication Issues
 
-### Cannot Login
+### Cannot Log In
 
-**Symptom**: Login fails with correct credentials.
-
-**Solutions**:
-- Verify username and password are correct
-- Check if 2FA is enabled and code is valid
-- Clear browser cache and cookies
-- Check server logs for authentication errors
-- Verify user account is not locked
+- After 10 failed attempts within a minute, authentication blocks for 5 minutes by default (`server.auth_rate_limit_*`) — wait or adjust as admin.
+- With 2FA enabled, a wrong clock on either side breaks TOTP codes — check the server's time synchronisation.
+- Check the server log for the specific rejection (bad password vs blocked).
 
 ### Token Expired
 
-**Symptom**: API calls fail with authentication error.
+Tokens expire after two weeks of inactivity; any API call resets the lifespan. For the CLI, just reconnect:
 
-**Solutions**:
-- Tokens expire after 2 weeks of inactivity
-- Generate new token from web interface
-- For CLI: Run `knot connect` again
+```shell
+knot connect https://knot.internal:3000
+```
 
 ---
 
 ## Network Issues
 
-### DNS Resolution Fails
+For wildcard-domain failures, see the dedicated [DNS Troubleshooting](dns/) guide. Quick check:
 
-**Symptom**: Cannot access spaces via wildcard domain.
-
-**Solutions**:
-1. Verify DNS configuration
-2. Check DNS server is running (if using built-in)
-3. Verify DNS forwarding is configured correctly
-4. Restart DNS resolver service
+```shell
+dig +short username--spacename--80.knot.internal   # should return the server IP
+```
 
 ### Port Forwarding Not Working
 
-**Symptom**: Cannot access forwarded ports.
+```shell
+knot connect                          # client still authenticated?
+knot forward port 127.0.0.1:9010 spacename 80
+lsof -i :9010                         # local port actually free?
+```
 
-**Solutions**:
-- Verify knot client is connected: `knot connect`
-- Check port is advertised in space
-- Ensure local port is not already in use
-- Try different local port
-- Check firewall rules
+If the forward command runs but the browser fails, the service inside the space may bind to localhost only — it needs to bind `0.0.0.0`.
 
 ### Tunnel Connection Fails
 
-**Symptom**: Cannot create or access tunnels.
-
-**Solutions**:
-- Verify tunnel server is configured in knot.toml
-- Check wildcard DNS points to tunnel port
-- Ensure tunnel name is unique
-- Review tunnel server logs
+Confirm the server has `listen_tunnel` configured ([Tunnel Server](/docs/configuration/tunnel-server/)), that the wildcard DNS record for the tunnel domain points at the server, and that the tunnel name is unique among your tunnels.
 
 ---
 
 ## Template Issues
 
-### Template Variables Not Working
-
-**Symptom**: Variables show as literal text instead of values.
-
-**Solutions**:
-- Check variable syntax: `${{ .variable.name }}`
-- Verify variable is defined (system, user, or custom)
-- For custom variables: Ensure defined in template
-- Check for typos in variable names
+For variables rendering as literal text, see [Variables Troubleshooting](variables/).
 
 ### Volume Creation Fails
 
-**Symptom**: Space fails to start due to volume errors.
-
-**Solutions**:
-- For Nomad: Verify CSI driver is installed and working
-- Check volume definition syntax
-- Ensure storage capacity is available
-- Verify volume plugin_id is correct
-- Check CSI controller and node plugins are running
+- Check the volume YAML against the [Volume Specification](/docs/templates/local-containers/volume-spec/).
+- For Nomad: verify the CSI plugin is healthy (`nomad plugin status`) and the `plugin_id` in the volume definition matches.
 
 ---
 
@@ -177,20 +129,15 @@ Common issues and solutions organized by topic.
 
 ### Slow Web Interface
 
-**Solutions**:
-- Check server resource usage (CPU, memory)
-- Verify database performance
-- For cluster mode: Check network latency between nodes
-- Review server logs for errors
-- Consider scaling resources
+```shell
+curl -w "%{time_total}s\n" -o /dev/null -s https://knot.internal:3000/health
+```
+
+If this is fast but pages are slow, check database latency and server CPU. In clusters, gossip traffic between zones adds latency to every listing — prefer a server in the user's zone.
 
 ### High Latency to Spaces
 
-**Solutions**:
-- Use cluster mode with servers near users
-- Consider leaf mode for local execution
-- Check network path to server
-- Verify server is not overloaded
+Terminal and port-forward traffic relays through the server — deploy servers near users, or use [leaf mode](/docs/configuration/leaf-mode/) for local execution.
 
 ---
 
@@ -198,62 +145,16 @@ Common issues and solutions organized by topic.
 
 ### Nodes Not Connecting
 
-**Symptom**: Cluster nodes don't see each other.
+All nodes must share the same `server.encrypt` key and cluster key, and each node's `advertise_addr` must be reachable from the others. Verify with the Cluster Info page (Pro) or by checking gossip join errors in each server's log. Firewalls must allow the gossip port between all members.
 
-**Solutions**:
-- Verify cluster key matches on all nodes
-- Check advertise_addr is accessible from other nodes
-- Ensure all nodes list each other in peers
-- Check firewall allows traffic between nodes
-- Review cluster logs on all nodes
+### Data Not Synchronising
 
-### Data Not Synchronizing
-
-**Symptom**: Changes on one node not visible on others.
-
-**Solutions**:
-- Check cluster status in web interface
-- Verify network connectivity between nodes
-- Review synchronization logs
-- Ensure clocks are synchronized (NTP)
+Check that clocks are synchronised (NTP) on all nodes — bad clocks break conflict resolution. Then verify the nodes actually see each other (see above).
 
 ---
 
 ## Common Error Messages
 
-**"Space quota exceeded"**
-User has reached maximum number of spaces allowed. Delete stopped spaces or contact admin to increase quota.
+**"Space quota exceeded"** — the user has reached their maximum number of spaces. Delete stopped spaces or raise the group's **Maximum Spaces** limit.
 
-**"Compute units exceeded"**
-User has insufficient compute units to start space. Stop other spaces or contact admin to increase quota.
-
-**"Template not found"**
-Template may be inactive or user lacks group membership. Verify template exists and user has access.
-
-**"Invalid token"**
-API token expired or invalid. Generate new token or run `knot connect` again.
-
----
-
-## Getting Help
-
-If you cannot resolve an issue:
-
-1. Check server logs for detailed error messages
-2. Review space logs in web interface
-3. For Nomad: Check Nomad allocation logs
-4. Enable debug logging: Set `log.level = "debug"` in configuration
-5. Check GitHub issues: https://github.com/paularlott/knot/issues
-
----
-
-## Debug Logging
-
-Enable detailed logging to troubleshoot issues:
-
-```toml {filename=knot.toml}
-[log]
-level = "debug"
-```
-
-Restart the server to apply changes.
+**"Compute units exceeded"** — stop another space or raise the group's **Compute Units Limit**.

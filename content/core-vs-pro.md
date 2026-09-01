@@ -125,6 +125,26 @@ hideSidebar: true
         <td><span class="compare-yes">Included</span> richer audit log search and filtering workflows</td>
       </tr>
       <tr>
+        <td><strong>On-disk log spooling</strong></td>
+        <td><span class="compare-no">Not included</span> failed batches are dropped with a warning</td>
+        <td><span class="compare-yes">Included</span> undeliverable log batches are spooled to disk and replayed once the external logging service recovers</td>
+      </tr>
+      <tr>
+        <td><strong>Audit anomaly detection</strong></td>
+        <td><span class="compare-no">Not included</span> stream audit events to an external service for detection</td>
+        <td><span class="compare-yes">Included</span> built-in detection of failed-login bursts, successful logins after failure bursts, attempts while blocked, admin grants, bulk deletions, distinct login IPs and event sink failures, emitting its own audit events</td>
+      </tr>
+      <tr>
+        <td><strong>Space log forwarding</strong></td>
+        <td><span class="compare-no">Not included</span> space logs stay in the in-memory log window</td>
+        <td><span class="compare-yes">Included</span> forward space logs into the server's external logging service, tagged by space — the compliance-grade log retention path</td>
+      </tr>
+      <tr>
+        <td><strong>Space log sinks</strong></td>
+        <td><span class="compare-no">Not included</span></td>
+        <td><span class="compare-yes">Included</span> run a space that receives a mirror of your other spaces' logs (e.g. VictoriaLogs inside a space)</td>
+      </tr>
+      <tr>
         <td><strong>User and space activity views</strong></td>
         <td><span class="compare-no">Not included</span></td>
         <td><span class="compare-yes">Included</span> activity tracking with per-template disable controls</td>

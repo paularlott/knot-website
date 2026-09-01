@@ -17,7 +17,7 @@ Open your web browser and navigate to `https://knot.internal` or the domain that
 
 If the server is running correctly, you'll see the setup form prompting you to create the initial user.
 
-{{< picture src="../../local-containers/images/create-admin-user.webp" caption="Initial User Setup" >}}
+{{< zoom-picture src="../../local-containers/images/create-admin-user.webp" caption="Initial User Setup" >}}
 
 ---
 
@@ -25,7 +25,7 @@ If the server is running correctly, you'll see the setup form prompting you to c
 
 Complete the form with the required information and click `Create User`. This will create your admin account. Once the account is created, the login form will appear.
 
-{{< picture src="../../local-containers/images/sign-in.webp" caption="Login" >}}
+{{< zoom-picture src="../../local-containers/images/sign-in.webp" caption="Login" >}}
 
 ---
 
@@ -33,15 +33,13 @@ Complete the form with the required information and click `Create User`. This wi
 
 Enter your username and password to log in. After logging in, click your name in the top-right corner of the screen to open the profile menu.
 
-{{< picture src="../../local-containers/images/profile-menu.webp" caption="Profile Menu" >}}
+{{< zoom-picture src="../../local-containers/images/user-menu.webp" caption="Profile Menu" >}}
 
 ---
 
 ### Step 4: Update Profile and Timezone
 
 From the profile menu, select `My Profile`. Here, you can edit your user information, including setting your timezone.
-
-{{< picture src="../../local-containers/images/timezone.webp" caption="Timezone" >}}
 
 ---
 

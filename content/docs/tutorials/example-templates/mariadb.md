@@ -139,7 +139,7 @@ volumes:
 
 ### Connecting to MariaDB
 
-The space exports the **MariaDB port 3306** via the TCP proxy, allowing it to be connected to using [port forwarding](/docs/spaces/port-forwarding). For example:
+The space exports the **MariaDB port 3306** via the TCP proxy, allowing it to be connected to using [port forwarding](/docs/spaces/port-forwarding/). For example:
 
 ```shell
 knot forward port 127.0.0.1:3306 <space> 3306
@@ -147,4 +147,4 @@ knot forward port 127.0.0.1:3306 <space> 3306
 
 Where `<space>` is the name of the space.
 
-Once the above command is running, any desktop **MySQL/MariaDB client** should be able to connect to port `3306` on `localhost`. **knot** will handle forwarding the data to the MariaDB server running within the space.
+Once the above command is running, any desktop **MySQL/MariaDB client** should be able to connect to port `3306` on `localhost`. Knot will handle forwarding the data to the MariaDB server running within the space.

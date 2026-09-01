@@ -17,6 +17,8 @@ The `knot.*` namespace provides libraries for interacting with Knot from scripts
 |---------|---------------|----------------|
 | **Built-in** | None required | Automatic (context token) |
 | **Knot CLI** | None required | Uses `~/.knot/config` |
+| **Scriptling + knot plugin** | None required | Automatic (agent in a space, `knot connect` config on the desktop) |
+| **Scriptling in a space** | Packages via the agent | Automatic (agent `/connect`) |
 | **External Scriptling** | `knot.apiclient` required | Manual (env vars or explicit) |
 
 ---
@@ -34,11 +36,7 @@ for s in spaces:
     print(f"{s['name']}: {status}")
 ```
 
-For `scriptling.secret`, local Knot CLI runs can opt in to host-owned secret providers with the same TOML format used by standalone Scriptling:
-
-```bash
-knot run-script --secret-config ./secrets.toml myscript.py
-```
+Serving (JSON-RPC, HTTP, MCP) and the interactive REPL run on the real Scriptling CLI in the space — see below.
 
 ```python
 import scriptling.secret as secret
@@ -68,6 +66,44 @@ for s in spaces:
 ```
 
 ---
+
+## The Knot Plugin (Recommended)
+
+The cleanest way to use knot libraries from the scriptling CLI is the knot plugin. Load the knot binary as a plugin and everything comes through it — libraries, scripts and API access — with no packages to download, no URLs to remember, and no tokens in scripts:
+
+```bash
+# Run a script stored on the knot server:
+scriptling --plugin /usr/local/bin/knot knot://myscript
+
+# Use knot libraries in a local script:
+scriptling --plugin /usr/local/bin/knot myscript.py
+
+# Inline code:
+scriptling --plugin /usr/local/bin/knot -c 'import knot.space; print(knot.space.list())'
+
+# Import a user library (e.g. a lib script named "mylib"):
+scriptling --plugin /usr/local/bin/knot -c 'import mylib; mylib.do_something()'
+
+# Talk to a specific configured server alias (see `knot connect --alias`):
+scriptling --plugin /usr/local/bin/knot --plugin-arg --alias work knot://myscript
+```
+
+Inside a space the connection comes from the agent automatically. On the desktop it uses the credentials saved by `knot connect` — by default the `default` alias; pass `--plugin-arg --alias <name>` (or `--plugin-arg --alias=<name>`) to use another configured alias. The `--alias` option is ignored inside a space, where the agent provides the connection.
+
+How it works:
+- `knot.*` libraries (space, user, template, ...) load from the plugin's embedded copies on demand
+- User library scripts (`Script Type: lib`) are importable by name: `import mylib`
+- Scripts stored on the server run as `knot://scriptname` sources
+- API calls made by `knot.*` libraries route through the plugin process, so the API token never appears in scripts
+- Nothing is cached by the host; the plugin decides what to cache behind its own reads
+
+For JSON-RPC or MCP server mode with a setup script from the server:
+
+```bash
+scriptling --plugin /usr/local/bin/knot --json-rpc knot://myserver/setup.py
+```
+
+The knot binary checks the `SCRIPTLING_PLUGIN_PEER` environment variable (which carries the scriptling version) and refuses to serve versions it does not support.
 
 ## External Scriptling
 
@@ -131,6 +167,43 @@ In production environments include the sha256 hash in the package URL to improve
 {{< /tip >}}
 
 See [knot.apiclient](/reference/libraries/apiclient/) for the full list of configuration options and environment variables.
+
+---
+
+## Scriptling in a Space
+
+Spaces built from a Scriptling base image run the real Scriptling CLI, and the
+in-space agent serves everything it needs as cached zip packages on the local
+API port:
+
+| Package | Contents | Refreshed |
+|---------|----------|-----------|
+| `http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip` | The `knot.*` libraries | When the agent reconnects to the server (e.g. after a server restart) |
+| `http://127.0.0.1:$KNOT_API_PORT/packages/libs.zip` | Your `lib` scripts and global libraries | Automatically — the server notifies the agent whenever a library changes |
+
+Pass both packages explicitly — the shell expands `$KNOT_API_PORT`:
+
+```bash
+scriptling \
+  --package http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip \
+  --package http://127.0.0.1:$KNOT_API_PORT/packages/libs.zip \
+  script.py
+```
+
+or add them to a `scriptling.toml` config file (searched in the current
+directory, `$HOME`, and `$HOME/.config/scriptling/`) so plain
+`scriptling script.py` works — the port must match the agent's `--api-port`,
+default `12201`:
+
+```toml
+packages = [
+  "http://127.0.0.1:12201/packages/knot.zip",
+  "http://127.0.0.1:12201/packages/libs.zip",
+]
+```
+
+Inside the space, `knot.apiclient` configures itself from the agent's
+`/connect` endpoint — scripts act as the space owner with no URLs or tokens.
 
 ---
 

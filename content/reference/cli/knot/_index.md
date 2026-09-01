@@ -36,6 +36,16 @@ Key options (all can be set in the config file):
 | `--encrypt` | Encryption key for stored variables |
 | `--terminal-webgl` | Enable the WebGL terminal renderer |
 
+Running bare `knot` with no subcommand starts the same server together with a system tray icon — see [Desktop Mode](/docs/quick-start/desktop-mode/).
+
+### `knot server config-wizard`
+
+Run the web-based configuration wizard: a local web UI with an embedded TOML editor that writes a `knot.toml`.
+
+```shell
+knot server config-wizard [--port PORT] [--listen ADDR]
+```
+
 ### `knot scaffold`
 
 Generate configuration and job templates to stdout.
@@ -82,6 +92,13 @@ Options:
 - `--use-web-auth`: authenticate via the web interface
 - `--username`: username for authentication
 - `--tls-skip-verify`: skip TLS verification (default `true`)
+
+Manage stored connections:
+
+```shell
+knot connect list
+knot connect delete <alias>
+```
 
 ### `knot ping`
 
@@ -251,16 +268,11 @@ knot space find web --long
 knot space find web --long --json | jq .
 ```
 
-### Custom fields and port forwards
+### Custom fields
 
 ```shell
 knot space get-field <space> <field>
 knot space set-field <space> <field> <value>
-
-# Manage a space's inter-space port forwards
-knot space port forward <from-space> <from-port> <to-space> <to-port> [--persistent] [--force]
-knot space port list <space>
-knot space port stop <space> <local-port>
 ```
 
 ---
@@ -300,16 +312,18 @@ knot stack delete <stack> [-y]
 
 ```shell
 knot template list
+knot template export <name>
+knot template import [file] [--name NAME]
 ```
+
+`export` writes a portable YAML representation of a template to stdout — pipe it to a file for version control. `import` creates a template from a YAML file (or stdin when no file is given), resolving referenced scripts by name.
 
 ### `knot script`
 
 ```shell
 knot script list [--global]
-knot script show <name>
-knot script read <name>
+knot script read <name> [--info]
 knot script write <name> <file> [--create] [--description TEXT] [--active]
-knot script resolve <name>
 knot script delete <name>
 ```
 
@@ -386,6 +400,14 @@ Manage a space's inter-space port forwards (orchestrated from the client).
 knot space port forward <from-space> <from-port> <to-space> <to-port> [--persistent] [--force]
 knot space port list <space>
 knot space port stop <space> <local-port>
+knot space port throttle <space> <local-port> [options]
+```
+
+`throttle` applies network simulation to an existing forward: `--latency` (ms), `--jitter` (ms), `--bandwidth` (KB/s), `--timeout` (ms, kills the connection after this duration), `--down` (block all traffic), and `--reset` to clear all limits.
+
+```shell
+knot space port throttle web 8080 --latency 200 --jitter 50 --bandwidth 1024
+knot space port throttle web 8080 --reset
 ```
 
 ### `knot space tunnel`
@@ -398,6 +420,22 @@ knot space tunnel https <space> <port> <name>
 knot space tunnel list <space>
 knot space tunnel stop <space> <name>
 ```
+
+### `knot space jobs`
+
+Manage the jobs defined on a space (see [Space Jobs](/docs/spaces/jobs/)). Definitions are stored on the space and pushed to the agent, so they survive restarts and can be edited while the space is stopped.
+
+```shell
+knot space jobs list <space>
+knot space jobs add <space> <job> --command <cmd> [--schedule <cron>] [--disabled]
+knot space jobs update <space> <job> [--command <cmd>] [--schedule <cron>] [--enable|--disable]
+knot space jobs remove <space> <job>
+knot space jobs run <space> <job>
+knot space jobs enable <space>
+knot space jobs disable <space>
+```
+
+`run` triggers a job immediately — it works for disabled and manual-only jobs too, but needs the space running. `enable`/`disable` start and stop the space's job runner (scheduled firing); the state is persisted on the space. `--schedule` takes a 5-field cron expression; omit it for a manual-only job.
 
 ### `knot tunnel`
 
@@ -431,9 +469,12 @@ Server administration commands.
 knot admin backup [--encrypt-key KEY]
 knot admin restore <backup-file>
 knot admin rename-zone <old> <new>
-knot admin reset-totp <username>
-knot admin set-password <username> <password>
+knot admin reset-totp <email-address>
+knot admin set-password <email-address> <password>
+knot admin refresh-base-images [--local-only]
 ```
+
+`refresh-base-images` forces every server in the cluster to fetch the base image manifest from its update URL immediately (`--local-only` limits the refresh to the local server).
 
 ---
 
@@ -441,7 +482,7 @@ knot admin set-password <username> <password>
 
 Global flags available on most commands:
 
-- `--config`, `-c`: configuration file to use (default `knot.toml` in `.`, `$HOME`, or `$HOME/.config/knot/`)
+- `--config`, `-c`: configuration file to use (searched in `.`, `$HOME`, `$HOME/.knot/`, `$HOME/.config/knot/`, and `/etc/knot/`)
 - `--log-level`: `trace`, `debug`, `info`, `warn`, `error`, `fatal`, `panic`
 - `--nameservers`: DNS nameservers (repeatable)
 - `--help` / `--version`

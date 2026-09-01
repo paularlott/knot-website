@@ -7,9 +7,9 @@ tags: [installation, templates]
 weight: 30
 ---
 
-Once logged in to the **knot** web interface at `http://knot.internal:3000`, you'll be presented with a list of available spaces. Initially, this list will be blank.
+Once logged in to the Knot web interface at `http://knot.internal:3000`, you'll be presented with a list of available spaces. Initially, this list will be blank.
 
-{{< picture src="../images/spaces.webp" caption="Spaces on Login" >}}
+{{< zoom-picture src="../images/spaces-empty.webp" caption="Spaces on First Login" >}}
 
 In this tutorial, we'll create a space that runs PHP and includes a web server powered by Caddy.
 
@@ -20,7 +20,7 @@ In this tutorial, we'll create a space that runs PHP and includes a web server p
 Start by clicking `Admiinistration`, `Templates` and then `+ Template`.
 
 - Click on Templates in the navigation menu, then select New Template.
-  {{< picture src="../images/new-template.webp" caption="New Template" >}}
+  {{< zoom-picture src="../images/template-general.webp" caption="Template General Section" >}}
 - Fill out the following fields:
   - **Name:** Enter phptest.
   - **Description:** Enter a short description, such as A test space that runs PHP..
@@ -36,13 +36,13 @@ The icon selected here will be the default icon for new spaces created from this
 
 Next, define the job for the template. In this case, we'll create a Docker-based space.
 
-- The default for the platform is `Local Container` when this is selected **knot** will attempt to use Docker, Podman or Apple Containers depending on which runtimes are installed on your machine.
+- The default for the platform is `Local Container` when this is selected Knot will attempt to use Docker, Podman or Apple Containers depending on which runtimes are installed on your machine.
 - In the **Container Specification** field, enter the following YAML configuration:
 
 ```yaml
 container_name: ${{ .user.username }}-${{ .space.name }}
 hostname: "${{ .space.name }}"
-image: paularlott/knot-php:8.4
+image: paularlott/knot-php:8.5
 volumes:
   - volume1:/home/${{ .user.username }}
 
@@ -54,6 +54,10 @@ environment:
   - "KNOT_SPACEID=${{.space.id}}"
   - "KNOT_SERVICE_PASSWORD=${{.user.service_password}}"
 ```
+
+The `Container Specification`, `Volume Definition` and `Ports` fields all live in the `Orchestration` section of the form:
+
+{{< zoom-picture src="../images/template-spec.webp" caption="Container Spec, Volumes and Ports" >}}
 
 ---
 
@@ -89,7 +93,7 @@ For this tutorial, we won't apply any restrictions. However, we'll enable the fo
 - **Web Terminal**
 - **SSH Access**
 
-{{< picture src="../images/template-features.webp" caption="Enable Template Features" >}}
+{{< zoom-picture src="../images/template-features.webp" caption="Enable Template Features" >}}
 
 ---
 
@@ -97,7 +101,7 @@ For this tutorial, we won't apply any restrictions. However, we'll enable the fo
 
 Once saved, you'll be redirected to the `Templates` page, where your new template will be displayed.
 
-{{< picture src="../images/templates.webp" caption="Templates" >}}
+{{< zoom-picture src="../images/templates-list.webp" caption="Templates" >}}
 
 ---
 

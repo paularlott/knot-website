@@ -1,0 +1,117 @@
+---
+description: Build a reusable template that defines how spaces are created.
+generated:
+    by: knot-website/okf.py
+resource: https://getknot.dev/docs/quick-start/local-containers/creating-a-template/
+sources:
+    - resource: https://getknot.dev/docs/quick-start/local-containers/creating-a-template/
+status: stable
+tags:
+    - installation
+    - templates
+title: Creating a Template
+type: Guide
+---
+# Creating a Template
+
+Once logged in to the Knot web interface at `http://knot.internal:3000`, you'll be presented with a list of available spaces. Initially, this list will be blank.
+
+
+
+In this tutorial, we'll create a space that runs PHP and includes a web server powered by Caddy.
+
+---
+
+## Step 1: Start a New Template
+
+Start by clicking `Admiinistration`, `Templates` and then `+ Template`.
+
+- Click on Templates in the navigation menu, then select New Template.
+  
+- Fill out the following fields:
+  - **Name:** Enter phptest.
+  - **Description:** Enter a short description, such as A test space that runs PHP..
+  - **Template Icon:** Type PHP in the field and select the PHP icon.
+
+
+The icon selected here will be the default icon for new spaces created from this template. However, it can be changed when creating a space.
+
+
+---
+
+## Step 2: Define the Job
+
+Next, define the job for the template. In this case, we'll create a Docker-based space.
+
+- The default for the platform is `Local Container` when this is selected Knot will attempt to use Docker, Podman or Apple Containers depending on which runtimes are installed on your machine.
+- In the **Container Specification** field, enter the following YAML configuration:
+
+```yaml
+container_name: ${{ .user.username }}-${{ .space.name }}
+hostname: "${{ .space.name }}"
+image: paularlott/knot-php:8.5
+volumes:
+  - volume1:/home/${{ .user.username }}
+
+environment:
+  - "TZ=${{.user.timezone}}"
+  - "KNOT_USER=${{.user.username}}"
+  - "KNOT_SERVER=${{.server.url}}"
+  - "KNOT_AGENT_ENDPOINT=${{.server.agent_endpoint}}"
+  - "KNOT_SPACEID=${{.space.id}}"
+  - "KNOT_SERVICE_PASSWORD=${{.user.service_password}}"
+```
+
+The `Container Specification`, `Volume Definition` and `Ports` fields all live in the `Orchestration` section of the form:
+
+
+
+---
+
+## Step 3: Add a Volume Definition
+
+To ensure data persistence between reboots, define a volume to host the user's home directory within the container:
+
+- In the **Volume Definition** field, enter the following YAML configuration:
+
+```yaml
+volumes:
+  volume1:
+```
+
+---
+
+## Step 4: Add Ports
+
+Under the **Ports** section of the template form, add a port so the web server is accessible:
+
+- Name: `Web`
+- Port: `80`
+- Protocol: `HTTP`
+
+This automatically injects the `KNOT_HTTP_PORT` environment variable into spaces created from this template.
+
+---
+
+## Step 5: Enable Features
+
+For this tutorial, we won't apply any restrictions. However, we'll enable the following features:
+
+- **Web Terminal**
+- **SSH Access**
+
+
+
+---
+
+## Step 6: View the New Template
+
+Once saved, you'll be redirected to the `Templates` page, where your new template will be displayed.
+
+
+
+---
+
+## What's Next
+
+- [Creating a Space](creating-a-space.md)

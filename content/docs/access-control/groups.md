@@ -6,7 +6,7 @@ tags: [security, authentication]
 weight: 10
 ---
 
-In **knot**, groups are used to control access to templates and manage resource limits for users. For example, web developers may need access to PHP environments but not Go development environments used by DevOps teams.
+In Knot, groups are used to control access to templates and manage resource limits for users. For example, web developers may need access to PHP environments but not Go development environments used by DevOps teams.
 
 Groups can also define limits for Compute and Storage Units, as well as other resources. When a user belongs to multiple groups, the limits from all groups are combined.
 
@@ -17,8 +17,10 @@ Groups can also define limits for Compute and Storage Units, as well as other re
 To create a new group:
 
 1. From the `Administration` menu, select `Groups` and then click `New Group`.
+
+{{< zoom-picture src="images/groups.webp" caption="The Groups Page" >}}
 2. Fill out the form presented:
-   {{< picture src="../images/group-form.webp" caption="Group Create and Edit Form" >}}
+   {{< zoom-picture src="images/group-form.webp" caption="Group Create and Edit Form" >}}
 
 #### Group Configuration Options
 

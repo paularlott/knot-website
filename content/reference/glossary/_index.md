@@ -5,7 +5,7 @@ type: Overview
 weight: 60
 ---
 
-Common terms and concepts used in **knot**.
+Common terms and concepts used in Knot.
 
 ---
 
@@ -91,6 +91,13 @@ Configuration language used for Nomad job specifications.
 
 ---
 
+## J
+
+**Job**
+A scheduled or manual task defined on a space and run by its agent. Managed from the web UI, `knot space jobs`, or the `knot.jobs` scriptling library.
+
+---
+
 ## L
 
 **Leaf Mode**
@@ -105,6 +112,9 @@ Cluster design where all servers are equal. No single point of failure.
 
 **Manual Template**
 Template for environments where the knot agent is started manually. Used for physical machines or custom setups.
+
+**MCP (Model Context Protocol)**
+Open protocol for exposing tools to AI assistants. Knot scripts can be exposed as MCP tools, and the server can proxy MCP tool calls to spaces.
 
 ---
 
@@ -125,6 +135,9 @@ Specific action a user can perform. Granted through roles.
 
 **Podman**
 Container runtime alternative to Docker. Supported for local container templates.
+
+**Pool**
+A pre-warmed set of spaces kept ready so that new spaces can be assigned instantly.
 
 **Port Forwarding**
 Tunneling connections from local machine to ports in a space.
@@ -156,8 +169,17 @@ Import knot data from a backup file.
 **Schedule**
 Time-based rules for when spaces can run. Spaces outside schedule are automatically stopped.
 
+**Scriptling**
+The Python-compatible scripting language used for knot scripts, JSON-RPC methods, event sinks, and MCP tools. Runs on the server and inside spaces.
+
+**Skill**
+A script packaged with metadata describing what it does, exposed to AI assistants as an MCP tool.
+
 **Space**
 Running instance of a template. Isolated environment with compute, storage, and network resources.
+
+**Stack**
+A reusable definition that creates a set of related spaces (components) with dependencies, port forwards, and shared custom fields.
 
 **Storage Units**
 Resource measurement for persistent storage. Used for quota management.

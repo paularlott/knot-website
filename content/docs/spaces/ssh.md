@@ -18,15 +18,17 @@ SSH access allows you to securely connect to your spaces for advanced management
    - All listed keys will be used for your SSH-enabled spaces, enabling passwordless authentication from any matching private key.
 3. Alternatively, automatically fetch your public keys from GitHub by entering your GitHub username in the **`GitHub Username`** field.
 
+{{< zoom-picture src="/docs/quick-start/local-containers/images/profile-ssh.webp" caption="Profile: Remote Access" >}}
+
 {{< tip >}}
-When using the SSH server built into the **knot** agent, the keys are stored in the agent's memory. When using an SSH server within the space, the keys are written to `~/.ssh/authorized_keys`, one key per line. Profile key changes are also pushed to running SSH-enabled spaces.
+When using the SSH server built into the Knot agent, the keys are stored in the agent's memory. When using an SSH server within the space, the keys are written to `~/.ssh/authorized_keys`, one key per line. Profile key changes are also pushed to running SSH-enabled spaces.
 {{< /tip >}}
 
 ## Adding a Private SSH Key
 
 You can also add an SSH private key to your own profile. It is not shown when administrators edit other users. The private key is always taken from the **current space owner's profile** and is applied every time a space starts.
 
-When set, **knot** writes it to the appropriate file in `~/.ssh/` depending on the key format:
+When set, Knot writes it to the appropriate file in `~/.ssh/` depending on the key format:
 
 | Key Format | File |
 |---|---|
@@ -44,10 +46,10 @@ If the owner has no private key set in their profile, any previously written key
 
 ## Connecting via SSH
 
-### Step 1: Connect to the **knot** Server
+### Step 1: Connect to the Knot Server
 
-1. Ensure the **knot** [client](/docs/quick-start/client/) is installed on your local machine.
-2. Open a terminal and run the following command, replacing the URL with your **knot** server's address:
+1. Ensure the Knot [client](/docs/quick-start/client/) is installed on your local machine.
+2. Open a terminal and run the following command, replacing the URL with your Knot server's address:
 
    ```shell
    knot connect https://knot.internal:3000
@@ -86,12 +88,12 @@ Host knot.phptest
 Once added, you can connect to the space with a shorter command:
 
 ```bash
-ssh user@phptest
+ssh knot.phptest
 ```
 
 ### Automating `.ssh/config` Updates
 
-The **knot** client includes a helper function to manage `.ssh/config` entries for all your spaces:
+The Knot client includes a helper function to manage `.ssh/config` entries for all your spaces:
 
 - **Add entries for all spaces**:
   ```shell

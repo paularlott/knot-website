@@ -14,7 +14,7 @@ Add a port in the template's **Ports** section with name `Valkey`, port `6379`, 
 
 ## Nomad Cluster
 
-The job assumes **Docker** is being used for container management. If **Podman** is being used, change the `driver` to `podman` and update the `image` to `registry-1.docker.io/paularlott/knot-valkey:latest` to enable spaces to be created using **Podman**.
+The job assumes **Docker** is being used for container management. If **Podman** is being used, change the `driver` to `podman` and update the `image` to `registry-1.docker.io/paularlott/knot-valkey:9.1` to enable spaces to be created using **Podman**.
 
 ---
 
@@ -45,7 +45,7 @@ job "${{.user.username}}-${{.space.name}}" {
 
       driver = "docker"
       config {
-        image = "paularlott/knot-valkey:latest"
+        image = "paularlott/knot-valkey:9.1"
         hostname = "${{ .space.name }}"
       }
 
@@ -62,7 +62,7 @@ job "${{.user.username}}-${{.space.name}}" {
 
 ### Connecting to Valkey
 
-The space exports the **Valkey port 6379** via the TCP proxy, allowing it to be connected to using [port forwarding](../../../docs/spaces/port-forwarding) within the desktop client. For example:
+The space exports the **Valkey port 6379** via the TCP proxy, allowing it to be connected to using [port forwarding](/docs/spaces/port-forwarding/) from the client CLI. For example:
 
 ```shell
 knot forward port 127.0.0.1:6379 <space> 6379
@@ -70,7 +70,7 @@ knot forward port 127.0.0.1:6379 <space> 6379
 
 Where `<space>` is the name of the space.
 
-Once the above command is running, any desktop **Redis/Valkey client** should be able to connect to port `6379` on `localhost`. **knot** will handle forwarding the data to the Valkey server running within the space.
+Once the above command is running, any desktop **Redis/Valkey client** should be able to connect to port `6379` on `localhost`. Knot will handle forwarding the data to the Valkey server running within the space.
 
 ---
 
@@ -82,12 +82,12 @@ The following defines the same **Valkey server template** for deployment using *
 
 ### Container Specification
 
-> **Note**: If using **Podman**, the `image` must be fully qualified as `registry-1.docker.io/paularlott/knot-valkey:latest`.
+> **Note**: If using **Podman**, the `image` must be fully qualified as `registry-1.docker.io/paularlott/knot-valkey:9.1`.
 
 ```yaml
 container_name: ${{ .user.username }}-${{ .space.name }}
 hostname: "${{ .space.name }}"
-image: paularlott/knot-valkey:latest
+image: paularlott/knot-valkey:9.1
 volumes:
   - ubuntu_${{.space.id}}_home:/home/
 

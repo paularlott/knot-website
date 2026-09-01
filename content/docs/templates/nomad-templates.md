@@ -6,7 +6,7 @@ tags: [templates, deployment]
 weight: 20
 ---
 
-Nomad templates in **knot** define environments using a Nomad job specification and optional volume definitions. When a developer creates and starts a space from a template, **knot** automatically provisions the required volumes and launches the job within the Nomad cluster.
+Nomad templates in Knot define environments using a Nomad job specification and optional volume definitions. When a developer creates and starts a space from a template, Knot automatically provisions the required volumes and launches the job within the Nomad cluster.
 
 The editor uses Nomad HCL completion for the job field and YAML completion for Nomad volume definitions. Save-time validation parses the job through Nomad and validates the volume YAML before the template is stored.
 
@@ -20,10 +20,10 @@ This ensures that jobs for each developer are placed in their own namespaces.
 
 To create a Nomad template:
 
-1. Navigate to `Templates` and select `New Template`.
+1. Navigate to `Templates` and select `+ Template`.
 2. Complete the form, ensuring the `Name` and `Nomad Job` fields are filled.
    - `Nomad` must be selected under `Platform`.
-   - The `Nomad Job` field requires an HCL job specification. See [example environments](/docs/examples-environments/) for reference.
+   - The `Nomad Job` field requires an HCL job specification. See [example environments](/docs/tutorials/example-templates/) for reference.
 
 {{< tip >}}
 When a template is updated, all running spaces are marked as having an update available. However, spaces are not automatically restarted. Restarting a space applies the updated template.
@@ -205,7 +205,7 @@ Nomad volume definitions can include both `csi` and `host` volume types.
 
 #### Example Managed Path Definition
 
-Use `paths` when a Nomad job should use a host directory that **knot** creates before the job starts and removes when the space is deleted:
+Use `paths` when a Nomad job should use a host directory that Knot creates before the job starts and removes when the space is deleted:
 
 ```yaml
 paths:

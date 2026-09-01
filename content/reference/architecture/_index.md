@@ -6,7 +6,7 @@ tags: [architecture]
 weight: 20
 ---
 
-Understanding **knot** architecture helps you design effective deployments.
+Understanding Knot architecture helps you design effective deployments.
 
 ---
 

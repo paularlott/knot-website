@@ -60,3 +60,18 @@ This helps identify which data type is causing issues.
 - Check backup file is not corrupted
 - Ensure backup was created with `--encrypt` flag
 - Try restoring on same knot version that created backup
+
+
+---
+
+## Backup and Restore Commands
+
+Full flag reference and an automation script live in [Best Practices: Backup & Restore](../../best-practices/backup-restore/). The essentials:
+
+```shell
+knot backup --output backup.json              # plain JSON export
+knot backup --encrypt --output backup.enc     # encrypted export
+knot restore --input backup.json              # restore from a backup
+```
+
+If a restore fails, check that the target server's `server.encrypt` key matches the key used when the backup was taken.

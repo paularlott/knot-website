@@ -47,6 +47,12 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-nunito);
 }
 
+/* Screenshot zoom trigger: hide the click-focus outline that lingers after
+   the lightbox closes, but keep it for keyboard navigation. */
+.zoom-trigger:focus:not(:focus-visible) {
+  outline: none;
+}
+
 h1 {
   @apply text-3xl font-bold mb-6;
 }
@@ -151,10 +157,11 @@ tr:nth-child(odd) {
 }
 
 /* Allow wide tables (e.g. reference tables) to scroll horizontally inside the
-   content column instead of overflowing into the TOC sidebar. */
-.prose table {
-  display: block;
+   content column instead of overflowing into the TOC sidebar. The wrapper
+   scrolls; the table keeps normal table layout so columns fill the width. */
+.table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
 }
 
 .hide-scrollbar {

@@ -6,7 +6,7 @@ tags: [security]
 weight: 160
 ---
 
-Security considerations for deploying **knot**.
+Security considerations for deploying Knot.
 
 ---
 

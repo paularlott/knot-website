@@ -1,0 +1,49 @@
+---
+title: API Tokens
+description: Create and manage API tokens to access the knot API from external applications.
+type: Overview
+tags: [security, authentication, api]
+weight: 75
+---
+
+API tokens are automatically created when logging in with the Knot client. Additionally, tokens can be manually created and used to access the API from external applications.
+
+---
+
+## Creating a Token
+
+1. From the menu, select **`API Tokens`**, then click **`New Token`**.
+   {{< zoom-picture src="images/token-form.webp" caption="Create API Token" >}}
+
+2. Complete the **`Name`** field to identify the token.
+3. Click **`Create Token`** to generate a new token.
+4. The list of available tokens will be displayed.
+
+{{< zoom-picture src="images/token-list.webp" caption="List of Available Tokens" >}}
+
+   - **Tip**: Clicking on a token will copy it to the clipboard for easy use.
+
+{{< tip "warning" >}}
+Tokens expire after two weeks of inactivity. Any API call made with the token will reset its lifespan.
+{{< /tip >}}
+
+---
+
+## Using a Token
+
+Pass the token in the `Authorization` header of any API request:
+
+```shell
+curl -H "Authorization: Bearer <token>" https://knot.internal:3000/api/spaces
+```
+
+The token carries your permissions — it can do everything your account can do. See the [API reference](/api-reference/) for every endpoint.
+
+---
+
+## Deleting a Token
+
+Deleting a token immediately prevents further API calls from being made using that token.
+
+1. From the **API Tokens** list, click **`Delete`** next to the token you want to remove.
+2. Confirm the operation when prompted.

@@ -18,6 +18,12 @@ knot server config-wizard
 
 This starts a local web server on `http://127.0.0.1:8080`. Open the URL in your browser.
 
+{{< zoom-picture src="images/config-wizard.webp" caption="Wizard: Deployment Type" >}}
+
+{{< tip >}}
+In [desktop mode](/docs/quick-start/desktop-mode/) the wizard runs automatically on the first run — no command needed. Afterwards it stays available from the tray menu's **Setup** entry, served at `/setup` while the server runs.
+{{< /tip >}}
+
 {{< tip >}}
 The wizard binds to loopback (`127.0.0.1`) by default. Use `--port` to change the port, `--listen` to change the address, and `--config` to target a specific output path.
 {{< /tip >}}
@@ -28,7 +34,9 @@ If a config file already exists at the target path, the wizard still runs — th
 
 ## What the Wizard Covers
 
-The wizard walks through nine steps:
+The wizard walks through ten steps, starting with the server settings:
+
+{{< zoom-picture src="images/config-wizard-settings.webp" caption="Wizard: Server Settings" >}}
 
 ### 1. Deployment Type
 Choose **Single Server**, **Cluster**, or **Leaf Node**. This sets sensible defaults for the remaining steps (storage backend, platforms, DNS).
@@ -41,7 +49,7 @@ Never use the same database (same MySQL database name or Redis DB number) for mu
 {{< /tip >}}
 
 ### 3. Server Address
-Enter the server URL, wildcard domain (auto-derived from the URL), agent endpoint, timezone (searchable), listen addresses, and encryption key. The wizard explains what each field is for.
+Enter the server URL, wildcard domain (auto-derived from the URL), agent endpoint, timezone (searchable), listen addresses, and encryption key. The wizard explains what each field is for. For **Cluster** deployments a cluster section appears: advertise address, shared cluster key (with regen), peer addresses, and the allow-leaf-nodes toggle.
 
 ### 4. DNS Resolution
 Choose system nameservers or specify custom ones (for Consul SRV lookups, etc.). Optionally enable the built-in DNS server with A/AAAA/CNAME records to serve your wildcard domain locally.
@@ -53,12 +61,15 @@ Configure Nomad, Docker, and Podman. Leave a field blank to skip that runtime.
 Expose services running inside spaces to the public internet for testing — webhooks, preview URLs, external integrations. Disabled by default.
 
 ### 7. Security & UI
-Enable TOTP two-factor authentication (works with Google Authenticator, Microsoft Authenticator, etc.) and Gravatar avatars.
+Enable TOTP two-factor authentication (works with Google Authenticator, Microsoft Authenticator, etc.), Gravatar avatars, and failed-login blocking. The block parameters are configurable: failures allowed, the counting window, and how long auth stays blocked (defaults: 10 failures per minute, 5-minute block). Tracking and blocking are cluster-wide — failures and blocks are shared between servers, in and out of zone; desktop leaf nodes keep local state.
 
 ### 8. Optional Features
 Enable AI/Chat (OpenAI, Anthropic, Google, Ollama) and MCP server.
 
-### 9. Review
+### 9. Logging & Audit
+Configure external log output (VictoriaLogs, Loki, Elasticsearch or Graylog endpoint, with optional basic auth or bearer token credentials) and audit log routing/retention. The Pro wizard additionally configures space log forwarding {{< pro-badge >}}, the on-disk log spool {{< pro-badge >}} and audit anomaly detection {{< pro-badge >}} (per-rule thresholds and windows — failed logins, successes after failure bursts, blocked attempts, admin grants, bulk deletions, distinct login IPs, and more). The external logging service is the long-term log store — the internal audit store expires entries after the retention period. See [Logging Configuration](../configuration/logging/).
+
+### 10. Review
 The generated `knot.toml` is shown in an embedded TOML editor with syntax highlighting. Edit anything directly, then click **write to disk** or **copy to clipboard**.
 
 ---

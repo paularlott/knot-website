@@ -29,7 +29,7 @@ Caddy requires the ability to create DNS records for your domain to handle SSL c
 2. Navigate to **Profile** > **API Tokens**.
 3. Click **Create Token** and select the preset template for "Edit Zone DNS."
 4. Under **Zone Resources**, select the domain you'll use for this project.
-   {{< picture src="../images/zone-records.webp" caption="Cloudflare DNS Records" >}}
+   {{< zoom-picture src="../images/zone-records.webp" caption="Cloudflare DNS Records" >}}
 5. Click **Continue to Summary** > **Create Token**.
 6. Copy the API token and save it—don’t lose this, as you’ll need it later.
 
@@ -49,7 +49,7 @@ To configure the required DNS records, go to your Cloudflare dashboard, select y
 
 ## Deploying Caddy
 
-We’ll deploy a Nomad job to handle traffic on ports 80 and 443. This job will manage SSL certificates and forward traffic to the **knot** server.
+We’ll deploy a Nomad job to handle traffic on ports 80 and 443. This job will manage SSL certificates and forward traffic to the Knot server.
 
 ### Caddy Job Configuration
 
@@ -224,4 +224,4 @@ EOF
 
 ### Verifying the Setup
 
-If everything is working correctly, accessing **https://knot.getknot.dev** will display the setup screen for **knot**.
+If everything is working correctly, accessing **https://knot.getknot.dev** will display the setup screen for Knot.

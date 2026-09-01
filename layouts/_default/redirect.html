@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ .Title }} — Knot</title>
+  <meta name="description" content="{{ .Description }}">
+  <link rel="canonical" href="{{ .Params.redirect }}">
+  <meta http-equiv="refresh" content="0; url={{ .Params.redirect }}">
+</head>
+<body>
+  <p>Redirecting to the <a href="{{ .Params.redirect }}">{{ .Title }} reference</a>…</p>
+</body>
+</html>

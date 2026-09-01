@@ -6,7 +6,9 @@ tags: [ai, scripting]
 weight: 5
 ---
 
-Slash commands are reusable prompt templates that users can invoke from the AI assistant chat window by typing `/<command-name>`. Each command has a markdown body with an optional `$ARGUMENTS` placeholder that is replaced with the user's input at invocation time.
+Slash commands are reusable prompt templates that users can invoke from the AI assistant chat window by typing `/<command-name>`.
+
+{{< zoom-picture src="/docs/ai/images/slash-picker.webp" caption="The Command Picker in the Assistant" >}} Each command has a markdown body with an optional `$ARGUMENTS` placeholder that is replaced with the user's input at invocation time.
 
 ---
 
@@ -81,19 +83,19 @@ Slash commands can also be managed programmatically via the `knot.slash_command`
 import knot.slash_command
 
 # List all commands
-commands = knot.command.list()
+commands = knot.slash_command.list()
 
 # Create a global command
-knot.command.create(
+knot.slash_command.create(
     content='---\nname: "greet"\ndescription: "Greet by name"\n---\n\nSay hello to $ARGUMENTS',
     is_global=True,
 )
 
 # Update a command
-knot.command.update("greet", content='---\nname: "greet"\ndescription: "Greet warmly"\n---\n\nWarmly greet $ARGUMENTS')
+knot.slash_command.update("greet", content='---\nname: "greet"\ndescription: "Greet warmly"\n---\n\nWarmly greet $ARGUMENTS')
 
 # Delete a command
-knot.command.delete("greet")
+knot.slash_command.delete("greet")
 ```
 
 See the [knot.slash_command library reference](../../../reference/libraries/slash_command/) for full API details.

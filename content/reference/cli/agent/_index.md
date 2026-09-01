@@ -41,6 +41,20 @@ Usually started automatically by the container entrypoint. Key options:
 | `--use-tls` | `true` | Enable TLS |
 | `--cert-file` / `--key-file` | | PEM certificate and key |
 | `--tls-skip-verify` | `true` | Skip TLS verification when talking to the server |
+| `--registration-key` | | The space's registration key, required to register with the server (shown in the web UI next to the space ID) |
+| `--server-cert-fingerprint` | | SHA-256 fingerprint of the server's agent certificate public key, used to verify the TLS connection |
+| `--service-password` | | Password for the agent service |
+| `--peer-port` | `12202` | Port for direct peer-to-peer connections; `0` disables |
+| `--peer-external-port` | | External port peers should dial for direct connections |
+| `--dns-resolver` | | Run a resident DNS resolver on `127.0.0.1:53` forwarding queries to the server's DNS |
+
+### `knot agent wait-for-start`
+
+Block until the agent daemon is running and accepting commands, then exit. Used by the container entrypoint before running setup commands.
+
+```shell
+knot agent wait-for-start [--timeout SECONDS]
+```
 
 ---
 
@@ -128,6 +142,19 @@ knot methods unregister
 
 ---
 
+## `knot jobs`
+
+Inspect this space's jobs (see [Space Jobs](/docs/spaces/jobs/)). Jobs are managed from the web UI, `knot space jobs` on your machine, or the scriptling `knot.jobs` library.
+
+```shell
+knot jobs list
+knot jobs run <job>
+```
+
+`run` triggers a job immediately — it works for disabled and manual-only jobs too.
+
+---
+
 ## `knot port`
 
 Forward ports from this space to ports in other spaces. Both spaces must be running, in the same zone, and owned by the same user.
@@ -158,6 +185,14 @@ knot port list
 knot port stop <local-port>
 ```
 
+### Throttle a forward
+
+Apply network simulation to an existing forward; `--reset` clears all limits.
+
+```shell
+knot port throttle <local-port> [--latency ms] [--jitter ms] [--bandwidth kb/s] [--timeout ms] [--down] [--reset]
+```
+
 ---
 
 ## `knot tunnel`
@@ -165,43 +200,35 @@ knot port stop <local-port>
 Expose a local port in this space publicly via the knot server.
 
 ```shell
-knot tunnel <protocol> <port> <name>
+knot tunnel http <port> <name> [--daemon]
+knot tunnel https <port> <name> [--daemon]
+knot tunnel list
+knot tunnel stop <name>
 ```
 
 - **Protocols**: `http`, `https`
+- `--daemon`: hand the tunnel to the knot agent and exit; the tunnel then lives for the life of the agent
 
 ```shell
 knot tunnel http 8080 myapp
 ```
 
-Creates a tunnel at `<user>-myapp.<tunnel-domain>`.
+Creates a tunnel at `<user>--myapp.<tunnel-domain>`.
 
 ---
 
 ## `knot run-script`
 
-Execute a named script or a local `.py` file in this space, or start an interactive REPL.
+Execute a named script or a local `.py` file in this space (eval only).
 
 ```shell
 knot run-script <script-or-file> [args...]
 ```
 
 Options:
-- `--interactive`: start an interactive REPL (omit the script argument)
 - `--no-fail`: exit successfully if the named script does not exist
 
-### Server modes
-
-`run-script` can also run a script as a long-running server:
-
-- `--json-rpc`: run as a JSON-RPC server over stdin/stdout
-- `--listen <addr>`: run as an HTTP server (e.g. `:8080`)
-- `--mcp-tools <dir>`: run as an MCP server exposing tools from a directory (implies HTTP)
-- `--mcp-exec`: enable the MCP code-execution tool
-- `--web-root <dir|zip>`: serve static files alongside the HTTP server
-- `--bearer-token <token>`: require this bearer token on HTTP/MCP requests
-- `--allowed-path <path>`: restrict filesystem access (repeatable)
-- `--tls-cert` / `--tls-key` / `--tls-generate`: enable HTTPS
+Serving (JSON-RPC / HTTP / MCP) and the interactive REPL belong to the real Scriptling CLI in the space — use a template built from a Scriptling base image (for example `paularlott/knot-scriptling:0.21-alpine`). Load the `knot.*` libraries and your `lib` scripts via the agent's package endpoints (`--package http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip --package http://127.0.0.1:$KNOT_API_PORT/packages/libs.zip`, or a scriptling config file), and `knot.apiclient` configures itself from the agent's `/connect` endpoint.
 
 ---
 

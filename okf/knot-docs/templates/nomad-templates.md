@@ -1,0 +1,226 @@
+---
+description: Nomad templates define environments using a Nomad HCL job specification with optional CSI and host volumes.
+generated:
+    by: knot-website/okf.py
+resource: https://getknot.dev/docs/templates/nomad-templates/
+sources:
+    - resource: https://getknot.dev/docs/templates/nomad-templates/
+status: stable
+tags:
+    - templates
+    - deployment
+title: Nomad Templates
+type: Guide
+---
+# Nomad Templates
+
+Nomad templates in Knot define environments using a Nomad job specification and optional volume definitions. When a developer creates and starts a space from a template, Knot automatically provisions the required volumes and launches the job within the Nomad cluster.
+
+The editor uses Nomad HCL completion for the job field and YAML completion for Nomad volume definitions. Save-time validation parses the job through Nomad and validates the volume YAML before the template is stored.
+
+For enhanced isolation, namespaces can be set within the job specification. For example:
+`namespace="${{ .user.username }}"`
+This ensures that jobs for each developer are placed in their own namespaces.
+
+---
+
+### Nomad Job
+
+To create a Nomad template:
+
+1. Navigate to `Templates` and select `+ Template`.
+2. Complete the form, ensuring the `Name` and `Nomad Job` fields are filled.
+   - `Nomad` must be selected under `Platform`.
+   - The `Nomad Job` field requires an HCL job specification. See [example environments](../tutorials/example-templates.md) for reference.
+
+
+When a template is updated, all running spaces are marked as having an update available. However, spaces are not automatically restarted. Restarting a space applies the updated template.
+
+
+#### Using Template Variables
+
+Template variables can store sensitive information, such as registry login credentials. For example:
+
+```hcl
+image = "paularlott/knot-ubuntu:24.04"
+auth {
+  username = "${{ .var.registry_user }}"
+  password = "${{ .var.registry_pass }}"
+}
+```
+
+
+Variables are stored as plain text within the Nomad template and can be viewed via the Nomad web interface. For sensitive environments, consider using a solution like Vault for compliance and security.
+
+
+---
+
+### Example Nomad Job
+
+Below is an example of a Nomad job specification:
+
+```hcl {filename=Nomad-Job}
+job "${{.space.name}}-${{.user.username}}" {
+  datacenters = ["dc1"]
+
+  update {
+    max_parallel     = 1
+    min_healthy_time = "30s"
+    healthy_deadline = "1m"
+    auto_revert      = true
+  }
+
+  group "ubuntu" {
+    count = 1
+
+    volume "home_volume" {
+      type            = "csi"
+      source          = "ubuntu_${{.space.id}}_home"
+      read_only       = false
+      attachment_mode = "file-system"
+      access_mode     = "single-node-writer"
+    }
+
+    volume "data_volume" {
+      type            = "csi"
+      source          = "ubuntu_${{.space.id}}_data"
+      read_only       = false
+      attachment_mode = "file-system"
+      access_mode     = "single-node-writer"
+    }
+
+    volume "host_volume" {
+      type   = "host"
+      source = "vol-${{.space.id}}"
+      read_only = false
+    }
+
+    task "ubuntu" {
+      driver = "docker"
+      config {
+        image = "paularlott/knot-ubuntu:24.04"
+        hostname = "${{ .space.name }}"
+      }
+
+      env {
+        KNOT_SERVER           = "${{.server.url}}"
+        KNOT_AGENT_ENDPOINT   = "${{.server.agent_endpoint}}"
+        KNOT_SPACEID          = "${{.space.id}}"
+        KNOT_SSH_PORT         = "22"
+        KNOT_CODE_SERVER_PORT = "49374"
+        KNOT_USER             = "${{.user.username}}"
+        TZ                    = "${{ .user.timezone }}"
+      }
+
+      volume_mount {
+        volume      = "home_volume"
+        destination = "/home"
+      }
+
+      volume_mount {
+        volume      = "data_volume"
+        destination = "/data"
+      }
+
+      volume_mount {
+        volume      = "host_volume"
+        destination = "/host-volume"
+        propagation_mode = "private"
+      }
+
+      resources {
+        cores  = 4
+        memory = 4096
+      }
+    }
+  }
+}
+```
+
+
+**Direct agent-to-agent connections** : To enable direct peer connections for Nomad spaces, add a `network` block with `mode = "bridge"` to the group and declare your service ports. The server automatically injects the peer port (`knot_agent_peer`), adds it to the task's `config.ports`, and registers a `knot-agent-<space-id>` service. Without bridge mode, port-forwarded traffic uses server relay. See [Direct Agent-to-Agent Connections](../spaces/space-space-port-forwarding.md#direct-agent-to-agent-connections).
+
+
+---
+
+### Volumes
+
+Templates can define one or more volumes or managed host paths. These storage resources are:
+
+- **Created**: When the space is deployed.
+- **Destroyed**: When the space is deleted.
+- **Persistent**: Starting and stopping the space does not affect the contents of the volumes unless the template is modified to remove a volume.
+
+
+Deleting a space will destroy its volumes and all data stored on them.
+
+
+#### Example CSI Volume Definition
+
+Below is an example YAML configuration for defining CSI volumes:
+
+```yaml
+volumes:
+  - id: "ubuntu_${{.space.id}}_home"
+    name: "ubuntu_${{.space.id}}_home"
+    type: "csi"
+    plugin_id: "hostpath"
+    capacity_min: 1G
+    capacity_max: 10G
+    mount_options:
+      fs_type: "ext4"
+      mount_flags:
+        - rw
+        - noatime
+    capabilities:
+      - access_mode: "single-node-writer"
+        attachment_mode: "file-system"
+
+  - id: "ubuntu_${{.space.id}}_data"
+    name: "ubuntu_${{.space.id}}_data"
+    type: "csi"
+    plugin_id: "hostpath"
+    capacity_min: 1G
+    capacity_max: 10G
+    mount_options:
+      fs_type: "ext4"
+      mount_flags:
+        - rw
+        - noatime
+    capabilities:
+      - access_mode: "single-node-writer"
+        attachment_mode: "file-system"
+```
+
+In this example, the volume ID `ubuntu_${{.space.id}}_home` dynamically incorporates the unique space ID.
+
+#### Example Host Volume Definition
+
+Below is an example YAML configuration for defining a host volume:
+
+```yaml
+volumes:
+  - name: "vol-${{.space.id}}"
+    type: "host"
+    plugin_id: "mkdir"
+    parameters:
+      mode: "0755"
+      uid: 999
+      gid: 999
+```
+
+Nomad volume definitions can include both `csi` and `host` volume types.
+
+#### Example Managed Path Definition
+
+Use `paths` when a Nomad job should use a host directory that Knot creates before the job starts and removes when the space is deleted:
+
+```yaml
+paths:
+  - /storage/${{ .space.id }}/data
+```
+
+`~/data` resolves under the server user's home directory, `/data` is absolute, and `data` is relative to the agent working directory.
+
+
+If volume or path definitions are added or removed from a template, the changes will take effect the next time the space is started. Any data in a deleted volume or path will be permanently lost.

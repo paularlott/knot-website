@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Knot API Reference</title>
+  <style>
+    html, body { margin: 0; padding: 0; background: #fefefe; color: #111827; }
+    redoc { display: block; }
+    /* Redoc open-source doesn't support theme.logo sizing — cap it directly.
+       Matched to the main site header's logo height (h-8 = 32px). */
+    img[src$="logo-light.svg"] {
+      max-height: 32px !important;
+      width: auto !important;
+    }
+  </style>
+</head>
+<body>
+  <redoc spec-url="./knot-openapi.yaml"></redoc>
+  <script src="/js/redoc.standalone.js"></script>
+</body>
+</html>

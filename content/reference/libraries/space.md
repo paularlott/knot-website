@@ -32,7 +32,9 @@ The `knot.space` library provides space management functions for scripts.
 | `stop(name)` | Stop a space |
 | `restart(name)` | Restart a space |
 | `list(all_zones=False)` | List all spaces for the current user |
-| `is_running(name)` | Check if a space is running |
+| `is_running(name)` | Check if a space is running (the container is up — its agent may still be connecting; see `is_ready`) |
+| `is_ready(name)` | Check if a space is running with its agent connected — the state required by `run()`, file operations, and other agent-backed calls |
+| `wait_for_start(name, timeout=30, interval=2)` | Wait for a space to be running with its agent connected; returns `False` on timeout, never stops an already-running space |
 | `usage_current(name)` | Get current resource usage for a space |
 | `usage_history(name, range='1h')` | Get historical resource usage for a space |
 | `get_description(name)` | Get the description of a space |
@@ -63,6 +65,7 @@ The `knot.space` library provides space management functions for scripts.
 | `port_apply(source_space, forwards)` | Replace all port forwards with the given list |
 | `port_list(space)` | List active port forwards |
 | `port_stop(space, local_port)` | Stop a port forward |
+| `port_throttle(space, local_port, latency_ms=0, jitter_ms=0, bandwidth_kb=0, timeout_ms=0, down=False, reset=False)` | Apply latency, jitter, and/or bandwidth limits to a port forward |
 | `tunnel_start(space, protocol, port, name)` | Start an agent-owned web tunnel in a space |
 | `tunnel_list(space)` | List agent-owned web tunnels in a space |
 | `tunnel_stop(space, name)` | Stop an agent-owned web tunnel in a space |
@@ -139,6 +142,49 @@ Update a space while preserving fields you do not pass.
 - `startup_script_id` (string, optional): New startup script ID
 
 **Returns:** `bool` - True on success
+
+---
+
+### is_running(name)
+
+Check if a space is running.
+
+Note that a freshly started space reports running as soon as its container is up, which can be seconds before the in-container agent connects back to the server. Calls that need the agent — `run()`, `read_file()`, `grep()`, and friends — fail with an "Agent session not found for space" error in that window. Use `is_ready()` to check for the agent-backed state.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `bool` - True if the space is running
+
+---
+
+### is_ready(name)
+
+Check if a space is running **with its agent connected** to the server.
+
+True only when the space is running and its agent session is live — the state from which `run()`, `read_file()`, and other agent-backed calls succeed. A starting space passes `is_running()` before it passes `is_ready()`.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `bool` - True if the space is running with a live agent session
+
+---
+
+### wait_for_start(name, timeout=30, interval=2)
+
+Wait for a space to be running with its agent connected.
+
+Returns True immediately if the space is already ready — the space is never stopped or restarted. Otherwise polls every `interval` seconds until the space reports running and its agent has registered, or until `timeout` expires.
+
+Waits for the agent as well as the container: the space reports running before the in-container agent connects, and command execution fails until it does, so waiting on `is_running()` alone races.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+- `timeout` (int, optional): Maximum seconds to wait (default 30)
+- `interval` (int, optional): Seconds between polls (default 2)
+
+**Returns:** `bool` - True if the space is running with its agent connected, False if the timeout expired
 
 ---
 
@@ -474,6 +520,7 @@ List all spaces for the current user.
 - `id` (string): Space ID
 - `name` (string): Space name
 - `is_running` (bool): Whether the space is running
+- `has_state` (bool): Whether the space's agent is connected to the server
 - `description` (string): Space description
 
 ---
@@ -499,6 +546,7 @@ Get detailed information about a space.
 - `platform` (string): Platform (e.g., "linux/amd64")
 - `zone` (string): Zone name
 - `is_running` (bool): Whether the space is running
+- `has_state` (bool): Whether the space's agent is connected to the server (see `is_ready`)
 - `is_pending` (bool): Whether the space is pending
 - `is_deleting` (bool): Whether the space is being deleted
 - `node_id` (string): ID of the node assigned to host the space
@@ -588,6 +636,32 @@ Replace all port forwards for a space with the given list. Any existing forwards
 - `applied` (list): List of forwards that were started
 - `stopped` (list): List of forwards that were stopped
 - `errors` (list): List of error messages (if any)
+
+---
+
+### port_throttle(space, local_port, latency_ms=0, jitter_ms=0, bandwidth_kb=0, timeout_ms=0, down=False, reset=False)
+
+Apply network simulation to an existing port forward in a space. All values are optional; pass `reset=True` to clear all limits.
+
+**Parameters:**
+- `space` (string): Space name or ID
+- `local_port` (int): Local port of the forward to throttle
+- `latency_ms` (int): Latency in milliseconds (default: 0)
+- `jitter_ms` (int): Jitter in milliseconds (default: 0)
+- `bandwidth_kb` (int): Bandwidth limit in KB/s (default: 0, unlimited)
+- `timeout_ms` (int): Connection timeout in milliseconds — kills the connection after this duration (default: 0, none)
+- `down` (bool): Block all traffic on this forward; the port definition stays (default: False)
+- `reset` (bool): Clear all throttle settings (default: False)
+
+```python
+import knot.space as space
+
+# Simulate a slow, lossy link
+space.port_throttle("web", 8080, latency_ms=200, jitter_ms=50, bandwidth_kb=1024)
+
+# Clear all limits
+space.port_throttle("web", 8080, reset=True)
+```
 
 ---
 

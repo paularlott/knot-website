@@ -6,7 +6,7 @@ tags: [storage, configuration]
 weight: 40
 ---
 
-The **knot** server can be configured to use either a standalone MySQL / MariaDB server or a Galera cluster for its database. To enable this, you need to update the configuration file and provide the necessary connection details.
+The Knot server can be configured to use either a standalone MySQL / MariaDB server or a Galera cluster for its database. To enable this, you need to update the configuration file and provide the necessary connection details.
 
 ---
 
@@ -28,7 +28,7 @@ To use MySQL / MariaDB, set `mysql.enabled` to `true` in the configuration file 
 
 ### Configuration Parameters
 
-- **`database`**: The name of the database to use. It should be an empty database, as it will be populated automatically on the first boot of the **knot** server.
+- **`database`**: The name of the database to use. It should be an empty database, as it will be populated automatically on the first boot of the Knot server.
 
 - **`enabled`**: Must be set to `true` to enable the use of MySQL / MariaDB.
 

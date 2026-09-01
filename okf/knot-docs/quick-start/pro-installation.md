@@ -1,0 +1,131 @@
+---
+description: Install and configure Knot Pro to unlock advanced features.
+generated:
+    by: knot-website/okf.py
+resource: https://getknot.dev/docs/quick-start/pro-installation/
+sources:
+    - resource: https://getknot.dev/docs/quick-start/pro-installation/
+status: stable
+tags:
+    - installation
+    - deployment
+title: Knot Pro Installation
+type: Guide
+---
+# Knot Pro Installation
+
+Knot Pro includes additional features such as OAuth authentication, visual port forwarding, and advanced networking. 
+
+
+**Free for up to 2 users.** Knot Pro runs with all features enabled for up to 2 users — no license key required. A license only raises the user limit, so install Pro and add a key when your team grows past two.
+
+
+---
+
+## Installing Knot Pro
+
+
+
+  
+  ### Homebrew (Linux & macOS)
+
+  Install Knot Pro via Homebrew:
+
+  ```bash
+  brew install paularlott/tap/knot-pro
+  ```
+
+  To upgrade to the latest version:
+
+  ```bash
+  brew upgrade knot-pro
+  ```
+  
+
+  
+  ### Linux Binary
+
+  Download the latest binary from [GitHub releases](https://github.com/paularlott/knot-pro/releases).
+
+  ```shell
+  curl -sL https://github.com/paularlott/knot-pro/releases/latest/download/knot_linux_amd64.zip -o knot.zip
+  unzip knot.zip
+  sudo mv knot /usr/local/bin/
+  ```
+  
+
+  
+  ### macOS Binary
+
+  Download the latest binary from [GitHub releases](https://github.com/paularlott/knot-pro/releases).
+
+  **Apple Silicon:**
+
+  ```shell
+  curl -sL https://github.com/paularlott/knot-pro/releases/latest/download/knot_darwin_arm64.zip -o knot.zip
+  unzip knot.zip
+  sudo mv knot /usr/local/bin/
+  ```
+
+  **Intel:**
+
+  ```shell
+  curl -sL https://github.com/paularlott/knot-pro/releases/latest/download/knot_darwin_amd64.zip -o knot.zip
+  unzip knot.zip
+  sudo mv knot /usr/local/bin/
+  ```
+
+  **Note:** If you encounter issues launching the application after downloading it from GitHub, try running the following command:
+
+  ```shell
+  sudo xattr -d com.apple.quarantine /usr/local/bin/knot
+  ```
+  
+
+  
+  ### Windows Binary
+
+  Download the latest binary for Windows from [GitHub releases](https://github.com/paularlott/knot-pro/releases).
+  
+
+
+
+---
+
+## Configuring the License Key
+
+A license key is only required once you have more than 2 users. To add one, add the `license` section to the `[server]` block in your `knot.toml`:
+
+```toml {filename=knot.toml}
+[server]
+  license.name = "Jane Smith"
+  license.key = "A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6A7B8C9D0E1F2G3H4I5J6K7L8M9N0O1P2Q3R4S5T6U7V8W9X0Y1Z2A3B4C5D6E7F8G9H0"
+```
+
+Replace the `name` and `key` values with your license credentials.
+
+---
+
+## Docker Image
+
+When running Knot Pro in Docker, use the `knot-pro` image instead of `knot`:
+
+```shell
+docker pull paularlott/knot-pro:latest
+```
+
+For a specific version:
+
+```shell
+docker pull paularlott/knot-pro:v2.5.0
+```
+
+Update any `docker run` commands or Docker Compose files to reference `paularlott/knot-pro` instead of `paularlott/knot`.
+
+---
+
+## What's Next
+
+- [Local Containers Setup](local-containers/server-setup.md) - Configure and run the server
+- [Nomad Deployment](nomad/server-setup.md) - Deploy to a Nomad cluster
+- [Client](client.md) - Install the client CLI

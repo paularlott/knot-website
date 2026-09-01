@@ -3,7 +3,7 @@ title: Variables
 description: Variables inject dynamic values into templates at runtime, including system, user-defined, and custom types.
 type: Overview
 tags: [variables, configuration]
-weight: 40
+weight: 55
 ---
 
 Variables make templates flexible and reusable. They allow you to inject dynamic values into container specifications and volume definitions at runtime.
@@ -17,6 +17,8 @@ Automatically provided by knot. Include user information, space details, and ser
 
 **User-Defined Variables**
 Created by administrators in the web interface. Shared across templates for common configuration values.
+
+{{< zoom-picture src="/docs/variables/images/variables.webp" caption="The Variables Page" >}}
 
 **Custom Variables**
 Defined in templates. Users provide values when creating spaces for per-space customization.

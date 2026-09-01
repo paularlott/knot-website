@@ -6,7 +6,7 @@ tags: [variables, security]
 weight: 30
 ---
 
-{{< pro-badge >}} Secret providers let templates and server-side Scriptling runtimes fetch secrets from an external secret manager at resolve time instead of storing the value in the **knot** database.
+{{< pro-badge >}} Secret providers let templates and server-side Scriptling runtimes fetch secrets from an external secret manager at resolve time instead of storing the value in the Knot database.
 
 Secret provider functions only run during server-side variable resolution, including:
 
@@ -80,7 +80,7 @@ token = "your-connect-token"
 # default_field = "password"
 ```
 
-Restart **knot** after updating the configuration.
+Restart Knot after updating the configuration.
 
 ---
 
@@ -102,7 +102,7 @@ environment:
   - API_TOKEN=${{ secret "vault" "secret/data/prod/api" }}
 ```
 
-If no field is supplied, **knot** uses the provider's `default_field`, which defaults to `value` for Vault.
+If no field is supplied, Knot uses the provider's `default_field`, which defaults to `value` for Vault.
 
 ### 1Password Connect
 
@@ -112,7 +112,7 @@ environment:
   - LOGIN_PASSWORD=${{ secret "op" "Engineering/App Login" }}
 ```
 
-For 1Password Connect, the path is `vault/item`. If no field is supplied, **knot** defaults to `password`, then falls back to common built-in field names if available.
+For 1Password Connect, the path is `vault/item`. If no field is supplied, Knot defaults to `password`, then falls back to common built-in field names if available.
 
 ---
 
@@ -122,11 +122,11 @@ The same `[[server.secret_providers]]` configuration is also exposed to server-s
 
 Available in:
 
-- MCP tool scripts
-- remote scripts, including startup and shutdown scripts
+- Server-side scripts (MCP tool scripts, event sinks)
 
 Not available in:
 
+- agent-side scripts (the agent has no secret providers)
 - standalone external `scriptling` runs unless you configure that host separately
 
 ```python
@@ -168,14 +168,14 @@ Secret values are cached per provider alias, path, and field.
 
 - The default cache TTL is 5 minutes.
 - `cache_ttl` can be set per provider using any Go duration string such as `30s`, `5m`, or `15m`.
-- When the TTL expires, **knot** fetches a fresh value from the upstream provider.
+- When the TTL expires, Knot fetches a fresh value from the upstream provider.
 
 ---
 
 ## Notes
 
 - Secret providers are a **knot Pro** feature.
-- Vault addresses must use `https://`.
+- Vault addresses support both `http://` (e.g. a local dev Vault) and `https://` — use `insecure_skip_tls = true` to skip certificate verification for self-signed certificates.
 - 1Password Connect supports both `http://` and `https://` addresses.
 - Resolved secret values are not written to the database.
 - Secret values are never logged.

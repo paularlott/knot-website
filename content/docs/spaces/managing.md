@@ -7,13 +7,15 @@ tags: [spaces]
 weight: 10
 ---
 
-This guide explains how to create, start, stop, update, edit, and delete spaces in **knot**.
+This guide explains how to create, start, stop, update, edit, and delete spaces in Knot.
 
 ---
 
 ## Creating a Space
 
 1. Navigate to the `Spaces` page, click the `+ Space` button to get a list of the available templates, select the required template.
+
+{{< zoom-picture src="/docs/quick-start/local-containers/images/template-picker.webp" caption="Select a Template" >}}
 2. Complete the form for the new space:
    - **`Name`**: The name of the space.
    - **`Description`**: (Optional) A description for the space.
@@ -24,6 +26,8 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
    - **`Custom Fields`**: If the template includes custom fields, they will appear here. Set values for each field as needed.
    - **`Depends On`**: (Optional) Select spaces that this space depends on. Dependent spaces will need to be started before this space starts.
    - **`Start Space on Create`**: If checked, the space will start automatically after creation.
+
+{{< zoom-picture src="/docs/quick-start/local-containers/images/space-form.webp" caption="Create Space Form" >}}
 
 3. Click `Create Space` to finalize the process.
 
@@ -61,6 +65,8 @@ Admins may see the `Create Space For` option, allowing them to create spaces on 
 
 1. Click the menu icon next to the running space.
 2. Select `Stop`.
+
+{{< zoom-picture src="/docs/quick-start/local-containers/images/space-actions.webp" caption="Space Actions Menu" >}}
 
 - The `Stop` button is a split button:
   - **`Stop`**: Stops the space.

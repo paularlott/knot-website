@@ -14,14 +14,14 @@ Now that we have a usable template, we can create a space from it. You can creat
 ### Step 1: Create a Space
 
 1. From the `Spaces` page, click the `+ Space` button and from the popup, click the template you want to use:
-  {{< picture src="../images/create-space.webp" caption="Create a Space" >}}
+  {{< zoom-picture src="../images/template-picker.webp" caption="Select a Template" >}}
 
 2. Fill out the form with the following details:
    - **Name**: Enter `phptest`.
    - **Description**: Enter `A test PHP space.`.
    - **Terminal**: Select the terminal you'd like to use.
    - **Icon**: Optionally, change the icon shown for the space.
-  {{< picture src="../images/create-space-form.webp" caption="Create a Space Form" >}}
+  {{< zoom-picture src="../images/space-form.webp" caption="Create Space Form" >}}
 
 3. Leave the `Start Space on Create` option checked, then click `Create Space`. You'll be returned to the `Spaces` page, where the new space will now be visible.
 
@@ -32,7 +32,7 @@ Now that we have a usable template, we can create a space from it. You can creat
 - While the space is starting, its **Status** will show as `Starting`.
 - Once the space is running, the **Status** will change to `Running`, and icons will appear, allowing access to the space's features.
 
-{{< picture src="../images/running-space.webp" caption="Running Space" >}}
+{{< zoom-picture src="../images/spaces-list.webp" caption="Running Space" >}}
 
 Once the space is running the icons will show:
 
@@ -50,7 +50,7 @@ Once the space is running the icons will show:
 echo "<?php phpinfo();" > public_html/index.php
 ```
 
-{{< picture src="../images/terminal.webp" caption="Creating a phpinfo Script" >}}
+{{< zoom-picture src="../images/terminal.webp" caption="Creating a phpinfo Script" >}}
 
 ---
 
@@ -58,13 +58,15 @@ echo "<?php phpinfo();" > public_html/index.php
 
 1. Click the `Web (80)` item in the `Ports` menu. The web page will open, running the new script and displaying the PHP information.
 
+{{< zoom-picture src="../images/space-web.webp" caption="The Space's Web Page" >}}
+
 ---
 
 ### Step 5: Stop and Restart the Space
 
 1. To stop the space, click the menu icon (three dots) next to the space, then select `Stop` from the menu.
 
-{{< picture src="../images/stop-space.webp" caption="Stop Space" >}}
+{{< zoom-picture src="../images/space-actions.webp" caption="Space Actions Menu" >}}
 
 2. Since the template was created with a persistent volume, restarting the space from the menu will restore it to the state it was in when it was stopped.
 

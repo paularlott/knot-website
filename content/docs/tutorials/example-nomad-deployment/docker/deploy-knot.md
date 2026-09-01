@@ -6,7 +6,7 @@ tags: [deployment, installation]
 weight: 30
 ---
 
-Below is the Nomad job specification for deploying the **knot** server:
+Below is the Nomad job specification for deploying the Knot server:
 
 ```hcl {filename="knot.hcl"}
 job "knot-server" {
@@ -153,7 +153,7 @@ EOF
 
 ## Deploy the Knot Server
 
-To deploy the **knot** server, run the following command:
+To deploy the Knot server, run the following command:
 
 ```shell
 nomad run knot.hcl

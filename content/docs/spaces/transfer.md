@@ -6,7 +6,7 @@ tags: [spaces, storage]
 weight: 70
 ---
 
-Spaces can be transferred between users on the same **knot** server. This feature allows ownership of a space to be reassigned to another user.
+Spaces can be transferred between users on the same Knot server. This feature allows ownership of a space to be reassigned to another user.
 
 ---
 
@@ -26,6 +26,8 @@ Spaces can be transferred between users on the same **knot** server. This featur
 
 - Once the space is transferred, it will no longer be available to the original user.
 - Only **stopped spaces** can be transferred. If the space is running, the transfer option will not be available.
+
+{{< zoom-picture src="images/space-transfer.webp" caption="The Transfer Space Dialog" >}}
 
 {{< tip >}}
 To give another user access to a running space without stopping it, use the **`Share`** space option instead.

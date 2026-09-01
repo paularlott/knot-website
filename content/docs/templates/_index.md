@@ -3,10 +3,10 @@ title: Templates
 description: Templates are reusable blueprints that define compute, storage, networking, and tooling for knot spaces.
 type: Overview
 tags: [templates]
-weight: 50
+weight: 30
 ---
 
-Templates are the foundation of **knot**. They define reusable environment configurations that users can deploy as spaces with a single click. Think of templates as blueprints for development environments, complete with compute resources, storage, networking, and tooling.
+Templates are the foundation of Knot. They define reusable environment configurations that users can deploy as spaces with a single click. Think of templates as blueprints for development environments, complete with compute resources, storage, networking, and tooling.
 
 ---
 

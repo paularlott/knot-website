@@ -1,0 +1,247 @@
+---
+description: Command-line reference for the knot agent that runs inside a space.
+generated:
+    by: knot-website/okf.py
+resource: https://getknot.dev/reference/cli/agent/
+sources:
+    - resource: https://getknot.dev/reference/cli/agent/
+status: stable
+tags:
+    - api
+    - cli
+title: knot agent
+type: Overview
+---
+# knot agent
+
+The **knot agent** is a separate binary (`knot-agent`, built from `agent/`) that runs inside a space's container and connects it to the knot server. Inside the space it is invoked as `knot`.
+
+These commands act on the space the agent is running in. They are started automatically by the container entrypoint, but are documented here for scripting, debugging, and manual use.
+
+## `knot agent start`
+
+Start the agent daemon and connect to the knot server.
+
+```shell
+knot agent start --endpoint https://knot.example.com:3000 --space-id <space-id>
+```
+
+Usually started automatically by the container entrypoint. Key options:
+
+| Flag | Default | Description |
+| ---- | ------- | ----------- |
+| `--endpoint` | | Server address to connect to |
+| `--space-id` | | ID of the space this agent provides |
+| `--config`, `-c` | `knot.toml` | Configuration file (global flag) |
+| `--ssh-port` | `22` | Port sshd runs on; `0` disables SSH |
+| `--code-server-port` | `49374` | Port for code-server; `0` disables |
+| `--disable-terminal` | `false` | Disable terminal access |
+| `--disable-space-io` | `false` | Disable command execution and file copy |
+| `--tcp-port` | | TCP ports to expose (repeatable) |
+| `--http-port` | | HTTP ports to expose via the web UI (repeatable) |
+| `--https-port` | | HTTPS ports to expose via the web UI (repeatable) |
+| `--vnc-http-port` | `0` | Port for VNC over HTTP |
+| `--methods-file` | | `.toml` or `.py` file registering JSON-RPC methods at startup |
+| `--syslog-port` | `1514` | Syslog listen port; `0` disables |
+| `--api-port` | `12201` | API/log listen port; `0` disables |
+| `--update-authorized-keys` | `true` | Keep the user's SSH authorized_keys up to date |
+| `--vscode-tunnel` | `vscodetunnel` | Screen running the VS Code tunnel; blank disables |
+| `--use-tls` | `true` | Enable TLS |
+| `--cert-file` / `--key-file` | | PEM certificate and key |
+| `--tls-skip-verify` | `true` | Skip TLS verification when talking to the server |
+| `--registration-key` | | The space's registration key, required to register with the server (shown in the web UI next to the space ID) |
+| `--server-cert-fingerprint` | | SHA-256 fingerprint of the server's agent certificate public key, used to verify the TLS connection |
+| `--service-password` | | Password for the agent service |
+| `--peer-port` | `12202` | Port for direct peer-to-peer connections; `0` disables |
+| `--peer-external-port` | | External port peers should dial for direct connections |
+| `--dns-resolver` | | Run a resident DNS resolver on `127.0.0.1:53` forwarding queries to the server's DNS |
+
+### `knot agent wait-for-start`
+
+Block until the agent daemon is running and accepting commands, then exit. Used by the container entrypoint before running setup commands.
+
+```shell
+knot agent wait-for-start [--timeout SECONDS]
+```
+
+---
+
+## Space lifecycle (from inside the space)
+
+### `knot agent shutdown`
+
+Request shutdown of this space.
+
+```shell
+knot agent shutdown
+```
+
+### `knot agent restart`
+
+Request a restart of this space.
+
+```shell
+knot agent restart
+```
+
+### `knot agent set-note`
+
+Set the note shown for this space.
+
+```shell
+knot agent set-note "Deployment completed"
+```
+
+### `knot agent get-field`
+
+Read a custom field value from this space's template.
+
+```shell
+knot agent get-field <field-name>
+```
+
+### `knot agent set-field`
+
+Set a custom field value on this space.
+
+```shell
+knot agent set-field <field-name> <value>
+```
+
+---
+
+## `knot event`
+
+Emit a custom event from this space. The event type is prefixed with `custom.` automatically. The payload is a JSON string, or read from stdin if omitted.
+
+```shell
+knot event <type> [payload]
+```
+
+Examples:
+
+```shell
+knot event myapp.deployed '{"version": "1.2.3"}'
+
+echo '{"version": "1.2.3"}' | knot event myapp.deployed
+```
+
+---
+
+## `knot methods`
+
+Register and unregister JSON-RPC methods for this space.
+
+### `knot methods register`
+
+Register methods from a `.toml` registration file or a `.py` Scriptling script that calls `server.register()`.
+
+```shell
+knot methods register <file>
+```
+
+### `knot methods unregister`
+
+Remove all registered methods and stop the method server.
+
+```shell
+knot methods unregister
+```
+
+---
+
+## `knot jobs`
+
+Inspect this space's jobs (see [Space Jobs](../../knot-docs/spaces/jobs.md)). Jobs are managed from the web UI, `knot space jobs` on your machine, or the scriptling `knot.jobs` library.
+
+```shell
+knot jobs list
+knot jobs run <job>
+```
+
+`run` triggers a job immediately — it works for disabled and manual-only jobs too.
+
+---
+
+## `knot port`
+
+Forward ports from this space to ports in other spaces. Both spaces must be running, in the same zone, and owned by the same user.
+
+### Forward a port
+
+```shell
+knot port forward <local-port> <space> <remote-port>
+```
+
+Options:
+- `--persistent`: persist the forward across agent restarts
+- `--force`: create the forward even if the target space is not running
+
+```shell
+knot port forward 8080 backend-api 3000
+```
+
+### List active forwards
+
+```shell
+knot port list
+```
+
+### Stop a forward
+
+```shell
+knot port stop <local-port>
+```
+
+### Throttle a forward
+
+Apply network simulation to an existing forward; `--reset` clears all limits.
+
+```shell
+knot port throttle <local-port> [--latency ms] [--jitter ms] [--bandwidth kb/s] [--timeout ms] [--down] [--reset]
+```
+
+---
+
+## `knot tunnel`
+
+Expose a local port in this space publicly via the knot server.
+
+```shell
+knot tunnel http <port> <name> [--daemon]
+knot tunnel https <port> <name> [--daemon]
+knot tunnel list
+knot tunnel stop <name>
+```
+
+- **Protocols**: `http`, `https`
+- `--daemon`: hand the tunnel to the knot agent and exit; the tunnel then lives for the life of the agent
+
+```shell
+knot tunnel http 8080 myapp
+```
+
+Creates a tunnel at `<user>--myapp.<tunnel-domain>`.
+
+---
+
+## `knot run-script`
+
+Execute a named script or a local `.py` file in this space (eval only).
+
+```shell
+knot run-script <script-or-file> [args...]
+```
+
+Options:
+- `--no-fail`: exit successfully if the named script does not exist
+
+Serving (JSON-RPC / HTTP / MCP) and the interactive REPL belong to the real Scriptling CLI in the space — use a template built from a Scriptling base image (for example `paularlott/knot-scriptling:0.21-alpine`). Load the `knot.*` libraries and your `lib` scripts via the agent's package endpoints (`--package http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip --package http://127.0.0.1:$KNOT_API_PORT/packages/libs.zip`, or a scriptling config file), and `knot.apiclient` configures itself from the agent's `/connect` endpoint.
+
+---
+
+## See also
+
+- [knot CLI](knot.md) — the main `knot` command run from your machine
+- [Events](../events.md) — event sinks and the events system
+- [Scripting](../../knot-docs/scripting.md) — authoring scripts and MCP tools

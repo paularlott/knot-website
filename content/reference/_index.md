@@ -6,7 +6,7 @@ type: Overview
 tags: [api, architecture, scripting]
 ---
 
-Technical reference documentation for **knot**.
+Technical reference documentation for Knot.
 
 ## [CLI Reference](cli/)
 
@@ -23,6 +23,10 @@ The `knot.*` scripting libraries exposed to Scriptling — space, template, user
 ## [Events](events/)
 
 The events system: webhook sinks, script sinks, and JSON-RPC sinks for reacting to space lifecycle and custom events.
+
+## [API](api/)
+
+The HTTP API used by the CLI, the web interface, and third-party integrations — rendered from the same OpenAPI spec that powers the in-product `/api-docs` page.
 
 ## [Glossary](glossary/)
 

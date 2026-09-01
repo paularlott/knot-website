@@ -27,3 +27,21 @@ Before custom variables can be created and used, fields must be added to the tem
 ### Setting a Custom Variable
 
 When creating or editing a space, the fields added to the template will be displayed, allowing you to enter values for each custom variable. These values will be saved and applied to the space, enabling per-space customization based on the template's configuration.
+
+
+---
+
+## End-to-End Example
+
+**1. Add the field to the template** — in the template form's **Custom Fields** section, add a field with variable name `branch` and a label such as `Git branch to checkout`.
+
+**2. Use the variable in the container spec**:
+
+```yaml
+environment:
+  - "CHECKOUT_BRANCH=${{ .custom.branch }}"
+```
+
+**3. Set the value when creating the space** — the field appears in the create-space form with your label; enter for example `main`.
+
+The space's container now starts with `CHECKOUT_BRANCH=main`. Editing the space changes the value, and the space is restarted to apply it.

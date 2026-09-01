@@ -13,6 +13,8 @@ To create a new template:
 1. Navigate to the `Templates` page via the `Administration` menu and select `+ Template`.
 2. Fill out the form presented:
 
+{{< zoom-picture src="/docs/quick-start/local-containers/images/template-general.webp" caption="Template General Section" >}}
+
 ### Template Information
 
 - **`Name`**:
@@ -30,7 +32,7 @@ To create a new template:
 
 - **`Platform`**:
   Choose the platform to run the template: Docker, Podman, Nomad, or Manual.
-  - **Manual templates**: Require the **knot** agent to be started manually on the remote server.
+  - **Manual templates**: Require the Knot agent to be started manually on the remote server.
 
 - **`Nomad Job (HCL)`** or **`Container Specification (YAML)`**:
   Provide the job description in either Nomad HCL or YAML format, depending on the selected platform. This field is not shown for `Manual` templates.
@@ -38,6 +40,8 @@ To create a new template:
   Next to the label is a wand icon that opens the **template spec wizard** — a UI-driven builder that picks a base image from the [catalog](../configuration/spec-wizard/), sets memory/CPU, ports, environment variables, and bind mounts, then writes the spec for you. The wizard only enables for specs it can safely round-trip (single-task Nomad `docker` jobs, or any well-formed container spec); multi-task Nomad jobs disable the wizard with an explanatory tooltip.
 
 ---
+
+{{< zoom-picture src="/docs/quick-start/local-containers/images/template-spec.webp" caption="Container Spec, Volumes and Ports" >}}
 
 ### Volume Definition
 
@@ -94,6 +98,9 @@ To create a new template:
   - **`Variable Name`**: The name of the variable for the field.
   - **`Field Label / Description`**: A description of the field, displayed in the space creation and edit forms.
 
+- **`Jobs`**:
+  Define scheduled or manual jobs that are copied into spaces created from the template, where each space can edit or remove its own copy. Each job has a name, a shell command and an optional 5-field cron schedule; see [Space Jobs](../spaces/jobs/).
+
 - **`Features`**:
   Define the features available to the space (e.g., Visual Studio Code Tunnels). Users require the appropriate role permissions to access these features.
 
@@ -138,7 +145,7 @@ Templates can be exported to a portable YAML format for version control, backup,
 knot template export "Ubuntu Desktop" > ubuntu.yaml
 ```
 
-The YAML file contains the full template definition: metadata, job spec (HCL/YAML), volume definitions, schedule, custom fields, feature flags, and health check configuration. Template variables (`${{ .X }}`) are preserved verbatim. Scripts are referenced by name (not UUID) for portability.
+The YAML file contains the full template definition: metadata, job spec (HCL/YAML), volume definitions, schedule, custom fields, feature flags, health check configuration, and space jobs (including port definitions). Template variables (`${{ .X }}`) are preserved verbatim. Scripts are referenced by name (not UUID) for portability.
 
 ### Import
 
@@ -174,6 +181,11 @@ zones:
 max_uptime: 8
 max_uptime_unit: h
 startup_script: install-tools.sh
+jobs:
+  - name: backup
+    command: knot run-script backup
+    schedule: "0 2 * * *"
+    enabled: true
 job: |
   job "${{.space.name}}" {
     ...
@@ -189,4 +201,4 @@ volumes: |
 ## What's Next
 
 - [Nomad Templates](../nomad-templates/)
-- [Docker / Podman Templates](../docker-templates/)
+- [Local Container Templates](local-containers/)

@@ -27,7 +27,7 @@ paths:
 
 ### **volumes**
 
-A map of local volume names to create. When a space or volume is started, **knot** instructs the selected container runtime to create these volumes automatically.
+A map of local volume names to create. When a space or volume is started, Knot instructs the selected container runtime to create these volumes automatically.
 
 For template volume definitions you can define multiple entries. For standalone volumes the definition must contain exactly one volume.
 

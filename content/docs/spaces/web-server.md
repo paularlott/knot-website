@@ -21,11 +21,15 @@ When a space is configured to expose web ports (e.g., for a web server), the **`
 
 4. For example, clicking **port 80** will open the web interface exposed by the space.
 
+{{< zoom-picture src="/docs/quick-start/local-containers/images/ports-menu.webp" caption="The Ports Menu" >}}
+
 ---
 
 ## Example: Caddy File Browser
 
-If the space is running the **knot** PHP image, clicking **port 80** will open the Caddy file browser.
+{{< zoom-picture src="/docs/quick-start/local-containers/images/space-web.webp" caption="The Caddy File Browser on Port 80" >}}
+
+If the space is running the Knot PHP image, clicking **port 80** will open the Caddy file browser.
 
 Other container images may display different content depending on their configuration.
 

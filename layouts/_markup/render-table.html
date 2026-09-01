@@ -1,0 +1,33 @@
+{{/* Wrap tables in a scrollable div so wide tables scroll inside the content
+       column while the table itself keeps normal table layout (a block-level
+       table stops distributing its columns across the full width). */}}
+<div class="table-wrap">
+  <table>
+    <thead>
+    {{- range .THead }}
+      <tr>
+      {{- range . }}
+        <th
+        {{- with .Alignment }}
+          {{- printf " style=%q" (printf "text-align: %s" .) | safeHTMLAttr }}
+        {{- end -}}
+        >{{- .Text -}}</th>
+      {{- end }}
+      </tr>
+    {{- end }}
+    </thead>
+    <tbody>
+    {{- range .TBody }}
+      <tr>
+      {{- range . }}
+        <td
+        {{- with .Alignment }}
+          {{- printf " style=%q" (printf "text-align: %s" .) | safeHTMLAttr }}
+        {{- end -}}
+        >{{- .Text -}}</td>
+      {{- end }}
+      </tr>
+    {{- end }}
+    </tbody>
+  </table>
+</div>

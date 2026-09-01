@@ -3,10 +3,10 @@ title: Configuration
 description: Server configuration options for customizing your knot deployment.
 type: Overview
 tags: [configuration]
-weight: 20
+weight: 15
 ---
 
-This section covers server configuration options for customizing your **knot** deployment.
+This section covers server configuration options for customizing your Knot deployment.
 
 ---
 
@@ -99,6 +99,15 @@ Configure the base image registry and catalog that power the template spec wizar
 ### [Two Factor Authentication](2fa)
 Enable TOTP-based 2FA for enhanced security.
 
+### [DNS Server](dns-server)
+Serve the wildcard domain locally so space addresses resolve.
+
+### [Node Selection](node-selection)
+Control which server in a cluster runs each space.
+
+### [Licensing](licensing)
+Activate a Knot Pro license on the server. {{< pro-badge >}}
+
 ### [OAuth Authentication](oauth)
 Allow users to sign in with GitHub or Google accounts. {{< pro-badge >}}
 
@@ -107,6 +116,9 @@ Customize the web interface with logos and Gravatar support.
 
 ### [Logging](logging)
 Forward structured logs to VictoriaLogs, Grafana Loki, or Elasticsearch.
+
+### [Anomaly Detection](anomaly-detection)
+Detect failed-login bursts, credential spraying and event sink failures over the audit stream. {{< pro-badge >}}
 
 ---
 
@@ -122,6 +134,10 @@ agent_endpoint = "192.168.1.100:3010"
 url = "http://knot.local:3000"
 wildcard_domain = "*.knot.local:3000"
 encrypt = "<generate with: knot genkey>"
+
+# Required. All members of a zone must use the same encryption key: it
+# derives agent registration keys, agent tokens and the zone's agent TLS
+# certificate.
 
 [server.badgerdb]
 enabled = true
@@ -168,4 +184,4 @@ peers = [
 - Regular backups of database
 - Keep knot updated
 
-See [Security](../security/) for detailed guidance.
+See [Security](../best-practices/security/) for detailed guidance.

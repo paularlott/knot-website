@@ -6,7 +6,7 @@ tags: [spaces, networking]
 weight: 120
 ---
 
-Port forwarding allows you to securely access ports within a remote space from your local machine. This requires the **knot** [client](/docs/quick-start/client/) to be installed on your computer, as it handles forwarding a local port to a port within the remote container.
+Port forwarding allows you to securely access ports within a remote space from your local machine. This requires the Knot [client](/docs/quick-start/client/) to be installed on your computer, as it handles forwarding a local port to a port within the remote container.
 
 ---
 
@@ -17,14 +17,16 @@ Port forwarding allows you to securely access ports within a remote space from y
 3. The list of advertised ports will appear below the dividing line. These ports cannot be clicked but are available for port forwarding.
    - For example, **port 80** may be exposed for web access, and **port 22** (SSH) may also be advertised.
 
+{{< zoom-picture src="/docs/quick-start/local-containers/images/ports-menu.webp" caption="The Ports Menu" >}}
+
 ---
 
 ## Setting Up Port Forwarding
 
-### Step 1: Connect to the **knot** Server
+### Step 1: Connect to the Knot Server
 
 1. Open a terminal on your local machine.
-2. Run the following command, replacing the URL with the address of your **knot** server:
+2. Run the following command, replacing the URL with the address of your Knot server:
 
    ```shell
    knot connect https://knot.internal:3000
@@ -55,7 +57,7 @@ Port forwarding allows you to securely access ports within a remote space from y
 ## Important Notes
 
 - **Authentication**: Ports forwarded in this way require authentication and are not publicly accessible.
-- **Security**: The **knot** client ensures secure communication between your local machine and the remote space.
+- **Security**: The Knot client ensures secure communication between your local machine and the remote space.
 
 {{< tip >}}
 Port forwarding is a secure way to access services within a space without exposing them publicly.

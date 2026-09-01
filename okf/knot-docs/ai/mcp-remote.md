@@ -1,0 +1,247 @@
+---
+description: Connect external MCP servers to knot and expose their tools alongside knot's built-in tools.
+generated:
+    by: knot-website/okf.py
+resource: https://getknot.dev/docs/ai/mcp-remote/
+sources:
+    - resource: https://getknot.dev/docs/ai/mcp-remote/
+status: stable
+tags:
+    - ai
+    - mcp
+    - networking
+title: Remote MCP Servers
+type: Guide
+---
+# Remote MCP Servers
+
+Knot's MCP server can connect to external MCP servers to expose their tools alongside Knot's built-in tools. This provides a unified interface for accessing tools from multiple MCP servers.
+
+---
+
+## MCP Endpoints
+
+Knot provides two MCP endpoints, each optimized for different use cases:
+
+### `/mcp` - Native Tools Endpoint (External MCP Clients)
+
+This endpoint exposes all tools via standard MCP tool discovery (`tools/list`):
+
+- **Use case**: External MCP clients (Claude Desktop, VS Code extensions, etc.)
+- **Tool access**: Tools appear in `tools/list` and can be called directly
+- **Benefits**: Full compatibility with standard MCP clients
+- **Target**: Third-party MCP consumers integrating with Knot
+
+### `/mcp/discovery` - Discovery-Based Endpoint (Internal AI)
+
+This endpoint uses tool discovery to minimize context window usage. All tools are accessed via the `tool_search` → `execute_tool` pattern:
+
+- **Use case**: Internal AI assistants and chat interfaces
+- **Tool access**: Tools are discovered on-demand using `tool_search`, then called via `execute_tool`
+- **Benefits**: Tool definitions are not sent upfront, so large toolsets use far fewer tokens
+- **Target**: Knot's internal AI features and scriptling environments
+
+Both endpoints provide access to the same tools - only the discovery mechanism differs.
+
+---
+
+## Configuration
+
+Remote MCP servers are configured in the `knot.toml` configuration file under the `[server.mcp]` section:
+
+```toml
+[server.mcp]
+enabled = true
+
+# HTTP remote server
+[[server.mcp.remote_servers]]
+namespace = "ai"
+url = "https://ai.example.com/mcp"
+token = "your-bearer-token"
+notifications = true   # accept listChanged notifications from this server
+
+# Another HTTP server, tools discoverable on-demand
+[[server.mcp.remote_servers]]
+namespace = "data"
+url = "https://data.example.com/mcp"
+token = "your-bearer-token"
+tool_visibility = "on-demand"
+
+# stdio remote server: a local executable launched as a subprocess
+[[server.mcp.remote_servers]]
+namespace = "fs"
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "/data"]
+env = ["FS_ROOT=/data", "LOG_LEVEL=debug"]  # extra KEY=VALUE vars (merged on top of the inherited environment)
+```
+
+Remote servers can be either **HTTP** (`url` + `token`) or **stdio**
+(`command` + `args`): a local executable that Knot launches as a subprocess and
+talks to over stdin/stdout. stdio servers need no token.
+
+### Configuration Fields
+
+| Field | Description |
+|-------|-------------|
+| `namespace` | The namespace prefix for tools from this server (e.g., tools will appear as `ai.generate-text`) |
+| `url` | The full URL of a remote **HTTP** MCP server endpoint (omit for stdio) |
+| `token` | Bearer token for **HTTP** authentication (omit for stdio) |
+| `command` | For **stdio** servers: the executable to launch as a subprocess (omit for HTTP) |
+| `args` | For **stdio** servers: command-line arguments (array of strings) |
+| `env` | Optional, **stdio** only. Extra `KEY=value` environment variables for the subprocess (array of strings). These are merged on top of the inherited environment, so `PATH`, `HOME`, etc. are preserved. |
+| `tool_visibility` | Optional (default: `native`). Controls how tools are exposed: |
+| | `native` - Full tool definitions sent immediately (default) |
+| | `on-demand` - Tools discovered on-demand via `tool_search`, reduces context usage |
+| | `discoverable` - Alias for `on-demand` |
+| `hidden` | Optional (default: `false`). When `true`, the server's tools are callable but not shown in tool listings — see [Hidden Tools](#hidden-tools). |
+| `notifications` | Optional (default: `false`). When `true`, Knot accepts `listChanged` notifications from this server and propagates them to its own clients, so tool changes on the remote are reflected automatically. stdio servers propagate automatically regardless. |
+
+---
+
+## How It Works
+
+When the Knot server starts, it:
+
+1. Reads the remote server configuration
+2. Creates a Bearer token authenticator for each remote server
+3. Registers each remote server with the local MCP server
+4. Exposes all tools (local + remote) through a unified interface
+
+### Tool Namespacing
+
+Tools from remote servers are prefixed with their namespace to avoid conflicts:
+
+- **Local tools**: `list_spaces`, `list_templates`, etc.
+- **Remote tools**: `ai.generate-text`, `data.query`, etc.
+
+### Hidden Tools
+
+Remote servers can be configured with `hidden = true` to make their tools callable but not visible in tool listings. This is useful for:
+
+- **Internal/utility tools**: Tools that should only be called from scripts, not directly by AI
+- **Reducing context**: Keeping tool lists concise while still allowing script access
+- **Security**: Hiding sensitive internal APIs from external visibility
+
+Hidden tools can still be called using `knot.mcp.call_tool()` in scripts, but won't appear in `knot.mcp.list_tools()` responses.
+
+### Authentication
+
+Remote servers use Bearer token authentication. The token is configured in the TOML file and sent with each request to the remote server.
+
+---
+
+## Live Tool Updates (Notifications)
+
+Knot's MCP server advertises `listChanged` support and pushes notifications to
+connected clients when its tool set changes, so MCP clients (Claude Desktop, VS
+Code, etc.) refresh their cached tool list automatically. This happens in two
+ways:
+
+1. **Knot's own tools change** — when a user's scripts are created, updated, or
+   deleted, Knot emits `notifications/tools/listChanged`. (This is a broadcast:
+   each connected client re-fetches and receives its own, permission-scoped tool
+   list.)
+2. **A remote server's tools change** — set `notifications = true` on a remote
+   server and Knot accepts its `listChanged` events, refreshes its merged tool
+   cache, and re-emits the notification to its own clients. stdio remote servers
+   propagate automatically (no flag needed); HTTP remote servers need the flag
+   and must themselves support SSE push.
+
+On the client side, an SSE connection to `/mcp` (`Accept: text/event-stream`)
+receives these notifications; clients that don't open the stream simply poll
+as before.
+
+---
+
+## Usage Examples
+
+### In Scripts
+
+```python
+import knot.mcp
+
+# List all available tools (including remote ones)
+tools = knot.mcp.list_tools()
+for tool in tools:
+    print(f"Tool: {tool['name']}")
+    # Tools will include both local (list_spaces) and remote (ai.generate-text)
+
+# Call a remote tool directly
+response = knot.mcp.call_tool("ai.generate-text", {
+    "prompt": "Write a Python function",
+    "max_tokens": 100
+})
+print(response)
+
+# Call a hidden tool (not listed but callable)
+response = knot.mcp.call_tool("internal.process-data", {
+    "data_id": "12345"
+})
+print(response)
+
+# Or let AI discover and use tools automatically
+import knot.ai as ai
+client = ai.Client()
+model = ai.get_default_model()
+messages = [
+    {"role": "user", "content": "Generate a Python function and save it to a file in my dev space"}
+]
+response = client.completion(model, messages)
+# AI will automatically use both remote (ai.generate-text) and local (write_file) tools
+```
+
+### In MCP Clients
+
+When connecting to Knot's MCP server from external clients (like Claude Desktop or VS Code extensions), use the `/mcp` endpoint:
+
+```json
+{
+  "mcpServers": {
+    "knot": {
+      "url": "https://knot.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_TOKEN"
+      }
+    }
+  }
+}
+```
+
+All tools (local and remote) are available through standard MCP methods:
+
+- `tools/list` - Lists all available tools with full schemas
+- `tools/call` - Executes a tool directly
+
+For internal use (AI chat, scriptling), Knot automatically uses the `/mcp/discovery` endpoint with tool discovery.
+
+---
+
+## Security Considerations
+
+1. **Token Security**: Store bearer tokens securely in the configuration file with appropriate file permissions
+2. **Network Security**: Ensure remote servers use HTTPS to protect tokens in transit
+3. **Access Control**: The Knot server doesn't enforce permissions on remote tools - the remote server is responsible for authorization
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Connection Failed**: Check that the remote server URL is accessible and correct
+2. **Authentication Failed**: Verify the bearer token is valid and not expired
+3. **Tools Not Appearing**: Check the remote server is running and properly configured
+
+### Debug Logs
+
+Enable debug logging to see information about remote server connections:
+
+```bash
+knot server --log-level debug
+```
+
+You'll see logs like:
+
+- `Registering remote MCP server: ai-tools (namespace: ai)`
+- `Successfully connected to remote MCP server: ai-tools`
+- `Failed to register remote MCP server: data-services - authentication failed`

@@ -135,4 +135,4 @@ event_id = knot.event.id()
 
 ## Available Libraries
 
-Sink scripts run on the knot server with the full `knot.*` library set (except `knot.event.emit`, which is not registered). See the [Scripting](/docs/scripting/) documentation for available libraries.
+Sink scripts run on the knot server in the restricted Server environment — the same library set as MCP tool scripts. That means all `knot.*` API libraries plus the base scriptling libraries and on-demand user `lib` imports, but no system access (`os`, `subprocess`, `pathlib`, …), no `knot.methods`, no `scriptling.runtime`, and `knot.event` exposes the sink accessors only — `emit()` is not registered, which prevents sink → event → sink recursion. See the [Scripting](/docs/scripting/) documentation for the full availability tables.

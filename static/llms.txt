@@ -1,0 +1,22 @@
+# knot
+
+> knot is a lightweight, single-binary tool for managing cloud-based development environments: consistent, on-demand environments for teams, from a single local setup to a globally distributed cluster.
+
+Docs: https://getknot.dev/docs/
+
+## OKF bundles
+
+Fetchable markdown (OKF 0.2) — each bundle's index.md lists its concepts:
+
+- [knot-docs](https://getknot.dev/okf/knot-docs/index.md): Guides — quick start, configuration, spaces, templates, scripting, AI integration, and tutorials
+- [knot-reference](https://getknot.dev/okf/knot-reference/index.md): Technical reference — architecture, CLI, events, scripting libraries, API tokens, and glossary
+- [OKF catalog](https://getknot.dev/okf/index.md): Markdown index of all bundles
+
+## Essential
+
+- [Quick Start](https://getknot.dev/docs/quick-start/): Choose your deployment path and get knot running in minutes
+- [Configuration](https://getknot.dev/docs/configuration/): Every option — cluster and leaf mode, storage, DNS, OAuth, logging, UI
+- [Templates](https://getknot.dev/docs/templates/): Build environment templates with packages, services, and ingress
+- [Scripting](https://getknot.dev/docs/scripting/): Automate knot with Scriptling, exposed as MCP tools and libraries
+- [AI Integration](https://getknot.dev/docs/ai/): AI assistant, MCP tools and remote servers, skills, and slash commands
+- [CLI Reference](https://getknot.dev/reference/cli/): Every knot command

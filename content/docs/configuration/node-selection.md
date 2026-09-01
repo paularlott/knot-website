@@ -49,20 +49,18 @@ Each server in the zone exposes which container runtimes it supports:
 - **Podman**: Detected via `podman info`
 - **Apple Containers**: Detected via `container system status`
 
-The runtime preference order is defined in your `knot.toml` configuration:
+Knot automatically detects available runtimes and picks the first available in this order:
 
-```toml {filename="knot.toml"}
-[server.docker]
-  host = "unix:///var/run/docker.sock"
-
-[server.podman]
-  host = "unix:///var/run/podman.sock"
-```
-
-Knot automatically detects available runtimes. The preference order is:
 1. Docker
 2. Podman
 3. Apple Containers (macOS only)
+
+The order can be pinned with `server.local_containers.runtime_pref` — see [Local Containers](../local-containers/):
+
+```toml {filename="knot.toml"}
+[server.local_containers]
+  runtime_pref = "docker"   # docker | podman | apple | container (auto)
+```
 
 {{< tip >}}
 If a template specifies a container runtime, only that runtime is used regardless of the global preference order.

@@ -7,7 +7,7 @@ tags: [variables]
 weight: 20
 ---
 
-User-defined variables can be created through the **knot** web interface and are available for use in both job and volume templates. These variables provide flexibility and customization for your templates.
+User-defined variables can be created through the Knot web interface and are available for use in both job and volume templates. These variables provide flexibility and customization for your templates.
 
 To use a user-defined variable, prefix its name with `.var.`. For example, if the variable is named `myvariable`, it should be used in a template as `${{ .var.myvariable }}`.
 
@@ -21,7 +21,7 @@ When creating or editing a variable, the `Protected` option can be selected. Pro
 Protected variables are secure in storage but may be visible in job definitions when used in templates.
 {{< /tip >}}
 
-For secrets that should remain outside the **knot** database entirely, use [Secret Providers](../secret-providers/). {{< pro-badge >}}
+For secrets that should remain outside the Knot database entirely, use [Secret Providers](../secret-providers/). {{< pro-badge >}}
 
 ---
 
@@ -29,7 +29,7 @@ For secrets that should remain outside the **knot** database entirely, use [Secr
 
 To create a new variable:
 
-1. Log in to the **knot** web interface.
+1. Log in to the Knot web interface.
 2. Click `Variables` and then select `New Variable`.
 
 ### Variable Configuration Options
@@ -50,7 +50,7 @@ To create a new variable:
   If checked, the variable is only shared between servers within a cluster and is never shared with a leaf node.
 
 - **`Local Variable`**:
-  If checked, the variable is only available on the **knot** server where it was created.
+  If checked, the variable is only available on the Knot server where it was created.
 
 3. Once the form is completed, click `Create Variable`.
 

@@ -3,7 +3,7 @@ title: Spaces
 description: Spaces are running instances of templates, each an isolated environment with its own compute, storage, and network configuration.
 type: Overview
 tags: [spaces]
-weight: 70
+weight: 20
 ---
 
 Spaces are running instances of templates. Each space is an isolated environment with its own compute resources, storage, and network configuration.
@@ -20,6 +20,8 @@ Each space includes:
 - Network connectivity
 - Access to configured features (SSH, terminal, Code Server)
 - Isolated resources
+
+{{< zoom-picture src="/docs/quick-start/local-containers/images/spaces-list.webp" caption="A Running Space in the Spaces List" >}}
 
 ---
 

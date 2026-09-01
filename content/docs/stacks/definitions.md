@@ -59,8 +59,8 @@ depends_on = ["db"]
 
 [[spaces.port_forwards]]
 to_space = "db"
-local_port = 6379
-remote_port = 6379
+local_port = 3306
+remote_port = 3306
 
 [[spaces]]
 name = "cache"
