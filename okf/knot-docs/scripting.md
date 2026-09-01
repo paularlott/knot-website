@@ -153,6 +153,14 @@ Scripts running outside knot entirely, using the published `knot.zip` package. R
 scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 ```
 
+The recommended alternative is the **knot plugin**: load the knot binary as a scriptling plugin and the `knot.*` libraries, server-stored scripts and API access all come through it with no packages or tokens to configure:
+
+```bash
+scriptling --plugin /usr/local/bin/knot knot://myscript
+```
+
+See [Using knot.\* Libraries](scripting/using-libraries.md#the-knot-plugin-recommended) for details.
+
 ---
 
 ## Library Availability
@@ -208,7 +216,7 @@ scriptling --package=https://knot.example.com/packages/knot.zip myscript.py
 
 ### knot.\* Libraries
 
-In MCP and Remote contexts the Go runtime provides the transport automatically — no configuration needed. In External contexts `knot.apiclient` must be configured. Most `knot.*` libraries are available everywhere, but a few are context-restricted — the [library reference](../../../reference/libraries/) documents the exact Execution Environment for each.
+In MCP and Remote contexts the Go runtime provides the transport automatically — no configuration needed. In External contexts `knot.apiclient` must be configured, except when using the knot plugin where it is automatic. Most `knot.*` libraries are available everywhere, but a few are context-restricted — the [library reference](../../../reference/libraries/) documents the exact Execution Environment for each.
 
 | Library                 | MCP           | Remote        | External          |
 | ----------------------- | ------------- | ------------- | ----------------- |
