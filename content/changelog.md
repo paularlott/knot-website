@@ -13,68 +13,50 @@ navSection: docs
 
 {{< version "v0.33.0" >}}
 
-{{< changelog-item "added" >}}
-- **`knot.space.wait_for_start(name, timeout=30, interval=2)`**: waits for a space to reach the running state, returning True immediately if already running (the space is never stopped or restarted), or polling every `interval` seconds until running or `timeout` expires. Returns False on timeout rather than raising.
-{{< /changelog-item >}}
-
-{{< changelog-item "added" >}}
-- **`knot scriptling`: the knot plugin for the scriptling CLI.** The scriptling CLI loads the knot binary as a plugin and everything comes through it — knot libraries, user scripts and API access. `scriptling --plugin knot knot://myscript` runs a script from the knot server; `scriptling --plugin knot -c 'import mylib'` imports a user library; `import knot.space` and every other `knot.*` module load from the plugin's embedded copies with no `--package` flag. API calls route through the plugin process (`knot.apiclient` transparently switches to the plugin transport), so the token stays out of scripts. Inside a space the connection comes from the agent; on the desktop it comes from `knot connect`'s saved config, and `--plugin-arg --alias <name>` selects a non-default server alias. The knot binary auto-detects when scriptling spawns it (`SCRIPTLING_PLUGIN_PEER`), so bare `--plugin /usr/local/bin/knot` works without a subcommand. An explicit `knot scriptling` subcommand exists for manual testing.
-{{< /changelog-item >}}
-
 {{< changelog-item "breaking" >}}
-- `knot run-script` is now evaluation-only. Serving and the REPL have moved to the real Scriptling CLI — use a Scriptling base image, and start method servers with `Server("/usr/local/bin/scriptling", args=["--json-rpc", ...])`.
+- **The agent listener is now TLS-only**: every server in a zone presents the same certificate, so agents verify one fingerprint for any of them. The `--agent-use-tls` flag has been removed, and manual agents must now pass `--registration-key` (shown in the web UI next to the space ID). See [Manual Space](../docs/spaces/manual-space/).
+
+- **An encryption key is required at startup**: the server now refuses to start without one (`server.encrypt`). The key derives agent registration keys, agent tokens, and the zone's agent TLS certificate, so every member of a zone must share the same one.
+
+- **`knot run-script` is now evaluation-only**: it runs a script to completion and nothing more. Interactive scriptling sessions and long-running method servers now run on the real Scriptling CLI in the space — use a Scriptling base image and start servers with `Server("/usr/local/bin/scriptling", args=["--json-rpc", ...])`.
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
-- **Scriptling packages in spaces**: scriptlings running inside a space can now use the `knot.*` libraries and your user and global `lib` scripts. The agent serves them as cached zip packages and refreshes them automatically when they change, and `knot.apiclient` configures itself automatically in spaces.
+- **Desktop mode**: run `knot` with no arguments and the server starts in the background with a system tray icon — installable as a macOS app via `brew install --cask paularlott/tap/knot`; Windows builds detach from the console. The first run (with no config) opens a browser wizard that writes `~/.knot/knot.toml`, and it can also join an existing cluster. See [Client](../docs/quick-start/client/).
 
-- **Scheduled space jobs**: spaces can now run their own jobs — shell commands that fire on a cron schedule or on demand, executed inside the space by its agent while it runs:
-  - Definitions live on the space itself, so they survive restarts without permanent storage and can be edited while the space is stopped — from the web UI (**Edit Jobs** in the space's menu), the CLI (`knot space jobs`), or a scriptling via the `knot.jobs` library.
-  - Templates can define jobs that are copied into every space created from them, and template export/import carries them along.
-  - Editing jobs needs the new **Edit Space Jobs** permission; viewing and triggering them manually stays open to the owner and to anyone the space is shared with (who can also edit when they hold it).
-  - Job output goes to the space's logs. See [Space Jobs](../docs/spaces/jobs/).
+- **Scriptlings get the knot library everywhere**: inside a space, scriptlings can now import `knot.*` and your user and global `lib` scripts — served as cached packages and refreshed automatically. Outside a space, the Scriptling CLI loads the knot binary as a plugin (`scriptling --plugin knot`), so the same scripts run from your desktop with API access routed through the plugin and the token kept out of your code.
 
-- **Space log forwarding** {{< pro-badge >}}: space logs can now flow into the server's log output — external services included — as a single copy per zone. Off by default. See [Logging Configuration](../docs/configuration/logging/).
+- **Space jobs**: a space can run its own shell commands on a cron schedule or on demand, executed by its agent while it runs. Definitions live on the space, so they survive restarts and can be edited while it's stopped — from the web UI, the CLI (`knot space jobs`), or a scriptling via `knot.jobs`. Templates can ship jobs that are copied into every space created from them; editing needs the new **Edit Space Jobs** permission. Output goes to the space's logs. See [Space Jobs](../docs/spaces/jobs/).
 
-- **Space log sinks** {{< pro-badge >}}: run a log service (e.g. VictoriaLogs) in one space to query the logs of the owner's other spaces in the zone. Off by default, owner-scoped, requires the new **Use Log Sinks** permission. See [Log Sinks](../docs/spaces/log-sinks/).
+- **Space log forwarding** {{< pro-badge >}}: space logs can now flow into the server's external logging — external services included — as a single copy per zone. Off by default. See [Logging Configuration](../docs/configuration/logging/).
 
-- **On-disk log spooling** {{< pro-badge >}}: undeliverable log batches spool to disk and replay when the log service recovers, so outages lose no records (bounded at 256 MB).
+- **Space log sinks** {{< pro-badge >}}: run a log service (e.g. VictoriaLogs) in one space and query the logs of the owner's other spaces in the zone. Off by default, owner-scoped, requires the new **Use Log Sinks** permission. See [Log Sinks](../docs/spaces/log-sinks/).
 
-- **GELF log output**: `[log.output]` now supports GELF alongside ndjson, Loki, and Elasticsearch, so logs can go straight to Graylog.
+- **On-disk log spooling** {{< pro-badge >}}: undeliverable log batches spool to disk (bounded at 256 MB) and replay when the log service recovers, so an outage loses no records.
 
-- **Native VictoriaLogs endpoint on the agent**: existing VictoriaLogs shippers work unchanged by pointing them at the agent.
+- **More ways to ship logs**: `[log.output]` now supports GELF alongside ndjson, Loki, and Elasticsearch (straight to Graylog), the agent speaks VictoriaLogs natively so existing shippers work unchanged when pointed at it, and delivery retries with backoff — failed records mirror to stderr until the service recovers.
 
-- **Log delivery retries + stderr failover**: batches are retried with backoff on transient failures; failed records are mirrored to stderr until delivery recovers.
+- **Cluster-wide failed-login blocking**: login attempts spread across servers behind a load balancer now trip one shared block, not one per server. Thresholds are configurable.
 
-- **Cluster-wide failed-login blocking**: attempts spread across servers behind a load balancer now trip one shared budget. Thresholds are configurable.
+- **Audit anomaly detection** {{< pro-badge >}}: failed-login bursts, credential spraying, and bulk admin changes are detected automatically and emitted as `Anomaly Detected` audit events to your external logging.
 
-- **Audit anomaly detection** {{< pro-badge >}}: detects failed-login bursts, credential spraying and bulk admin changes, emitting `Anomaly Detected` audit events to your external logging.
+- **Data-access auditing**: see who read, wrote, or copied which file in a space, and who opened a terminal session — paths and sizes only, never file contents. Built for environments holding copies of production data; SSH logins are recorded per key attempt, success or failure. Off by default. See [Logging Configuration](../docs/configuration/logging/).
 
-- **Data-access auditing**: environments holding copies of production data can now see who read, wrote or copied which file in a space, and who opened a terminal session — paths and sizes only, never file contents. SSH logins are recorded per key attempt, success or failure. Off by default. See [Logging Configuration](../docs/configuration/logging/).
+- **A broader audit trail**: API token creation, update, and deletion; config changes made through the setup wizard; and the provider behind every login (password or OAuth) now land in the audit trail. `User Create` / `User Update` events also record the target's roles and a `granted_admin` flag.
 
-- **More actions always audited**: API tokens being created, updated or deleted, config changes made through the setup wizard, and the provider behind every login (password or OAuth) now land in the audit trail.
+- **Config wizard**: new logging and cluster steps, a login-rate-limiting toggle, and a visual refresh.
 
-- **Richer user audit entries**: `User Create` / `User Update` events now record the target's roles and a `granted_admin` flag.
+- **`knot.space.wait_for_start`**: pause a script until a space is running — returns True immediately if it already is, polls until timeout, and returns False instead of raising. For scripts that provision a space and then work against it.
 
-- **Config wizard**: new logging and cluster steps plus a login-rate-limiting toggle, with a visual refresh.
-
-- **Desktop mode**: running `knot` with no arguments starts the server in the background with a system tray icon. Installable as a macOS app via `brew install --cask paularlott/tap/knot`; Windows builds detach from the console. See [Client](../docs/quick-start/client/).
-
-- **First-run setup wizard**: starting desktop mode with no config opens a guided wizard in the browser that writes `~/.knot/knot.toml` — it can also join an existing cluster. It can be re-run at `/setup`, and it preserves hand edits and any config sections it doesn't manage.
-
-- **`${{ host_ip }}` in config addresses**: config values like `server.agent_endpoint` can use `${{ host_ip }}`, resolved to the host's IP on every start.
+- **`${{ host_ip }}` in config addresses**: values like `server.agent_endpoint` can use `${{ host_ip }}`, resolved to the host's current IP on every start — no more hardcoding IPs on machines whose address changes.
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
-- **Agent listener is now TLS-only** (breaking): every server in a zone presents the same certificate, so agents verify one fingerprint for any of them. The `--agent-use-tls` flag has been removed, and manual agents must now pass `--registration-key` (shown in the web UI next to the space ID). See [Manual Space](../docs/spaces/manual-space/).
-
-- **Encryption key required at startup** (breaking): the server now refuses to start without an encryption key (`server.encrypt`). The key derives agent registration keys, agent tokens, and the zone's agent TLS certificate, so every member of a zone must share the same one.
-
 - **Sifting knot records on a shared logging service**: every record knot delivers now carries `source: knot`, and knot's own services are prefixed — `knot_audit`, `knot_tunnel`, `knot_syslog` for ingested records with no service of their own — while application-chosen service names are left alone. One selector (`source:knot`) finds everything a knot shipped.
 
 - **The audit trail ignores the log level**: raising `log.level` to cut diagnostic noise no longer stops audit events (or forwarded space logs / tunnel requests) from reaching the external logging service — they travel their own always-on pipeline.
 
-- **Audit settings moved to `[server.audit]`**: routing, retention and the new data-access options now live in one section; configs using the older flat `server.audit_*` keys keep working.
+- **Audit settings moved to `[server.audit]`**: routing, retention, and the new data-access options now live in one section; configs using the older flat `server.audit_*` keys keep working.
 
 - **Faster space start and stop**: spaces now start and stop several times faster — deployments, restarts, and stack operations included. A failed image pull falls back to the local image instead of failing the start.
 {{< /changelog-item >}}
