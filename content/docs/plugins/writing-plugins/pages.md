@@ -46,7 +46,7 @@ Each handler returns JSON for its type:
 - `table` - `{columns: [{key, label, badge?}], rows: [...]}` plus optional `actions` (below).
 - `form` - see below.
 - `markdown` - `{markdown: "..."}`; GFM rendered server-side into knot's prose (trusted like html: plugins are admin-installed).
-- `html` - `{html: "..."}`; trusted inline markup - style with the `kp-*` helper classes or inline styles, never Tailwind classes (knot's Tailwind compile only covers knot's own markup).
+- `html` - `{html: "..."}`; trusted inline markup - see [Raw HTML](../html/) for the `kp-*` helpers, theming, and the rule against Tailwind classes.
 
 ## Forms: one handler, two faces
 
@@ -111,9 +111,9 @@ return {"status": "ok", "message": "Report generated.",
         "dialog": {"title": "Report", "markdown": "**Done.**\n\n- one thing\n- another"}}
 ```
 
-## The `html` column and `kp-*` helpers
+## The `html` column
 
-Trusted html columns can carry inline CSS and Alpine (`window.Alpine`). The `kp-*` classes ship in knot's CSS unconditionally and adapt to the light/dark themes: `kp-text`/`kp-muted`, `kp-accent`/`kp-info`/`kp-success`/`kp-warning`/`kp-danger`, `kp-title`/`kp-label`, `kp-mono`, `kp-card`, `kp-flex`, `kp-grid`.
+Trusted markup, rendered raw - the full helper-class reference (`kp-*`), theme rules, available globals (Alpine, Chart.js) and refresh semantics are on the [Raw HTML](../html/) page.
 
 ## Accessibility
 

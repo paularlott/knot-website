@@ -8,7 +8,7 @@ weight: 50
 
 Every plugin has the same shape regardless of what its logic is written in: **a script entry file that declares** - plus, optionally, assets and binary components. Whether you write the plugin in [Scriptling](./scriptling/), in [Go](./go/), or mix both, the declarations are identical and live in the same place: the metadata block of the entry file.
 
-This page covers what's common - packaging, the metadata reference, and validation. The [Scriptling](./scriptling/) and [Go](./go/) pages cover the language-specific parts, and [Plugin Pages](./pages/) covers what happens when a page handler runs.
+This page covers what's common - packaging, the metadata reference, and validation. The [Scriptling](./scriptling/) and [Go](./go/) pages cover the language-specific parts, [Plugin Pages](./pages/) covers what happens when a page handler runs, and [Raw HTML](./html/) documents the trusted html column's helper classes and globals.
 
 ## Packaging
 
