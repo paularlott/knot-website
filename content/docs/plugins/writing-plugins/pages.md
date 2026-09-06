@@ -29,8 +29,8 @@ Any other return value renders as a read-only key-value view.
 
 The document is always `{"rows": [...]}`. A row has an optional `title`, an optional `style: "card"` (the whole row is one card and the columns are unstyled panels; the default styles each column as its own card), optional `permission`/`group` gates, and a `columns` list. A column has:
 
-- `id` - the data-binding key (auto-generated as `r<row>c<col>` when omitted); identifies the column for refresh targeting. Data is fetched with `?_col=<handler>` - the handler name itself, proxied straight through after the page gate.
-- `type` - what renders the column: `stat`, `chart`, `table`, `form`, `markdown`, `html`, `text`, `bar`. Markdown covers code (fenced blocks) and lists (rendered with knot's checkmark styling); `text` is the literal type - escaped, whitespace preserved, no markdown semantics, right for timestamps and captions.
+- `id` - the data-binding key (auto-generated as `r<row>c<col>` when omitted); identifies the column for refresh targeting, so keep ids unique within a page. Data is fetched with `?_col=<handler>` - the handler name itself, proxied straight through after the page gate.
+- `type` - what renders the column: `stat`, `chart`, `table`, `form`, `markdown`, `html`, `text`, `bar`. Markdown covers code (fenced blocks) and lists (plain bullets); `text` is the literal type - escaped, whitespace preserved, no markdown semantics, right for timestamps and captions.
 - `title` - the column heading.
 - `handler` - the function that supplies this column's data. **Self-contained**: each call runs in a fresh environment as the requesting user, so compute what you need per call.
 - `refresh` - seconds (5-3600); the client re-fetches just this column.
@@ -71,15 +71,45 @@ On `ok` the client shows the message as a notification and refreshes the columns
 
 ## Table actions
 
-A table column may declare per-row buttons:
+A table column may declare per-row actions. A row may also carry its own `actions` list, which **replaces** the column's set for that row - the handler decides, per row, what is offered (a stopped row offers Start, a running row Stop):
 
 ```python
 {"id": "spaces", "type": "table", "handler": "spaces_table", "width": 3, "actions": [
-    {"label": "Delete", "style": "danger", "action": "delete", "confirm": "Delete this space?"},
+    {"label": "Restart", "action": "restart", "icon": "restart", "confirm": "Restart this space?"},
+    {"label": "Edit", "action": "edit", "icon": "edit", "handler": "space_edit"},
 ]}
 ```
 
-`action` buttons POST `{action, key}` (the row's `id` or `name`) to the column's endpoint and handle the envelope like a form; `style: "danger"` renders red; `confirm` arms an inline two-step confirmation.
+An action has:
+
+- `action` - the name POSTed with `key` (the row's `id` or `name`) to the column's own handler.
+- `label` - the button text; for icon buttons also the tooltip and screen-reader label.
+- `icon` - one of knot's action icons (`play`, `stop`, `restart`, `edit`, `trash`, `info`, `document`, `clock`, `share`, `warning`, `check`); with an icon the button renders icon-only, like the spaces list rows. An unknown icon name renders a text button.
+- `style` - `success`, `warning`, `danger` or default blue colour semantics.
+- `menu: true` - collect into the row's kebab dropdown instead of an inline button. A row can have any mix: any number of inline buttons (icon or text) and any number of menu items; the kebab only appears when there is something to put in it.
+- `confirm` - ask first in a knot-style danger dialog with Cancel/Confirm; the confirm button carries the action label.
+- `handler` - clicking GETs this function with `key` and opens a popup (below).
+
+Actions without `handler` POST `{action, key}` to the column's endpoint and handle the envelope like a form POST.
+
+### Popup actions
+
+An action naming a `handler` opens a popup: the client GETs `?_col=<handler>&key=<row key>`, and the response shape decides what the popup is.
+
+A **form popup** returns `{title?, fields, submit?, cancel?}` - the same field contract as form columns. Submit POSTs to the same handler (with `key`) and handles the envelope: `error` keeps the popup open with `field_errors` painted on the inputs, `ok` closes it, notifies and refreshes. Dynamic autocompleters work inside popups; their `_data` fetches go to the popup's own handler.
+
+An **information popup** returns `{title?, markdown}` (or `html`) - read-only, rendered server-side like a markdown column, with a Close button.
+
+Popups are knot dialogs: draggable, resizable, focus-trapped, closable with Escape and restored focus on close.
+
+### Success dialogs
+
+Any `ok` envelope, from a form or an action, may also carry a `dialog` - `{title, markdown}` - which opens as an information popup after the toast. The markdown is rendered server-side, like every markdown payload:
+
+```python
+return {"status": "ok", "message": "Report generated.",
+        "dialog": {"title": "Report", "markdown": "**Done.**\n\n- one thing\n- another"}}
+```
 
 ## The `html` column and `kp-*` helpers
 
@@ -95,4 +125,4 @@ When a user opens the page, knot checks the page gate (declared permission and/o
 
 ## Examples
 
-The `dashboard` example is a real landing page on this contract - live `knot.*` aggregates and history, and it claims the post-login default with `default = true`; `demo-scriptling`'s showcase exercises every column type plus a one-handler form; `demo-go` measures real peer latencies into charts.
+The `dashboard` example is a real landing page on this contract - live `knot.*` aggregates and history, a spaces table with state-dependent row actions and an edit popup, and it claims the post-login default with `default = true`; `demo-scriptling`'s showcase exercises every column type, the full action set (icon buttons, kebab menu, both confirm styles, popup forms, markdown popups, success dialogs) and a one-handler form; `demo-go` measures real peer latencies into charts.

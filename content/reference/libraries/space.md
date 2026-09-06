@@ -188,6 +188,50 @@ Waits for the agent as well as the container: the space reports running before t
 
 ---
 
+### start(name)
+
+Start a stopped space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `bool` - True on success; raises on API error
+
+---
+
+### stop(name)
+
+Stop a running space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `bool` - True on success; raises on API error
+
+---
+
+### restart(name)
+
+Restart a running space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `bool` - True on success; raises on API error
+
+---
+
+### delete(name)
+
+Delete a space and its data.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `bool` - True on success; raises on API error
+
+---
+
 ### run(space_name, command, args=[], timeout=30, workdir='')
 
 Execute a command in a running space.

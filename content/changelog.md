@@ -14,7 +14,7 @@ navSection: docs
 {{< version "v0.34.0" >}}
 
 {{< changelog-item "added" >}}
-- **Plugins**: extend knot entirely from a script's metadata — menus, permission- and group-gated pages, themed logos, SVG icons, and Go/scriptling binary peers — plus a layout-driven page system: handlers return rows of columns, each column declaring its type, data handler and refresh, fetched independently with loaders and per-panel gates; forms are one handler branching on request.method and answer with success/error envelopes (notifications, per-field errors); tables carry row action buttons, and **field handlers** that turn template custom fields into plugin-backed autocompleters and code editors. Plugins load as pure parsing, so a broken one never affects startup. See [Plugins](../docs/plugins/).
+- **Plugins**: extend knot entirely from a script's metadata — menus, permission- and group-gated pages, themed logos, SVG icons, and Go/scriptling binary peers — plus a layout-driven page system: handlers return rows of columns, each column declaring its type, data handler and refresh, fetched independently with loaders and per-panel gates; forms are one handler branching on request.method and answer with success/error envelopes (notifications, per-field errors); tables carry row actions (icon buttons, kebab menus, confirms, popup forms and information dialogs driven by success envelopes), and **field handlers** that turn template custom fields into plugin-backed autocompleters and code editors. Plugins load as pure parsing, so a broken one never affects startup. See [Plugins](../docs/plugins/).
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
