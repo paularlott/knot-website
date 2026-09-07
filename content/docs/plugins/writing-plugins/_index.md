@@ -27,11 +27,11 @@ A folder plugin's other `.py` files are modules its handlers can import (`import
 
 Declarations live in the entry file's metadata block - the `# /// script` comments before the first statement, the same block that declares requirements. One source of truth, lintable with `scriptling --lint`, and readable by an admin without running anything.
 
-Inside knot, `requires-scriptling` is checked against **knot's own version** (knot is the script host), so a plugin written against knot 0.34 declares `requires-scriptling = ">=0.34"`. The `dependencies` and `plugins` keys declare what the plugin needs from its environment - including any [binary peers](./go/):
+Inside knot, `requires-scriptling` is checked against the **embedded scriptling runtime's version**, so a plugin using language features from scriptling 0.24 declares `requires-scriptling = ">=0.24"`. The optional `requires_knot` in `[tool.knot]` is the host bound - the knot version the plugin's use of the plugin system needs, checked against knot's own version at load (`requires_knot = ">=0.34"`). The `dependencies` and `plugins` keys declare what the plugin needs from its environment - including any [binary peers](./go/):
 
 ```python
 # /// script
-# requires-scriptling = ">=0.34"
+# requires-scriptling = ">=0.24"
 # dependencies = [
 #   "plugin.demolib via demolib >= 1.0.0",   # a binary peer this plugin needs
 # ]
@@ -44,10 +44,11 @@ Everything a plugin declares lives under `[tool.knot]`:
 
 ```python
 # /// script
-# requires-scriptling = ">=0.34"
+# requires-scriptling = ">=0.24"
 #
 # [tool.knot]
 # version = "1.0.0"                                  # the plugin's own version
+# requires_knot = ">=0.34"                           # optional host bound
 # description = "Space metrics dashboards."          # shown in the admin inventory
 # permissions = ["read_metrics", "export"]           # ids, qualified at load
 # logo_light = "assets/logo-light.svg"               # themed pair, relative to the

@@ -18,7 +18,7 @@ The metadata block's existing dependency keys cover peers - no new syntax. A plu
 
 ```python
 # /// script
-# requires-scriptling = ">=0.34"
+# requires-scriptling = ">=0.24"
 # dependencies = [
 #   "plugin.demolib via demolib >= 1.0.0",
 # ]
@@ -68,6 +68,27 @@ func main() {
 		panic(err)
 	}
 }
+```
+
+Classes work the same way - construct, hold state, call methods, all over the plugin protocol (this is demo-go's `Counter`, exercised by its `peer_class` handler):
+
+```go
+type counter struct {
+	step int
+	n    int
+}
+
+server.RegisterClass(object.NewClassBuilder("Counter").
+	Constructor(func(step int) *counter {
+		return &counter{step: step}
+	}).
+	Method("next", func(self *counter) int {
+		self.n += self.step
+		return self.n
+	}).
+	Method("value", func(self *counter) int {
+		return self.n
+	}))
 ```
 
 `NewServer`'s first argument is the name scripts import (`plugin.demolib`) and the name the metadata dependency references; the second is the version the `>= 1.0.0` constraint checks. Register functions, classes, and constants with the server builders - see the [scriptling Go integration guide](https://scriptling.dev/docs/go-integration/plugins/) for the full surface.

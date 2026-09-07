@@ -8,11 +8,11 @@ weight: 10
 
 The entry file (`main.py`, or the single `.py`) is a [Scriptling](https://scriptling.dev/) script: it carries the [metadata declarations](../) and defines the handler functions your pages call. Nothing in it runs at load - knot parses the declarations only, and the code below executes per-request when a page is opened.
 
-`requires-scriptling` is checked against **knot's own version** - in an embedded host, the host *is* the interpreter the plugin runs on - so `>=0.34` means knot 0.34 or newer. A plugin asking for a newer host than the running one fails to load, with the requirement named on the admin Plugins page.
+`requires-scriptling` is checked against the **embedded scriptling runtime's version** - it bounds the language features the plugin's code may use, so `>=0.24` means scriptling 0.24 or newer regardless of the knot version wrapping it. A plugin asking for a newer runtime than the embedded one fails to load, with the requirement named on the admin Plugins page. Development builds (a scriptling replace directive) carry no embedded version and skip the check. For the host side, `[tool.knot]` takes an optional `requires_knot = ">=0.34"` - the knot version the plugin's use of the plugin system needs, checked against knot's own version at load.
 
 ```python
 # /// script
-# requires-scriptling = ">=0.34"
+# requires-scriptling = ">=0.24"
 #
 # [tool.knot]
 # version = "1.0.0"
