@@ -85,22 +85,25 @@ Plugin pages load knot's full web bundle, so `window.Alpine` and `window.Chart` 
 
 ## Calling your handlers
 
-`pluginFetch(handler, options)` is the bridge for interactive html: it calls a plugin handler with the same transport, auth, page gate and running-user identity as every column fetch, retrying transient failures and parsing the JSON for you.
+`pluginFetch(handler, options)` is the bridge for interactive html: it calls a plugin handler's URL with the same transport, auth, page gate and running-user identity as every column fetch, retrying transient failures and parsing the JSON for you.
 
-- `pluginFetch('my_handler')` - GET the handler's JSON.
+- `pluginFetch('my_handler')` - GET your handler's JSON (the page path plus `/<handler>`).
 - `pluginFetch('my_handler', { params: { word: 'hi' } })` - GET with query params (they arrive in the handler's `params`).
 - `pluginFetch('my_handler', { method: 'POST', body: { name: 'x' } })` - POST the object form-encoded; the handler sees `request.method == "POST"` and the fields in `params`.
+- `pluginFetch('their_handler', { plugin: 'other-plugin' })` - GET **another plugin's** handler (`/plugins/other-plugin/their_handler`, gated by that plugin's default page for the requesting user). Handlers are ajax endpoints - any page may fetch any plugin's.
 
 It throws on a non-JSON response (an expired session or a down server), so widgets can surface their own error state. Combined with Alpine:
 
 ```html
 <div class="kp-card" x-data="{ word: '', busy: false, reply: '' }">
   <div class="kp-label">Echo service</div>
-  <input x-model="word" placeholder="type a word">
-  <button :disabled="busy"
-          @click="busy = true; try { reply = (await pluginFetch('echo_word', { params: { word: word } })).reply } finally { busy = false }"
-          x-text="busy ? '...' : 'Send'"></button>
-  <div class="kp-muted" x-show="reply" x-text="reply"></div>
+  <div class="kp-flex" style="margin-top:0.5rem">
+    <input class="kp-input" x-model="word" placeholder="type a word">
+    <button class="kp-button" :disabled="busy"
+            @click="busy = true; try { reply = (await pluginFetch('echo_word', { params: { word: word } })).reply } finally { busy = false }"
+            x-text="busy ? '...' : 'Send'"></button>
+  </div>
+  <div class="kp-muted" style="margin-top:0.5rem" x-show="reply" x-text="reply"></div>
 </div>
 ```
 

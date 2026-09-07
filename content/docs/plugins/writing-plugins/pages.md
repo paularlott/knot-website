@@ -29,7 +29,7 @@ Any other return value renders as a read-only key-value view.
 
 The document is always `{"rows": [...]}`. A row has an optional `title`, an optional `style: "card"` (the whole row is one card and the columns are unstyled panels; the default styles each column as its own card), optional `permission`/`group` gates, and a `columns` list. A column has:
 
-- `id` - the data-binding key (auto-generated as `r<row>c<col>` when omitted); identifies the column for refresh targeting, so keep ids unique within a page. Data is fetched with `?_col=<handler>` - the handler name itself, proxied straight through after the page gate.
+- `id` - the data-binding key (auto-generated as `r<row>c<col>` when omitted); identifies the column for refresh targeting, so keep ids unique within a page. Data is fetched from the column's handler URL - the page path plus `/<handler>` (e.g. `/plugins/my-plugin/dashboard/spaces`).
 - `type` - what renders the column: `stat`, `chart`, `table`, `form`, `markdown`, `html`, `text`, `bar`. Markdown covers code (fenced blocks) and lists (plain bullets); `text` is the literal type - escaped, whitespace preserved, no markdown semantics, right for timestamps and captions.
 - `title` - the column heading.
 - `handler` - the function that supplies this column's data. **Self-contained**: each call runs in a fresh environment as the requesting user, so compute what you need per call.
@@ -90,11 +90,11 @@ An action has:
 - `confirm` - ask first in a knot-style danger dialog with Cancel/Confirm; the confirm button carries the action label.
 - `handler` - clicking GETs this function with `key` and opens a popup (below).
 
-Actions without `handler` POST `{action, key}` to the column's endpoint and handle the envelope like a form POST.
+Actions without `handler` POST `{action, key}` to the column's handler URL and handle the envelope like a form POST.
 
 ### Popup actions
 
-An action naming a `handler` opens a popup: the client GETs `?_col=<handler>&key=<row key>`, and the response shape decides what the popup is.
+An action naming a `handler` opens a popup: the client GETs that handler's URL with the row key (`/<handler>?key=<row key>`), and the response shape decides what the popup is.
 
 A **form popup** returns `{title?, fields, submit?, cancel?}` - the same field contract as form columns. Submit POSTs to the same handler (with `key`) and handles the envelope: `error` keeps the popup open with `field_errors` painted on the inputs, `ok` closes it, notifies and refreshes. Dynamic autocompleters work inside popups; their `_data` fetches go to the popup's own handler.
 
@@ -121,7 +121,14 @@ Presentation lives in knot's renderer, so pages inherit it: semantic headings/ta
 
 ## The dispatch model
 
-When a user opens the page, knot checks the page gate (declared permission and/or group - **knot enforces, plugins can't forget it**), evaluates the entry file, calls the handler as the requesting user, enforces the row/column gates, and serves the layout. Each `?_col` fetch proxies straight to that handler (auth and the page gate checked, then the call - no layout re-resolution). Handler environments: the scriptling standard library, data formats, templating, text processing (jailed to the plugin folder), `scriptling.ai`, the [`knot.*` libraries](../../../scripting/) as the requesting user, and binary peers as `plugin.<name>` imports. No outbound networking, no container/nomad, no filesystem outside the plugin folder.
+When a user opens the page, knot checks the page gate (declared permission and/or group - **knot enforces, plugins can't forget it**), evaluates the entry file, calls the handler as the requesting user, enforces the row/column gates, and serves the layout.
+
+Every handler is also addressable as a URL, and a handler fetch runs that handler directly - auth and the page gate checked, then the call; the layout handler is not re-run:
+
+- `/plugins/<name>/<page-path>/<handler>` - runs through that page's gate;
+- `/plugins/<name>/<handler>` - runs through the plugin's default page's gate (first declared page when none claims `default`).
+
+Handlers are ajax endpoints: the plugin's own pages, another plugin's pages (see [`pluginFetch`](../html/)), or a user with curl all fetch the same URLs, always answered as JSON. The gate is always the requesting user's permission on the page the URL rides. Handler environments: the scriptling standard library, data formats, templating, text processing (jailed to the plugin folder), `scriptling.ai`, the [`knot.*` libraries](../../../scripting/) as the requesting user, and binary peers as `plugin.<name>` imports. No outbound networking, no container/nomad, no filesystem outside the plugin folder.
 
 ## Examples
 
