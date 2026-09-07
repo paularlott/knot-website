@@ -8,20 +8,19 @@ weight: 50
 
 Every plugin has the same shape regardless of what its logic is written in: **a script entry file that declares** - plus, optionally, assets and binary components. Whether you write the plugin in [Scriptling](./scriptling/), in [Go](./go/), or mix both, the declarations are identical and live in the same place: the metadata block of the entry file.
 
-This page covers what's common - packaging, the metadata reference, and validation. The [Scriptling](./scriptling/) and [Go](./go/) pages cover the language-specific parts, [Plugin Pages](./pages/) covers what happens when a page handler runs, and [Raw HTML](./html/) documents the trusted html column's helper classes and globals.
+This page covers what's common - packaging, the metadata reference, and validation. The [Scriptling](./scriptling/) and [Go](./go/) pages cover the language-specific parts, [Plugin Pages](./pages/) covers what happens when a page handler runs, [Raw HTML](./html/) documents the trusted html column's helper classes and globals, and [MCP Tools](./mcp-tools/) covers exposing handlers as MCP tools.
 
 ## Packaging
 
-A plugin is **a single script or a folder**, in the server's plugins path:
+A plugin is **a folder** in the server's plugins path:
 
 | Layout | Identity | Entry point |
 |---|---|---|
-| `plugins/metrics.py` | `metrics` | the file itself |
-| `plugins/metrics/main.py` (+ modules, `assets/`, `bin/`) | `metrics` | `main.py` |
+| `plugins/metrics/main.py` (+ modules, `assets/`, `peers/`, `bin/`) | `metrics` | `main.py` |
 
-Identity is the filesystem name, which must match `[a-z0-9_-]+` - it becomes part of the plugin's permission namespace (`plugin.<name>.<id>`). A file and a folder may not both claim the same name.
+Identity is the filesystem name, which must match `[a-z0-9_-]+` - it becomes part of the plugin's permission namespace (`plugin.<name>.<id>`). A loose `.py` file in the plugins path is not a plugin (it is ignored with a warning) - folders give peers and assets a home and keep one shape for every plugin.
 
-A folder plugin's other `.py` files are modules its handlers can import (`import helpers`) - the module loader is scoped to the plugin folder, so plugins cannot see each other's code. Assets live anywhere in the folder (`assets/` by convention); binary peers in [`bin/`](./go/).
+The folder's other `.py` files are modules its handlers can import (`import helpers`) - the module loader is scoped to the plugin folder, so plugins cannot see each other's code. Assets live anywhere in the folder (`assets/` by convention); scriptling peers in [`peers/`](./scriptling/#scriptling-peers); Go peers in [`bin/`](./go/).
 
 ## The metadata block
 
@@ -60,9 +59,27 @@ Everything a plugin declares lives under `[tool.knot]`:
 # label = "Metrics Dashboard"                        # page title
 # menu_label = "Metrics"                             # set: also a sidebar item under this label
 # permission = "read_metrics"                        # optional: gate on a declared permission
-# group = "platform"                                 # optional: gate on group membership
+# groups = ["platform"]                                 # optional: gate on group membership
 # default = false                                    # true: the post-login landing page
 # icon = "assets/gauge.svg"                          # plugin's own SVG asset
+#
+# [[tool.knot.handlers]]
+# handler = "export_all"                             # ajax addressable; own gate + plugin-root URL
+# permission = "export"                              # optional: gate for this handler everywhere
+# groups = ["platform"]                                 # optional
+#
+# [[tool.knot.mcp_tools]]
+# name = "export_metrics"                            # MCP tool name (defaults to the handler)
+# description = "Export fleet metrics as JSON."      # shown to MCP clients
+# handler = "export_all"                             # same handlers; params arrive in `params`
+# permission = "export"                              # optional: gates listing and calls
+# groups = ["platform"]
+#
+# [[tool.knot.mcp_tools.parameters]]                 # optional: builds the input schema
+# name = "hours"
+# type = "int"                                       # string, int, float, bool, list
+# description = "Hours to export."
+# default = 24                                 # optional
 #
 # [[tool.knot.field_handlers]]
 # label = "Environments"                             # shown in the template editor (defaults to handler)
@@ -72,7 +89,7 @@ Everything a plugin declares lives under `[tool.knot]`:
 # label = "Grafana"                                  # required
 # url = "https://grafana.internal/d/spaces"          # required: "/", http:// or https://
 # permission = "read_metrics"                        # optional: must be declared above
-# group = "platform"                                 # optional: restrict to a group
+# groups = ["platform"]                                 # optional: restrict to listed groups
 # icon = "assets/chart.svg"                          # plugin's own SVG asset
 # ///
 ```
@@ -90,19 +107,29 @@ The admin role passes every plugin permission check; no other role gets plugin p
 
 ### Logos
 
-`logo_light` and `logo_dark` are relative paths inside the plugin folder (single-file plugins cannot carry assets - use a folder). Declare both for a themed pair, or just one - a single logo serves both themes. They must exist at load and are served at `/plugins/<name>/assets/<path>`; only the declared logo files are reachable. **A declared pair claims the main page logo** - the top bar and the login page use it while the plugin is loaded - unless `server.ui.logo_url` is configured, which wins. If several plugins declare pairs, the first by name wins (the admin inventory shows a warning), so only one plugin should ship one.
+`logo_light` and `logo_dark` are relative paths inside the plugin folder. Declare both for a themed pair, or just one - a single logo serves both themes. They must exist at load and are served at `/plugins/<name>/assets/<path>`; only the declared logo files are reachable. **A declared pair claims the main page logo** - the top bar and the login page use it while the plugin is loaded - unless `server.ui.logo_url` is configured, which wins. If several plugins declare pairs, the first by name wins (the admin inventory shows a warning), so only one plugin should ship one.
 
 ### Pages
 
-A `[[tool.knot.pages]]` entry declares an internal page under `/plugins/<name>` served by a handler function, optionally gated by `permission` and/or `group` like a menu item - see [Plugin Pages](./pages/) for the dispatch model. `label` is the page title; a page with a `menu_label` also appears in the sidebar under that label (unset means no menu item), inheriting the page's gate and icon. A page with `default = true` becomes the post-login landing page (one page per plugin; if several plugins claim it the first by name wins, with a warning on the admin inventory).
+A `[[tool.knot.pages]]` entry declares an internal page under `/plugins/<name>` served by a handler function, optionally gated by `permission` and/or `groups` like a menu item - see [Plugin Pages](./pages/) for the dispatch model. `label` is the page title; a page with `menu_label` also appears in the sidebar under that label (unset means no menu item), inheriting the page's gate and icon. A page with `default = true` becomes the post-login landing page (one page per plugin; if several plugins claim it the first by name wins, with a warning on the admin inventory).
+
+## The dispatch globals
+
+Whatever the dispatch — a page render, a column fetch, an MCP tool call, a field handler, `knot.plugin.call` — the handler runs with three globals bound: `params` (the call's parameters), `request` (`{method, path}`), and **`user`**: a `User` instance describing the requesting user, carrying their groups and permissions with `has_permission` / `in_group` methods (one check for all of it: an integer is a built-in permission id — the `knot.permission` constants — a string a stable key like `"manage_spaces"` or a qualified grant like `"plugin.metrics.read"`), so code can ask who is calling. The metadata gates remain the enforcement boundary; `user` is for in-code decisions the declarations can't express.
+
+The full `User` surface is in [the dispatch globals reference](./scriptling/#the-dispatch-globals) (editors complete it from the `knot.globals.User` stub). The global binds in the *entry script* — which is all a pure-Scriptling plugin needs. When the logic lives in a [Go](./go/) peer, the handler reads `user` and passes what the peer needs across as plain arguments: [how identity reaches the peer](./go/#the-requesting-user).
+
+## MCP tools
+
+`[[tool.knot.mcp_tools]]` exposes a plugin handler as an MCP tool — listed by knot's MCP server, callable by AI assistants, running as the requesting user, optionally gated by permission and group. No input schema is needed: parameters arrive in the handler's `params`. See [MCP Tools](./mcp-tools/) for the full contract, including calling plugins back from tools via `knot.plugin`.
 
 ## Fields
 
 `[[tool.knot.field_handlers]]` declares the functions that back autocomplete template custom fields; types, editor languages and the key-to-text contract are covered in [Fields](fields/).
 
 
-### Menus and icons
+## Menus and icons
 
-A `[[tool.knot.menus]]` entry adds a link to the sidebar's *More* section - internal (`/...`) or external (`http(s)://...`). Items are visible to any logged-in user unless gated. A `permission` requires one of the user's roles to carry the grant; a `group` requires membership; both may be set. Items are pinnable like built-in navigation and appear in the global search.
+A `[[tool.knot.menus]]` entry adds a link to the sidebar's *More* section - internal (`/...`) or external (`http(s)://...`). Items are visible to any logged-in user unless gated. A `permission` requires one of the user's roles to carry the grant; `groups` requires membership in any listed group; both may be set. Items are pinnable like built-in navigation and appear in the global search.
 
 `icon` is a relative path to an **SVG asset in the plugin folder**. The SVG's inner markup is rendered inline with the site's icon styling, so an icon stroked with `currentColor` themes with the UI exactly like knot's own icons - write yours the same way (any heroicons-style 24×24 outline SVG works). Icons are size-capped and sanitized at load: scripts, event handlers, and external references are refused.

@@ -62,7 +62,7 @@ def spaces_table():
 
 ## Handlers
 
-A page's `handler` is `"fn"` for a function in the entry file, or `"module.fn"` for a function in a sibling module. Handlers take no arguments; the request's query parameters arrive as the `params` dict, and the return value is a rows/columns layout document (see [Plugin Pages](../pages/)) or a plain dict (key-value view). Column handlers are self-contained: each runs as the requesting user with fresh `params` and a `request` object (`request.method` distinguishes a form's GET definition from its POST submit), on a clean module state — environments are pooled per plugin and bound to the requesting user per call, so nothing persists between requests.
+A page's `handler` is `"fn"` for a function in the entry file, or `"module.fn"` for a function in a sibling module. Handlers take no arguments; the request's query parameters arrive as the `params` dict, the requesting user is the [`user` global](#the-dispatch-globals), and the return value is a rows/columns layout document (see [Plugin Pages](../pages/)) or a plain dict (key-value view). Column handlers are self-contained: each runs as the requesting user with fresh globals and a clean module state — environments are pooled per plugin and bound to the requesting user per call, so nothing persists between requests.
 
 ## Modules
 
@@ -82,6 +82,80 @@ def dashboard_report():
 ## The environment in one paragraph
 
 Handlers run in an environment bound to the requesting user (pooled per plugin; each call is Reset, rebound to the user and starts from a clean module state): the scriptling standard library and data/text tooling, filesystem access **jailed to the plugin's own folder**, no outbound networking (`requests`, `wait_for`) and no container/nomad libraries, plus the [`knot.*` libraries](../../../scripting/) acting as the requesting user and the invoking user's own `lib` scripts. If the plugin ships [binary peers](../go/), they are importable as `plugin.<name>`. The full details are on the [Plugin Pages](../pages/) page.
+
+## Scriptling peers
+
+A plugin's peer does not have to be Go — it can be a **scriptling script**, loaded in-process by knot's embedded scriptling runtime: no subprocess, no CLI on the host, no protocol hop. A peer is a `.py` file in the plugin's `peers/` folder:
+
+```
+myplugin/
+  main.py            handlers and metadata
+  peers/
+    calc.py          a scriptling peer
+  bin/               Go peers, if any
+```
+
+The peer is ordinary scriptling — functions, classes with `__init__` and stateful methods, constants. Its **public surface** (names not prefixed with `_`) becomes the `plugin.<name>` import in the plugin's handler environments, evaluated in-process on first import inside the same jail and trust domain as the handlers:
+
+```python
+# peers/calc.py
+MAX = 100
+
+def add(a, b):
+    """Add two numbers."""
+    return a + b
+
+class Counter:
+    """A stateful counter."""
+    def __init__(self, step):
+        self.step = step
+        self.n = 0
+    def next(self):
+        self.n = self.n + self.step
+        return self.n
+```
+
+```python
+# main.py — consuming it
+def add_up():
+    import plugin.calc as calc
+
+    c = calc.Counter(4)
+    return {"sum": calc.add(2, 3), "first": c.next(), "second": c.next()}
+```
+
+**Version**: the optional `[tool.knot.peer]` table in the peer's metadata block declares its version (default `"1.0"`), and the consuming plugin's dependency validates against it exactly as Go peer handshakes do:
+
+```python
+# peers/calc.py
+# /// script
+# [tool.knot.peer]
+# version = "1.5"
+# ///
+```
+
+with `"plugin.calc via calc >= 1.0.0"` in main.py's `dependencies`. Choose Go for CPU-heavy work, native libraries or a separate trust boundary; choose scriptling for pure-compute helpers that travel with the plugin as source.
+
+## The dispatch globals
+
+Every handler call - pages, MCP tools, field handlers, `knot.plugin.call` - receives its world through three globals (script tools get `user` too):
+
+- **`params`** - the call's parameters as a dict. On a page it is the query string (plus any POST body on submits); as an MCP tool it is the client's JSON arguments; `scriptling.mcp.tool.get_string` and friends read the same values.
+- **`request`** - `{method, path}`: how the handler was reached. `request.method` distinguishes a form's GET definition from its POST submit.
+- **`user`** - a `User` instance describing the requesting user:
+
+| Member | Kind | Meaning |
+|---|---|---|
+| `user.id` | field | the user's id |
+| `user.name` | field | the user's login name |
+| `user.is_admin` | field | whether the user holds the fixed admin role |
+| `user.groups` | field | the groups the user belongs to |
+| `user.permissions` | field | stable snake_case keys of the built-in permissions the user holds (`"manage_spaces"`, `"use_mcp_server"`, ...) |
+| `user.plugin_permissions` | field | qualified plugin grants (`"plugin.metrics.read"`) the user holds |
+| `user.has_permission(key)` | method | permission check — the argument picks: an integer is a built-in permission id (the `knot.permission` constants), a `"plugin."`-prefixed string a qualified grant, any other string a built-in's stable key; admins pass every check |
+| `user.in_group(name)` | method | membership of one group |
+
+Permission keys are stable identifiers — display names are for the role editor and may be reworded, keys never change. One method answers all of it because the forms can't collide: an integer names a built-in by id (`knot.permission.MANAGE_SPACES`), and among strings qualified grants always start with `plugin.`, which no built-in key contains. The metadata gates knot enforces before code runs remain the security boundary; `user` is for in-code decisions - adapting output, refusing edge cases the declarations cannot express. The type is stubbed as `knot.globals.User` in the editor completions.
 
 ## Testing
 

@@ -70,7 +70,7 @@ func main() {
 }
 ```
 
-Classes work the same way - construct, hold state, call methods, all over the plugin protocol (this is demo-go's `Counter`, exercised by its `peer_class` handler):
+Classes work the same way - construct, hold state, call methods, all over the plugin protocol (this is demo-go's `Counter`, exercised by its `peer_class` handler). The host auto-builds a stub class from the peer's handshake schema: the stub runs in the plugin's scriptling environment and marshals constructor calls and method invocations over the wire, while the functionality (and the state) stays in the peer process:
 
 ```go
 type counter struct {
@@ -112,6 +112,32 @@ Peers ship in one of three shapes - a package never mixes a bare binary with var
 
 The universal bundle's `_goos_goarch` naming is goreleaser's default artifact name, so release builds drop in unrenamed. Cross-compile by setting `GOOS`/`GOARCH`.
 
+## The requesting user
+
+Every dispatch — a page render, a column fetch, an MCP tool call, a field handler, `knot.plugin.call` — binds a `user` global in the **entry script's** environment: a `User` instance with `id`, `name`, `is_admin`, `groups`, `permissions` and `plugin_permissions` fields plus `has_permission` / `in_group` methods (`has_permission`'s argument picks the check: an integer is a built-in permission id, a string a stable key or a qualified grant). Editors complete it from the `knot.globals.User` stub. The full surface is in [the dispatch globals](../scriptling/#the-dispatch-globals).
+
+The peer sits in its own process, so identity arrives the way everything else does: **as arguments the handler passes**. The plugin protocol carries plain values — strings, numbers, bools, lists, dicts — and refuses to marshal the `User` instance itself, so no capability ever leaves the script environment. The handler owns the identity, the peer owns the compute:
+
+```python
+# main.py
+def export():
+    import plugin.demolib as demolib
+
+    if not user.is_admin and not user.in_group("platform"):
+        return {"error": "not for you"}
+
+    return demolib.report(user.name, user.is_admin, user.groups)
+```
+
+```go
+// peer/main.go — typed parameters, like any registered function
+server.RegisterFunc("report", object.NewFunctionBuilder().FunctionWithHelp(func(name string, admin bool, groups []string) map[string]any {
+    return map[string]any{"user": name, "admin": admin, "groups": groups}
+}, "report(name, admin, groups) - build the report for one user."))
+```
+
+Lists arrive as Go slices and dicts as maps. The metadata gates are still the enforcement boundary — knot checks them before the handler runs at all — and `user` is for in-code decisions the declarations can't express.
+
 ## Trust
 
-Peers are admin-installed binaries running outside the scriptling sandbox - the same trust class as the plugin folder itself. The script environment holds the user identity and performs every `knot.*` call; the peer receives data, never credentials. Permissions are checked before any handler runs: **a binary extends what a plugin can compute, not what a user can reach.**
+Peers can also be written in scriptling, loaded in-process from the plugin's `peers/` folder — see [Scriptling peers](../scriptling/#scriptling-peers). Go peers are admin-installed binaries running outside the scriptling sandbox - the same trust class as the plugin folder itself. The script environment holds the user identity and performs every `knot.*` call; the peer receives data, never credentials ([how identity reaches the peer](#the-requesting-user)). Permissions are checked before any handler runs: **a binary extends what a plugin can compute, not what a user can reach.**

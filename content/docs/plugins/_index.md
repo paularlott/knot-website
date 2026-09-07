@@ -1,6 +1,6 @@
 ---
 title: Plugins
-description: Extend knot with menus, pages, and permissions declared in script metadata - single files or folders, with optional binary components.
+description: Extend knot with menus, pages, and permissions declared in script metadata - folder plugins with optional scriptling and Go peers.
 type: Overview
 tags: [plugins, scripting]
 weight: 46
@@ -15,7 +15,7 @@ A plugin is declared entirely in its script's [metadata block](../scripting/) - 
 | Declaration | Effect |
 |---|---|
 | `permissions` | Grants roles can carry, stored as text (`plugin.<name>.<id>`) and managed in the role editor |
-| `[[tool.knot.menus]]` | Sidebar items - external links or internal - gated per item by permission and/or group |
+| `[[tool.knot.menus]]` | Sidebar items - external links or internal - gated per item by permission and/or groups |
 | `[[tool.knot.pages]]` | Live pages under `/plugins/<name>/…` whose handlers run per-request as the requesting user; a page may claim the post-login landing spot with `default = true` |
 | `logo_light` / `logo_dark` | A logo (or themed pair) that replaces the main page logo (login included) while the plugin is loaded |
 | `icon` on menus/pages | The plugin's own SVG asset, rendered inline and themed with the UI |

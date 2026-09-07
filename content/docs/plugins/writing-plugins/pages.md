@@ -27,15 +27,15 @@ Any other return value renders as a read-only key-value view.
 
 ## Rows and columns
 
-The document is always `{"rows": [...]}`. A row has an optional `title`, an optional `style: "card"` (the whole row is one card and the columns are unstyled panels; the default styles each column as its own card), optional `permission`/`group` gates, and a `columns` list. A column has:
+The document is always `{"rows": [...]}`. A row has an optional `title`, an optional `style: "card"` (the whole row is one card and the columns are unstyled panels; the default styles each column as its own card), optional `permission`/`groups` gates, and a `columns` list. A column has:
 
 - `id` - the data-binding key (auto-generated as `r<row>c<col>` when omitted); identifies the column for refresh targeting, so keep ids unique within a page. Data is fetched from the column's handler URL - the page path plus `/<handler>` (e.g. `/plugins/my-plugin/dashboard/spaces`).
 - `type` - what renders the column: `stat`, `chart`, `table`, `form`, `markdown`, `html`, `text`, `bar`. Markdown covers code (fenced blocks) and lists (plain bullets); `text` is the literal type - escaped, whitespace preserved, no markdown semantics, right for timestamps and captions.
 - `title` - the column heading.
-- `handler` - the function that supplies this column's data. **Self-contained**: each call runs as the requesting user with fresh `params` and `request` values and a clean module state — environments are pooled per plugin and bound to the requesting user per call, so nothing persists between requests. Compute what you need per call.
+- `handler` - the function that supplies this column's data. **Self-contained**: each call runs as the requesting user with fresh `params`, `request` and `user` values (the [dispatch globals](../scriptling/#the-dispatch-globals)) and a clean module state — environments are pooled per plugin and bound to the requesting user per call, so nothing persists between requests. Compute what you need per call.
 - `refresh` - seconds (5-3600); the client re-fetches just this column.
 - `width` - 1 to 4 (default 4); the row is always full width, divided into N columns on wide screens and stacking on narrow ones.
-- `permission` / `group` - gates enforced by knot; a row left with no columns is never sent.
+- `permission` / `groups` - gates enforced by knot (any listed group passes); a row left with no columns is never sent.
 
 ## Column handlers
 
@@ -121,7 +121,7 @@ Presentation lives in knot's renderer, so pages inherit it: semantic headings/ta
 
 ## The dispatch model
 
-When a user opens the page, knot checks the page gate (declared permission and/or group - **knot enforces, plugins can't forget it**), evaluates the entry file, calls the handler as the requesting user, enforces the row/column gates, and serves the layout.
+When a user opens the page, knot checks the page gate (declared permission and/or groups - **knot enforces, plugins can't forget it**), evaluates the entry file, calls the handler as the requesting user, enforces the row/column gates, and serves the layout.
 
 Every handler is also addressable as a URL, and a handler fetch runs that handler directly - auth and the gate checked, then the call:
 
@@ -134,7 +134,7 @@ Handlers are ajax endpoints: the plugin's own pages, another plugin's pages (see
 # [[tool.knot.handlers]]
 # handler = "export_all"
 # permission = "admin"     # optional; must be declared in [tool.knot] permissions
-# group = "platform"       # optional
+# groups = ["platform"]       # optional
 ```
 
 A declared gate is authoritative everywhere the handler is called - page path, plugin root, or a column fetch - the same semantics as row/column gates. Declaring a handler also opts it into plugin-root addressability (what cross-plugin `pluginFetch` uses).

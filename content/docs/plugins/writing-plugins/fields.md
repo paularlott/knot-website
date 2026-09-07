@@ -39,7 +39,7 @@ def field_environment():
 
 The `handler` function name is the handler's identity; a template binds to its qualified form `plugin.<name>.<handler>`. Suggestions are **key -> text**: the user picks by text, the space stores the **key** as the variable's value (a plain string option means key and text are the same, so simple lists stay simple).
 
-**When the handler runs.** Whenever a space create/edit form renders a bound field - the completer fetches eagerly on load, so even a reload resolves a stored key back to its display text. It runs as the requesting user through the permission-checked loopback, receiving `params` with `_data` (the qualified handler id) and `query` (when given). Options can therefore be fully dynamic: return whatever `knot.*` yields *right now*, different per user and per load.
+**When the handler runs.** Whenever a space create/edit form renders a bound field - the completer fetches eagerly on load, so even a reload resolves a stored key back to its display text. It runs as the requesting user through the permission-checked loopback, receiving `params` with `_data` (the qualified handler id) and `query` (when given), and - like every dispatch - the [`user` global](../scriptling/#the-dispatch-globals), so suggestions can adapt to who is asking. Options can therefore be fully dynamic: return whatever `knot.*` yields *right now*, different per user and per load.
 
 **Who may invoke it.** The options endpoint requires the Use Spaces permission (space forms drive the fetches). A field handler can declare an additional gate, narrowing who may invoke it - useful when the suggestions expose data not every space user should see:
 
@@ -48,7 +48,7 @@ The `handler` function name is the handler's identity; a template binds to its q
 # label = "Environments"
 # handler = "field_environment"
 # permission = "pick"      # optional; must be declared in [tool.knot] permissions
-# group = "platform"       # optional
+# groups = ["platform"]       # optional
 ```
 
 The `demo-scriptling` example declares a working `field_environment`. For a full handler against real live data, see the [scriptling](../scriptling/#fields) walkthrough.
