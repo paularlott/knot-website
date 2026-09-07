@@ -8,6 +8,8 @@ weight: 10
 
 The entry file (`main.py`, or the single `.py`) is a [Scriptling](https://scriptling.dev/) script: it carries the [metadata declarations](../) and defines the handler functions your pages call. Nothing in it runs at load - knot parses the declarations only, and the code below executes per-request when a page is opened.
 
+`requires-scriptling` is checked against **knot's own version** - in an embedded host, the host *is* the interpreter the plugin runs on - so `>=0.34` means knot 0.34 or newer. A plugin asking for a newer host than the running one fails to load, with the requirement named on the admin Plugins page.
+
 ```python
 # /// script
 # requires-scriptling = ">=0.34"
@@ -60,7 +62,7 @@ def spaces_table():
 
 ## Handlers
 
-A page's `handler` is `"fn"` for a function in the entry file, or `"module.fn"` for a function in a sibling module. Handlers take no arguments; the request's query parameters arrive as the `params` dict, and the return value is a rows/columns layout document (see [Plugin Pages](../pages/)) or a plain dict (key-value view). Column handlers are self-contained: each runs in a fresh environment as the requesting user, with `params` and a `request` object (`request.method` distinguishes a form's GET definition from its POST submit).
+A page's `handler` is `"fn"` for a function in the entry file, or `"module.fn"` for a function in a sibling module. Handlers take no arguments; the request's query parameters arrive as the `params` dict, and the return value is a rows/columns layout document (see [Plugin Pages](../pages/)) or a plain dict (key-value view). Column handlers are self-contained: each runs as the requesting user with fresh `params` and a `request` object (`request.method` distinguishes a form's GET definition from its POST submit), on a clean module state — environments are pooled per plugin and bound to the requesting user per call, so nothing persists between requests.
 
 ## Modules
 
@@ -79,7 +81,7 @@ def dashboard_report():
 
 ## The environment in one paragraph
 
-Handlers run in a fresh environment bound to the requesting user: the scriptling standard library and data/text tooling, filesystem access **jailed to the plugin's own folder**, no outbound networking (`requests`, `wait_for`) and no container/nomad libraries, plus the [`knot.*` libraries](../../../scripting/) acting as the requesting user and the invoking user's own `lib` scripts. If the plugin ships [binary peers](../go/), they are importable as `plugin.<name>`. The full details are on the [Plugin Pages](../pages/) page.
+Handlers run in an environment bound to the requesting user (pooled per plugin; each call is Reset, rebound to the user and starts from a clean module state): the scriptling standard library and data/text tooling, filesystem access **jailed to the plugin's own folder**, no outbound networking (`requests`, `wait_for`) and no container/nomad libraries, plus the [`knot.*` libraries](../../../scripting/) acting as the requesting user and the invoking user's own `lib` scripts. If the plugin ships [binary peers](../go/), they are importable as `plugin.<name>`. The full details are on the [Plugin Pages](../pages/) page.
 
 ## Testing
 

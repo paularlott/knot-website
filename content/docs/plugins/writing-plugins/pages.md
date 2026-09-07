@@ -32,7 +32,7 @@ The document is always `{"rows": [...]}`. A row has an optional `title`, an opti
 - `id` - the data-binding key (auto-generated as `r<row>c<col>` when omitted); identifies the column for refresh targeting, so keep ids unique within a page. Data is fetched from the column's handler URL - the page path plus `/<handler>` (e.g. `/plugins/my-plugin/dashboard/spaces`).
 - `type` - what renders the column: `stat`, `chart`, `table`, `form`, `markdown`, `html`, `text`, `bar`. Markdown covers code (fenced blocks) and lists (plain bullets); `text` is the literal type - escaped, whitespace preserved, no markdown semantics, right for timestamps and captions.
 - `title` - the column heading.
-- `handler` - the function that supplies this column's data. **Self-contained**: each call runs in a fresh environment as the requesting user, so compute what you need per call.
+- `handler` - the function that supplies this column's data. **Self-contained**: each call runs as the requesting user with fresh `params` and `request` values and a clean module state — environments are pooled per plugin and bound to the requesting user per call, so nothing persists between requests. Compute what you need per call.
 - `refresh` - seconds (5-3600); the client re-fetches just this column.
 - `width` - 1 to 4 (default 4); the row is always full width, divided into N columns on wide screens and stacking on narrow ones.
 - `permission` / `group` - gates enforced by knot; a row left with no columns is never sent.
@@ -123,12 +123,25 @@ Presentation lives in knot's renderer, so pages inherit it: semantic headings/ta
 
 When a user opens the page, knot checks the page gate (declared permission and/or group - **knot enforces, plugins can't forget it**), evaluates the entry file, calls the handler as the requesting user, enforces the row/column gates, and serves the layout.
 
-Every handler is also addressable as a URL, and a handler fetch runs that handler directly - auth and the page gate checked, then the call; the layout handler is not re-run:
+Every handler is also addressable as a URL, and a handler fetch runs that handler directly - auth and the gate checked, then the call:
 
-- `/plugins/<name>/<page-path>/<handler>` - runs through that page's gate;
-- `/plugins/<name>/<handler>` - runs through the plugin's default page's gate (first declared page when none claims `default`).
+- `/plugins/<name>/<page-path>/<handler>` - runs through that page's gate (and, below, the column gates) unless the handler has its own declaration;
+- `/plugins/<name>/<handler>` - plugin root; serves only handlers with a `[[tool.knot.handlers]]` declaration, whose gate applies.
 
-Handlers are ajax endpoints: the plugin's own pages, another plugin's pages (see [`pluginFetch`](../html/)), or a user with curl all fetch the same URLs, always answered as JSON. The gate is always the requesting user's permission on the page the URL rides. Handler environments: the scriptling standard library, data formats, templating, text processing (jailed to the plugin folder), `scriptling.ai`, the [`knot.*` libraries](../../../scripting/) as the requesting user, and binary peers as `plugin.<name>` imports. No outbound networking, no container/nomad, no filesystem outside the plugin folder.
+Handlers are ajax endpoints: the plugin's own pages, another plugin's pages (see [`pluginFetch`](../html/)), or a user with curl all fetch the same URLs, always answered as JSON. A handler may declare its own gate:
+
+```toml
+# [[tool.knot.handlers]]
+# handler = "export_all"
+# permission = "admin"     # optional; must be declared in [tool.knot] permissions
+# group = "platform"       # optional
+```
+
+A declared gate is authoritative everywhere the handler is called - page path, plugin root, or a column fetch - the same semantics as row/column gates. Declaring a handler also opts it into plugin-root addressability (what cross-plugin `pluginFetch` uses).
+
+Undeclared handlers are reachable only through a page, and the column gates hold at fetch time, not just when the layout is pruned: knot runs the page's layout handler as the requesting user (row/column gates applied) and serves the handler only if that layout offers it - as a column's `handler` or an action's popup `handler`. That answer is memoized for a few seconds per user and query, so a page's columns fetching as a burst cost one layout run, not one per column; a handler the layout withdraws (or a gate revoked via a role edit) stops being fetchable within that window. A user who fails a column's permission cannot fetch that column's data by naming its handler directly, and a handler no layout references (a trusted-html widget callback, say) must carry a `[[tool.knot.handlers]]` declaration to be callable at all.
+
+So the full model, outermost in: the **page** gate decides the page and every handler riding its path; **row** gates are presentation (gated rows vanish with their columns, hiding their handlers); **column** gates decide both the column's visibility and its handler's fetchability; a **handler declaration** replaces the inherited gates wherever it applies. Handler environments: the scriptling standard library, data formats, templating, text processing (jailed to the plugin folder), `scriptling.ai`, the [`knot.*` libraries](../../../scripting/) as the requesting user, and binary peers as `plugin.<name>` imports. No outbound networking, no container/nomad, no filesystem outside the plugin folder.
 
 ## Examples
 

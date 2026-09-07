@@ -87,10 +87,10 @@ Plugin pages load knot's full web bundle, so `window.Alpine` and `window.Chart` 
 
 `pluginFetch(handler, options)` is the bridge for interactive html: it calls a plugin handler's URL with the same transport, auth, page gate and running-user identity as every column fetch, retrying transient failures and parsing the JSON for you.
 
-- `pluginFetch('my_handler')` - GET your handler's JSON (the page path plus `/<handler>`).
+- `pluginFetch('my_handler')` - GET your handler's JSON (the page path plus `/<handler>`). A handler no layout column references - a widget callback like this echo - must be declared in `[[tool.knot.handlers]]` to be callable.
 - `pluginFetch('my_handler', { params: { word: 'hi' } })` - GET with query params (they arrive in the handler's `params`).
 - `pluginFetch('my_handler', { method: 'POST', body: { name: 'x' } })` - POST the object form-encoded; the handler sees `request.method == "POST"` and the fields in `params`.
-- `pluginFetch('their_handler', { plugin: 'other-plugin' })` - GET **another plugin's** handler (`/plugins/other-plugin/their_handler`, gated by that plugin's default page for the requesting user). Handlers are ajax endpoints - any page may fetch any plugin's.
+- `pluginFetch('their_handler', { plugin: 'other-plugin' })` - GET **another plugin's** handler (`/plugins/other-plugin/their_handler`). The handler must be declared in that plugin's metadata with `[[tool.knot.handlers]]` (that declaration is what makes it addressable at the plugin root), and its declared permission/group - empty means any logged-in user - is the gate. Handlers are ajax endpoints - any page may fetch any plugin's declared handlers.
 
 It throws on a non-JSON response (an expired session or a down server), so widgets can surface their own error state. Combined with Alpine:
 
