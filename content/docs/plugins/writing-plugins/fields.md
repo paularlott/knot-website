@@ -48,7 +48,6 @@ The `handler` function name is the handler's identity; a template binds to its q
 # label = "Environments"
 # handler = "field_environment"
 # permission = "pick"      # optional; must be declared in [tool.knot] permissions
-# groups = ["platform"]       # optional
 ```
 
 The `demo-scriptling` example declares a working `field_environment`. For a full handler against real live data, see the [scriptling](../scriptling/#fields) walkthrough.

@@ -59,21 +59,18 @@ Everything a plugin declares lives under `[tool.knot]`:
 # label = "Metrics Dashboard"                        # page title
 # menu_label = "Metrics"                             # set: also a sidebar item under this label
 # permission = "read_metrics"                        # optional: gate on a declared permission
-# groups = ["platform"]                                 # optional: gate on group membership
 # default = false                                    # true: the post-login landing page
 # icon = "assets/gauge.svg"                          # plugin's own SVG asset
 #
 # [[tool.knot.handlers]]
 # handler = "export_all"                             # ajax addressable; own gate + plugin-root URL
 # permission = "export"                              # optional: gate for this handler everywhere
-# groups = ["platform"]                                 # optional
 #
 # [[tool.knot.mcp_tools]]
 # name = "export_metrics"                            # MCP tool name (defaults to the handler)
 # description = "Export fleet metrics as JSON."      # shown to MCP clients
 # handler = "export_all"                             # same handlers; params arrive in `params`
 # permission = "export"                              # optional: gates listing and calls
-# groups = ["platform"]
 #
 # [[tool.knot.mcp_tools.parameters]]                 # optional: builds the input schema
 # name = "hours"
@@ -89,7 +86,6 @@ Everything a plugin declares lives under `[tool.knot]`:
 # label = "Grafana"                                  # required
 # url = "https://grafana.internal/d/spaces"          # required: "/", http:// or https://
 # permission = "read_metrics"                        # optional: must be declared above
-# groups = ["platform"]                                 # optional: restrict to listed groups
 # icon = "assets/chart.svg"                          # plugin's own SVG asset
 # ///
 ```
@@ -111,7 +107,7 @@ The admin role passes every plugin permission check; no other role gets plugin p
 
 ### Pages
 
-A `[[tool.knot.pages]]` entry declares an internal page under `/plugins/<name>` served by a handler function, optionally gated by `permission` and/or `groups` like a menu item - see [Plugin Pages](./pages/) for the dispatch model. `label` is the page title; a page with `menu_label` also appears in the sidebar under that label (unset means no menu item), inheriting the page's gate and icon. A page with `default = true` becomes the post-login landing page (one page per plugin; if several plugins claim it the first by name wins, with a warning on the admin inventory).
+A `[[tool.knot.pages]]` entry declares an internal page under `/plugins/<name>` served by a handler function, optionally gated by `permission` like a menu item - see [Plugin Pages](./pages/) for the dispatch model. `label` is the page title; a page with `menu_label` also appears in the sidebar under that label (unset means no menu item), inheriting the page's gate and icon. A page with `default = true` becomes the post-login landing page (one page per plugin; if several plugins claim it the first by name wins, with a warning on the admin inventory).
 
 ## The dispatch globals
 
@@ -121,7 +117,7 @@ The full `User` surface is in [the dispatch globals reference](./scriptling/#the
 
 ## MCP tools
 
-`[[tool.knot.mcp_tools]]` exposes a plugin handler as an MCP tool — listed by knot's MCP server, callable by AI assistants, running as the requesting user, optionally gated by permission and group. No input schema is needed: parameters arrive in the handler's `params`. See [MCP Tools](./mcp-tools/) for the full contract, including calling plugins back from tools via `knot.plugin`.
+`[[tool.knot.mcp_tools]]` exposes a plugin handler as an MCP tool — listed by knot's MCP server, callable by AI assistants, running as the requesting user, optionally gated by permission. No input schema is needed: parameters arrive in the handler's `params`. See [MCP Tools](./mcp-tools/) for the full contract, including calling plugins back from tools via `knot.plugin`.
 
 ## Fields
 
@@ -130,6 +126,6 @@ The full `User` surface is in [the dispatch globals reference](./scriptling/#the
 
 ## Menus and icons
 
-A `[[tool.knot.menus]]` entry adds a link to the sidebar's *More* section - internal (`/...`) or external (`http(s)://...`). Items are visible to any logged-in user unless gated. A `permission` requires one of the user's roles to carry the grant; `groups` requires membership in any listed group; both may be set. Items are pinnable like built-in navigation and appear in the global search.
+A `[[tool.knot.menus]]` entry adds a link to the sidebar's *More* section - internal (`/...`) or external (`http(s)://...`). Items are visible to any logged-in user unless gated. A `permission` requires one of the user's roles to carry the grant. Items are pinnable like built-in navigation and appear in the global search.
 
 `icon` is a relative path to an **SVG asset in the plugin folder**. The SVG's inner markup is rendered inline with the site's icon styling, so an icon stroked with `currentColor` themes with the UI exactly like knot's own icons - write yours the same way (any heroicons-style 24×24 outline SVG works). Icons are size-capped and sanitized at load: scripts, event handlers, and external references are refused.

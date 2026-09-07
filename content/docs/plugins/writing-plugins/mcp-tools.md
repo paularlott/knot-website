@@ -23,11 +23,10 @@ A plugin can expose its handlers as **MCP tools**: they are listed by knot's MCP
 # description = "Export fleet metrics as JSON for a time range."
 # handler = "export_metrics"
 # permission = "export"                   # optional: gates listing and calls
-# groups = ["platform"]                      # optional
 # ///
 ```
 
-The `description` is required — MCP clients list it next to the tool name. The `permission` (a `[tool.knot]` permission id, qualified at load) and `groups` (a list — the tool applies to members of any listed group) gates apply at **both** listing and call time: a user without the grant never sees the tool, and a direct call by name is refused before the handler runs. Both empty means any MCP user.
+The `description` is required — MCP clients list it next to the tool name. The `permission` (a `[tool.knot]` permission id, qualified at load) gate applies at **both** listing and call time: a user without the grant never sees the tool, and a direct call by name is refused before the handler runs. An empty gate means any MCP user.
 
 **No input schema is declared, and none is needed.** The MCP input schema is an empty object, and the tool's parameters are bound twice — as the handler's `params` dict and as the MCP tool context — so `scriptling.mcp.tool` works exactly as it does in any other MCP tool. Write the handler the way script tools are written:
 
