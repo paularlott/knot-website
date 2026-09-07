@@ -34,6 +34,8 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 | [knot.role](role/) | Role management |
 | [knot.vars](vars/) | Variables management |
 | [knot.permission](permission/) | Permission checking |
+| [knot.plugin](plugin/) | Call plugins' declared handlers as the requesting user |
+| [knot.identity](identity/) | The requesting user for module code (plugin libraries, lib scripts) |
 | [knot.healthcheck](healthcheck/) | Space health monitoring (agent-side scripts) |
 | [knot.event](event/) | Event emission (space-side) and sink accessors (server-side) |
 | [knot.audit](audit/) | Audit log search and filtering |

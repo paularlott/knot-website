@@ -83,22 +83,22 @@ def dashboard_report():
 
 Handlers run in an environment bound to the requesting user (pooled per plugin; each call is Reset, rebound to the user and starts from a clean module state): the scriptling standard library and data/text tooling, filesystem access **jailed to the plugin's own folder**, no outbound networking (`requests`, `wait_for`) and no container/nomad libraries, plus the [`knot.*` libraries](../../../scripting/) acting as the requesting user and the invoking user's own `lib` scripts. If the plugin ships [binary peers](../go/), they are importable as `plugin.<name>`. The full details are on the [Plugin Pages](../pages/) page.
 
-## Scriptling peers
+## Scriptling libs
 
-A plugin's peer does not have to be Go — it can be a **scriptling script**, loaded in-process by knot's embedded scriptling runtime: no subprocess, no CLI on the host, no protocol hop. A peer is a `.py` file in the plugin's `peers/` folder:
+A plugin's exports do not have to be Go — they can be **scriptling libraries**, loaded in-process by knot's embedded scriptling runtime: no subprocess, no CLI on the host, no protocol hop. A library is a `.py` file in the plugin's `libs/` folder:
 
 ```
 myplugin/
   main.py            handlers and metadata
-  peers/
-    calc.py          a scriptling peer
+  libs/
+    calc.py          a scriptling library
   bin/               Go peers, if any
 ```
 
-The peer is ordinary scriptling — functions, classes with `__init__` and stateful methods, constants. Its **public surface** (names not prefixed with `_`) becomes the `plugin.<name>` import in the plugin's handler environments, evaluated in-process on first import inside the same jail and trust domain as the handlers:
+The library is ordinary scriptling — functions, classes with `__init__` and stateful methods, constants. Its **public surface** (names not prefixed with `_`) becomes the `plugin.<name>` import in the plugin's handler environments, evaluated in-process on first import inside the same jail and trust domain as the handlers:
 
 ```python
-# peers/calc.py
+# libs/calc.py
 MAX = 100
 
 def add(a, b):
@@ -124,17 +124,21 @@ def add_up():
     return {"sum": calc.add(2, 3), "first": c.next(), "second": c.next()}
 ```
 
-**Version**: the optional `[tool.knot.peer]` table in the peer's metadata block declares its version (default `"1.0"`), and the consuming plugin's dependency validates against it exactly as Go peer handshakes do:
+**Version**: the optional `[tool.knot.lib]` table in the library's metadata block declares its version (default `"1.0"`), and the consuming plugin's dependency validates against it exactly as Go peer handshakes do:
 
 ```python
-# peers/calc.py
+# libs/calc.py
 # /// script
-# [tool.knot.peer]
+# [tool.knot.lib]
 # version = "1.5"
 # ///
 ```
 
 with `"plugin.calc via calc >= 1.0.0"` in main.py's `dependencies`. Choose Go for CPU-heavy work, native libraries or a separate trust boundary; choose scriptling for pure-compute helpers that travel with the plugin as source.
+
+`demo-scriptling` ships a working library — `libs/calc.py` (a constant, `add`/`scale`, the `Counter` class and a self-gating `gated_report()`), exercised by the *Plugin peers* row on its showcase page and declared as `plugin.calc via calc >= 1.0` in its metadata. Its Go twin is `demo-go`'s `demolib` (functions plus the `Counter` class over the plugin protocol).
+
+Libraries travel beyond the plugin too: **user-created MCP tools** import them the same way (`import plugin.calc as calc`, `import plugin.demolib as demolib` — scriptling and Go peers alike, the Go ones through the host-side stubs scriptling auto-generates from the peer's handshake). The plugin publishes that compute for reuse, and because no metadata gate applies to an import, the peer's code self-gates on the requesting user via `knot.identity.user()` ([the contract](./mcp-tools/#plugin-exports-in-user-tools)). Handler code, which runs in the main program's scope, reads the `user` global directly; libraries are modules, so they use [`knot.identity`](../../../reference/libraries/identity/).
 
 ## The dispatch globals
 

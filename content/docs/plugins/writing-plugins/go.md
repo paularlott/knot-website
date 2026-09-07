@@ -100,6 +100,12 @@ peer:
 	cd peer && go build -o ../bin/demolib_$(GOOS)_$(GOARCH) .
 ```
 
+## Publishing the peer for reuse
+
+Everything registered on the server is the plugin's published compute: handlers import it through the host-side stubs scriptling auto-generates from the handshake, and **user-created MCP tools import the same names** — `import plugin.demolib as demolib` in a tool drives the peer's functions and classes exactly as a handler does, with the state living in the peer process. `demo-go` exercises this live: `status()`, `greeting(name)` and the `Counter` class, called from its own handlers and from user tools alike.
+
+No metadata gate applies to an import, and the peer process is shared by every caller — a Go peer receives data, never credentials. When a call needs per-user decisions, the calling code passes identity as plain arguments (the pattern in [the requesting user](#the-requesting-user)); scriptling libraries instead self-gate in code via [`knot.identity`](../../../reference/libraries/identity/). To call a plugin's *handlers* rather than its exports, tools use [`knot.plugin.call`](../../../reference/libraries/plugin/) over the authenticated loopback.
+
 ## Packaging shapes
 
 Peers ship in one of three shapes - a package never mixes a bare binary with variants of the same peer:
@@ -140,4 +146,4 @@ Lists arrive as Go slices and dicts as maps. The metadata gates are still the en
 
 ## Trust
 
-Peers can also be written in scriptling, loaded in-process from the plugin's `peers/` folder — see [Scriptling peers](../scriptling/#scriptling-peers). Go peers are admin-installed binaries running outside the scriptling sandbox - the same trust class as the plugin folder itself. The script environment holds the user identity and performs every `knot.*` call; the peer receives data, never credentials ([how identity reaches the peer](#the-requesting-user)). Permissions are checked before any handler runs: **a binary extends what a plugin can compute, not what a user can reach.**
+Exports can also be written in scriptling, loaded in-process from the plugin's `libs/` folder — see [Scriptling libs](../scriptling/#scriptling-libs). Go peers are admin-installed binaries running outside the scriptling sandbox - the same trust class as the plugin folder itself. The script environment holds the user identity and performs every `knot.*` call; the peer receives data, never credentials ([how identity reaches the peer](#the-requesting-user)). Permissions are checked before any handler runs: **a binary extends what a plugin can compute, not what a user can reach.**

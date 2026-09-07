@@ -86,14 +86,43 @@ Tool names share one namespace with knot's boot tools and script tools. Two plug
 
 ## Calling plugins from tools
 
-The reverse direction works too. Built-in and user-defined MCP tools (and plugin handlers themselves) can call any plugin's *declared* handlers in-process through the `knot.plugin` library:
+The [`knot.plugin`](../../../reference/libraries/plugin/) library calls declared handlers; what a call may reach depends on who wrote it:
+
+- **Plugin-exposed tools** (and plugin handlers) may call any plugin's *declared* handlers in-process through the `knot.plugin` library — same trust domain:
+
+  ```python
+  import knot.plugin as kp
+  result = kp.call("metrics", "export_all", {"range": "1h"})
+  ```
+
+  Only `[[tool.knot.handlers]]`-declared handlers are addressable — the same contract the browser's `pluginFetch` uses — and the declaration's gate is enforced for the **requesting user** at the call boundary: the call fails with `permission denied` and the plugin's code never runs.
+
+- **User-created tools** (defined in the web interface, stored in the database) get the same `knot.plugin.call`, but it rides the **in-process loopback** — the same authenticated transport the `knot.*` libraries use — through the real web dispatch, so the declared gate applies exactly as for a browser fetch. User code never invokes plugin handler code in-process:
+
+  ```python
+  import knot.plugin as kp
+  result = kp.call("metrics", "export_all", {"range": "1h"})
+  # POST (params as a JSON body) for handlers that branch on request.method:
+  result = kp.call("metrics", "submit", {"range": "1h"}, method="POST")
+  ```
+
+  A refused gate raises `permission denied`, an undeclared handler or unknown plugin is not addressable, and the handler runs as the requesting user with the `user` global bound — it can self-check exactly as a page handler does.
+
+## Plugin exports in user tools
+
+A plugin's **scriptling libraries** (`libs/*.py`) are importable in user-created tools as `plugin.<name>` — functions, classes and constants, evaluated in-process. This is the plugin author's decision to publish compute for reuse; no metadata gate applies to an import, so the exported code carries its own:
 
 ```python
-import knot.plugin as kp
-result = kp.call("metrics", "export_all", {"range": "1h"})
+# libs/calc.py — the plugin exports this
+import knot.identity
+
+def export_report():
+    if not knot.identity.user().has_permission("plugin.metrics.export"):
+        raise Exception("plugin.metrics.export not granted")
+    return {"rows": []}
 ```
 
-Only `[[tool.knot.handlers]]`-declared handlers are addressable — the same contract the browser's `pluginFetch` uses — and the declaration's gate is enforced for the **requesting user** at the call boundary. A user-defined tool cannot reach a handler its user lacks permission for; the call fails with `permission denied` and the plugin's code never runs.
+`knot.identity.user()` returns the same `User` instance the `user` global holds — module code (exported libraries, lib scripts) can't see the globals, whose scope is the calling program, so the identity library carries the instance. The permission check is the plugin's own: a user without `plugin.metrics.export` gets the refusal, whoever's tool invoked it. Binary (Go) peers are importable the same way — through the scriptling plugin support, the host-side stubs auto-generated from each peer's handshake, so a user tool calls into the already-spawned peer process exactly as plugin handlers do (the peer-lifecycle control surface is not part of it). `demo-scriptling` ships a working self-gate example: `gated_report()` in its `libs/calc.py` refuses users without `plugin.demo-scriptling.view_dashboard`; `demo-go`'s `demolib` is the Go twin, importable from user tools as `plugin.demolib`.
 
 ## Example
 

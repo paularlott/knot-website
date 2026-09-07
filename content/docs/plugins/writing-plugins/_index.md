@@ -16,11 +16,11 @@ A plugin is **a folder** in the server's plugins path:
 
 | Layout | Identity | Entry point |
 |---|---|---|
-| `plugins/metrics/main.py` (+ modules, `assets/`, `peers/`, `bin/`) | `metrics` | `main.py` |
+| `plugins/metrics/main.py` (+ modules, `assets/`, `libs/`, `bin/`) | `metrics` | `main.py` |
 
 Identity is the filesystem name, which must match `[a-z0-9_-]+` - it becomes part of the plugin's permission namespace (`plugin.<name>.<id>`). A loose `.py` file in the plugins path is not a plugin (it is ignored with a warning) - folders give peers and assets a home and keep one shape for every plugin.
 
-The folder's other `.py` files are modules its handlers can import (`import helpers`) - the module loader is scoped to the plugin folder, so plugins cannot see each other's code. Assets live anywhere in the folder (`assets/` by convention); scriptling peers in [`peers/`](./scriptling/#scriptling-peers); Go peers in [`bin/`](./go/).
+The folder's other `.py` files are modules its handlers can import (`import helpers`) - the module loader is scoped to the plugin folder, so plugins cannot see each other's code. Assets live anywhere in the folder (`assets/` by convention); scriptling libraries in [`libs/`](./scriptling/#scriptling-libs); Go peers in [`bin/`](./go/).
 
 ## The metadata block
 
@@ -117,7 +117,7 @@ The full `User` surface is in [the dispatch globals reference](./scriptling/#the
 
 ## MCP tools
 
-`[[tool.knot.mcp_tools]]` exposes a plugin handler as an MCP tool — listed by knot's MCP server, callable by AI assistants, running as the requesting user, optionally gated by permission. No input schema is needed: parameters arrive in the handler's `params`. See [MCP Tools](./mcp-tools/) for the full contract, including calling plugins back from tools via `knot.plugin`.
+`[[tool.knot.mcp_tools]]` exposes a plugin handler as an MCP tool — listed by knot's MCP server, callable by AI assistants, running as the requesting user, optionally gated by permission. No input schema is needed: parameters arrive in the handler's `params`. See [MCP Tools](./mcp-tools/) for the full contract, including calling plugins back from plugin tools via `knot.plugin`.
 
 ## Fields
 
