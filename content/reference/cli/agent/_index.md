@@ -34,6 +34,8 @@ Usually started automatically by the container entrypoint. Key options:
 | `--https-port` | | HTTPS ports to expose via the web UI (repeatable) |
 | `--vnc-http-port` | `0` | Port for VNC over HTTP |
 | `--methods-file` | | `.toml` or `.py` file registering JSON-RPC methods at startup |
+| `--plugin` | | Scriptling plugin executable to load into space scripts (repeatable) |
+| `--plugin-dir` | | Directory of Scriptling plugin executables to load into space scripts (repeatable) |
 | `--syslog-port` | `1514` | Syslog listen port; `0` disables |
 | `--api-port` | `12201` | API/log listen port; `0` disables |
 | `--update-authorized-keys` | `true` | Keep the user's SSH authorized_keys up to date |
@@ -54,6 +56,25 @@ Block until the agent daemon is running and accepting commands, then exit. Used 
 
 ```shell
 knot agent wait-for-start [--timeout SECONDS]
+```
+
+### Configuration file
+
+Every `knot agent start` option can be set in a TOML configuration file instead of on the command line. The agent looks for `knot.toml` in the current directory, then `$HOME/`, then `$HOME/.config/knot/`; point it at a specific file with `--config <path>` (or `KNOT_CONFIG`). Precedence is command-line flag → environment variable → config file → default, so a flag always wins over the file.
+
+Options live under an `[agent]` table, keyed as shown in the tables above (for example `--space-id` → `agent.space_id`, `--ssh-port` → `agent.port.ssh`). Because the container entrypoint usually invokes `knot agent start` with a fixed command, baking a config file into the image (or mounting one) is the cleanest way to configure an agent per template — including which Scriptling plugins it loads.
+
+```toml
+[agent]
+endpoint = "https://knot.example.com:3000"
+space_id = "..."
+
+# Scriptling plugins loaded into space scripts (see below)
+plugins = ["/opt/knot/plugins/sql", "/opt/knot/plugins/valkey"]
+plugin_dirs = ["/opt/knot/plugins"]
+
+[agent.port]
+ssh = 22
 ```
 
 ---
@@ -227,8 +248,35 @@ knot run-script <script-or-file> [args...]
 
 Options:
 - `--no-fail`: exit successfully if the named script does not exist
+- `--plugin` / `--plugin-dir`: Scriptling plugins to load for this run (repeatable). By default `run-script` inherits the agent's configured plugins (`agent.plugins` / `agent.plugin_dirs`), so a space set up with a database driver has it here too; passing either flag overrides the configured value for that run. See [Loading Scriptling plugins](#loading-scriptling-plugins).
 
 Serving (JSON-RPC / HTTP / MCP) and the interactive REPL belong to the real Scriptling CLI in the space — use a template built from a Scriptling base image (for example `paularlott/knot-scriptling:0.21-alpine`). Load the `knot.*` libraries and your `lib` scripts via the agent's package endpoints (`--package http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip --package http://127.0.0.1:$KNOT_API_PORT/packages/libs.zip`, or a scriptling config file), and `knot.apiclient` configures itself from the agent's `/connect` endpoint.
+
+### Loading Scriptling plugins
+
+The agent can load Scriptling plugins into the environment its scripts run in, the same way the standalone Scriptling CLI does. This is how a space reaches heavyweight libraries — most notably the Scriptling database drivers (`scriptling.sql`, `scriptling.sqlite`, `scriptling.badgerdb`, `scriptling.valkey`) — without those drivers being compiled into the agent binary. Both `knot agent start` (the daemon, for remotely-executed and system scripts) and `knot run-script` (ad-hoc scripts) accept the same flags and read the same config keys.
+
+```shell
+# one or more explicit plugin executables
+knot agent start ... --plugin /opt/knot/plugins/sql --plugin /opt/knot/plugins/valkey
+
+# or a directory of plugin executables (repeatable)
+knot agent start ... --plugin-dir /opt/knot/plugins
+
+# ad-hoc, for a single run-script invocation
+knot run-script report.py --plugin-dir /opt/knot/plugins
+```
+
+Both flags can also be set from the environment or `knot.toml`:
+
+| Flag | Environment variable | Config key |
+| ---- | -------------------- | ---------- |
+| `--plugin` | `KNOT_PLUGIN` | `agent.plugins` |
+| `--plugin-dir` | `KNOT_PLUGIN_DIR` | `agent.plugin_dirs` |
+
+Explicit `--plugin` executables load first, in order; each `--plugin-dir` is then scanned. A plugin's identity is its resolved path, so the same binary named explicitly and found again in a directory loads once. Once loaded, a script imports it by the name the plugin declares in its handshake, for example `import scriptling.sql as sql`. If a configured plugin fails to start the process exits, rather than run as though the plugin were present.
+
+Standard CLI precedence applies to both commands: a `--plugin` / `--plugin-dir` flag overrides the config file for that invocation (it does not add to it), so `knot run-script` with no flag inherits the space's configured plugins, and with a flag uses exactly what you pass.
 
 ---
 

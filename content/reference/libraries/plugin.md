@@ -6,7 +6,7 @@ tags: [api, scripting, plugins]
 weight: 24
 ---
 
-The `knot.plugin` library calls a plugin's **declared** handlers — the `[[tool.knot.handlers]]` contract the browser's `pluginFetch` uses — as the requesting user. One call signature, two transports: the environment decides which, and both enforce the declaration's gate before any plugin code runs.
+The `knot.plugin` library calls a plugin's **declared** handlers — the `[[tool.knot.handlers]]` contract the browser's `pluginFetch` uses — as the requesting user. One call contract, two transports: the environment decides which, and both behave identically — same signature (`method` kwarg included), same name validation, declared-handlers-only, the declaration's gate enforced before any plugin code runs. Only the transport differs.
 
 ---
 

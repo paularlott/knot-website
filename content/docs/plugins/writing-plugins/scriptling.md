@@ -136,6 +136,77 @@ def add_up():
 
 with `"plugin.calc via calc >= 1.0.0"` in main.py's `dependencies`. Choose Go for CPU-heavy work, native libraries or a separate trust boundary; choose scriptling for pure-compute helpers that travel with the plugin as source.
 
+## Scriptling binary peers
+
+A `libs/` library runs in-process and jailed, with knot's library set — no database drivers. When a plugin needs them (or any of the CLI's heavier libraries), the peer can be a **scriptling script that looks like a binary**: an executable file in `bin/` whose shebang hands it to the scriptling CLI. knot spawns it exactly as it spawns a Go peer — stdio JSON-RPC, handshake, auto-generated host stubs — and the CLI carries the drivers, so knot links none of them.
+
+```
+myplugin/
+  main.py             declarations + handlers — every plugin's entry file
+  bin/
+    store             executable script: shebang + serve + register
+    impl.py           companion module (not executable, silently skipped)
+```
+
+The shape is the Go plugin's exactly — `main.py` plus something in `bin/`; only the *contents* of `bin/` differ. A Go plugin keeps its source in `peer/` (compiled into `bin/` by a Makefile, the binary gitignored), while a scriptling peer's `bin/` **is** its source, committed as-is. `main.py` is never optional and never replaced by `bin/`: the declarations — and every handler knot dispatches — always live in the entry file; `bin/` only ever carries a component the handlers import as `plugin.<name>`.
+
+The entry script serves the plugin protocol:
+
+```python
+# bin/store
+#!/usr/bin/env -S scriptling --json-rpc
+import scriptling.runtime.plugin as plugin_srv
+import scriptling.runtime as runtime
+
+import impl
+
+plugin_srv.serve("store", "1.0", "sqlite-backed store")
+plugin_srv.register_function("remember", "impl.remember")
+plugin_srv.register_function("recall", "impl.recall")
+runtime.start_server()
+```
+
+Two authoring rules the shape encodes: **handlers must live in a module** — `register_function("x", "impl.x")` resolves a `module.function` reference, and functions defined in the entry script cannot be registered at all (decorator forms included), so the implementation sits in `impl.py` beside the executable; and **`serve()` names the peer** — the handshake name and version the metadata dependency checks (`plugin.store via store >= 1.0`).
+
+The companion module is where the CLI's compiled-in libraries shine — `scriptling.sqlite` with the database file beside the executable, so plugin state survives every dispatch and travels with the folder:
+
+```python
+# bin/impl.py
+import os
+import os.path          # a library of its own in scriptling — import it explicitly
+import sys
+
+import scriptling.sqlite as sqlite
+
+
+def _db():
+    # sys.argv[0] is the executable's path once the server runs (NULL at
+    # import time, so resolve lazily); abspath because knot may spawn the
+    # peer through a relative plugins path.
+    return os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "store.db")
+
+
+def remember(key, value):
+    conn = sqlite.connect(_db())
+    conn.execute("create table if not exists kv (k text primary key, v text)")
+    conn.execute("insert or replace into kv (k, v) values (?, ?)", key, value)
+    conn.close()
+    return True
+
+
+def recall(key):
+    conn = sqlite.connect(_db())
+    rows = conn.query("select v from kv where k = ?", key)
+    conn.close()
+    return rows[0].get("v") if len(rows) > 0 else None
+```
+
+Everything else is the bin/ contract from [In Go](../go/): the dependency declaration, packaging shapes, health on the admin page, imports as `plugin.store` in handlers and user-created tools alike. Three requirements are specific to this form: the **scriptling CLI must be on the server's PATH** (the shebang invokes it; without it the plugin fails its requirements at load, named on the admin page); it is **unix-only** (shebang execution — a Windows server cannot spawn it); and it carries the **Go-peer trust class** — a subprocess the admin installed, not the jailed in-process environment, with the full CLI library surface (including `scriptling.sql` for MySQL/MariaDB/PostgreSQL) that implies.
+
+Choose `libs/` for pure compute that travels as source and stays jailed; choose a scriptling `bin/` peer for state (sqlite beside the executable) or CLI-only libraries; choose Go for CPU-heavy work, native libraries or a separate trust boundary.
+
+`demo-peer` (`examples/plugins/demo-peer/` in the knot repository) is a working example: its `bin/store` peer backs a small key/value page.
+
 `demo-scriptling` ships a working library — `libs/calc.py` (a constant, `add`/`scale`, the `Counter` class and a self-gating `gated_report()`), exercised by the *Plugin peers* row on its showcase page and declared as `plugin.calc via calc >= 1.0` in its metadata. Its Go twin is `demo-go`'s `demolib` (functions plus the `Counter` class over the plugin protocol).
 
 Libraries travel beyond the plugin too: **user-created MCP tools** import them the same way (`import plugin.calc as calc`, `import plugin.demolib as demolib` — scriptling and Go peers alike, the Go ones through the host-side stubs scriptling auto-generates from the peer's handshake). The plugin publishes that compute for reuse, and because no metadata gate applies to an import, the peer's code self-gates on the requesting user via `knot.identity.user()` ([the contract](./mcp-tools/#plugin-exports-in-user-tools)). Handler code, which runs in the main program's scope, reads the `user` global directly; libraries are modules, so they use [`knot.identity`](../../../reference/libraries/identity/).
@@ -145,7 +216,7 @@ Libraries travel beyond the plugin too: **user-created MCP tools** import them t
 Every handler call - pages, MCP tools, field handlers, `knot.plugin.call` - receives its world through three globals (script tools get `user` too):
 
 - **`params`** - the call's parameters as a dict. On a page it is the query string (plus any POST body on submits); as an MCP tool it is the client's JSON arguments; `scriptling.mcp.tool.get_string` and friends read the same values.
-- **`request`** - `{method, path}`: how the handler was reached. Browser fetches carry the real method and URL; in-process dispatch (MCP tool execution, `knot.plugin.call` between plugins) carries `method: "CALL"` with the handler's plugin-root URL as the path. `request.method` distinguishes a form's GET definition from its POST submit.
+- **`request`** - `{method, path}`: how the handler was reached. Browser fetches carry the real method and URL; `knot.plugin.call` carries the method it was given (GET by default, POST on request — both transports) with the handler's plugin-root URL as the path; MCP tool execution carries `method: "CALL"`. `request.method` distinguishes a form's GET definition from its POST submit.
 - **`user`** - a `User` instance describing the requesting user:
 
 | Member | Kind | Meaning |
