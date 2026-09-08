@@ -9,7 +9,7 @@ weight: 25
 An `html` column renders exactly what its handler returns, raw. This is the one place a plugin owns markup: plugins are installed by an administrator, so their html is trusted like knot's own templates. With that trust comes freedom - inline styles, `<style>` blocks, inline SVG, [Alpine](#alpine-and-chartjs) directives - and one rule about classes, below.
 
 ```python
-def col_clock():
+def col_clock(request):
     now = time.now()
     return {"html": f"""
 <div class="kp-card kp-flex">
@@ -89,7 +89,7 @@ Plugin pages load knot's full web bundle, so `window.Alpine` and `window.Chart` 
 
 - `pluginFetch('my_handler')` - GET your handler's JSON (the page path plus `/<handler>`). A handler no layout column references - a widget callback like this echo - must be declared in `[[tool.knot.handlers]]` to be callable.
 - `pluginFetch('my_handler', { params: { word: 'hi' } })` - GET with query params (they arrive in the handler's `params`).
-- `pluginFetch('my_handler', { method: 'POST', body: { name: 'x' } })` - POST the object form-encoded; the handler sees `request.method == "POST"` and the fields in `params`.
+- `pluginFetch('my_handler', { method: 'POST', body: { name: 'x' } })` - POST the object form-encoded; the handler sees `request["method"] == "POST"` and the fields in `request["params"]`.
 - `pluginFetch('their_handler', { plugin: 'other-plugin' })` - GET **another plugin's** handler (`/plugins/other-plugin/their_handler`). The handler must be declared in that plugin's metadata with `[[tool.knot.handlers]]` (that declaration is what makes it addressable at the plugin root), and its declared permission - empty means any logged-in user - is the gate. Handlers are ajax endpoints - any page may fetch any plugin's declared handlers.
 
 It throws on a non-JSON response (an expired session or a down server), so widgets can surface their own error state. Combined with Alpine:
@@ -110,8 +110,8 @@ It throws on a non-JSON response (an expired session or a down server), so widge
 The handler is ordinary - it cannot tell a column fetch from a widget call:
 
 ```python
-def echo_word():
-    word = params.get("word", "")
+def echo_word(request):
+    word = request["params"].get("word", "")
     if word == "":
         return {"reply": "type something first"}
     return {"reply": "echo: " + word.upper()}

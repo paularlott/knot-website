@@ -4,7 +4,7 @@ description: Exposing plugin handlers as MCP tools for AI assistants.
 weight: 35
 ---
 
-A plugin can expose its handlers as **MCP tools**: they are listed by knot's MCP server and callable by any MCP client — AI assistants included — running as the requesting user through the same dispatch as every other handler call.
+A plugin can expose its handlers as **MCP tools**: they are listed by knot's MCP server and callable by any MCP client — AI assistants included — running as the requesting user through the same dispatch as every other handler call. Like every handler, a tool handler takes a single `request` argument and is addressed `plugin.<namespace>.<fn>`.
 
 ## Declaring a tool
 
@@ -28,10 +28,10 @@ A plugin can expose its handlers as **MCP tools**: they are listed by knot's MCP
 
 The `description` is required — MCP clients list it next to the tool name. The `permission` (a `[tool.knot]` permission id, qualified at load) gate applies at **both** listing and call time: a user without the grant never sees the tool, and a direct call by name is refused before the handler runs. An empty gate means any MCP user.
 
-**No input schema is declared, and none is needed.** The MCP input schema is an empty object, and the tool's parameters are bound twice — as the handler's `params` dict and as the MCP tool context — so `scriptling.mcp.tool` works exactly as it does in any other MCP tool. Write the handler the way script tools are written:
+**No input schema is declared, and none is needed.** The MCP input schema is an empty object, and the tool's parameters are bound twice — in the handler's `request["params"]` dict and as the MCP tool context — so `scriptling.mcp.tool` works exactly as it does in any other MCP tool. Write the handler the way script tools are written:
 
 ```python
-def export_metrics():
+def export_metrics(request):
     import scriptling.mcp.tool as tool
 
     hours = tool.get_int("hours", 24)
@@ -40,7 +40,7 @@ def export_metrics():
     tool.return_object({"exported": rows})
 ```
 
-`tool.get_string`/`get_int`/`get_bool`/`get_list` (and their `_list` variants) read the caller's arguments; `return_string`, `return_object` and `return_toon` set the response. A plain `return` also works — strings become text responses, anything else is JSON-encoded — so handlers shared with pages (which use `params` and plain returns) serve as tools unchanged.
+`tool.get_string`/`get_int`/`get_bool`/`get_list` (and their `_list` variants) read the caller's arguments; `return_string`, `return_object` and `return_toon` set the response. A plain `return` also works — strings become text responses, anything else is JSON-encoded — so handlers shared with pages (which read `request["params"]` and plain returns) serve as tools unchanged.
 
 ### Declaring parameters
 
@@ -65,16 +65,18 @@ By default the tool's input schema is an empty object — permissive, but MCP cl
 # required = true
 ```
 
-Types map to JSON schema types (`int` → `integer`, `float` → `number`, `list` → `array`), and `required` parameters collect into the schema's `required` list. The declaration is documentation and client ergonomics — parameters still arrive in the handler's `params` dict untyped, exactly as before.
+Types map to JSON schema types (`int` → `integer`, `float` → `number`, `list` → `array`), and `required` parameters collect into the schema's `required` list. The declaration is documentation and client ergonomics — parameters still arrive in the handler's `request["params"]` dict untyped, exactly as before.
 
 ## The identity surface
 
-Handlers can self-check who is calling: every dispatch binds a `user` global — a `User` instance with `name`, `id`, `is_admin`, `groups`, `permissions`, `plugin_permissions` fields and `has_permission`/`in_group` methods — one check for all of it: an integer is a built-in permission id, a string a stable key or a qualified grant (script tools see the same global). The metadata gates remain the enforcement boundary (knot refuses before plugin code runs); `user` is for in-code decisions — adapting output, refusing edge cases the declarations can't express:
+Handlers can self-check who is calling. `request["user"]` carries the caller as inert data (`name`, `id`, `is_admin`, `groups`, `permissions`, `plugin_permissions`) - use it to branch on who is asking. Any permission **check** uses [`knot.identity`](../scriptling/#identity), a real `User` object with `has_permission`/`in_group` where the admin role passes everything. The metadata gates remain the enforcement boundary (knot refuses before plugin code runs); these are for the in-code decisions the declarations can't express — adapting output, refusing edge cases:
 
 ```python
-def export_metrics():
+def export_metrics(request):
     import scriptling.mcp.tool as tool
+    import knot.identity
 
+    user = knot.identity.user()
     if not user.is_admin and not user.in_group("platform"):
         tool.return_error("platform group only")
     ...
@@ -102,27 +104,31 @@ The [`knot.plugin`](../../../reference/libraries/plugin/) library calls declared
   ```python
   import knot.plugin as kp
   result = kp.call("metrics", "export_all", {"range": "1h"})
-  # POST (params as a JSON body) for handlers that branch on request.method:
+  # POST (params as a JSON body) for handlers that branch on request["method"]:
   result = kp.call("metrics", "submit", {"range": "1h"}, method="POST")
   ```
 
-  A refused gate raises `permission denied`, an undeclared handler or unknown plugin is not addressable, and the handler runs as the requesting user with the `user` global bound — it can self-check exactly as a page handler does.
+  A refused gate raises `permission denied`, an undeclared handler or unknown plugin is not addressable, and the handler runs as the requesting user with `request["user"]` set and `knot.identity` bound — it can self-check exactly as a page handler does.
 
-## Plugin exports in user tools
+## The trust boundary: import vs call
 
-A plugin's **scriptling libraries** (`libs/*.py`) are importable in user-created tools as `plugin.<name>` — functions, classes and constants, evaluated in-process. This is the plugin author's decision to publish compute for reuse; no metadata gate applies to an import, so the exported code carries its own:
+Installed plugins are one trust domain sharing a single **plugin pool** - the exposed surfaces (`libs/*.py` and peers) importable as `plugin.<name>`. That pool is *attached* to plugin handler and plugin-tool environments, so those may `import plugin.<other>` and use another plugin's functions, classes and constants directly, ungated - [composition](../scriptling/#composition) in-process.
+
+User-created tools are the untrusted side: the plugin pool is **not** attached to their environment, so they cannot `import plugin.<name>` at all. This attach/not-attach split is the structural isolation boundary. A user tool reaches a plugin only through [`knot.plugin.call`](../../../reference/libraries/plugin/) over the gated loopback, where the declared handler's gate is enforced for the requesting user - the same contract shown above.
+
+Because that call rides the real web dispatch, the plugin's handler self-gates on the caller exactly as a page handler would - `request["user"]` for the caller's data, `knot.identity` for the authoritative check:
 
 ```python
-# libs/calc.py — the plugin exports this
+# a [[tool.knot.handlers]]-declared handler the plugin exposes
 import knot.identity
 
-def export_report():
+def export_report(request):
     if not knot.identity.user().has_permission("plugin.metrics.export"):
         raise Exception("plugin.metrics.export not granted")
     return {"rows": []}
 ```
 
-`knot.identity.user()` returns the same `User` instance the `user` global holds — module code (exported libraries, lib scripts) can't see the globals, whose scope is the calling program, so the identity library carries the instance. The permission check is the plugin's own: a user without `plugin.metrics.export` gets the refusal, whoever's tool invoked it. Binary (Go) peers are importable the same way — through the scriptling plugin support, the host-side stubs auto-generated from each peer's handshake, so a user tool calls into the already-spawned peer process exactly as plugin handlers do (the peer-lifecycle control surface is not part of it). `demo-scriptling` ships a working self-gate example: `gated_report()` in its `libs/calc.py` refuses users without `plugin.demo-scriptling.view_dashboard`; `demo-go`'s `demolib` is the Go twin, importable from user tools as `plugin.demolib`.
+The permission check is the plugin's own: a user without `plugin.metrics.export` gets the refusal, whoever's tool invoked it. `knot.plugin.call` reaches a plugin's **declared handlers** (pages, `[[tool.knot.handlers]]`, MCP tools) — never its raw library exports; those are import-only, and imports are trusted-plugin-to-trusted-plugin. `demo-scriptling` ships a self-gating library export, `gated_report()` in its `libs/calc.py`, which refuses users without `plugin.demo-scriptling.view_dashboard` (`demo-go`'s `demolib` is the Go twin): because a composing plugin imports it ungated, the export makes its own `knot.identity` check — the discipline the trust domain relies on for shared compute.
 
 ## Example
 

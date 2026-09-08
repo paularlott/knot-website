@@ -6,21 +6,27 @@ tags: [plugins, scripting]
 weight: 50
 ---
 
-Every plugin has the same shape regardless of what its logic is written in: **a script entry file that declares** - plus, optionally, assets and binary components. Whether you write the plugin in [Scriptling](./scriptling/), in [Go](./go/), or mix both, the declarations are identical and live in the same place: the metadata block of the entry file.
+Every plugin is **a folder** that declares itself in a `[tool.knot]` table - plus, optionally, assets and binary components. Whether you write the plugin in [Scriptling](./scriptling/), in [Go](./go/), or mix both, the declarations are identical; what differs is only where the `[tool.knot]` table is read from:
+
+- a **pure-script plugin** puts it in the metadata block of `main.py`;
+- a **peer plugin** returns it in its [binary peer's handshake](./go/) - so a folder with only `bin/` + `assets/` and no `main.py` is a complete plugin.
+
+Either way knot parses the *same* table the *same* way, and never runs plugin code to learn a declaration.
 
 This page covers what's common - packaging, the metadata reference, and validation. The [Scriptling](./scriptling/) and [Go](./go/) pages cover the language-specific parts, [Plugin Pages](./pages/) covers what happens when a page handler runs, [Raw HTML](./html/) documents the trusted html column's helper classes and globals, and [MCP Tools](./mcp-tools/) covers exposing handlers as MCP tools.
 
 ## Packaging
 
-A plugin is **a folder** in the server's plugins path:
+A plugin is **a folder** in the server's plugins path, in one of two shapes:
 
-| Layout | Identity | Entry point |
+| Layout | Identity | Manifest source |
 |---|---|---|
-| `plugins/metrics/main.py` (+ modules, `assets/`, `libs/`, `bin/`) | `metrics` | `main.py` |
+| `plugins/metrics/main.py` (+ modules, `assets/`, `libs/`, `bin/`) | `metrics` | `main.py` metadata block |
+| `plugins/metrics/bin/<peer>` (+ `assets/`, no `main.py`) | `metrics` | the peer's handshake |
 
-Identity is the filesystem name, which must match `[a-z0-9_-]+` - it becomes part of the plugin's permission namespace (`plugin.<name>.<id>`). A loose `.py` file in the plugins path is not a plugin (it is ignored with a warning) - folders give peers and assets a home and keep one shape for every plugin.
+A folder qualifies as a plugin if it has a `main.py` **or** a `bin/` directory. Identity is the filesystem name, which must match `[a-z0-9_-]+` - it becomes part of the plugin's permission namespace (`plugin.<name>.<id>`). A loose `.py` file in the plugins path is not a plugin (it is ignored with a warning) - folders give peers and assets a home and keep one shape for every plugin.
 
-The folder's other `.py` files are modules its handlers can import (`import helpers`) - the module loader is scoped to the plugin folder, so plugins cannot see each other's code. Assets live anywhere in the folder (`assets/` by convention); scriptling libraries in [`libs/`](./scriptling/#scriptling-libs); Go peers in [`bin/`](./go/).
+The folder's other `.py` files are modules its handlers can import (`import helpers`) - the sibling-module loader is scoped to the plugin folder, so a plugin's private modules stay private. (This is separate from a plugin's *published* surface: what a plugin exposes under `plugin.<name>` - a `libs/` library or a `bin/` peer - other installed plugins may compose, since installed plugins share one trust domain; see [composition](./scriptling/#composition).) Assets live anywhere in the folder (`assets/` by convention); scriptling libraries in [`libs/`](./scriptling/#scriptling-libs); Go peers in [`bin/`](./go/).
 
 ## The metadata block
 
@@ -109,11 +115,37 @@ The admin role passes every plugin permission check; no other role gets plugin p
 
 A `[[tool.knot.pages]]` entry declares an internal page under `/plugins/<name>` served by a handler function, optionally gated by `permission` like a menu item - see [Plugin Pages](./pages/) for the dispatch model. `label` is the page title; a page with `menu_label` also appears in the sidebar under that label (unset means no menu item), inheriting the page's gate and icon. A page with `default = true` becomes the post-login landing page (one page per plugin; if several plugins claim it the first by name wins, with a warning on the admin inventory).
 
-## The dispatch globals
+## Handler addressing and the `request` argument
 
-Whatever the dispatch — a page render, a column fetch, an MCP tool call, a field handler, `knot.plugin.call` — the handler runs with three globals bound: `params` (the call's parameters), `request` (`{method, path}`), and **`user`**: a `User` instance describing the requesting user, carrying their groups and permissions with `has_permission` / `in_group` methods (one check for all of it: an integer is a built-in permission id — the `knot.permission` constants — a string a stable key like `"manage_spaces"` or a qualified grant like `"plugin.metrics.read"`), so code can ask who is calling. The metadata gates remain the enforcement boundary; `user` is for in-code decisions the declarations can't express.
+Every handler is addressed **`plugin.<name>.<function>`** and receives a single argument, `request` - there are no implicit globals. Whatever the dispatch (a page render, a column fetch, an MCP tool call, a field handler, `knot.plugin.call`), the handler is called as `handler(request)`:
 
-The full `User` surface is in [the dispatch globals reference](./scriptling/#the-dispatch-globals) (editors complete it from the `knot.globals.User` stub). The global binds in the *entry script* — which is all a pure-Scriptling plugin needs. When the logic lives in a [Go](./go/) peer, the handler reads `user` and passes what the peer needs across as plain arguments: [how identity reaches the peer](./go/#the-requesting-user).
+```python
+def dashboard_report(request):
+    method = request["method"]   # "GET" | "POST" | "CALL" (MCP) | the knot.plugin.call method
+    path   = request["path"]     # "/plugins/metrics/dashboard"
+    params = request["params"]   # dict: query parameters merged over any POST body
+    who    = request["user"]     # inert identity snapshot (a dict) - see below
+    ...
+```
+
+A bare handler declaration (`handler = "dashboard_report"`) resolves against the plugin's own namespace - the folder name for a Scriptling `main.py` (with `-` mapped to `_`), or the peer's handshake name for a [Go](./go/) peer. A declaration can also name another plugin explicitly (`handler = "plugin.other.export"`) - that is [cross-plugin composition](./scriptling/#composition).
+
+### `request["user"]` is data; `knot.identity` is authority
+
+`request["user"]` is a plain, serializable **dict** - `id`, `name`, `is_admin`, `groups`, `permissions` (stable snake_case keys), `plugin_permissions` (qualified grants). It is passed *data*: no round trip, no methods, and it crosses the wire unchanged to a [Go peer](./go/). Use it to branch on *who is calling*.
+
+Anything that acts with the user's authority - or wants the authoritative permission check, where the admin role passes everything - uses `knot.identity.user()`, a real `User` object with `has_permission` / `in_group`, backed by the gated loopback:
+
+```python
+def export_all(request):
+    import knot.identity
+
+    if not knot.identity.user().has_permission("plugin.metrics.export"):
+        return {"error": "forbidden"}
+    ...
+```
+
+The metadata gates remain the enforcement boundary knot applies before the handler ever runs; `request["user"]` and `knot.identity` are for the in-code decisions the declarations can't express. The `knot.identity` `User` surface (the `has_permission` argument forms) is in [the identity reference](./scriptling/#identity); editors complete it from the `knot.identity` stub.
 
 ## MCP tools
 

@@ -11,7 +11,7 @@ A `[[tool.knot.pages]]` entry serves a live page under `/plugins/<name><path>`. 
 # path = "/home"
 # handler = "dashboard"
 # ...
-def dashboard():
+def dashboard(request):
     return {"rows": [
         {"title": "Fleet status", "columns": [
             {"id": "kpi", "type": "stats", "handler": "kpi", "refresh": 30},
@@ -32,7 +32,7 @@ The document is always `{"rows": [...]}`. A row has an optional `title`, an opti
 - `id` - the data-binding key (auto-generated as `r<row>c<col>` when omitted); identifies the column for refresh targeting, so keep ids unique within a page. Data is fetched from the column's handler URL - the page path plus `/<handler>` (e.g. `/plugins/my-plugin/dashboard/spaces`).
 - `type` - what renders the column: `stat`, `chart`, `table`, `form`, `markdown`, `html`, `text`, `bar`. Markdown covers code (fenced blocks) and lists (plain bullets); `text` is the literal type - escaped, whitespace preserved, no markdown semantics, right for timestamps and captions.
 - `title` - the column heading.
-- `handler` - the function that supplies this column's data. **Self-contained**: each call runs as the requesting user with fresh `params`, `request` and `user` values (the [dispatch globals](../scriptling/#the-dispatch-globals)) and a clean module state — environments are pooled per plugin and bound to the requesting user per call, so nothing persists between requests. Compute what you need per call.
+- `handler` - the function that supplies this column's data. **Self-contained**: each call runs as the requesting user, called `handler(request)` with a fresh [`request` argument](../scriptling/#the-request-argument) and a clean module state — environments are pooled per plugin and bound to the requesting user per call, so nothing persists between requests. Compute what you need per call.
 - `refresh` - seconds (5-3600); the client re-fetches just this column.
 - `width` - 1 to 4 (default 4); the row is always full width, divided into N columns on wide screens and stacking on narrow ones.
 - `permission` - a gate enforced by knot; a row left with no columns is never sent.
@@ -50,11 +50,12 @@ Each handler returns JSON for its type:
 
 ## Forms: one handler, two faces
 
-A form column's handler branches on `request.method`. GET returns the definition; POST receives the submitted fields in `params` and returns an **envelope**:
+A form column's handler branches on `request["method"]`. GET returns the definition; POST receives the submitted fields in `request["params"]` and returns an **envelope**:
 
 ```python
-def widget_form():
-    if request.method == "POST":
+def widget_form(request):
+    if request["method"] == "POST":
+        params = request["params"]
         name = params.get("widget_name", "")
         if name == "":
             return {"status": "error", "message": "A widget needs a name.",
@@ -121,7 +122,7 @@ Presentation lives in knot's renderer, so pages inherit it: semantic headings/ta
 
 ## The dispatch model
 
-When a user opens the page, knot checks the page gate (declared permission - **knot enforces, plugins can't forget it**), evaluates the entry file, calls the handler as the requesting user, enforces the row/column gates, and serves the layout.
+When a user opens the page, knot checks the page gate (declared permission - **knot enforces, plugins can't forget it**), evaluates the entry file, calls the handler as the requesting user - `handler(request)`, addressed `plugin.<namespace>.<fn>` (see [the request argument](../scriptling/#the-request-argument)) - enforces the row/column gates, and serves the layout.
 
 Every handler is also addressable as a URL, and a handler fetch runs that handler directly - auth and the gate checked, then the call:
 
@@ -140,7 +141,7 @@ A declared gate is authoritative everywhere the handler is called - page path, p
 
 Undeclared handlers are reachable only through a page, and the column gates hold at fetch time, not just when the layout is pruned: knot runs the page's layout handler as the requesting user (row/column gates applied) and serves the handler only if that layout offers it - as a column's `handler` or an action's popup `handler`. That answer is memoized for a few seconds per user and query, so a page's columns fetching as a burst cost one layout run, not one per column; a handler the layout withdraws (or a gate revoked via a role edit) stops being fetchable within that window. A user who fails a column's permission cannot fetch that column's data by naming its handler directly, and a handler no layout references (a trusted-html widget callback, say) must carry a `[[tool.knot.handlers]]` declaration to be callable at all.
 
-So the full model, outermost in: the **page** gate decides the page and every handler riding its path; **row** gates are presentation (gated rows vanish with their columns, hiding their handlers); **column** gates decide both the column's visibility and its handler's fetchability; a **handler declaration** replaces the inherited gates wherever it applies. Handler environments: the scriptling standard library, data formats, templating, text processing (jailed to the plugin folder), `scriptling.ai`, the [`knot.*` libraries](../../../scripting/) as the requesting user, and binary peers as `plugin.<name>` imports. No outbound networking, no container/nomad, no filesystem outside the plugin folder.
+So the full model, outermost in: the **page** gate decides the page and every handler riding its path; **row** gates are presentation (gated rows vanish with their columns, hiding their handlers); **column** gates decide both the column's visibility and its handler's fetchability; a **handler declaration** replaces the inherited gates wherever it applies. Handler environments: the scriptling standard library, data formats, templating, text processing (jailed to the plugin folder), `scriptling.ai`, the [`knot.*` libraries](../../../scripting/) as the requesting user, and binary peers as `plugin.<name>` imports. Installed plugins share one plugin pool and one trust domain, so *other* plugins' exposed surfaces are importable as `plugin.<name>` too ([composition](../scriptling/#composition)). No outbound networking, no container/nomad, no filesystem outside the plugin folder.
 
 ## Examples
 
