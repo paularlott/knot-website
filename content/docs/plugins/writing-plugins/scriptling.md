@@ -145,7 +145,7 @@ Libraries travel beyond the plugin too: **user-created MCP tools** import them t
 Every handler call - pages, MCP tools, field handlers, `knot.plugin.call` - receives its world through three globals (script tools get `user` too):
 
 - **`params`** - the call's parameters as a dict. On a page it is the query string (plus any POST body on submits); as an MCP tool it is the client's JSON arguments; `scriptling.mcp.tool.get_string` and friends read the same values.
-- **`request`** - `{method, path}`: how the handler was reached. `request.method` distinguishes a form's GET definition from its POST submit.
+- **`request`** - `{method, path}`: how the handler was reached. Browser fetches carry the real method and URL; in-process dispatch (MCP tool execution, `knot.plugin.call` between plugins) carries `method: "CALL"` with the handler's plugin-root URL as the path. `request.method` distinguishes a form's GET definition from its POST submit.
 - **`user`** - a `User` instance describing the requesting user:
 
 | Member | Kind | Meaning |

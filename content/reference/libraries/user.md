@@ -33,8 +33,9 @@ The `knot.user` library provides user management functions.
 | `set_ssh_private_key(ssh_private_key)` | Set the current user's SSH private key |
 | `delete(user_id)` | Delete a user |
 | `get_quota(user_id)` | Get user quota and usage |
-| `list_permissions(user_id)` | List all permissions for a user |
-| `has_permission(user_id, permission_id)` | Check if user has a specific permission |
+| `list_permissions(user_id)` | List the user's built-in permissions (integer IDs) |
+| `list_plugin_permissions(user_id)` | List the user's plugin permissions — qualified grant strings (`plugin.<name>.<id>`) resolved from their roles |
+| `has_permission(user_id, permission_id)` | Check if user has a specific permission — an integer checks a built-in, a `"plugin."`-prefixed string checks a plugin grant |
 
 ---
 

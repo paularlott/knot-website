@@ -25,6 +25,7 @@ The `knot.permission` library provides permission constants and a function to li
 | Function | Description |
 |----------|-------------|
 | `list()` | List all available permissions with IDs, names, and groups |
+| `list_plugin()` | List the permissions declared by loaded plugins — the qualified grant ids (`plugin.<name>.<id>`) roles may carry |
 
 ---
 
