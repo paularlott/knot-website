@@ -23,6 +23,8 @@ navSection: docs
 - **Custom field defaults**: template custom fields can carry a default value — prefilled when a space is created and applied when an API/CLI request omits the field. Clearing the prefilled value keeps the field empty, so a deliberately blank field never falls back to the default.
 
 - **Bool custom fields**: templates gain a `bool` custom field type — the same styled toggle the UI uses elsewhere, showing `true`/`false` and storing the value as a string. The `knot.template` scriptling library can now declare custom fields (types and defaults included) on create and update.
+
+- **Required custom fields**: a template custom field can be marked required — the space form refuses to save with it blank (and marks the field), and the space create/update API rejects blank values; the field's default can satisfy the requirement.
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}

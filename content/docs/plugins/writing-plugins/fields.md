@@ -19,6 +19,8 @@ A template's custom field has a **name**, a **description** (its label on the sp
 
 Values are stored as strings regardless of type. Admins set a field's type, language and handler by opening the wrench next to the field in the template editor; each row's badge shows its type. Type, language and handler are validated when the template is saved: a type outside this list is rejected rather than silently rendered as a text input.
 
+**Required.** A field can be marked required (a toggle in the wrench dialog, default off): a required field cannot be left blank when creating or editing a space - the form marks it and refuses to save, and the space API rejects absent, empty or whitespace-only values with `missing required custom field(s)`. A default value can satisfy the requirement, and a `bool` field is never blank.
+
 **`masked` is presentation-only.** The name says what it does: it hides the value while typing - an over-the-shoulder affordance, nothing more. The value is still stored as a plain string on the space, is returned by the space API and appears in editable forms exactly like a `text` field: no encryption, no redaction. It is not a secret store - anything that must not be readable should use [secret providers](../../variables/secret-providers/) instead.
 
 ## Field handlers
