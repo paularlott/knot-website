@@ -25,6 +25,8 @@ navSection: docs
 - **Bool custom fields**: templates gain a `bool` custom field type — the same styled toggle the UI uses elsewhere, showing `true`/`false` and storing the value as a string. The `knot.template` scriptling library can now declare custom fields (types and defaults included) on create and update.
 
 - **Required custom fields**: a template custom field can be marked required — the space form refuses to save with it blank (and marks the field), and the space create/update API rejects blank values; the field's default can satisfy the requirement.
+
+- **Select custom fields**: a `select` type renders a dropdown whose options come from a plugin field handler or a manual one-per-line list on the field — autocomplete takes the same two sources; the template editor's field list now badges required fields.
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}

@@ -15,7 +15,8 @@ A template's custom field has a **name**, a **description** (its label on the sp
 - `number` - digit-validated input; stored as a string.
 - `bool` - the styled true/false toggle; the value is the string `"true"` or `"false"`, prefilled from the field's default.
 - `textarea` - a code editor for multi-line values, with a configurable **language**: text, scriptling, yaml, toml, json, markdown or shell. Scriptling gets the same completions as the script editors.
-- `autocomplete` - a pick-or-create combobox whose suggestions come from a plugin field handler.
+- `select` - a dropdown. Options come from one of exactly two sources: a plugin field handler (refreshed as the form loads; picking stores the option's key when suggestions are key/text pairs) or a manual list declared right on the field (one option per line in the wrench dialog, values stored verbatim).
+- `autocomplete` - a pick-or-create combobox taking the same two sources as select: a plugin field handler's suggestions, or the manual list.
 
 Values are stored as strings regardless of type. Admins set a field's type, language and handler by opening the wrench next to the field in the template editor; each row's badge shows its type. Type, language and handler are validated when the template is saved: a type outside this list is rejected rather than silently rendered as a text input.
 
