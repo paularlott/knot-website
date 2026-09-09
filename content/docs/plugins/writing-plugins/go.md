@@ -6,7 +6,7 @@ tags: [plugins, go, scripting]
 weight: 20
 ---
 
-A plugin folder carries **binary peers** - executables speaking scriptling's plugin protocol (JSON-RPC over stdio) - in its `bin/` folder. A peer is where you put what a script can't do: FFI, a proprietary SDK, a perf-critical loop. But a peer can also be the *whole plugin*: it serves both the plugin's declarations and its handlers from the handshake, so a folder with only `bin/` + `assets/` and **no `main.py`** is a complete plugin.
+A plugin folder carries **binary peers** - executables speaking scriptling's plugin protocol (JSON-RPC over stdio) - in its `bin/` folder. A peer is where you put what a script can't do: FFI, a proprietary SDK, a perf-critical loop. But a peer can also be the *whole plugin*: it serves both the plugin's declarations and its handlers from the handshake, and it can even serve the declared assets from its own fetcher (below) - so a folder with only `bin/` and **no `main.py` and no `assets/`** is a complete plugin: one binary, nothing else.
 
 knot spawns and handshakes each peer at plugin load (bounded by a timeout - a broken binary can't stall boot), reads its manifest and version there, and exposes its functions to handlers as `plugin.<name>`. Peer health shows on the [admin plugins page](../../managing/).
 
@@ -131,6 +131,31 @@ Another plugin's handler then does `import plugin.demolib as demolib; demolib.gr
 peer:
 	cd peer && go build -o ../bin/demolib_$(GOOS)_$(GOARCH) .
 ```
+
+## Single binary: assets from the peer
+
+A peer can serve the plugin's declared assets from a **fetcher**, so the icon and logo live inside the binary - one file to ship, no `assets/` folder at all:
+
+```go
+//go:embed assets
+var embeddedAssets embed.FS
+
+type assetFetcher struct{}
+
+func (assetFetcher) Read(ctx context.Context, source, path string) ([]byte, error) {
+	data, err := embeddedAssets.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %s", plugin.ErrFetchNotFound, path)
+	}
+	return data, nil
+}
+
+func (assetFetcher) Glob(ctx context.Context, source, pattern string) ([]plugin.FetchEntry, error) { /* fs.Glob over the embed FS */ }
+
+server.RegisterFetcher("demolib", assetFetcher{})
+```
+
+At load, knot reads each declared asset **peer-first** - the first peer advertising a fetcher, addressed at its scheme root with the declared path - and falls back to the plugin folder on disk for anything the fetcher misses (or when there is no peer). Peer-served bytes are fetched once and served from memory; disk assets stream from disk as before. The disk file remains the last word on existence: a sick peer can only degrade to disk, never invent an asset. The declared paths in the manifest (`"icon": "assets/chip.svg"`) are the same either way - only where the bytes come from differs. `demo-go` ships this shape: its icon and logo are embedded in the peer, and the plugin folder is `bin/` alone.
 
 ## Packaging shapes
 

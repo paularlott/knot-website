@@ -22,11 +22,11 @@ A plugin is **a folder** in the server's plugins path, in one of two shapes:
 | Layout | Identity | Manifest source |
 |---|---|---|
 | `plugins/metrics/main.py` (+ modules, `assets/`, `libs/`, `bin/`) | `metrics` | `main.py` metadata block |
-| `plugins/metrics/bin/<peer>` (+ `assets/`, no `main.py`) | `metrics` | the peer's handshake |
+| `plugins/metrics/bin/<peer>` (+ optional `assets/`, no `main.py`) | `metrics` | the peer's handshake |
 
 A folder qualifies as a plugin if it has a `main.py` **or** a `bin/` directory. Identity is the filesystem name, which must match `[a-z0-9_-]+` - it becomes part of the plugin's permission namespace (`plugin.<name>.<id>`). A loose `.py` file in the plugins path is not a plugin (it is ignored with a warning) - folders give peers and assets a home and keep one shape for every plugin.
 
-The folder's other `.py` files are modules its handlers can import (`import helpers`) - the sibling-module loader is scoped to the plugin folder, so a plugin's private modules stay private. (This is separate from a plugin's *published* surface: what a plugin exposes under `plugin.<name>` - a `libs/` library or a `bin/` peer - other installed plugins may compose, since installed plugins share one trust domain; see [composition](./scriptling/#composition).) Assets live anywhere in the folder (`assets/` by convention); scriptling libraries in [`libs/`](./scriptling/#scriptling-libs); Go peers in [`bin/`](./go/).
+The folder's other `.py` files are modules its handlers can import (`import helpers`) - the sibling-module loader is scoped to the plugin folder, so a plugin's private modules stay private. (This is separate from a plugin's *published* surface: what a plugin exposes under `plugin.<name>` - a `libs/` library or a `bin/` peer - other installed plugins may compose, since installed plugins share one trust domain; see [composition](./scriptling/#composition).) Assets live anywhere in the folder (`assets/` by convention) — or, for a peer plugin, inside the peer itself: a fetcher-serving peer can carry the declared assets in the binary or the script, making the plugin a single file ([single binary](./go/#single-binary-assets-from-the-peer)). Scriptling libraries in [`libs/`](./scriptling/#scriptling-libs); Go peers in [`bin/`](./go/).
 
 ## The metadata block
 

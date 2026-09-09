@@ -239,9 +239,26 @@ def recall(key):
 
 Everything else is the bin/ contract from [In Go](../go/): the dependency declaration, packaging shapes, health on the admin page, imports as `plugin.kvstore` in this plugin's handlers and in other installed plugins ([composition](#composition)) - never in user-created MCP tools, which reach a plugin only via `knot.plugin.call`. Three requirements are specific to this form: the **scriptling CLI must be on the server's PATH** (the shebang invokes it; without it a `main.py` plugin fails its requirements at load and a pure-peer plugin is named as failed — its manifest has no other source — either way it appears on the admin page); it is **unix-only** (shebang execution — a Windows server cannot spawn it); and it carries the **Go-peer trust class** — a subprocess the admin installed, not the jailed in-process environment, with the full CLI library surface (including `scriptling.sql` for MySQL/MariaDB/PostgreSQL) that implies.
 
+A scriptling peer can also serve the plugin's declared assets from **inside the script** — the single-file equivalent of a Go peer's embedded assets. Register a fetcher whose read handler answers the declared paths from strings (or bytes) in the script; `None` is a miss and knot falls back to the plugin folder, so an `assets/` folder is optional:
+
+```python
+# bin/notes
+plugin_srv.register_fetcher("notes", "impl.fetch_read")
+
+# bin/impl.py
+ASSETS = {
+    "assets/icon.svg": "<svg ...>",
+}
+
+def fetch_read(source, path):
+    return ASSETS.get(path)   # None answers a miss
+```
+
+knot reads declared assets peer-first, disk second — the same resolution rule as [a Go peer's embedded assets](../go/#single-binary-assets-from-the-peer). Requires a scriptling CLI with `register_fetcher` (0.24.5).
+
 Choose `libs/` for pure compute that travels as source and stays jailed; choose a scriptling `bin/` peer for state (sqlite beside the executable) or CLI-only libraries; choose Go for CPU-heavy work, native libraries or a separate trust boundary.
 
-`demo-scriptlingcli` (`examples/plugins/demo-scriptlingcli/` in the knot repository) is the wrap-and-extend working example: it keeps a `main.py` (scriptling handlers, namespace `plugin.demo_scriptlingcli`) whose `bin/kvstore` peer handshakes as `kvstore` (`plugin.kvstore`) and backs a small key/value page. Its sibling `demo-scriptlingcli2` (`examples/plugins/demo-scriptlingcli2/`) is the pure-peer twin: no `main.py`, the `bin/notes` peer serves its own manifest and every handler — `notes_page`, `col_notes`, `col_add`, `note_view` (an Ace-edited textarea, a table with per-row markdown view popups and delete actions over sqlite) — addressed as `plugin.notes.<fn>`. Between them the two are an encapsulation toolkit: wrap an existing binary and extend it with scriptling, or ship one executable that declares itself.
+`demo-scriptlingcli` (`examples/plugins/demo-scriptlingcli/` in the knot repository) is the wrap-and-extend working example: it keeps a `main.py` (scriptling handlers, namespace `plugin.demo_scriptlingcli`) whose `bin/kvstore` peer handshakes as `kvstore` (`plugin.kvstore`) and backs a small key/value page. Its sibling `demo-scriptlingcli2` (`examples/plugins/demo-scriptlingcli2/`) is the pure-peer twin and a **single-file plugin**: no `main.py` and no `assets/` — the `bin/notes` peer serves its own manifest, every handler (`notes_page`, `col_notes`, `col_add`, `note_view` — an Ace-edited textarea, a table with per-row markdown view popups and delete actions over sqlite) and its icon and action icons (inlined in the script, via the fetcher), all addressed as `plugin.notes.<fn>`. Between them the two are an encapsulation toolkit: wrap an existing binary and extend it with scriptling, or ship one executable (or script) that declares itself.
 
 `demo-scriptling` ships a working library — `libs/calc.py` (a constant, `add`/`scale`, the `Counter` class and a self-gating `gated_report()`), exercised by the *Plugin peers* row on its showcase page and declared as `plugin.calc via calc >= 1.0` in its metadata. Its Go twin is `demo-go`'s `demolib` (functions plus the `Counter` class over the plugin protocol).
 
