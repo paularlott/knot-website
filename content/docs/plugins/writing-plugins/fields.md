@@ -13,6 +13,7 @@ A template's custom field has a **name**, a **description** (its label on the sp
 - `text` (default) - plain single-line input.
 - `masked` - the value is hidden while typing (a browser password control with `autocomplete="new-password"`).
 - `number` - digit-validated input; stored as a string.
+- `bool` - the styled true/false toggle; the value is the string `"true"` or `"false"`, prefilled from the field's default.
 - `textarea` - a code editor for multi-line values, with a configurable **language**: text, scriptling, yaml, toml, json, markdown or shell. Scriptling gets the same completions as the script editors.
 - `autocomplete` - a pick-or-create combobox whose suggestions come from a plugin field handler.
 

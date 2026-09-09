@@ -92,6 +92,9 @@ Everything a plugin declares lives under `[tool.knot]`:
 # icons = ["assets/view.svg"]                        # SVG assets for data-driven row action icons,
 #                                                    #   sanitized at load and addressable by path
 #
+# export = ["client.py"]                             # modules materialized in user tool environments
+#                                                    #   as plugin.<name>.<stem> (first also plugin.<name>)
+#
 # [[tool.knot.menus]]
 # label = "Grafana"                                  # required
 # url = "https://grafana.internal/d/spaces"          # required: "/", http:// or https://
@@ -165,7 +168,7 @@ The metadata gates remain the enforcement boundary knot applies before the handl
 
 ## MCP tools
 
-`[[tool.knot.mcp_tools]]` exposes a plugin handler as an MCP tool — listed by knot's MCP server, callable by AI assistants, running as the requesting user, optionally gated by permission. No input schema is needed: parameters arrive in the handler's `params`. See [MCP Tools](./mcp-tools/) for the full contract, including calling plugins back from plugin tools via `knot.plugin`.
+`[[tool.knot.mcp_tools]]` exposes a plugin handler as an MCP tool — listed by knot's MCP server, callable by AI assistants, running as the requesting user, optionally gated by permission. No input schema is needed: parameters arrive in the handler's `params`. `export` declares the flip side — client modules materialized in *user* tool environments as `plugin.<name>.*`, wrapping `knot.plugin.call` so user tools get a friendly surface over the plugin's declared handlers. See [MCP Tools](./mcp-tools/) for the full contract, including calling plugins back from plugin tools via `knot.plugin`.
 
 ## Fields
 

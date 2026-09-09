@@ -114,7 +114,7 @@ The [`knot.plugin`](../../../reference/libraries/plugin/) library calls declared
 
 Installed plugins are one trust domain sharing a single **plugin pool** - the exposed surfaces (`libs/*.py` and peers) importable as `plugin.<name>`. That pool is *attached* to plugin handler and plugin-tool environments, so those may `import plugin.<other>` and use another plugin's functions, classes and constants directly, ungated - [composition](../scriptling/#composition) in-process.
 
-User-created tools are the untrusted side: the plugin pool is **not** attached to their environment, so they cannot `import plugin.<name>` at all. This attach/not-attach split is the structural isolation boundary. A user tool reaches a plugin only through [`knot.plugin.call`](../../../reference/libraries/plugin/) over the gated loopback, where the declared handler's gate is enforced for the requesting user - the same contract shown above.
+User-created tools are the untrusted side: the plugin pool is **not** attached to their environment, so they cannot `import plugin.<name>` at all — with one deliberate exception, the [declared client module](#client-modules-plugins-in-user-tools) below. This attach/not-attach split is the structural isolation boundary. A user tool reaches a plugin only through [`knot.plugin.call`](../../../reference/libraries/plugin/) over the gated loopback, where the declared handler's gate is enforced for the requesting user - the same contract shown above.
 
 Because that call rides the real web dispatch, the plugin's handler self-gates on the caller exactly as a page handler would - `request["user"]` for the caller's data, `knot.identity` for the authoritative check:
 
@@ -129,6 +129,66 @@ def export_report(request):
 ```
 
 The permission check is the plugin's own: a user without `plugin.metrics.export` gets the refusal, whoever's tool invoked it. `knot.plugin.call` reaches a plugin's **declared handlers** (pages, `[[tool.knot.handlers]]`, MCP tools) — never its raw library exports; those are import-only, and imports are trusted-plugin-to-trusted-plugin. `demo-scriptling` ships a self-gating library export, `gated_report()` in its `libs/calc.py`, which refuses users without `plugin.demo-scriptling.view_dashboard` (`demo-go`'s `demolib` is the Go twin): because a composing plugin imports it ungated, the export makes its own `knot.identity` check — the discipline the trust domain relies on for shared compute.
+
+## Client modules: plugins in user tools
+
+A plugin can hand user tools a friendly object surface instead of raw call strings. `[tool.knot] export = ["client.py"]` declares **exported modules** — scriptling modules whose public classes and functions are materialized in user tool (and event sink) environments, wrapping `knot.plugin.call`:
+
+```python
+# client.py — declared in [tool.knot] export
+import knot.plugin
+
+PLUGIN = "metrics"
+
+class Client:
+    def export(self, range="1h"):
+        return knot.plugin.call(PLUGIN, "export_all", {"range": range})
+```
+
+A user tool then reads like composition:
+
+```python
+import plugin.metrics as metrics
+
+report = metrics.Client().export("7d")
+```
+
+### Several files
+
+`export` takes a list. Every module is importable as `plugin.<name>.<stem>`, and the **first** declared module is also aliased as `plugin.<name>` itself — the friendly one-module import. Exported modules import each other by that same full name:
+
+```python
+# [tool.knot] export = ["client.py", "format.py"]
+
+# format.py — a leaf helper
+def tidy(word):
+    return word.strip()
+
+# client.py — imports the sibling by its user-side name
+import plugin.metrics.format as fmt
+```
+
+Stems must be valid module names (`[A-Za-z_][A-Za-z0-9_]*`), unique within the list.
+
+**Members do not flatten.** The unit of export is the file, namespaced by its stem — only the first module's members appear at `plugin.<name>.*` (through the alias). A function `other()` in `helpers.py` is `plugin.<name>.helpers.other`, never `plugin.<name>.other`:
+
+```python
+import plugin.metrics.helpers as h
+
+h.other()          # works — the second module, by stem
+```
+
+```python
+import plugin.metrics as m
+
+m.other            # identifier not found — no flattening
+```
+
+Want something at the root? Define it in the first module — that one *is* `plugin.<name>`.
+
+The trust model is unchanged — the modules are a **client SDK**, not an import of plugin code. They execute in the caller's environment with the caller's authority; every method is the same gated loopback call the user could write by hand, so only `[[tool.knot.handlers]]`-declared handlers are reachable and each call enforces its gate for the requesting user. The declaration adds ergonomics, never authority. (Contrast [composition](../scriptling/#composition): there a peer's class is *live* — state lives in the peer process. A client class is a client: state is client-side, and a stateful pattern works by holding an opaque handle a handler returns and passing it back on later calls.)
+
+Each module is read once at plugin load (peer fetcher first, disk second — a single-file plugin can serve its own client) and run through scriptling's linter: a broken module fails the plugin at load, not the user at run time. Exported modules must be self-contained — import only what user tool environments provide (`knot.*`, the common libraries, and each other); sibling plugin modules and peers do not exist on that side. `demo-scriptling` ships a pair (`client.py` with the `Widgets` class over its declared handlers, plus `format.py`).
 
 ## Example
 
