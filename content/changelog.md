@@ -14,13 +14,19 @@ navSection: docs
 {{< version "v0.34.0" >}}
 
 {{< changelog-item "added" >}}
-- **Plugins**: extend knot entirely from a script's metadata — menus, permission-gated pages, themed logos, SVG icons, and Go/scriptling binary peers — plus a layout-driven page system: handlers return rows of columns, each column declaring its type, data handler and refresh, fetched independently with loaders and per-panel gates; forms are one handler branching on request.method and answer with success/error envelopes (notifications, per-field errors); tables carry row actions (icon buttons, kebab menus, confirms, popup forms and information dialogs driven by success envelopes); **field handlers** that turn template custom fields into plugin-backed autocompleters and code editors; and plugin handlers exposed as **MCP tools**. Plugins load as pure parsing, so a broken one never affects startup. See [Plugins](../docs/plugins/).
+- **Plugins**: extend knot entirely from a script's metadata — menus, permission-gated pages, themed logos, SVG icons (menus, pages and data-driven row actions all ship their own assets), and Go/scriptling binary peers — plus a layout-driven page system: handlers return rows of columns, each column declaring its type, data handler and refresh, fetched independently with loaders and per-panel gates; forms are one handler branching on request.method and answer with success/error envelopes (notifications, per-field errors, reset on success), with fields from text and select to an Ace-edited `textarea` with language highlighting; tables carry row actions (icon buttons, kebab menus, confirms in knot's own delete-dialog look, popup forms and information dialogs driven by success envelopes); **field handlers** that turn template custom fields into plugin-backed autocompleters and code editors; and plugin handlers exposed as **MCP tools**. Plugins declare their system generation (`api = 1`, the default) so a future api 2 can coexist. Plugins load as pure parsing, so a broken one never affects startup. See [Plugins](../docs/plugins/).
 
 - **Agent Scriptling plugins**: the agent can load Scriptling plugins into the environment its space scripts run in — the same mechanism as the standalone Scriptling CLI — via `--plugin` / `--plugin-dir` (or `KNOT_PLUGIN` / `KNOT_PLUGIN_DIR`, or `agent.plugins` / `agent.plugin_dirs` in the agent config file). This is how a space reaches the Scriptling database drivers (`scriptling.sql`, `scriptling.sqlite`, `scriptling.badgerdb`, `scriptling.valkey`) without compiling them into the agent binary. See [knot agent](../reference/cli/agent/).
+
+- **Become another user**: fast user switching between accounts. Link accounts a user may become from the user manager (new **Link Users** permission) — the link is one way, and the profile menu offers `Switch User` for the linked accounts plus `Back to <your account>` to return. Every switch is recorded in the audit trail {{< pro-badge >}}.
+
+- **Custom field defaults**: template custom fields can carry a default value — prefilled when a space is created and applied when an API/CLI request omits the field. Clearing the prefilled value keeps the field empty, so a deliberately blank field never falls back to the default.
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
 - **Embedded `knot.apiclient`**: `get(path, params)` passed positionally was being dropped by the Go transport (breaking `knot.space.list()` for non-admins, `skill.search()`, `usage_history()`); it now honours a positional params dict like the standalone client, across pages, MCP and the CLI.
+
+- **Template picker vs quota**: the space-creation template picker now tints templates the owner lacks quota for ("Insufficient quota"), and when no available template fits, the out-of-quota dialog is shown instead of the picker.
 {{< /changelog-item >}}
 
 ## August 2026

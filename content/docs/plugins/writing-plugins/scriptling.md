@@ -158,13 +158,16 @@ A `libs/` library runs in-process and jailed, with knot's library set — no dat
 
 ```
 myplugin/
-  main.py             declarations + handlers — every plugin's entry file
+  main.py             optional — declarations + scriptling handlers (wrap-and-extend flavour)
   bin/
     kvstore           executable script: shebang + serve + register
     impl.py           companion module (not executable, silently skipped)
 ```
 
-The shape is the Go plugin's exactly — a folder with something in `bin/`; only the *contents* of `bin/` differ. A Go plugin keeps its source in `peer/` (compiled into `bin/` by a Makefile, the binary gitignored), while a scriptling peer's `bin/` **is** its source, committed as-is. As with a Go peer, the peer may serve the `[tool.knot]` manifest in its handshake (`runtime.plugin.serve(..., metadata={"tool.knot": {...}})`), in which case no `main.py` is needed. This example takes the other route — `demo-scriptlingcli` keeps a `main.py` (its handlers and, since a `main.py` block wins, its manifest live there) and uses the `bin/` peer only for compute the handlers import as `plugin.kvstore`.
+The shape is the Go plugin's exactly — a folder with something in `bin/`; only the *contents* of `bin/` differ. A Go plugin keeps its source in `peer/` (compiled into `bin/` by a Makefile, the binary gitignored), while a scriptling peer's `bin/` **is** its source, committed as-is. Two flavours, and both are encapsulation plays:
+
+- **Wrap and extend** (`demo-scriptlingcli`): the plugin keeps a `main.py` — its handlers and, since a `main.py` block wins when both exist, its manifest live there — and uses the `bin/` peer only for compute the handlers import as `plugin.<name>`. The peer stays a self-contained unit (an existing tool, an SDK wrapper, a store) and the `main.py` extends it with page logic, presentation and gates the peer knows nothing about.
+- **Pure peer** (`demo-scriptlingcli2`): **no `main.py` at all**. The peer serves the `[tool.knot]` manifest in its handshake — `runtime.plugin.serve(..., metadata={"tool.knot": {...}})`, exactly the model of a Go peer's `SetMetadata` — and every handler the manifest names is a function the peer exports, addressed as `plugin.<peer>.<fn>`. One executable carries the whole plugin, whatever language it is written in.
 
 The entry script serves the plugin protocol:
 
@@ -180,6 +183,23 @@ plugin_srv.serve("kvstore", "1.0", "sqlite-backed key/value store")
 plugin_srv.register_function("remember", "impl.remember")
 plugin_srv.register_function("recall", "impl.recall")
 runtime.start_server()
+```
+
+In the pure-peer flavour the same entry script also declares the plugin — the manifest rides the `serve()` call as static metadata, parsed by knot exactly like a `main.py` block (the same constants-only rule as a Go peer's manifest applies: it must not vary with runtime state):
+
+```python
+plugin_srv.serve(
+    "notes", "1.0.0", "sqlite-backed notes store: the whole plugin, no main.py",
+    metadata={
+        "tool.knot": {
+            "version": "1.0.0",
+            "permissions": ["use_notes"],
+            "pages": [
+                {"path": "/notes", "handler": "notes_page", "menu_label": "Notes", "permission": "use_notes"},
+            ],
+        },
+    },
+)
 ```
 
 Two authoring rules the shape encodes: **handlers must live in a module** — `register_function("x", "impl.x")` resolves a `module.function` reference, and functions defined in the entry script cannot be registered at all (decorator forms included), so the implementation sits in `impl.py` beside the executable; and **`serve()` names the peer** — the handshake name and version the metadata dependency checks (`plugin.kvstore via kvstore >= 1.0`).
@@ -217,11 +237,11 @@ def recall(key):
     return rows[0].get("v") if len(rows) > 0 else None
 ```
 
-Everything else is the bin/ contract from [In Go](../go/): the dependency declaration, packaging shapes, health on the admin page, imports as `plugin.kvstore` in this plugin's handlers and in other installed plugins ([composition](#composition)) - never in user-created MCP tools, which reach a plugin only via `knot.plugin.call`. Three requirements are specific to this form: the **scriptling CLI must be on the server's PATH** (the shebang invokes it; without it the plugin fails its requirements at load, named on the admin page); it is **unix-only** (shebang execution — a Windows server cannot spawn it); and it carries the **Go-peer trust class** — a subprocess the admin installed, not the jailed in-process environment, with the full CLI library surface (including `scriptling.sql` for MySQL/MariaDB/PostgreSQL) that implies.
+Everything else is the bin/ contract from [In Go](../go/): the dependency declaration, packaging shapes, health on the admin page, imports as `plugin.kvstore` in this plugin's handlers and in other installed plugins ([composition](#composition)) - never in user-created MCP tools, which reach a plugin only via `knot.plugin.call`. Three requirements are specific to this form: the **scriptling CLI must be on the server's PATH** (the shebang invokes it; without it a `main.py` plugin fails its requirements at load and a pure-peer plugin is named as failed — its manifest has no other source — either way it appears on the admin page); it is **unix-only** (shebang execution — a Windows server cannot spawn it); and it carries the **Go-peer trust class** — a subprocess the admin installed, not the jailed in-process environment, with the full CLI library surface (including `scriptling.sql` for MySQL/MariaDB/PostgreSQL) that implies.
 
 Choose `libs/` for pure compute that travels as source and stays jailed; choose a scriptling `bin/` peer for state (sqlite beside the executable) or CLI-only libraries; choose Go for CPU-heavy work, native libraries or a separate trust boundary.
 
-`demo-scriptlingcli` (`examples/plugins/demo-scriptlingcli/` in the knot repository) is a working example: it keeps a `main.py` (scriptling handlers, namespace `plugin.demo_scriptlingcli`) whose `bin/kvstore` peer handshakes as `kvstore` (`plugin.kvstore`) and backs a small key/value page.
+`demo-scriptlingcli` (`examples/plugins/demo-scriptlingcli/` in the knot repository) is the wrap-and-extend working example: it keeps a `main.py` (scriptling handlers, namespace `plugin.demo_scriptlingcli`) whose `bin/kvstore` peer handshakes as `kvstore` (`plugin.kvstore`) and backs a small key/value page. Its sibling `demo-scriptlingcli2` (`examples/plugins/demo-scriptlingcli2/`) is the pure-peer twin: no `main.py`, the `bin/notes` peer serves its own manifest and every handler — `notes_page`, `col_notes`, `col_add`, `note_view` (an Ace-edited textarea, a table with per-row markdown view popups and delete actions over sqlite) — addressed as `plugin.notes.<fn>`. Between them the two are an encapsulation toolkit: wrap an existing binary and extend it with scriptling, or ship one executable that declares itself.
 
 `demo-scriptling` ships a working library — `libs/calc.py` (a constant, `add`/`scale`, the `Counter` class and a self-gating `gated_report()`), exercised by the *Plugin peers* row on its showcase page and declared as `plugin.calc via calc >= 1.0` in its metadata. Its Go twin is `demo-go`'s `demolib` (functions plus the `Counter` class over the plugin protocol).
 

@@ -50,25 +50,7 @@ Each handler returns JSON for its type:
 
 ## Forms: one handler, two faces
 
-A form column's handler branches on `request["method"]`. GET returns the definition; POST receives the submitted fields in `request["params"]` and returns an **envelope**:
-
-```python
-def widget_form(request):
-    if request["method"] == "POST":
-        params = request["params"]
-        name = params.get("widget_name", "")
-        if name == "":
-            return {"status": "error", "message": "A widget needs a name.",
-                    "field_errors": {"widget_name": "Required."}}
-        return {"status": "ok", "message": "Widget created.", "refresh": True}
-    return {"fields": [
-        {"type": "hidden", "name": "action", "value": "create"},
-        {"type": "text", "name": "widget_name", "label": "Name"},
-        {"type": "autocomplete", "name": "owner", "label": "Owner", "dynamic_options": True},
-    ], "submit": "Create widget"}
-```
-
-On `ok` the client shows the message as a notification and refreshes the columns the envelope names (`refresh: ["spaces"]`) or all of them (`refresh: true`). On `error` the message notifies and `field_errors` map back onto the open form's inputs. Field types: `text`, `number`, `select` (requires `options`), `autocomplete` (fixed `options` or `dynamic_options: true` - the client asks the form column's own handler with `_data=<field name>`, and that handler returns `{"options": [...]}` before anything else), and `hidden`. Autocomplete is pick-or-create; suggestions may be key/text pairs (`{key, text}`) where the user picks by text and the form stores the key.
+A form column's handler branches on `request["method"]`: GET returns the definition, POST receives the submitted fields in `request["params"]` and returns an **envelope** - `ok` with a message, column refreshes and an optional dialog, or `error` with per-field errors painted back onto the form. After a successful submit a plain form resets to its initial values; an `auto_submit` filter form instead keeps its values and folds them into the page's parameters. The full contract - every field type (`text`, `number`, the Ace-edited `textarea`, `select`, `autocomplete` with dynamic options, `hidden`), the envelope keys, and form popups - is on [Plugin Forms](../forms/).
 
 ## Table actions
 
@@ -76,8 +58,8 @@ A table column may declare per-row actions. A row may also carry its own `action
 
 ```python
 {"id": "spaces", "type": "table", "handler": "spaces_table", "width": 3, "actions": [
-    {"label": "Restart", "action": "restart", "icon": "restart", "confirm": "Restart this space?"},
-    {"label": "Edit", "action": "edit", "icon": "edit", "handler": "space_edit"},
+    {"label": "Restart", "action": "restart", "icon": "assets/restart.svg", "confirm": "Restart this space?"},
+    {"label": "Edit", "action": "edit", "icon": "assets/edit.svg", "handler": "space_edit"},
 ]}
 ```
 
@@ -85,19 +67,19 @@ An action has:
 
 - `action` - the name POSTed with `key` (the row's `id` or `name`) to the column's own handler.
 - `label` - the button text; for icon buttons also the tooltip and screen-reader label.
-- `icon` - one of knot's action icons (`play`, `stop`, `restart`, `edit`, `trash`, `info`, `document`, `clock`, `share`, `warning`, `check`); with an icon the button renders icon-only, like the spaces list rows. An unknown icon name renders a text button.
+- `icon` - a relative path to one of the plugin's declared icon assets (`icons = ["assets/view.svg"]` in `[tool.knot]`): loaded and sanitized at load like every plugin asset, inlined themed with the UI, and shared by inline buttons and kebab items. With an icon the button renders icon-only, like the spaces list rows; anything the plugin did not declare renders a text button. Plugins bring their own icons - knot ships no built-in action set.
 - `style` - `success`, `warning`, `danger` or default blue colour semantics.
 - `menu: true` - collect into the row's kebab dropdown instead of an inline button. A row can have any mix: any number of inline buttons (icon or text) and any number of menu items; the kebab only appears when there is something to put in it.
-- `confirm` - ask first in a knot-style danger dialog with Cancel/Confirm; the confirm button carries the action label.
+- `confirm` - ask first in a modal; the action's `style` picks the treatment. A `danger` action gets knot's delete look - *Confirm Delete* title, trash header icon, a **Keep** button, and a trash-icon'd confirm button carrying the action label (the group delete's `Delete Group` with your label instead); any other style gets the neutral confirm (Cancel / action label).
 - `handler` - clicking GETs this function with `key` and opens a popup (below).
 
 Actions without `handler` POST `{action, key}` to the column's handler URL and handle the envelope like a form POST.
 
 ### Popup actions
 
-An action naming a `handler` opens a popup: the client GETs that handler's URL with the row key (`/<handler>?key=<row key>`), and the response shape decides what the popup is.
+An action naming a `handler` opens a popup: the client GETs that handler's URL with the row key (`/<handler>?key=<row key>`), and the response shape decides what the popup is. The fetch-time gate serves an undeclared handler only if the **layout** names it - so a popup action is also declared on its column in the page layout (`"actions": [{...}]` on the column); row actions from the column's data replace that set at render time, and a row with no actions of its own falls back to the column's. (A `[[tool.knot.handlers]]` declaration stands on its own gate instead and needs no layout entry.)
 
-A **form popup** returns `{title?, fields, submit?, cancel?}` - the same field contract as form columns. Submit POSTs to the same handler (with `key`) and handles the envelope: `error` keeps the popup open with `field_errors` painted on the inputs, `ok` closes it, notifies and refreshes. Dynamic autocompleters work inside popups; their `_data` fetches go to the popup's own handler.
+A **form popup** returns `{title?, fields, submit?, cancel?}` - the same [field contract](../forms/) as form columns. Submit POSTs to the same handler (with `key`): `error` keeps the popup open with `field_errors` painted on the inputs, `ok` closes it, notifies and refreshes.
 
 An **information popup** returns `{title?, markdown}` (or `html`) - read-only, rendered server-side like a markdown column, with a Close button.
 
@@ -139,10 +121,10 @@ Handlers are ajax endpoints: the plugin's own pages, another plugin's pages (see
 
 A declared gate is authoritative everywhere the handler is called - page path, plugin root, or a column fetch - the same semantics as row/column gates. Declaring a handler also opts it into plugin-root addressability (what cross-plugin `pluginFetch` uses).
 
-Undeclared handlers are reachable only through a page, and the column gates hold at fetch time, not just when the layout is pruned: knot runs the page's layout handler as the requesting user (row/column gates applied) and serves the handler only if that layout offers it - as a column's `handler` or an action's popup `handler`. That answer is memoized for a few seconds per user and query, so a page's columns fetching as a burst cost one layout run, not one per column; a handler the layout withdraws (or a gate revoked via a role edit) stops being fetchable within that window. A user who fails a column's permission cannot fetch that column's data by naming its handler directly, and a handler no layout references (a trusted-html widget callback, say) must carry a `[[tool.knot.handlers]]` declaration to be callable at all.
+Undeclared handlers are reachable only through a page, and the column gates hold at fetch time, not just when the layout is pruned: knot runs the page's layout handler as the requesting user (row/column gates applied) and serves the handler only if that layout offers it - as a column's `handler` or an action's popup `handler`. That answer is memoized for a few seconds per user and query, so a page's columns fetching as a burst cost one layout run, not one per column; a handler the layout withdraws (or a gate revoked via a role edit) stops being fetchable within that window. A user who fails a column's permission cannot fetch that column's data by naming its handler directly, and a handler no layout references must carry a `[[tool.knot.handlers]]` declaration to be callable at all. That includes popup handlers named by **data-driven row actions**: a table payload's rows can carry their own action lists, but the layout gate only vouches for what the layout itself names — so a handler a payload row names is refused unless it is declared (give it the page's own permission to keep the gate equivalent).
 
 So the full model, outermost in: the **page** gate decides the page and every handler riding its path; **row** gates are presentation (gated rows vanish with their columns, hiding their handlers); **column** gates decide both the column's visibility and its handler's fetchability; a **handler declaration** replaces the inherited gates wherever it applies. Handler environments: the scriptling standard library, data formats, templating, text processing (jailed to the plugin folder), `scriptling.ai`, the [`knot.*` libraries](../../../scripting/) as the requesting user, and binary peers as `plugin.<name>` imports. Installed plugins share one plugin pool and one trust domain, so *other* plugins' exposed surfaces are importable as `plugin.<name>` too ([composition](../scriptling/#composition)). No outbound networking, no container/nomad, no filesystem outside the plugin folder.
 
 ## Examples
 
-The `dashboard` example is a real landing page on this contract - live `knot.*` aggregates and history, a spaces table with state-dependent row actions and an edit popup, and it claims the post-login default with `default = true`; `demo-scriptling`'s showcase exercises every column type, the full action set (icon buttons, kebab menu, both confirm styles, popup forms, markdown popups, success dialogs) and a one-handler form; `demo-go` measures real peer latencies into charts.
+The `dashboard` example is a real landing page on this contract - live `knot.*` aggregates and history, a spaces table with state-dependent row actions and an edit popup, and it claims the post-login default with `default = true`; `demo-scriptling`'s showcase exercises every column type, the full action set (icon buttons, kebab menu, both confirm styles, popup forms, markdown popups, success dialogs) and a one-handler form - every action icon a plugin-declared asset; `demo-go` measures real peer latencies into charts.

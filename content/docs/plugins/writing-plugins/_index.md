@@ -13,7 +13,7 @@ Every plugin is **a folder** that declares itself in a `[tool.knot]` table - plu
 
 Either way knot parses the *same* table the *same* way, and never runs plugin code to learn a declaration.
 
-This page covers what's common - packaging, the metadata reference, and validation. The [Scriptling](./scriptling/) and [Go](./go/) pages cover the language-specific parts, [Plugin Pages](./pages/) covers what happens when a page handler runs, [Raw HTML](./html/) documents the trusted html column's helper classes and globals, and [MCP Tools](./mcp-tools/) covers exposing handlers as MCP tools.
+This page covers what's common - packaging, the metadata reference, and validation. The [Scriptling](./scriptling/) and [Go](./go/) pages cover the language-specific parts, [Plugin Pages](./pages/) covers what happens when a page handler runs, [Plugin Forms](./forms/) is the form field reference and POST envelope contract, [Raw HTML](./html/) documents the trusted html column's helper classes and globals, and [MCP Tools](./mcp-tools/) covers exposing handlers as MCP tools.
 
 ## Packaging
 
@@ -52,6 +52,7 @@ Everything a plugin declares lives under `[tool.knot]`:
 # requires-scriptling = ">=0.24"
 #
 # [tool.knot]
+# api = 1                                           # plugin system generation (only 1 today; absent = 1)
 # version = "1.0.0"                                  # the plugin's own version
 # requires_knot = ">=0.34"                           # optional host bound
 # description = "Space metrics dashboards."          # shown in the admin inventory
@@ -88,6 +89,9 @@ Everything a plugin declares lives under `[tool.knot]`:
 # label = "Environments"                             # shown in the template editor (defaults to handler)
 # handler = "field_environment"                      # serves custom field suggestions; see Fields
 #
+# icons = ["assets/view.svg"]                        # SVG assets for data-driven row action icons,
+#                                                    #   sanitized at load and addressable by path
+#
 # [[tool.knot.menus]]
 # label = "Grafana"                                  # required
 # url = "https://grafana.internal/d/spaces"          # required: "/", http:// or https://
@@ -99,6 +103,18 @@ Everything a plugin declares lives under `[tool.knot]`:
 ## Validation
 
 Unknown keys anywhere in `[tool.knot]` are load errors - a typo fails loudly, never silently. The same goes for: a permission reference that isn't declared, a menu or page without its required fields, a path that escapes the plugin's namespace, an icon asset that is missing, not an `.svg`, or unsafe to inline, or logos declared as a half pair. A plugin that fails validation is listed on the [admin plugins page](../managing/) with the reason and is simply unavailable - the server keeps running.
+
+## Plugin api generations
+
+The plugin system is versioned as a **generation**, declared with `api` in `[tool.knot]` (absent means `1`, today's only generation). A generation covers the whole plugin contract: the `[tool.knot]` table shape, the handler `request`/response contract, and the block document the client renders. The promises that make a future generation safe to ship:
+
+- **Breaking changes happen only behind a new generation.** Within a generation knot may grow *optional* keys - and because unknown keys are load errors, an older knot rejects a newer plugin's keys loudly (failed on the admin page, with the reason) instead of guessing at them.
+- **A knot rejects what it doesn't implement.** A plugin declaring an `api` this knot doesn't know fails at load with a message naming both generations - never a mis-parse.
+- **Generations coexist.** When an api 2 exists, v1 plugins keep loading unchanged; plugins don't age out of knot.
+
+Version-independent substrate - stable across generations by construction: the folder identity and `[a-z0-9_-]+` naming, `plugin.<name>` handler namespaces, permission grants (stored as text on roles, surviving restarts and reinstalls), the `/plugins/<name>/...` URL space, and asset serving.
+
+`api` answers *which contract*; [`requires_knot`](#the-metadata-block) answers *which knot version* the plugin's use of knot needs. A plugin written against generation 1 features that shipped in knot 0.35 declares `api = 1` (or nothing) plus `requires_knot = ">=0.35"`.
 
 
 ### Permissions
@@ -153,7 +169,7 @@ The metadata gates remain the enforcement boundary knot applies before the handl
 
 ## Fields
 
-`[[tool.knot.field_handlers]]` declares the functions that back autocomplete template custom fields; types, editor languages and the key-to-text contract are covered in [Fields](fields/).
+`[[tool.knot.field_handlers]]` declares the functions that back autocomplete template custom fields; types, editor languages and the key-to-text contract are covered in [Fields](fields/). (Template custom fields are collected on the space form - a plugin's *own* form fields, on its pages, are a different contract: [Plugin Forms](./forms/).)
 
 
 ## Menus and icons

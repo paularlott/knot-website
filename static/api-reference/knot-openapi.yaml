@@ -824,6 +824,84 @@ paths:
           $ref: "#/components/responses/not-found"
       security: [BearerAuth: []]
 
+  /api/users/{user_id}/linked-users/{linked_user_id}:
+    put:
+      tags:
+        - Users
+      summary: Link User
+      description: Grant one user the ability to switch into another - the linked user joins the target's become-list, offered in the target's profile menu. Full access to the linked account, administrators included; one way - the linked user cannot become the target. Requires the link_users permission.
+      operationId: linkUser
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID or username of the first user.
+          schema:
+            type: string
+        - name: linked_user_id
+          in: path
+          required: true
+          description: The ID or username of the user the first user will be able to become.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Users linked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+        "400":
+          $ref: "#/components/responses/bad-request"
+        "401":
+          $ref: "#/components/responses/unauthorized"
+        "403":
+          $ref: "#/components/responses/forbidden"
+        "404":
+          $ref: "#/components/responses/not-found"
+      security: [BearerAuth: []]
+    delete:
+      tags:
+        - Users
+      summary: Unlink User
+      description: Remove one user from another's become-list. The unlinked user's own list is untouched. Requires the link_users permission.
+      operationId: unlinkUser
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID or username of the first user.
+          schema:
+            type: string
+        - name: linked_user_id
+          in: path
+          required: true
+          description: The ID or username of the user to detach.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Users unlinked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+        "400":
+          $ref: "#/components/responses/bad-request"
+        "401":
+          $ref: "#/components/responses/unauthorized"
+        "403":
+          $ref: "#/components/responses/forbidden"
+        "404":
+          $ref: "#/components/responses/not-found"
+      security: [BearerAuth: []]
+
   /api/users/whoami:
     get:
       tags:
@@ -5914,6 +5992,7 @@ paths:
             application/msgpack:
               schema:
                 type: object
+      security: [BearerAuth: []]
 
   /api/plugins/field-handlers:
     get:
@@ -5933,6 +6012,7 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/FieldHandler"
+      security: [BearerAuth: []]
 
   /api/plugins/field-handlers/{handler_id}:
     get:
@@ -5955,13 +6035,14 @@ paths:
           description: Optional query passed through to the handler.
       responses:
         "200":
-          description: Handler result (conventionally {"options": [...]}).
+          description: 'Handler result (conventionally {"options": [...]}).'
           content:
             application/msgpack:
               schema:
                 type: object
         "404":
           description: Unknown field handler.
+      security: [BearerAuth: []]
 
 
 components:
@@ -7436,13 +7517,16 @@ components:
           description: The optional description for the field.
         type:
           type: string
-          description: Field input type - text (default), password, number, textarea or autocomplete.
+          description: Field input type - text (default), masked, number, textarea or autocomplete. "password" is accepted as a legacy alias for masked and stored as masked.
         handler:
           type: string
           description: For autocomplete fields, the bound plugin field handler (plugin.<name>.<handler>).
         language:
           type: string
           description: For textarea fields, the editor language - scriptling, yaml, toml, json, markdown or shell.
+        default:
+          type: string
+          description: Value prefilled when creating a space. Applied only when the create request omits the field entirely - a field sent with an empty value keeps the empty value.
 
     TemplateCreateRequest:
       type: object
@@ -8580,6 +8664,9 @@ components:
         current:
           type: boolean
           description: Whether the user is the current user
+        has_linked_users:
+          type: boolean
+          description: Whether the user has linked users (accounts it may become).
         last_login_at:
           type: string
           format: date-time
@@ -8818,6 +8905,17 @@ components:
           type: string
           example: password
           description: Optional service password. Only populated for the current user.
+        linked_users:
+          type: array
+          items:
+            type: object
+            properties:
+              user_id:
+                type: string
+                format: uuid
+              username:
+                type: string
+          description: The accounts this user may become (profile menu Become User list). One way - these accounts cannot become this user.
         roles:
           type: array
           items:

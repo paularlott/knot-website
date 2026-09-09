@@ -14,8 +14,8 @@ The same pattern works for any language with JSON-RPC - C, PHP, even bash - usin
 
 ## Two ways to use a peer
 
-- **Pure peer plugin (no `main.py`).** The peer returns the `[tool.knot]` manifest at handshake and exports every declared handler. `demo-go` is this shape. Covered below.
-- **Scriptling handlers backed by a peer (`main.py` + `bin/`).** The plugin keeps a `main.py` whose scriptling handlers `import plugin.<name>` to drive the peer's compute. The manifest lives in `main.py`. `demo-scriptlingcli` is this shape. The peer side is identical; only where the manifest and handlers live differs.
+- **Pure peer plugin (no `main.py`).** The peer returns the `[tool.knot]` manifest at handshake and exports every declared handler. `demo-go` is this shape with a Go binary; `demo-scriptlingcli2` is the same shape with a scriptling script the CLI runs ([scriptling peers](../scriptling/#scriptling-binary-peers)) — the model is language-agnostic. Covered below.
+- **Scriptling handlers backed by a peer (`main.py` + `bin/`).** The plugin keeps a `main.py` whose scriptling handlers `import plugin.<name>` to drive the peer's compute — wrap the peer and extend it with page logic, presentation and gates. The manifest lives in `main.py`. `demo-scriptlingcli` is this shape. The peer side is identical; only where the manifest and handlers live differs.
 
 ## The manifest lives in the peer
 

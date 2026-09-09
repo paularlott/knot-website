@@ -32,6 +32,8 @@ The `knot.user` library provides user management functions.
 | `set_ssh_public_key(ssh_public_key, github_username=None)` | Set the current user's SSH public keys |
 | `set_ssh_private_key(ssh_private_key)` | Set the current user's SSH private key |
 | `delete(user_id)` | Delete a user |
+| `link_user(user_id, linked_user_id)` | Grant `user_id` the ability to become `linked_user_id` — one way (requires the `link_users` permission) |
+| `unlink_user(user_id, linked_user_id)` | Remove `linked_user_id` from `user_id`'s become-list (requires the `link_users` permission) |
 | `get_quota(user_id)` | Get user quota and usage |
 | `list_permissions(user_id)` | List the user's built-in permissions (integer IDs) |
 | `list_plugin_permissions(user_id)` | List the user's plugin permissions — qualified grant strings (`plugin.<name>.<id>`) resolved from their roles |
@@ -65,6 +67,12 @@ if user.has_permission(me['id'], 2):  # MANAGE_SPACES = 2
 quota = user.get_quota(me['id'])
 print(f"Spaces: {quota['number_spaces']}/{quota['max_spaces']}")
 
+# Let user A become user B (one way; needs the link_users permission)
+user.link_user("user-a-id", "user-b-id")
+
+# Take that ability away again
+user.unlink_user("user-a-id", "user-b-id")
+
 # Update SSH keys for the current user
 user.set_ssh_public_key("ssh-ed25519 AAAA...")
 user.set_ssh_private_key("-----BEGIN OPENSSH PRIVATE KEY-----\n...")
@@ -96,6 +104,7 @@ Users contain:
 - `current` - Whether this is the current user
 - `roles` - List of role names
 - `groups` - List of group names
+- `linked_users` - The accounts this user may become, each with `user_id` and `username`
 
 ---
 
