@@ -421,6 +421,8 @@ knot space tunnel list <space>
 knot space tunnel stop <space> <name>
 ```
 
+`http` / `https` accept target flags to create the tunnel on another knot server instead of the space's own: `--tunnel-server` + `--tunnel-token` (an API token valid on that server), or `--tunnel-alias` (a `client.connection.<alias>` entry from the config file), plus `--tunnel-tls-skip-verify` (default true) for the agent's connection to it. See [Agent Tunnels](/docs/tunnels/agent-tunnels/).
+
 ### `knot space jobs`
 
 Manage the jobs defined on a space (see [Space Jobs](/docs/spaces/jobs/)). Definitions are stored on the space and pushed to the agent, so they survive restarts and can be edited while the space is stopped.
@@ -446,7 +448,7 @@ knot tunnel <protocol> <port> <name>
 knot tunnel http 8080 myapp
 ```
 
-Protocols: `http`, `https`. Options: `--server`, `--token`, `--tls-skip-verify`.
+Protocols: `http`, `https`. Options: `--server`, `--token`, `--tls-skip-verify`. The `--tunnel-server` / `--tunnel-token` / `--tunnel-alias` spellings are accepted as synonyms, matching the target flags on `knot space tunnel`.
 
 ### `knot ssh-config`
 

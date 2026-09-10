@@ -271,6 +271,7 @@ Every handler call - pages, MCP tools, field handlers, `knot.plugin.call` - is `
 - **`request["method"]`** - how the handler was reached. Browser fetches carry the real method (`"GET"`/`"POST"`); `knot.plugin.call` carries the method it was given (GET by default, POST on request); MCP tool execution carries `"CALL"`. Branch on `request["method"] == "POST"` to tell a form's GET definition from its POST submit.
 - **`request["path"]`** - the handler's URL (its plugin-root or page path).
 - **`request["params"]`** - the call's parameters as a dict, the query string merged over any POST body. As an MCP tool it is the client's JSON arguments; `scriptling.mcp.tool.get_string` and friends read the same values. Read it with `params = request["params"]`.
+- **`request["config"]`** - the plugin's server-side configuration as inert data: the `[plugins.<name>]` table from the server's `knot.toml`, always present (an empty dict when unconfigured, so `request["config"]["key"]` never needs a guard for the table itself). See [Plugin configuration](#plugin-configuration).
 - **`request["user"]`** - the requesting user as inert **data**: a plain, serializable dict with keys `id`, `name`, `is_admin`, `groups`, `permissions` (stable snake_case keys of the built-in permissions - `"manage_spaces"`, `"use_mcp_server"`, ...) and `plugin_permissions` (qualified grants, `"plugin.metrics.read"`). It has no methods, does no round trip, and crosses the wire unchanged to a [Go peer](../go/). Use it to branch on *who is calling* (`request["user"]["name"]`, `request["user"]["is_admin"]`).
 
 For any permission **check** - the decision that carries authority, where the admin role passes everything - use [`knot.identity`](#identity), not `request["user"]`:
@@ -286,6 +287,40 @@ def export_all(request):
 ```
 
 The metadata gates knot enforces before code runs remain the security boundary; `request["user"]` and `knot.identity` are for the in-code decisions the declarations cannot express - adapting output, refusing edge cases.
+
+## Plugin configuration
+
+A plugin's deployment configuration lives in the server's `knot.toml`, one table per plugin, and reaches every handler call as `request["config"]`:
+
+```toml
+[plugins.metrics]
+url = "https://influx.internal:8086"
+bucket = "knot"
+verify_tls = true
+```
+
+```python
+def export_metrics(request):
+    cfg = request["config"]
+    url = cfg["url"]                      # a required key - see below
+    bucket = cfg.get("bucket", "default") # an optional key with a default
+    ...
+```
+
+The table is free-form TOML (strings, numbers, booleans, lists, nested tables). It is read once at plugin load and attached to the plugin, then converted per call — handlers can never mutate shared state, and an unconfigured plugin sees an empty table, so `request["config"]` itself never needs a guard. Like everything on a page or handler call it crosses the wire unchanged to [Go peers](../go/).
+
+A plugin can declare the keys it requires in its metadata:
+
+```python
+# [tool.knot]
+# config = ["url"]
+```
+
+Required keys are validated at load: a missing key fails the plugin with a reason on the administration Plugins page — `config requires keys missing from [plugins.metrics]: url` — instead of a handler failing at first use. Declared keys are required, not exhaustive; extra keys ride along. Two guard rails keep the channel configuration-shaped: a table over 64 KiB fails the plugin at load, and a `[plugins.<name>]` section naming no loaded plugin is reported as a warning on the same page (stale config left behind by a removed plugin).
+
+Configuration is per-server (`knot.toml` is not replicated) — put the same section on every member of a zone. It is read at startup: changing it requires a server restart. Secrets placed here are visible to the plugin's handlers by design; anything larger or hotter than configuration belongs in a knot library, not the config table.
+
+The `demo-scriptling` plugin shows the whole loop: its showcase page has a **Plugin configuration** column whose *Read config* button calls the plugin's `config_echo` handler from the browser and shows what the server configured.
 
 ## Identity
 

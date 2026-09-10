@@ -37,6 +37,12 @@ this folder's `okf/`. Substitute your real absolute path where shown.
 | `knotkb_get`    | Read a page; synthesizes a listing when given a folder.                      |
 | `knotkb_search` | Semantic search: rank pages by relevance to a natural-language query.        |
 | `knotkb_grep`   | Exact/fast keyword search (parallel grep, OR, case-insensitive).             |
+| `template_fields` | List templates and their custom fields — types, required flags, defaults and valid option values (handler-backed lists resolved live). |
+| `space_create`  | Create a space from a template, filling its custom fields. Call `template_fields` first to learn what to send. |
+
+The `knotkb_*` tools only need `$OKF_ROOT`. `template_fields` and `space_create`
+talk to a knot server: they need the knot plugin loaded
+(`scriptling --plugin knot`) and a configured connection (`knot connect`).
 
 The bundles also carry a per-bundle vector index (`.vector.json`) computed by
 `make okf`, which powers `knotkb_search`. It's a hidden file, ignored by

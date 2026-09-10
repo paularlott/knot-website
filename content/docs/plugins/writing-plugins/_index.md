@@ -57,6 +57,7 @@ Everything a plugin declares lives under `[tool.knot]`:
 # requires_knot = ">=0.34"                           # optional host bound
 # description = "Space metrics dashboards."          # shown in the admin inventory
 # permissions = ["read_metrics", "export"]           # ids, qualified at load
+# config = ["url"]                                   # keys required in the server's [plugins.metrics]
 # logo_light = "assets/logo-light.svg"               # themed pair, relative to the
 # logo_dark = "assets/logo-dark.svg"                 #   plugin folder, must exist
 #

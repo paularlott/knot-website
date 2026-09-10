@@ -99,7 +99,8 @@ To create a new template:
   - **Password**: a masked input.
   - **Number**: a digit-validated input, stored as a string.
   - **Text area**: a code editor for multi-line values, with a configurable language (text, scriptling, yaml, toml, json, markdown, or shell); scriptling gets the editor's completions.
-  - **Autocomplete**: a pick-or-create box whose suggestions come from a [plugin field handler](../../plugins/writing-plugins/fields/) (offered only when a plugin provides one).
+  - **Autocomplete**: a searchable box whose suggestions come from a [plugin field handler](../../plugins/writing-plugins/fields/) (offered only when a plugin provides one); the value must be one of the suggested options.
+  - **Select**: a dropdown whose options come from a plugin field handler or a manual list on the field; the value must be one of the options.
 
   Every field can also carry a **Default value** (set in the same wrench-icon dialog). The default is pre-filled when a space is created and applied when an API/CLI request omits the field. Clearing the pre-filled value keeps the field empty — a deliberately blank field never falls back to the default.
 
