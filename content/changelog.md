@@ -21,6 +21,8 @@ navSection: docs
 - **Template custom fields**: four improvements — **defaults** (prefilled on space creation, applied when API/CLI omits the field, but a deliberate blank is never overridden); **bool type** (styled toggle showing `true`/`false`); **required fields** (space form and API reject blank values, default can satisfy the requirement); and **select type** (dropdown sourced from a plugin field handler or a manual one-per-line list; autocomplete takes the same two sources). The template editor now badges required fields. The `knot.template` library can declare custom fields (types and defaults) on create and update.
 
 - **Tunnels to any server from a space**: `knot tunnel` inside a space can now target any knot server — pass `--server` and `--token`, or an `-a` alias from the space's `knot.toml`, with or without `--daemon`. Several tunnels against different servers run side by side; each address is built from your username on the target and counts against its quota. `knot space tunnel` from the desktop gets the same via `--tunnel-server` / `--tunnel-token` / `--tunnel-alias`. Without an explicit target the tunnel uses the space's own server exactly as before. See [Agent Tunnels](../docs/tunnels/agent-tunnels/).
+
+- **Tunnels-only API tokens**: token scoping gains a **Tunnels** scope — a key that can create, list and delete web and port tunnels (`/tunnel/*`, `/api/tunnels*`) and nothing else, for machines that should only ever expose a port. Scope prefix matching is now boundary-aware, so `/api/tunnels` no longer covers paths like `/api/tunnels-extra`. Scripts mint and revoke keys via the new `knot.token` library. See [API Tokens](../docs/api-tokens/).
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}

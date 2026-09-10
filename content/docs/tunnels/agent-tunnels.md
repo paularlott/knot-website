@@ -81,6 +81,10 @@ server and an API token valid on it:
 knot tunnel http 8080 test1 --server https://other.knot.internal --token <api-token>
 ```
 
+A **Tunnels**-only scoped token is enough — and the right key to hand a
+machine that should do nothing but expose a port; see
+[API Tokens](../../api-tokens/#scoping-a-token).
+
 With `--daemon` the agent owns the tunnel like any other: it survives the
 launching command exiting, appears in `knot tunnel list`, and is stopped with
 `knot tunnel stop`.
