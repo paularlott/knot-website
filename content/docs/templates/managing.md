@@ -94,9 +94,15 @@ To create a new template:
 ### Custom Fields and Features
 
 - **`Custom Fields`**:
-  Add optional fields to pass additional information into a space.
-  - **`Variable Name`**: The name of the variable for the field.
-  - **`Field Label / Description`**: A description of the field, displayed in the space creation and edit forms.
+  Add optional fields to pass additional information into a space. Each field has a **Variable Name**, a **Field Label / Description** (shown on the space creation and edit forms), and a **type** - set with the wrench icon next to the field, shown as a badge on each row:
+  - **Text** (default): a single-line input.
+  - **Password**: a masked input.
+  - **Number**: a digit-validated input, stored as a string.
+  - **Text area**: a code editor for multi-line values, with a configurable language (text, scriptling, yaml, toml, json, markdown, or shell); scriptling gets the editor's completions.
+  - **Autocomplete**: a searchable box whose suggestions come from a [plugin field handler](../../plugins/writing-plugins/fields/) (offered only when a plugin provides one); the value must be one of the suggested options.
+  - **Select**: a dropdown whose options come from a plugin field handler or a manual list on the field; the value must be one of the options.
+
+  Every field can also carry a **Default value** (set in the same wrench-icon dialog). The default is pre-filled when a space is created and applied when an API/CLI request omits the field. Clearing the pre-filled value keeps the field empty — a deliberately blank field never falls back to the default.
 
 - **`Jobs`**:
   Define scheduled or manual jobs that are copied into spaces created from the template, where each space can edit or remove its own copy. Each job has a name, a shell command and an optional 5-field cron schedule; see [Space Jobs](../spaces/jobs/).

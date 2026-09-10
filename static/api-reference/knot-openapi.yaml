@@ -18,7 +18,7 @@ tags:
     description: |
       This API is authenticated using a bearer token. The token is passed in the Authorization header as a Bearer token.
 
-      A token can be obtained by logging in with the login endpoint and providing a valid username and password, or by creating a token with the create token endpoint.
+      A token can be obtained by logging in with the login endpoint and providing a valid username and password, then calling the create token endpoint. The login response returns a session ID which must be sent as a cookie (`__KNOT_WEBUI_SESSION`) when calling the create token endpoint, after which all requests use the returned token as a Bearer token. Tokens can also be created directly in the web interface.
   - name: OpenAI
     description: |
       OpenAI-compatible endpoints for AI chat functionality.
@@ -609,6 +609,45 @@ paths:
           $ref: "#/components/responses/not-found"
       security: [BearerAuth: []]
 
+  /api/users/{user_id}/activity:
+    get:
+      tags:
+        - Users
+      summary: Get User Activity
+      description: Retrieve per-minute filesystem activity for the last hour or daily activity for the last 7 days.
+      operationId: getUserActivity
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID or username of the user.
+          schema:
+            type: string
+            format: uuid
+        - name: range
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [1h, 7d]
+            default: 1h
+      responses:
+        "200":
+          description: Aggregated user activity history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserActivityHistoryResponse"
+        "400":
+          $ref: "#/components/responses/bad-request"
+        "401":
+          $ref: "#/components/responses/unauthorized"
+        "403":
+          $ref: "#/components/responses/forbidden"
+        "404":
+          $ref: "#/components/responses/not-found"
+      security: [BearerAuth: []]
+
     put:
       tags:
         - Users
@@ -669,111 +708,6 @@ paths:
           $ref: "#/components/responses/internal-server-error"
       security: [BearerAuth: []]
 
-  /api/users/{user_id}/activity:
-    get:
-      tags:
-        - Users
-      summary: Get User Activity
-      description: Retrieve per-minute filesystem activity for the last hour or daily activity for the last 7 days.
-      operationId: getUserActivity
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: The ID or username of the user.
-          schema:
-            type: string
-            format: uuid
-        - name: range
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [1h, 7d]
-            default: 1h
-      responses:
-        "200":
-          description: Aggregated user activity history
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserActivityHistoryResponse"
-        "400":
-          $ref: "#/components/responses/bad-request"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "403":
-          $ref: "#/components/responses/forbidden"
-        "404":
-          $ref: "#/components/responses/not-found"
-      security: [BearerAuth: []]
-
-  /api/users/{user_id}/access:
-    get:
-      tags:
-        - Users
-      summary: Get User Access
-      description: Aggregated view of everything a user can access — resolved roles, groups, effective quota and permissions, owned and shared spaces, plus the templates, variables, volumes, scripts, skills and stack definitions visible to the user.
-      operationId: getUserAccess
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: The ID or username of the user.
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "200":
-          description: The user's aggregated access
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserAccessResponse"
-        "400":
-          $ref: "#/components/responses/bad-request"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "403":
-          $ref: "#/components/responses/forbidden"
-        "404":
-          $ref: "#/components/responses/not-found"
-      security: [BearerAuth: []]
-
-  /api/users/{user_id}/auth-provider/{provider_id}:
-    delete:
-      tags:
-        - Users
-      summary: Unlink an Auth Provider
-      description: Unlink an external auth provider from a user. Users can unlink their own provider only after setting a password (or, when password auth is disabled, only if at least two providers remain linked); otherwise the manage-users permission is required.
-      operationId: unlinkAuthProvider
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: The ID of the user.
-          schema:
-            type: string
-            format: uuid
-        - name: provider_id
-          in: path
-          required: true
-          description: The ID of the linked auth provider to remove.
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Provider unlinked
-        "400":
-          $ref: "#/components/responses/bad-request"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "403":
-          $ref: "#/components/responses/forbidden"
-        "404":
-          $ref: "#/components/responses/not-found"
-      security: [BearerAuth: []]
-
   /api/users/{user_id}/quota:
     get:
       tags:
@@ -810,7 +744,7 @@ paths:
       tags:
         - Users
       summary: Get User Permissions
-      description: Retrieve all permissions for a user, resolved from their roles.
+      description: Retrieve all permissions for a user, resolved from their roles — built-in permission IDs plus the qualified plugin grants their roles carry.
       operationId: getUserPermissions
       parameters:
         - name: user_id
@@ -833,6 +767,11 @@ paths:
                     items:
                       type: integer
                     description: The list of permission IDs the user has.
+                  plugin_permissions:
+                    type: array
+                    items:
+                      type: string
+                    description: The qualified plugin grants (plugin.<name>.<id>) the user holds.
         "400":
           $ref: "#/components/responses/bad-request"
         "401":
@@ -875,6 +814,84 @@ paths:
                   has_permission:
                     type: boolean
                     description: True if the user has the permission.
+        "400":
+          $ref: "#/components/responses/bad-request"
+        "401":
+          $ref: "#/components/responses/unauthorized"
+        "403":
+          $ref: "#/components/responses/forbidden"
+        "404":
+          $ref: "#/components/responses/not-found"
+      security: [BearerAuth: []]
+
+  /api/users/{user_id}/linked-users/{linked_user_id}:
+    put:
+      tags:
+        - Users
+      summary: Link User
+      description: Grant one user the ability to switch into another - the linked user joins the target's become-list, offered in the target's profile menu. Full access to the linked account, administrators included; one way - the linked user cannot become the target. Requires the link_users permission.
+      operationId: linkUser
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID or username of the first user.
+          schema:
+            type: string
+        - name: linked_user_id
+          in: path
+          required: true
+          description: The ID or username of the user the first user will be able to become.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Users linked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+        "400":
+          $ref: "#/components/responses/bad-request"
+        "401":
+          $ref: "#/components/responses/unauthorized"
+        "403":
+          $ref: "#/components/responses/forbidden"
+        "404":
+          $ref: "#/components/responses/not-found"
+      security: [BearerAuth: []]
+    delete:
+      tags:
+        - Users
+      summary: Unlink User
+      description: Remove one user from another's become-list. The unlinked user's own list is untouched. Requires the link_users permission.
+      operationId: unlinkUser
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID or username of the first user.
+          schema:
+            type: string
+        - name: linked_user_id
+          in: path
+          required: true
+          description: The ID or username of the user to detach.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Users unlinked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
         "400":
           $ref: "#/components/responses/bad-request"
         "401":
@@ -1026,7 +1043,7 @@ paths:
   /api/permissions:
     get:
       summary: Get Permissions
-      description: Retrieve all permissions.
+      description: Retrieve all permissions — the built-in catalog plus the permissions declared by loaded plugins.
       operationId: getPermissions
       tags:
         - Permissions
@@ -5962,6 +5979,72 @@ paths:
           $ref: "#/components/responses/internal-server-error"
       security: [BearerAuth: []]
 
+  /api/plugins:
+    get:
+      tags: [Plugins]
+      summary: List loaded plugins
+      description: Admin inventory of loaded and failed plugins with permissions, menus, pages, handlers, MCP tools, field handlers, scriptling libraries and warnings. Requires the manage roles permission.
+      operationId: getPlugins
+      responses:
+        "200":
+          description: Plugin inventory.
+          content:
+            application/msgpack:
+              schema:
+                type: object
+      security: [BearerAuth: []]
+
+  /api/plugins/field-handlers:
+    get:
+      tags: [Plugins]
+      summary: List plugin field handlers
+      description: Every field handler declared by loaded plugins; used by the template form to bind custom fields. Requires the manage templates permission.
+      operationId: getPluginFieldHandlers
+      responses:
+        "200":
+          description: Handler list.
+          content:
+            application/msgpack:
+              schema:
+                type: object
+                properties:
+                  handlers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FieldHandler"
+      security: [BearerAuth: []]
+
+  /api/plugins/field-handlers/{handler_id}:
+    get:
+      tags: [Plugins]
+      summary: Field handler options
+      description: Calls the plugin's declared handler as the requesting user and returns its options (conventionally key/text pairs) for a bound custom field. Requires the use spaces permission.
+      operationId: getPluginFieldHandlerOptions
+      parameters:
+        - name: handler_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Qualified handler id (plugin.<name>.<handler>).
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional query passed through to the handler.
+      responses:
+        "200":
+          description: 'Handler result (conventionally {"options": [...]}).'
+          content:
+            application/msgpack:
+              schema:
+                type: object
+        "404":
+          description: Unknown field handler.
+      security: [BearerAuth: []]
+
+
 components:
   securitySchemes:
     BearerAuth:
@@ -6526,6 +6609,27 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PermissionInfo"
+        plugin_permissions:
+          type: array
+          description: The permissions declared by loaded plugins, grouped by declaring plugin. A role carries these as their qualified grant text.
+          items:
+            $ref: "#/components/schemas/PluginPermissionInfo"
+
+    PluginPermissionInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          example: plugin.metrics.read
+          description: The qualified grant stored on roles (plugin.<name>.<id>).
+        plugin:
+          type: string
+          example: metrics
+          description: The plugin that declares the permission.
+        label:
+          type: string
+          example: read
+          description: The declared permission id.
 
     GroupInfo:
       type: object
@@ -6933,6 +7037,15 @@ components:
           items:
             $ref: "#/components/schemas/SpaceInfo"
 
+    FieldHandler:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Qualified handler id (plugin.<name>.<handler>).
+        label:
+          type: string
+          description: Display label for the template form.
     CustomFieldValue:
       type: object
       properties:
@@ -7402,6 +7515,26 @@ components:
           type: string
           maxLength: 256
           description: The optional description for the field.
+        type:
+          type: string
+          description: Field input type - text (default), masked, number, bool, select, textarea or autocomplete. A bool field renders a true/false toggle and stores the string "true" or "false"; select renders the handler's options as a dropdown (stores the key). "password" is accepted as a legacy alias for masked and stored as masked.
+        handler:
+          type: string
+          description: For autocomplete and select when no manual options list is set, the bound plugin field handler (plugin.<name>.<handler>) serving the options.
+        language:
+          type: string
+          description: For textarea fields, the editor language - scriptling, yaml, toml, json, markdown or shell.
+        default:
+          type: string
+          description: Value prefilled when creating a space, stored as a string (a bool field prefills "true" or "false"). Applied only when the create request omits the field entirely - a field sent with an empty value keeps the empty value.
+        required:
+          type: boolean
+          description: When true the field cannot be left blank - space create/update is rejected (absent, empty or whitespace-only values) unless the template default satisfies it. A bool field is never blank.
+        options:
+          type: array
+          items:
+            type: string
+          description: A manual option list for select and autocomplete fields - exactly one source applies (handler or options); values are stored verbatim.
 
     TemplateCreateRequest:
       type: object
@@ -8539,6 +8672,9 @@ components:
         current:
           type: boolean
           description: Whether the user is the current user
+        has_linked_users:
+          type: boolean
+          description: Whether the user has linked users (accounts it may become).
         last_login_at:
           type: string
           format: date-time
@@ -8777,6 +8913,17 @@ components:
           type: string
           example: password
           description: Optional service password. Only populated for the current user.
+        linked_users:
+          type: array
+          items:
+            type: object
+            properties:
+              user_id:
+                type: string
+                format: uuid
+              username:
+                type: string
+          description: The accounts this user may become (profile menu Become User list). One way - these accounts cannot become this user.
         roles:
           type: array
           items:
@@ -8908,122 +9055,6 @@ components:
           enum: [minute, day]
         activity_usage:
           $ref: "#/components/schemas/UserActivityUsage"
-
-    UserAccessRole:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-
-    UserAccessGroup:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-
-    UserAccessPermission:
-      type: object
-      properties:
-        name:
-          type: string
-        granted:
-          type: boolean
-
-    UserAccessPermissionGroup:
-      type: object
-      properties:
-        group:
-          type: string
-        permissions:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserAccessPermission"
-
-    UserAccessSpace:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        shared:
-          type: boolean
-        owner_name:
-          type: string
-        is_deployed:
-          type: boolean
-
-    UserAccessResource:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        via:
-          type: string
-          description: How the resource is visible to the user, e.g. owner, group membership or permission.
-
-    UserAccessResponse:
-      type: object
-      properties:
-        user_id:
-          type: string
-          format: uuid
-        username:
-          type: string
-        email:
-          type: string
-        active:
-          type: boolean
-        is_admin:
-          type: boolean
-        roles:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserAccessRole"
-        groups:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserAccessGroup"
-        quota:
-          $ref: "#/components/schemas/UserQuota"
-        permission_groups:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserAccessPermissionGroup"
-        spaces:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserAccessSpace"
-        templates:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserAccessResource"
-        variables:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserAccessResource"
-        volumes:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserAccessResource"
-        scripts:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserAccessResource"
-        skills:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserAccessResource"
-        stack_definitions:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserAccessResource"
 
     UserActivityHistoryResponse:
       type: object

@@ -1,0 +1,378 @@
+---
+title: In Scriptling
+description: Write the plugin entry, handlers, and modules in Scriptling - knot's scripting language.
+type: Guide
+tags: [plugins, scripting]
+weight: 10
+---
+
+The entry file (`main.py`, or the single `.py`) is a [Scriptling](https://scriptling.dev/) script: it carries the [metadata declarations](../) and defines the handler functions your pages call. Nothing in it runs at load - knot parses the declarations only, and the code below executes per-request when a page is opened.
+
+`requires-scriptling` is checked against the **embedded scriptling runtime's version** - it bounds the language features the plugin's code may use, so `>=0.24` means scriptling 0.24 or newer regardless of the knot version wrapping it. A plugin asking for a newer runtime than the embedded one fails to load, with the requirement named on the admin Plugins page. Development builds (a scriptling replace directive) carry no embedded version and skip the check. For the host side, `[tool.knot]` takes an optional `requires_knot = ">=0.34"` - the knot version the plugin's use of the plugin system needs, checked against knot's own version at load.
+
+```python
+# /// script
+# requires-scriptling = ">=0.24"
+#
+# [tool.knot]
+# version = "1.0.0"
+# description = "Company dashboards."
+# permissions = ["view_dashboard"]
+#
+# [[tool.knot.pages]]
+# path = "/dashboard"
+# handler = "dashboard_report"
+# permission = "view_dashboard"
+# menu_label = "Dashboard"
+# icon = "assets/gauge.svg"
+# ///
+
+"""Company metrics plugin."""
+
+
+def dashboard_report(request):
+    # The layout: rows of columns, each column with its own data handler.
+    return {"rows": [
+        {"columns": [
+            {"id": "kpi", "type": "stats", "handler": "kpi", "refresh": 30},
+        ]},
+        {"columns": [
+            {"id": "spaces", "type": "table", "title": "Spaces",
+             "handler": "spaces_table", "width": 4},
+        ]},
+    ]}
+
+
+def kpi(request):
+    import knot.space as space
+
+    params = request["params"]
+    spaces = space.list()                  # runs as the requesting user
+    return [{"label": "Spaces", "value": len(spaces)},
+            {"label": "Range", "value": params.get("range", "24h")}]
+
+
+def spaces_table(request):
+    import knot.space as space
+
+    rows = []
+    for s in space.list():
+        rows.append({"name": s.get("name", "?")})
+    return {"columns": [{"key": "name", "label": "Space"}], "rows": rows}
+```
+
+## Handlers
+
+A page's `handler` is `"fn"` for a function in the entry file, or `"module.fn"` for a function in a sibling module. Every handler takes a single argument, `request` (a dict) - `request["params"]` carries the query parameters (query merged over any POST body), `request["user"]` the requesting user as data, and the return value is a rows/columns layout document (see [Plugin Pages](../pages/)) or a plain dict (key-value view). See [the request argument](#the-request-argument) for the full shape. Every handler is addressed `plugin.<namespace>.<function>` - for a `main.py` the namespace is the folder name with `-` mapped to `_` (folder `demo-scriptling` → `plugin.demo_scriptling.<fn>`). Column handlers are self-contained: each runs as the requesting user with a fresh `request` and a clean module state — environments are pooled per plugin and bound to the requesting user per call, so nothing persists between requests.
+
+## Modules
+
+A folder plugin's other `.py` files are importable (`import helpers`, `import helpers.sub as sub`) - the loader is scoped to the plugin folder. Keep helpers beside `main.py`; the entry stays the single place declarations live.
+
+```python
+# helpers.py
+def format_duration(seconds):
+    ...
+
+# main.py handler
+def dashboard_report(request):
+    import helpers
+    return {"uptime": helpers.format_duration(3600)}
+```
+
+## The environment in one paragraph
+
+Handlers run in an environment bound to the requesting user (pooled per plugin; each call is Reset, rebound to the user and starts from a clean module state): the scriptling standard library and data/text tooling, filesystem access **jailed to the plugin's own folder**, no outbound networking (`requests`, `wait_for`) and no container/nomad libraries, plus the [`knot.*` libraries](../../../scripting/) acting as the requesting user and the invoking user's own `lib` scripts. If the plugin ships [binary peers](../go/), they are importable as `plugin.<name>` - as is every *other* installed plugin's exposed surface, since installed plugins share one plugin pool and one trust domain ([composition](#composition)). The full details are on the [Plugin Pages](../pages/) page.
+
+## Logging
+
+For diagnostics, use the `logging` library - it writes to the **server's log**, so a handler's messages land where an admin looks:
+
+```python
+def dashboard_report(request):
+    import logging
+
+    log = logging.getLogger("metrics")   # a named group in the server log
+    log.info("rendering dashboard", request["user"]["name"])
+    ...
+```
+
+`print()` in a handler is not a logging channel: its output is captured and discarded when the dispatch completes (it never reaches the browser or the log), so reach for `logging`. A [Go peer](../go/#logging) logs the same way from the other side - `plugin.Logger(ctx)` forwards to the same server log under the `plugins` group - so a plugin's script and native halves log to one place.
+
+## Scriptling libs
+
+A plugin's exports do not have to be Go — they can be **scriptling libraries**, loaded in-process by knot's embedded scriptling runtime: no subprocess, no CLI on the host, no protocol hop. A library is a `.py` file in the plugin's `libs/` folder:
+
+```
+myplugin/
+  main.py            handlers and metadata
+  libs/
+    calc.py          a scriptling library
+  bin/               Go peers, if any
+```
+
+The library is ordinary scriptling — functions, classes with `__init__` and stateful methods, constants. Its **public surface** (names not prefixed with `_`) becomes the `plugin.<name>` import in the plugin's handler environments, evaluated in-process on first import inside the same jail and trust domain as the handlers:
+
+```python
+# libs/calc.py
+MAX = 100
+
+def add(a, b):
+    """Add two numbers."""
+    return a + b
+
+class Counter:
+    """A stateful counter."""
+    def __init__(self, step):
+        self.step = step
+        self.n = 0
+    def next(self):
+        self.n = self.n + self.step
+        return self.n
+```
+
+```python
+# main.py — consuming it
+def add_up(request):
+    import plugin.calc as calc
+
+    c = calc.Counter(4)
+    return {"sum": calc.add(2, 3), "first": c.next(), "second": c.next()}
+```
+
+**Version**: the optional `[tool.knot.lib]` table in the library's metadata block declares its version (default `"1.0"`), and the consuming plugin's dependency validates against it exactly as Go peer handshakes do:
+
+```python
+# libs/calc.py
+# /// script
+# [tool.knot.lib]
+# version = "1.5"
+# ///
+```
+
+with `"plugin.calc via calc >= 1.0.0"` in main.py's `dependencies`. Choose Go for CPU-heavy work, native libraries or a separate trust boundary; choose scriptling for pure-compute helpers that travel with the plugin as source.
+
+## Scriptling binary peers
+
+A `libs/` library runs in-process and jailed, with knot's library set — no database drivers. When a plugin needs them (or any of the CLI's heavier libraries), the peer can be a **scriptling script that looks like a binary**: an executable file in `bin/` whose shebang hands it to the scriptling CLI. knot spawns it exactly as it spawns a Go peer — stdio JSON-RPC, handshake, auto-generated host stubs — and the CLI carries the drivers, so knot links none of them.
+
+```
+myplugin/
+  main.py             optional — declarations + scriptling handlers (wrap-and-extend flavour)
+  bin/
+    kvstore           executable script: shebang + serve + register
+    impl.py           companion module (not executable, silently skipped)
+```
+
+The shape is the Go plugin's exactly — a folder with something in `bin/`; only the *contents* of `bin/` differ. A Go plugin keeps its source in `peer/` (compiled into `bin/` by a Makefile, the binary gitignored), while a scriptling peer's `bin/` **is** its source, committed as-is. Two flavours, and both are encapsulation plays:
+
+- **Wrap and extend** (`demo-scriptlingcli`): the plugin keeps a `main.py` — its handlers and, since a `main.py` block wins when both exist, its manifest live there — and uses the `bin/` peer only for compute the handlers import as `plugin.<name>`. The peer stays a self-contained unit (an existing tool, an SDK wrapper, a store) and the `main.py` extends it with page logic, presentation and gates the peer knows nothing about.
+- **Pure peer** (`demo-scriptlingcli2`): **no `main.py` at all**. The peer serves the `[tool.knot]` manifest in its handshake — `runtime.plugin.serve(..., metadata={"tool.knot": {...}})`, exactly the model of a Go peer's `SetMetadata` — and every handler the manifest names is a function the peer exports, addressed as `plugin.<peer>.<fn>`. One executable carries the whole plugin, whatever language it is written in.
+
+The entry script serves the plugin protocol:
+
+```python
+# bin/kvstore
+#!/usr/bin/env -S scriptling --json-rpc
+import scriptling.runtime.plugin as plugin_srv
+import scriptling.runtime as runtime
+
+import impl
+
+plugin_srv.serve("kvstore", "1.0", "sqlite-backed key/value store")
+plugin_srv.register_function("remember", "impl.remember")
+plugin_srv.register_function("recall", "impl.recall")
+runtime.start_server()
+```
+
+In the pure-peer flavour the same entry script also declares the plugin — the manifest rides the `serve()` call as static metadata, parsed by knot exactly like a `main.py` block (the same constants-only rule as a Go peer's manifest applies: it must not vary with runtime state):
+
+```python
+plugin_srv.serve(
+    "notes", "1.0.0", "sqlite-backed notes store: the whole plugin, no main.py",
+    metadata={
+        "tool.knot": {
+            "version": "1.0.0",
+            "permissions": ["use_notes"],
+            "pages": [
+                {"path": "/notes", "handler": "notes_page", "menu_label": "Notes", "permission": "use_notes"},
+            ],
+        },
+    },
+)
+```
+
+Two authoring rules the shape encodes: **handlers must live in a module** — `register_function("x", "impl.x")` resolves a `module.function` reference, and functions defined in the entry script cannot be registered at all (decorator forms included), so the implementation sits in `impl.py` beside the executable; and **`serve()` names the peer** — the handshake name and version the metadata dependency checks (`plugin.kvstore via kvstore >= 1.0`).
+
+The companion module is where the CLI's compiled-in libraries shine — `scriptling.sqlite` with the database file beside the executable, so plugin state survives every dispatch and travels with the folder:
+
+```python
+# bin/impl.py
+import os
+import os.path          # a library of its own in scriptling — import it explicitly
+import sys
+
+import scriptling.sqlite as sqlite
+
+
+def _db():
+    # sys.argv[0] is the executable's path once the server runs (NULL at
+    # import time, so resolve lazily); abspath because knot may spawn the
+    # peer through a relative plugins path.
+    return os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "kvstore.db")
+
+
+def remember(key, value):
+    conn = sqlite.connect(_db())
+    conn.execute("create table if not exists kv (k text primary key, v text)")
+    conn.execute("insert or replace into kv (k, v) values (?, ?)", key, value)
+    conn.close()
+    return True
+
+
+def recall(key):
+    conn = sqlite.connect(_db())
+    rows = conn.query("select v from kv where k = ?", key)
+    conn.close()
+    return rows[0].get("v") if len(rows) > 0 else None
+```
+
+Everything else is the bin/ contract from [In Go](../go/): the dependency declaration, packaging shapes, health on the admin page, imports as `plugin.kvstore` in this plugin's handlers and in other installed plugins ([composition](#composition)) - never in user-created MCP tools, which reach a plugin only via `knot.plugin.call`. Three requirements are specific to this form: the **scriptling CLI must be on the server's PATH** (the shebang invokes it; without it a `main.py` plugin fails its requirements at load and a pure-peer plugin is named as failed — its manifest has no other source — either way it appears on the admin page); it is **unix-only** (shebang execution — a Windows server cannot spawn it); and it carries the **Go-peer trust class** — a subprocess the admin installed, not the jailed in-process environment, with the full CLI library surface (including `scriptling.sql` for MySQL/MariaDB/PostgreSQL) that implies.
+
+A scriptling peer can also serve the plugin's declared assets from **inside the script** — the single-file equivalent of a Go peer's embedded assets. Register a fetcher whose read handler answers the declared paths from strings (or bytes) in the script; `None` is a miss and knot falls back to the plugin folder, so an `assets/` folder is optional:
+
+```python
+# bin/notes
+plugin_srv.register_fetcher("notes", "impl.fetch_read")
+
+# bin/impl.py
+ASSETS = {
+    "assets/icon.svg": "<svg ...>",
+}
+
+def fetch_read(source, path):
+    return ASSETS.get(path)   # None answers a miss
+```
+
+knot reads declared assets peer-first, disk second — the same resolution rule as [a Go peer's embedded assets](../go/#single-binary-assets-from-the-peer). Requires a scriptling CLI with `register_fetcher` (0.24.5).
+
+Choose `libs/` for pure compute that travels as source and stays jailed; choose a scriptling `bin/` peer for state (sqlite beside the executable) or CLI-only libraries; choose Go for CPU-heavy work, native libraries or a separate trust boundary.
+
+`demo-scriptlingcli` (`examples/plugins/demo-scriptlingcli/` in the knot repository) is the wrap-and-extend working example: it keeps a `main.py` (scriptling handlers, namespace `plugin.demo_scriptlingcli`) whose `bin/kvstore` peer handshakes as `kvstore` (`plugin.kvstore`) and backs a small key/value page. Its sibling `demo-scriptlingcli2` (`examples/plugins/demo-scriptlingcli2/`) is the pure-peer twin and a **single-file plugin**: no `main.py` and no `assets/` — the `bin/notes` peer serves its own manifest, every handler (`notes_page`, `col_notes`, `col_add`, `note_view` — an Ace-edited textarea, a table with per-row markdown view popups and delete actions over sqlite) and its icon and action icons (inlined in the script, via the fetcher), all addressed as `plugin.notes.<fn>`. Between them the two are an encapsulation toolkit: wrap an existing binary and extend it with scriptling, or ship one executable (or script) that declares itself.
+
+`demo-scriptling` ships a working library — `libs/calc.py` (a constant, `add`/`scale`, the `Counter` class and a self-gating `gated_report()`), exercised by the *Plugin peers* row on its showcase page and declared as `plugin.calc via calc >= 1.0` in its metadata. Its Go twin is `demo-go`'s `demolib` (functions plus the `Counter` class over the plugin protocol).
+
+Libraries travel to *other installed plugins* too: because installed plugins share one trust domain and one plugin pool, another plugin's handler imports them the same way (`import plugin.calc as calc`, `import plugin.demolib as demolib` — scriptling and Go peers alike, the Go ones through the host-side stubs scriptling auto-generates from the peer's handshake) — see [composition](#composition). User-created MCP tools are the untrusted side and **cannot** import them: the pool is not attached to their environment, so they reach a plugin only through `knot.plugin.call` over the gated loopback. Within a plugin or library, the authority for any permission check is [`knot.identity`](../../../reference/libraries/identity/); libraries are modules and cannot see a handler's `request`, so they read `knot.identity` directly.
+
+## The request argument
+
+Every handler call - pages, MCP tools, field handlers, `knot.plugin.call` - is `handler(request)`, where `request` is a dict:
+
+- **`request["method"]`** - how the handler was reached. Browser fetches carry the real method (`"GET"`/`"POST"`); `knot.plugin.call` carries the method it was given (GET by default, POST on request); MCP tool execution carries `"CALL"`. Branch on `request["method"] == "POST"` to tell a form's GET definition from its POST submit.
+- **`request["path"]`** - the handler's URL (its plugin-root or page path).
+- **`request["params"]`** - the call's parameters as a dict, the query string merged over any POST body. As an MCP tool it is the client's JSON arguments; `scriptling.mcp.tool.get_string` and friends read the same values. Read it with `params = request["params"]`.
+- **`request["config"]`** - the plugin's server-side configuration as inert data: the `[plugins.<name>]` table from the server's `knot.toml`, always present (an empty dict when unconfigured, so `request["config"]["key"]` never needs a guard for the table itself). See [Plugin configuration](#plugin-configuration).
+- **`request["user"]`** - the requesting user as inert **data**: a plain, serializable dict with keys `id`, `name`, `is_admin`, `groups`, `permissions` (stable snake_case keys of the built-in permissions - `"manage_spaces"`, `"use_mcp_server"`, ...) and `plugin_permissions` (qualified grants, `"plugin.metrics.read"`). It has no methods, does no round trip, and crosses the wire unchanged to a [Go peer](../go/). Use it to branch on *who is calling* (`request["user"]["name"]`, `request["user"]["is_admin"]`).
+
+For any permission **check** - the decision that carries authority, where the admin role passes everything - use [`knot.identity`](#identity), not `request["user"]`:
+
+```python
+def export_all(request):
+    import knot.identity
+
+    if not knot.identity.user().has_permission("plugin.metrics.export"):
+        return {"error": "forbidden"}
+    params = request["params"]
+    ...
+```
+
+The metadata gates knot enforces before code runs remain the security boundary; `request["user"]` and `knot.identity` are for the in-code decisions the declarations cannot express - adapting output, refusing edge cases.
+
+## Plugin configuration
+
+A plugin's deployment configuration lives in the server's `knot.toml`, one table per plugin, and reaches every handler call as `request["config"]`:
+
+```toml
+[plugins.metrics]
+url = "https://influx.internal:8086"
+bucket = "knot"
+verify_tls = true
+```
+
+```python
+def export_metrics(request):
+    cfg = request["config"]
+    url = cfg["url"]                      # a required key - see below
+    bucket = cfg.get("bucket", "default") # an optional key with a default
+    ...
+```
+
+The table is free-form TOML (strings, numbers, booleans, lists, nested tables). It is read once at plugin load and attached to the plugin, then converted per call — handlers can never mutate shared state, and an unconfigured plugin sees an empty table, so `request["config"]` itself never needs a guard. Like everything on a page or handler call it crosses the wire unchanged to [Go peers](../go/).
+
+A plugin can declare the keys it requires in its metadata:
+
+```python
+# [tool.knot]
+# config = ["url"]
+```
+
+Required keys are validated at load: a missing key fails the plugin with a reason on the administration Plugins page — `config requires keys missing from [plugins.metrics]: url` — instead of a handler failing at first use. Declared keys are required, not exhaustive; extra keys ride along. Two guard rails keep the channel configuration-shaped: a table over 64 KiB fails the plugin at load, and a `[plugins.<name>]` section naming no loaded plugin is reported as a warning on the same page (stale config left behind by a removed plugin).
+
+Configuration is per-server (`knot.toml` is not replicated) — put the same section on every member of a zone. It is read at startup: changing it requires a server restart. Secrets placed here are visible to the plugin's handlers by design; anything larger or hotter than configuration belongs in a knot library, not the config table.
+
+The `demo-scriptling` plugin shows the whole loop: its showcase page has a **Plugin configuration** column whose *Read config* button calls the plugin's `config_echo` handler from the browser and shows what the server configured.
+
+## Identity
+
+`knot.identity.user()` is the authoritative permission surface: a real `User` object backed by the gated loopback (the admin role passes every check), with `has_permission` and `in_group` methods. It works the same in a handler or a library, because it does not depend on the handler's `request`:
+
+| Member | Kind | Meaning |
+|---|---|---|
+| `.id` | field | the user's id |
+| `.name` | field | the user's login name |
+| `.is_admin` | field | whether the user holds the fixed admin role |
+| `.groups` | field | the groups the user belongs to |
+| `.permissions` | field | stable snake_case keys of the built-in permissions the user holds |
+| `.plugin_permissions` | field | qualified plugin grants (`"plugin.metrics.read"`) the user holds |
+| `.has_permission(key)` | method | permission check — the argument picks: an integer is a built-in permission id (the `knot.permission` constants), a `"plugin."`-prefixed string a qualified grant, any other string a built-in's stable key; admins pass every check |
+| `.in_group(name)` | method | membership of one group |
+
+Permission keys are stable identifiers — display names are for the role editor and may be reworded, keys never change. One method answers all of it because the forms can't collide: an integer names a built-in by id (`knot.permission.MANAGE_SPACES`), and among strings qualified grants always start with `plugin.`, which no built-in key contains. See [the identity library](../../../reference/libraries/identity/) for the full surface.
+
+## Composition
+
+Installed plugins are one trust domain sharing a single plugin pool, so cross-plugin composition runs **in-process**: a handler may `import plugin.<othername>` and use another plugin's exposed library, class or peer directly, ungated. A declaration can also name another plugin's handler explicitly (`handler = "plugin.other.fn"`) for cross-plugin composition; a bare `handler = "foo"` resolves against the plugin's own namespace.
+
+User-created MCP tools are the untrusted side of that boundary: the plugin pool is **not** attached to their environment, so they cannot `import plugin.<name>` at all. They reach a plugin only via `knot.plugin.call(...)` over the gated loopback, where the declared handler's gate is enforced for the requesting user. That structural split - the pool attached for installed plugins, not attached for user tools - is the isolation boundary.
+
+## Testing
+
+The entry file is a normal scriptling script - anything it declares can be checked with the Scriptling CLI:
+
+```sh
+scriptling --lint plugins/metrics/main.py     # validates the metadata block
+scriptling plugins/metrics/main.py            # runs it (handlers just won't be called)
+```
+
+Handlers that only compute can be exercised directly from the CLI during development.
+
+## Fields
+
+A field handler works like a page handler but is only ever asked for suggestions, so it fast and runs as the requesting user:
+
+```python
+# [[tool.knot.field_handlers]]
+# label = "Spaces you own"
+# handler = "field_my_spaces"
+# ///
+
+def field_my_spaces(request):
+    import knot.space as space
+    options = []
+    for s in space.list():
+        options.append({"key": s.get("id", ""), "text": s.get("name", "?")})
+    return {"options": options}
+```
+
+Bind a *template custom field* of type `autocomplete` to `plugin.<your-plugin>.field_my_spaces` in the template editor (wrench icon) and the space form shows each space as its name, storing the space id as the variable's value.
+

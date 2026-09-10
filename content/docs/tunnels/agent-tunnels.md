@@ -43,6 +43,10 @@ This opens an HTTP tunnel exposing local port `8080` as
 `<user>--test1.<tunnel_domain>`. The tunnel stays active until you press
 `Ctrl-C` (or the process is killed), exactly as before.
 
+By default the tunnel is created on the server that owns the space. A tunnel
+can instead be created on any other knot server — see
+[Targeting Another Knot Server](#targeting-another-knot-server).
+
 Use `https` instead of `http` for an HTTPS tunnel:
 
 ```shell
@@ -60,8 +64,81 @@ knot tunnel http 8080 test1 --daemon
 - The command prints the tunnel URL and exits.
 - The tunnel is owned by the agent and runs until the agent exits, or until you
   stop it explicitly.
-- The agent uses its own server credentials, so no `--server` / `--token` flags
-  are needed (or used) in daemon mode.
+- The agent uses its own server credentials, so no `--server` / `--token`
+  flags are needed for a tunnel on the space's own server — a different server
+  can be targeted too, see
+  [Targeting Another Knot Server](#targeting-another-knot-server).
+
+---
+
+## Targeting Another Knot Server
+
+A tunnel — foreground or `--daemon` — can be created on **any** knot server
+this space can reach, not just the one that owns the space. Pass the target
+server and an API token valid on it:
+
+```shell
+knot tunnel http 8080 test1 --server https://other.knot.internal --token <api-token>
+```
+
+A **Tunnels**-only scoped token is enough — and the right key to hand a
+machine that should do nothing but expose a port; see
+[API Tokens](../../api-tokens/#scoping-a-token).
+
+With `--daemon` the agent owns the tunnel like any other: it survives the
+launching command exiting, appears in `knot tunnel list`, and is stopped with
+`knot tunnel stop`.
+
+Aliases work the same way. Configure them in the space's config file
+(`knot.toml` in the current directory, `~/knot.toml`, or
+`~/.config/knot/knot.toml`) using the same layout `knot connect` writes on the
+desktop:
+
+```toml
+[client.connection.staging]
+server = "https://staging.knot.internal"
+token = "<api-token>"
+
+[client.connection.prod]
+server = "https://prod.knot.internal"
+token = "<api-token>"
+```
+
+```shell
+knot tunnel http 8080 web1 -a staging --daemon
+knot tunnel http 8081 web2 -a prod --daemon
+```
+
+The `--tunnel-server` / `--tunnel-token` / `--tunnel-alias` spellings are
+accepted as synonyms of `--server` / `--token` / `--alias`, so the same flags
+work here and on `knot space tunnel` from the desktop.
+
+Each tunnel is independent, so several can run at once against different
+servers and ports, mixing foreground and daemon freely.
+
+The same works remotely from the desktop with `knot space tunnel`, using the
+`--tunnel-*` flags (named differently from `-s` / `-t` / `-a` because on
+`knot space` commands those select the server the CLI itself talks to):
+
+```shell
+knot space tunnel http myspace 8080 web1 --tunnel-server https://other.knot.internal --tunnel-token <api-token>
+knot space tunnel http myspace 8081 web2 --tunnel-alias prod
+```
+
+Notes:
+
+- Daemon tunnels to other servers are not persisted, like all daemon tunnels:
+  they stop when the space (and therefore the agent) stops or restarts.
+- The tunnel address is built from **your username on the target server**, and
+  the tunnel counts against that server's tunnel quota and permissions.
+- Without `--server` / `--token` / `--alias` (or the `--tunnel-*` equivalents)
+  the tunnel is created on the server that owns the space, as before.
+- The space must be able to reach the target server over the network.
+- `knot tunnel list` inside the space and `knot space tunnel list` from the
+  desktop share one registry, so both list and stop tunnels started against
+  any server.
+- Scripts get the same via `knot.space.tunnel_start(space, protocol, port,
+  name, server, token)` from the `knot.space` library.
 
 ---
 
@@ -93,6 +170,9 @@ Active tunnels:
   test1  8080  http  https://alice--test1.tunnels.knot.internal
 ```
 
+A tunnel's URL shows the domain of the server it runs on, so tunnels on other
+servers are distinguishable at a glance.
+
 ---
 
 ## Remote Management
@@ -111,6 +191,10 @@ knot space tunnel http myspace 8080 test1
 
 Daemon mode is implied — the command prints the tunnel URL and exits, and the
 tunnel is owned by the space's agent. `https` is also supported.
+
+A different knot server can be targeted with `--tunnel-server` /
+`--tunnel-token` or `--tunnel-alias` — see
+[Targeting Another Knot Server](#targeting-another-knot-server).
 
 ### Listing tunnels
 
@@ -139,7 +223,11 @@ import knot.space as space
 url = space.tunnel_start("myspace", "http", 8080, "myapp")
 print(url)
 
-# List active tunnels
+# Start a tunnel on another knot server (token must be valid there)
+url = space.tunnel_start("myspace", "http", 8081, "web1",
+                         server="https://other.knot.internal", token="<api-token>")
+
+# List active tunnels — each URL's domain shows which server it runs on
 for t in space.tunnel_list("myspace"):
     print(t["name"], t["url"])
 

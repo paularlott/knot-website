@@ -41,6 +41,26 @@ The token carries your permissions — it can do everything your account can do.
 
 ---
 
+## Scoping a Token
+
+By default a token has **Full Access** — every endpoint your account can reach. Untick Full Access when creating (or editing) a token and it becomes scoped: only the ticked endpoint groups are reachable, everything else answers `403 token scopes do not permit this endpoint`.
+
+| Scope | Reach |
+|-------|-------|
+| **Methods** | Discover and call space methods (`/api/methods*`). |
+| **MCP** | The MCP server endpoint (`/mcp`). |
+| **Tunnels** | Web and port tunnels only (`/tunnel/*`) plus the tunnel management API (`/api/tunnels*`) — list, create and delete tunnels and nothing else. |
+
+A **Tunnels**-only key is what a machine that should only ever expose a port wants:
+
+```shell
+knot tunnel http 8080 myapp --server https://knot.internal:3000 --token <tunnels-only-token>
+```
+
+Scopes narrow but never widen: a scoped token still passes through every permission check a full token does, and an unscoped token behaves exactly as before.
+
+---
+
 ## Deleting a Token
 
 Deleting a token immediately prevents further API calls from being made using that token.

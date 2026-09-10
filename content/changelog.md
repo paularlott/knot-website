@@ -9,6 +9,28 @@ weight: 100
 navSection: docs
 ---
 
+## September 2026
+
+{{< version "v0.34.0" >}}
+
+{{< changelog-item "added" >}}
+- **Plugins**: extend knot entirely from a script's metadata. Plugins ship their own assets (logos, SVG icons) and can be single-file Go binaries or scriptling scripts. Key capabilities: a **layout-driven page system** where handlers return column grids with independent data fetching and per-panel gates; **forms** branching on request method with success/error envelopes and per-field errors; **tables** with row-action icon buttons, kebab menus, confirm dialogs, and popup forms; **field handlers** turning template custom fields into plugin-backed autocompleters and code editors; **MCP tool** exposure; and **export modules** whose classes appear as `plugin.<name>` in user tools via the gated loopback SDK. Plugins declare their generation (`api = 1`) so future versions can coexist, and load as pure parsing — a broken plugin never affects startup. Plugin config lives in `[plugins.<name>]` in `knot.toml`, reaches every handler as `request["config"]` (always present, never mutable), and fails at load if required keys are missing. The agent can also load Scriptling plugins via `--plugin` / `--plugin-dir` (or env/config equivalents) — this is how spaces access database drivers (`scriptling.sql`, `scriptling.sqlite`, `scriptling.badgerdb`, `scriptling.valkey`) without bundling them. See [Plugins](../docs/plugins/) and [knot agent](../reference/cli/agent/).
+
+- **Become another user**: fast user switching between accounts. Link accounts a user may become from the user manager (new **Link Users** permission) — the link is one way, and the profile menu offers `Switch User` for the linked accounts plus `Back to <your account>` to return. Every switch is recorded in the audit trail {{< pro-badge >}}.
+
+- **Template custom fields**: four improvements — **defaults** (prefilled on space creation, applied when API/CLI omits the field, but a deliberate blank is never overridden); **bool type** (styled toggle showing `true`/`false`); **required fields** (space form and API reject blank values, default can satisfy the requirement); and **select type** (dropdown sourced from a plugin field handler or a manual one-per-line list; autocomplete takes the same two sources). The template editor now badges required fields. The `knot.template` library can declare custom fields (types and defaults) on create and update.
+
+- **Tunnels to any server from a space**: `knot tunnel` inside a space can now target any knot server — pass `--server` and `--token`, or an `-a` alias from the space's `knot.toml`, with or without `--daemon`. Several tunnels against different servers run side by side; each address is built from your username on the target and counts against its quota. `knot space tunnel` from the desktop gets the same via `--tunnel-server` / `--tunnel-token` / `--tunnel-alias`. Without an explicit target the tunnel uses the space's own server exactly as before. See [Agent Tunnels](../docs/tunnels/agent-tunnels/).
+
+- **Tunnels-only API tokens**: token scoping gains a **Tunnels** scope — a key that can create, list and delete web and port tunnels (`/tunnel/*`, `/api/tunnels*`) and nothing else, for machines that should only ever expose a port. Scope prefix matching is now boundary-aware, so `/api/tunnels` no longer covers paths like `/api/tunnels-extra`. Scripts mint and revoke keys via the new `knot.token` library. See [API Tokens](../docs/api-tokens/).
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- **Embedded `knot.apiclient`**: `get(path, params)` passed positionally was being dropped by the Go transport (breaking `knot.space.list()` for non-admins, `skill.search()`, `usage_history()`); it now honours a positional params dict like the standalone client, across pages, MCP and the CLI.
+
+- **Template picker vs quota**: the space-creation template picker now tints templates the owner lacks quota for ("Insufficient quota"), and when no available template fits, the out-of-quota dialog is shown instead of the picker.
+{{< /changelog-item >}}
+
 ## August 2026
 
 {{< version "v0.33.0" >}}

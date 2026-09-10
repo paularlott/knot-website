@@ -101,3 +101,16 @@ Editing a user is similar to creating one:
 2. Update the user's details, roles, groups, or resource limits as needed.
 
 **Note**: If the password fields are left blank, the user's password will remain unchanged.
+
+---
+
+## Linked Users (Fast User Switching)
+
+Linked users are the accounts a user may **become** — think fast user switching. The link is one way: link B on A's account and A can switch into B (B's spaces included) from the profile menu (`Switch User`), but B cannot become A. Switching back needs no link: the session always offers `Back to <your account>` to return to whoever authenticated.
+
+- **Linking** is done in the user manager: edit a user and use the `Linked Users` section — the listed accounts are the ones the edited user will be able to become. Requires the `Link Users` permission, which is **impersonation-grade**: whoever holds it can link to any account — administrators included — and act as it fully. Grant it as sparingly as admin itself.
+- **Unlinking** removes one account from that list. A session the linking user already has switched into that account keeps running until it switches back or expires — it simply cannot switch in again.
+- **Unlinking** removes one account from that list; the other account is unaffected.
+- **Switching** requires nothing beyond the link (the target must be active). Every switch — including switching back — is written to the audit log (`User Switch`), and refused attempts are recorded as `User Switch Denied`.
+- The users list marks accounts that have linked users with a `Linked` badge.
+- The API exposes the same operations: `PUT /api/users/{user_id}/linked-users/{linked_user_id}` to link and `DELETE` on the same path to unlink, both gated by the `link_users` permission.
