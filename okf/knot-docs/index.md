@@ -13,6 +13,7 @@ Guides: quick start, configuration, spaces, templates, scripting, AI integration
 - [API Tokens](api-tokens.md)
 - [Best Practices](best-practices.md)
 - [Configuration](configuration.md)
+- [Plugins](plugins.md)
 - [Quick Start](quick-start.md)
 - [Scripting](scripting.md)
 - [Spaces](spaces.md)

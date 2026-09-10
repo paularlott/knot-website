@@ -33,8 +33,9 @@ The `knot.template` library provides template management functions. Templates de
 
 | Function | Description |
 |----------|-------------|
-| `list()` | List all templates |
-| `get(template_id)` | Get template by ID or name |
+| `list(include_inactive=False, resolve_options=False)` | List templates visible to the current user; with `resolve_options`, handler-backed custom fields have their options resolved as the requesting user |
+| `get(template_id, resolve_options=False)` | Get template by ID or name; with `resolve_options`, handler-backed custom fields have their options resolved as the requesting user |
+| `field_options(handler_id)` | Resolve a plugin field handler's option keys as the requesting user — the values the space form offers and the API accepts — or `None` when the handler cannot be reached |
 | `validate(platform, job='', volumes='')` | Validate template job and volume specs without saving |
 | `build_spec(platform, spec, original_job='', original_volumes='')` | Build native job/volume text from a unified spec (image, env, ports, storage, resources). The same conversion the [UI spec wizard](../../knot-docs/configuration/spec-wizard.md) uses. |
 | `nodes(template_id)` | List available nodes for a local-container template |
@@ -113,7 +114,7 @@ template.create("nginx", job=built["job"], volumes=built["volumes"], platform="n
 - `groups` - List of group IDs
 - `zones` - List of zone names
 - `schedule` - List of schedule day dicts (`enabled`, `from`, `to`)
-- `custom_fields` - List of custom field dicts (`name`, `description`)
+- `custom_fields` - List of custom field dicts: `name`, `description`, `type` (text, masked, number, bool, textarea, select or autocomplete), `required`, `default` (when set), and the option source — `options` (the manual list, also the resolved values when `get` ran with `resolve_options=True`) or `handler` (a plugin field handler id). These are the definitions to fill when creating a space: required fields must be set, and select/autocomplete values must be one of the field's options (see [space.create](space.md#create)).
 - `health_check_type` - Health check type (`none`, `agent`, `tcp`, `http`, `program`, or `custom`)
 - `health_check_config` - Health check target, command, or custom script depending on type
 - `health_check_skip_ssl_verify` - Skip TLS verification for HTTP health checks

@@ -161,6 +161,7 @@ Example:
 - Assign only necessary templates
 - Create `contractor` role with restricted permissions
 - Set short token expiration
+- Issue scoped API tokens where possible — e.g. a [tunnels-only](api-tokens.md#scoping-a-token) key for machines that just expose a port
 
 **Result**: Contractors have limited, controlled access.
 

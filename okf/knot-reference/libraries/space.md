@@ -75,7 +75,7 @@ The `knot.space` library provides space management functions for scripts.
 | `port_list(space)` | List active port forwards |
 | `port_stop(space, local_port)` | Stop a port forward |
 | `port_throttle(space, local_port, latency_ms=0, jitter_ms=0, bandwidth_kb=0, timeout_ms=0, down=False, reset=False)` | Apply latency, jitter, and/or bandwidth limits to a port forward |
-| `tunnel_start(space, protocol, port, name)` | Start an agent-owned web tunnel in a space |
+| `tunnel_start(space, protocol, port, name, server="", token="")` | Start an agent-owned web tunnel in a space, optionally on another knot server |
 | `tunnel_list(space)` | List agent-owned web tunnels in a space |
 | `tunnel_stop(space, name)` | Stop an agent-owned web tunnel in a space |
 
@@ -124,7 +124,7 @@ Create a new space.
 - `selected_node_id` (string, optional): Node ID to assign for local-container spaces. Leave empty to auto-select.
 - `alt_names` (list, optional): Additional HTTP route names, each with `name` and `port`
 - `icon_url` (string, optional): Icon URL
-- `custom_fields` (list, optional): Custom field values as `{"name": "...", "value": "..."}`
+- `custom_fields` (list, optional): Custom field values as `{"name": "...", "value": "..."}`. Required fields must be set and select/autocomplete values must be one of the field's options — [template.get](template.md) with `resolve_options=True` lists each field's definition and valid values, and the API error names what to fix when a value is rejected
 - `startup_script_id` (string, optional): Startup script ID
 - `start_on_create` (bool, optional): Start the space immediately after it is created
 
@@ -194,6 +194,50 @@ Waits for the agent as well as the container: the space reports running before t
 - `interval` (int, optional): Seconds between polls (default 2)
 
 **Returns:** `bool` - True if the space is running with its agent connected, False if the timeout expired
+
+---
+
+### start(name)
+
+Start a stopped space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `bool` - True on success; raises on API error
+
+---
+
+### stop(name)
+
+Stop a running space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `bool` - True on success; raises on API error
+
+---
+
+### restart(name)
+
+Restart a running space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `bool` - True on success; raises on API error
+
+---
+
+### delete(name)
+
+Delete a space and its data.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `bool` - True on success; raises on API error
 
 ---
 
@@ -674,7 +718,7 @@ space.port_throttle("web", 8080, reset=True)
 
 ---
 
-### tunnel_start(space, protocol, port, name)
+### tunnel_start(space, protocol, port, name, server="", token="")
 
 Start an agent-owned web tunnel in a space, exposing a port inside the space on the internet as `<user>--<name>.<domain>`. The tunnel is owned by the space's agent and runs until the agent exits or the tunnel is stopped; it is not persisted. The space must be running.
 
@@ -683,8 +727,10 @@ Start an agent-owned web tunnel in a space, exposing a port inside the space on 
 - `protocol` (string): `"http"` or `"https"`
 - `port` (int): The port within the space to tunnel
 - `name` (string): The tunnel name (forms `<user>--<name>.<domain>`)
+- `server` (string, optional): Create the tunnel on this knot server instead of the space's own; the space must be able to reach it
+- `token` (string, optional): API token valid on `server` — required when `server` is given, and both must be given together
 
-**Returns:** `string` - The public tunnel URL
+**Returns:** `string` - The public tunnel URL. The URL is on the target server's tunnel domain, built from your username on that server.
 
 ---
 
@@ -699,7 +745,7 @@ List the agent-owned web tunnels active in a space.
 - `port` (int): Port within the space
 - `protocol` (string): `"http"` or `"https"`
 - `name` (string): Tunnel name
-- `url` (string): Public tunnel URL
+- `url` (string): Public tunnel URL — its domain shows which server the tunnel runs on
 
 ---
 

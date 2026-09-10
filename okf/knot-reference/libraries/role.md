@@ -36,8 +36,8 @@ The `knot.role` library provides role management functions.
 |----------|-------------|
 | `list()` | List all roles |
 | `get(role_id)` | Get role by ID or name |
-| `create(name, ...)` | Create a new role |
-| `update(role_id, ...)` | Update role properties |
+| `create(name, permissions=None, plugin_permissions=None)` | Create a new role — built-in permission IDs and/or qualified plugin grant strings |
+| `update(role_id, name=None, permissions=None, plugin_permissions=None)` | Update role properties; omitted lists keep their current values |
 | `delete(role_id)` | Delete a role |
 
 ---

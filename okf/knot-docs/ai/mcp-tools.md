@@ -14,7 +14,7 @@ type: Guide
 ---
 # MCP Tools
 
-The Knot MCP server exposes a set of built-in tools that AI assistants and MCP clients can use to manage spaces, templates, stack definitions, and the files and commands inside running spaces. The exact tools available to a given caller depend on the user's permissions.
+The Knot MCP server exposes a set of built-in tools that AI assistants and MCP clients can use to manage spaces, templates, stack definitions, and the files and commands inside running spaces. The exact tools available to a given caller depend on the user's permissions. Plugins can expose further tools — see [Plugins → MCP Tools](../plugins/writing-plugins/mcp-tools.md).
 
 Write-capable tools (create, update, delete, start, stop, share, transfer, run, write) require approval when called from the Knot web assistant. Read-only tools run without a confirmation prompt. External MCP clients connected to `/mcp` are not prompted.
 
