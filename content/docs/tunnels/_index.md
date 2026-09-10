@@ -63,7 +63,11 @@ knot tunnel http 8080 test1
 ```
 
 By default this behaves like the desktop version — the tunnel lives for the life
-of the command. To let the knot agent own the tunnel so it keeps running after
-the command exits, add `--daemon`, and use `knot tunnel stop` / `knot tunnel
-list` to manage it. See [Agent Tunnels](./agent-tunnels/) for the full
-agent-managed workflow.
+of the command and is created on the server that owns the space. To let the
+knot agent own the tunnel so it keeps running after the command exits, add
+`--daemon`, and use `knot tunnel stop` / `knot tunnel list` to manage it. See
+[Agent Tunnels](./agent-tunnels/) for the full agent-managed workflow.
+
+A foreground tunnel (no `--daemon`) can also target a **different** knot server
+with `--server` / `--token` or a configured `--alias` — see
+[Targeting Another Knot Server](./agent-tunnels/#targeting-another-knot-server).

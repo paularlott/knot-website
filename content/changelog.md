@@ -27,6 +27,8 @@ navSection: docs
 - **Required custom fields**: a template custom field can be marked required — the space form refuses to save with it blank (and marks the field), and the space create/update API rejects blank values; the field's default can satisfy the requirement.
 
 - **Select custom fields**: a `select` type renders a dropdown whose options come from a plugin field handler or a manual one-per-line list on the field — autocomplete takes the same two sources; the template editor's field list now badges required fields.
+
+- **Tunnels to any server from a space**: a foreground `knot tunnel` inside a space can now target any knot server, not just the one that owns the space — pass `--server` and `--token` (or `KNOT_SERVER` / `KNOT_TOKEN`), or an `-a` alias resolved from the space's `knot.toml` (the same `client.connection.<alias>` layout `knot connect` writes on the desktop). Without them the tunnel uses the space's own server exactly as before; `--daemon` tunnels still run on the space's server, and combining `--daemon` with an explicit target is now a clear error instead of silently ignoring the flags. See [Agent Tunnels](../docs/tunnels/agent-tunnels/).
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}

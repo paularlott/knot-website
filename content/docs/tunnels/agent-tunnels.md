@@ -43,6 +43,10 @@ This opens an HTTP tunnel exposing local port `8080` as
 `<user>--test1.<tunnel_domain>`. The tunnel stays active until you press
 `Ctrl-C` (or the process is killed), exactly as before.
 
+By default the tunnel is created on the server that owns the space. A
+foreground tunnel can instead be created on any other knot server — see
+[Targeting Another Knot Server](#targeting-another-knot-server).
+
 Use `https` instead of `http` for an HTTPS tunnel:
 
 ```shell
@@ -61,7 +65,47 @@ knot tunnel http 8080 test1 --daemon
 - The tunnel is owned by the agent and runs until the agent exits, or until you
   stop it explicitly.
 - The agent uses its own server credentials, so no `--server` / `--token` flags
-  are needed (or used) in daemon mode.
+  are needed (or used) in daemon mode — daemon tunnels always run on the server
+  that owns the space, and combining `--daemon` with `--server` / `--token` or a
+  configured `--alias` is an error (see below).
+
+---
+
+## Targeting Another Knot Server
+
+A foreground tunnel (no `--daemon`) can be created on **any** knot server this
+space can reach, not just the one that owns the space. Pass the target server
+and an API token valid on it:
+
+```shell
+knot tunnel http 8080 test1 --server https://other.knot.internal --token <api-token>
+```
+
+Or use an alias configured in the space's config file (`knot.toml` in the
+current directory, `~/knot.toml`, or `~/.config/knot/knot.toml`) using the same
+layout `knot connect` writes on the desktop:
+
+```toml
+[client.connection.other]
+server = "https://other.knot.internal"
+token = "<api-token>"
+```
+
+```shell
+knot tunnel http 8080 test1 -a other
+```
+
+Notes:
+
+- The tunnel runs in this process and stops when it exits, like any foreground
+  tunnel — it is not handed to the agent.
+- The tunnel address is built from **your username on the target server**, and
+  the tunnel counts against that server's tunnel quota and permissions.
+- `--daemon` cannot be combined with `--server` / `--token` or a configured
+  `--alias`: the agent creates daemon tunnels only on the space's own server.
+- Without `--server` / `--token` / `--alias` the tunnel is created on the
+  server that owns the space, as before.
+- The space must be able to reach the target server over the network.
 
 ---
 

@@ -228,7 +228,9 @@ knot tunnel stop <name>
 ```
 
 - **Protocols**: `http`, `https`
-- `--daemon`: hand the tunnel to the knot agent and exit; the tunnel then lives for the life of the agent
+- `--daemon`: hand the tunnel to the knot agent and exit; the tunnel then lives for the life of the agent. Daemon tunnels always run on the server that owns the space.
+- `-s, --server` / `-t, --token` (or `KNOT_SERVER` / `KNOT_TOKEN`): create a foreground tunnel on another knot server instead of the space's own — the pair targets that server from this process.
+- `-a, --alias`: use a `client.connection.<alias>` entry from the config file as the target server (foreground only; must be given explicitly — the `default` alias is not consulted implicitly inside a space).
 
 ```shell
 knot tunnel http 8080 myapp
