@@ -11,6 +11,14 @@ navSection: docs
 
 ## September 2026
 
+{{< version "v0.34.2" >}}
+
+{{< changelog-item "fixed" >}}
+- **Required custom fields**: picking a value in an autocomplete or select custom field now clears the "This field cannot be left blank" error immediately. Previously the error stayed visible after selecting a value until the field was focused and blurred again (or the form was saved), because selection wrote the value without re-running the field's validation; select fields also validated against the pre-selection value.
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.34.1" >}}
 
 {{< changelog-item "changed" >}}
