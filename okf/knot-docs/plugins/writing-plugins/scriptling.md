@@ -90,7 +90,7 @@ def dashboard_report(request):
 
 ## The environment in one paragraph
 
-Handlers run in an environment bound to the requesting user (pooled per plugin; each call is Reset, rebound to the user and starts from a clean module state): the scriptling standard library and data/text tooling, filesystem access **jailed to the plugin's own folder**, no outbound networking (`requests`, `wait_for`) and no container/nomad libraries, plus the [`knot.*` libraries](../../scripting.md) acting as the requesting user and the invoking user's own `lib` scripts. If the plugin ships [binary peers](go.md), they are importable as `plugin.<name>` - as is every *other* installed plugin's exposed surface, since installed plugins share one plugin pool and one trust domain ([composition](#composition)). The full details are on the [Plugin Pages](pages.md) page.
+Handlers run in an environment bound to the requesting user (pooled per plugin; each call is Reset, rebound to the user and starts from a clean module state): the scriptling standard library and data/text tooling, filesystem access **as the knot process user** (unrestricted — the same authority a binary peer has; `subprocess` was never jailed, so a folder restriction would not have been a boundary anyway), outbound HTTP via `requests` — resolving through the server's configured DNS servers when any are set, under no other network policy — no `wait_for` and no container/nomad libraries, plus the [`knot.*` libraries](../../scripting.md) acting as the requesting user and the invoking user's own `lib` scripts. If the plugin ships [binary peers](go.md), they are importable as `plugin.<name>` - as is every *other* installed plugin's exposed surface, since installed plugins share one plugin pool and one trust domain ([composition](#composition)). The full details are on the [Plugin Pages](pages.md) page.
 
 ## Logging
 
@@ -162,7 +162,7 @@ with `"plugin.calc via calc >= 1.0.0"` in main.py's `dependencies`. Choose Go fo
 
 ## Scriptling binary peers
 
-A `libs/` library runs in-process and jailed, with knot's library set — no database drivers. When a plugin needs them (or any of the CLI's heavier libraries), the peer can be a **scriptling script that looks like a binary**: an executable file in `bin/` whose shebang hands it to the scriptling CLI. knot spawns it exactly as it spawns a Go peer — stdio JSON-RPC, handshake, auto-generated host stubs — and the CLI carries the drivers, so knot links none of them.
+A `libs/` library runs in-process with knot's library set — no database drivers. When a plugin needs them (or any of the CLI's heavier libraries), the peer can be a **scriptling script that looks like a binary**: an executable file in `bin/` whose shebang hands it to the scriptling CLI. knot spawns it exactly as it spawns a Go peer — stdio JSON-RPC, handshake, auto-generated host stubs — and the CLI carries the drivers, so knot links none of them.
 
 ```
 myplugin/
@@ -245,7 +245,7 @@ def recall(key):
     return rows[0].get("v") if len(rows) > 0 else None
 ```
 
-Everything else is the bin/ contract from [In Go](go.md): the dependency declaration, packaging shapes, health on the admin page, imports as `plugin.kvstore` in this plugin's handlers and in other installed plugins ([composition](#composition)) - never in user-created MCP tools, which reach a plugin only via `knot.plugin.call`. Three requirements are specific to this form: the **scriptling CLI must be on the server's PATH** (the shebang invokes it; without it a `main.py` plugin fails its requirements at load and a pure-peer plugin is named as failed — its manifest has no other source — either way it appears on the admin page); it is **unix-only** (shebang execution — a Windows server cannot spawn it); and it carries the **Go-peer trust class** — a subprocess the admin installed, not the jailed in-process environment, with the full CLI library surface (including `scriptling.sql` for MySQL/MariaDB/PostgreSQL) that implies.
+Everything else is the bin/ contract from [In Go](go.md): the dependency declaration, packaging shapes, health on the admin page, imports as `plugin.kvstore` in this plugin's handlers and in other installed plugins ([composition](#composition)) - never in user-created MCP tools, which reach a plugin only via `knot.plugin.call`. Three requirements are specific to this form: the **scriptling CLI must be on the server's PATH** (the shebang invokes it; without it a `main.py` plugin fails its requirements at load and a pure-peer plugin is named as failed — its manifest has no other source — either way it appears on the admin page); it is **unix-only** (shebang execution — a Windows server cannot spawn it); and it carries the **Go-peer trust class** — a subprocess the admin installed, not the in-process environment, with the full CLI library surface (including `scriptling.sql` for MySQL/MariaDB/PostgreSQL) that implies.
 
 A scriptling peer can also serve the plugin's declared assets from **inside the script** — the single-file equivalent of a Go peer's embedded assets. Register a fetcher whose read handler answers the declared paths from strings (or bytes) in the script; `None` is a miss and knot falls back to the plugin folder, so an `assets/` folder is optional:
 
@@ -264,7 +264,7 @@ def fetch_read(source, path):
 
 knot reads declared assets peer-first, disk second — the same resolution rule as [a Go peer's embedded assets](go.md#single-binary-assets-from-the-peer). Requires a scriptling CLI with `register_fetcher` (0.24.5).
 
-Choose `libs/` for pure compute that travels as source and stays jailed; choose a scriptling `bin/` peer for state (sqlite beside the executable) or CLI-only libraries; choose Go for CPU-heavy work, native libraries or a separate trust boundary.
+Choose `libs/` for pure compute that travels as source; choose a scriptling `bin/` peer for state (sqlite beside the executable) or CLI-only libraries; choose Go for CPU-heavy work, native libraries or a separate trust boundary.
 
 `demo-scriptlingcli` (`examples/plugins/demo-scriptlingcli/` in the knot repository) is the wrap-and-extend working example: it keeps a `main.py` (scriptling handlers, namespace `plugin.demo_scriptlingcli`) whose `bin/kvstore` peer handshakes as `kvstore` (`plugin.kvstore`) and backs a small key/value page. Its sibling `demo-scriptlingcli2` (`examples/plugins/demo-scriptlingcli2/`) is the pure-peer twin and a **single-file plugin**: no `main.py` and no `assets/` — the `bin/notes` peer serves its own manifest, every handler (`notes_page`, `col_notes`, `col_add`, `note_view` — an Ace-edited textarea, a table with per-row markdown view popups and delete actions over sqlite) and its icon and action icons (inlined in the script, via the fetcher), all addressed as `plugin.notes.<fn>`. Between them the two are an encapsulation toolkit: wrap an existing binary and extend it with scriptling, or ship one executable (or script) that declares itself.
 

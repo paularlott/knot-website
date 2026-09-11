@@ -11,6 +11,14 @@ navSection: docs
 
 ## September 2026
 
+{{< version "v0.34.1" >}}
+
+{{< changelog-item "changed" >}}
+- **More libraries and unrestricted filesystem in plugin environments**: plugin handler environments now include `requests` for outbound HTTP — resolving through the server's configured DNS servers when any are set, under no other network policy — and their file IO is no longer jailed to the plugin folder: handlers read and write anywhere the knot process user can, the same authority a binary peer has (`subprocess` was never jailed, so the folder restriction was an inconsistency, not a boundary; a plugin that needs a database still ships the driver as a `bin/` peer). `html`, `io`, `msgpack`, `platform`, `textwrap`, `contextlib`, `difflib` and `urllib.parse` are now declarable in a plugin's `dependencies` metadata (they were already importable via the scriptling standard library; declarations naming them now resolve at load).
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.34.0" >}}
 
 {{< changelog-item "added" >}}
