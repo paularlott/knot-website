@@ -11,6 +11,22 @@ navSection: docs
 
 ## September 2026
 
+{{< version "v0.34.4" >}}
+
+{{< changelog-item "added" >}}
+- **Spaces list**: the Shared badge now names who a space is shared with ("Shared With: alice +2"), mirroring the recipient's "Shared By"; hover lists every recipient.
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- **Fast user switching no longer randomly logs you out**: the switch raced the SSE logout signal against the page navigation (and other tabs logged the session out entirely); the switch now drops the old identity's streams without the logout signal.
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- **Session cookies now carry the Secure attribute behind HTTPS-terminating proxies** (direct TLS or `X-Forwarded-Proto`), in addition to knot's own TLS setting.
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.34.3" >}}
 
 {{< changelog-item "fixed" >}}
