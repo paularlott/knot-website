@@ -11,6 +11,14 @@ navSection: docs
 
 ## September 2026
 
+{{< version "v0.34.3" >}}
+
+{{< changelog-item "fixed" >}}
+- **Cleanup UI**: Improve visuals around linked accounts and linked users.
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.34.2" >}}
 
 {{< changelog-item "fixed" >}}
