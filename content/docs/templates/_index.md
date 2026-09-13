@@ -14,7 +14,7 @@ Templates are the foundation of Knot. They define reusable environment configura
 
 A template defines:
 
-- **Platform**: Where the environment runs (Nomad cluster, Docker, Podman, or Apple Container)
+- **Platform**: Where the environment runs (Nomad cluster, Docker, Podman, Apple Container, or KVM virtual machines)
 - **Container specification**: The image, environment variables, and runtime configuration
 - **Volumes**: Persistent storage that survives space restarts
 - **Resources**: CPU, memory, and storage allocations
@@ -25,6 +25,9 @@ A template defines:
 ---
 
 ## Template Types
+
+**KVM Templates**
+Run spaces as full virtual machines on KVM-capable nodes, booted from cloud images with bridged or NAT networking. Best for workloads that need their own kernel, systemd, or non-container toolchains. See [KVM Templates](/docs/templates/kvm-templates/).
 
 **Nomad Templates**
 Run in a Nomad cluster using HCL job specifications. Best for production deployments with high availability and scalability.
