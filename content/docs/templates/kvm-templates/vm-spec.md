@@ -84,7 +84,7 @@ The VM attaches to a **host Linux bridge** and carries a **static IP** chosen fr
 | `mode` | recommended | `bridged` when omitted |
 | `bridge` | optional | Host bridge name, default `br0`. Must exist on the node with the physical NIC enslaved (see [KVM nodes](/docs/configuration/kvm/#bridged-networking)) |
 | `cidr` | yes | The IPv4 network the VMs live on, e.g. `192.0.2.0/24` |
-| `ip_range_start` / `ip_range_end` | yes | The address range spaces pick their IP from (validated at creation against the range and addresses already in use) |
+| `ip_range_start` / `ip_range_end` | optional | The address range spaces pick their IP from (validated at creation against the range and addresses already in use). Omit both to use the network's whole usable address space — right for a subnet dedicated to VMs; set a range to carve a slice from a shared subnet. Both or neither |
 | `gateway` | optional | Defaults to the network's first usable address |
 
 Values must be literal — template variables are rejected, since they're validated at save time and used to validate space IPs at creation time.
