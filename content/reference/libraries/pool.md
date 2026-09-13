@@ -26,7 +26,7 @@ The `knot.pool` library manages space pools. A pool keeps a desired count of ide
 |----------|-------------|
 | `list()` | List visible pools with current utilization |
 | `get(name)` | Get pool details and utilization by name or ID |
-| `create(name, template_name, startup_script_id='', desired_count=1, active=True)` | Create a pool and return its ID |
+| `create(name, template_name, startup_script_id='', desired_count=1, active=True)` | Create a pool and return its ID. Bridged KVM templates are rejected — their spaces need an IP address chosen at creation, which a pool can't provide; NAT KVM templates work |
 | `update(name, desired_count=None, active=None)` | Update the pool's desired count or active state |
 | `delete(name)` | Delete a stopped pool and all its spaces |
 | `set_size(name, desired_count)` | Set the pool's desired space count |

@@ -99,6 +99,7 @@ template.create("nginx", job=built["job"], volumes=built["volumes"], platform="n
 - `allow_node_migration` - Whether stopped spaces created from this local-container template can be reassigned to another node. Combined with `health_check_auto_restart`, automatic failed-node recovery is available in Knot Pro {{< pro-badge >}}
 - `kvm_network_mode` - KVM templates only: `bridged` (static IPs from the template's range) or `nat` (libvirt NAT, DHCP) — see the [VM specification](../../docs/templates/kvm-templates/vm-spec/)
 - `kvm_network_cidr`, `kvm_ip_range_start`, `kvm_ip_range_end`, `kvm_gateway`, `kvm_bridge` - KVM bridged network configuration derived from the template's `network:` block
+- `runtime_available` - Whether any node in the zone currently offers the runtime this template needs (always true for manual and Nomad templates)
 - `schedule_enabled` - Schedule enabled
 - `auto_start` - Auto-start enabled
 - `max_uptime` - Maximum uptime value
