@@ -45,6 +45,10 @@ environment:
 
 The `network.mode` picks between **bridged** (static IPs from the range, directly reachable on the LAN) and **nat** (libvirt NAT network, DHCP inside the VM, no addresses to manage). Both are described in the [VM specification](vm-spec/).
 
+### Pools
+
+Pools can back **NAT** KVM templates — members are created and DHCP without any addresses to assign. **Bridged** KVM templates cannot back pools: their spaces need an IP address chosen at creation, which a pool has no one to pick; pool creation rejects them.
+
 ### Lifecycle
 
 VMs persist across stop/start: the domain stays defined and the disk untouched. A template change applied on the next start redefines the domain with the new resources and cloud-init configuration while keeping the disk. A space's IP address can be changed while the space is stopped — cloud-init applies the new address at the next boot. Deleting the space destroys the VM and removes its disks.
