@@ -45,6 +45,8 @@ If you keep images under a home directory instead, grant the qemu user (`libvirt
 sudo setfacl -m u:libvirt-qemu:--x /home/<user>
 ```
 
+Templates whose `image:` is an `https://` URL download the base into the cache directory (`--kvm-base-image-path`, default `<images path>/base/`) on first use and reuse the cached file afterwards. To pre-seed a node (or to control exactly what runs on it), drop the qcow2 into that directory named as the URL's last path segment, or into the cloud-images library and reference it by bare name.
+
 ### Cloud images
 
 Drop cloud-init capable qcow2 images (matching the node's architecture) into `/var/lib/libvirt/images/knot/cloud-images`, or point `--kvm-cloud-image-path` at your library. A spec's bare `image:` name resolves there — e.g. `ubuntu-24.04` finds `ubuntu-24.04.qcow2`. Images must have cloud-init installed; stock cloud images from Ubuntu, Debian and Fedora all qualify.
@@ -85,8 +87,9 @@ No host setup: the VM attaches to libvirt's `default` NAT network (or any libvir
 
 | Option | Default | Description |
 |---|---|---|
-| `--kvm-images-path` | `/var/lib/libvirt/images/knot` | Working storage: per-space disk overlays, cloud-init seeds, downloaded base images |
-| `--kvm-cloud-image-path` | `/var/lib/libvirt/images/knot/cloud-images` | Read-only library of cloud images; bare `image:` names resolve here. Does **not** follow a custom images path — set it explicitly if you move the images path |
+| `--kvm-images-path` | `/var/lib/libvirt/images/knot` | Working storage: per-space disk overlays and cloud-init seeds (one directory per space, named after the domain) |
+| `--kvm-base-image-path` | *follows images path* (`<images path>/base`) | Cache for base images downloaded from URLs in KVM specs; files are named after the URL's last path segment and reused by later spaces |
+| `--kvm-cloud-image-path` | *follows images path* (`<images path>/cloud-images`) | Read-only library of cloud images; bare `image:` names resolve here |
 | `--kvm-resolvers` | `1.1.1.1, 1.0.0.1` | DNS servers handed to bridged VMs via cloud-init. The gateway is never injected implicitly — add your router's address here if it should answer DNS |
 
 All three are also settable via environment (`KNOT_KVM_IMAGES_PATH`, `KNOT_KVM_CLOUD_IMAGE_PATH`, `KNOT_KVM_RESOLVERS`) and config file (`server.kvm.*`). Relative paths are resolved against the directory the server starts in.

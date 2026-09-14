@@ -20,8 +20,9 @@ navSection: docs
   - **Persistent lifecycle**: stopping a space shuts the VM down and starting boots the same machine; only deleting the space destroys it. A template change redefines the domain over the existing disk with a fresh cloud-init seed.
   - **Cloud-init provisioning**: the OS account is the space owner (console login with their knot service password), the agent is installed to `/usr/local/bin/knot` and re-fetched from the server once per boot, and the seed's instance-id hashes its own content so configuration changes re-apply at the next boot.
   - **Device passthrough**: PCI addresses, USB pairs or vendor:product IDs handed to the VM exclusively; edited in the raw YAML or the wizard's Host Devices section.
+  - **Web console**: a Console action on running KVM spaces opens the VM's serial console in the browser — login with the owner's knot username and service password, reachable even when the agent has not connected.
   - **Full wizard support** — the spec wizard understands the VM YAML including the network block and host devices, alongside validation of every field at save time.
-  - Node setup, server options (`--kvm-images-path`, `--kvm-cloud-image-path`, `--kvm-resolvers`) and troubleshooting are documented in [KVM Nodes](../docs/configuration/kvm/), the YAML in the [VM Specification](../docs/templates/kvm-templates/vm-spec/).
+  - Node setup, server options (`--kvm-images-path`, `--kvm-base-image-path`, `--kvm-cloud-image-path`, `--kvm-resolvers`) and troubleshooting are documented in [KVM Nodes](../docs/configuration/kvm/), the YAML in the [VM Specification](../docs/templates/kvm-templates/vm-spec/).
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}

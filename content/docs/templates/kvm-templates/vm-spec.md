@@ -42,9 +42,9 @@ The VM's hostname. Defaults to the space name.
 ### `image`
 A cloud-init capable qcow2 image matching the node's architecture. Three forms:
 
-- **Bare name** (`ubuntu-24.04`) — resolved against the node's cloud image directory (`--kvm-cloud-image-path`, default `/var/lib/libvirt/images/knot/cloud-images`), with `.qcow2` appended when the name has no suitable suffix. Stock Ubuntu/Debian/Fedora cloud images work as-is.
-- **URL** — downloaded once into the node's image cache.
-- **Absolute path** — a file on the node.
+- **Bare name** (`ubuntu-24.04`) — resolved against the node's cloud image directory (`--kvm-cloud-image-path`, default `<images path>/cloud-images`), with `.qcow2` appended when the name has no suitable suffix. Stock Ubuntu/Debian/Fedora cloud images work as-is.
+- **URL** (`https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img`) — downloaded into the node's base-image cache on first use and reused from then on, so only the first space of that image pays the download. The file name is taken from the last path segment of the URL (query strings are stripped); the cache directory is `--kvm-base-image-path`, which defaults to following the images path (`<images path>/base/`). Downloads are not checksum-verified — pull from sources you trust. The node must be able to reach the URL (DNS and egress), and the download counts against the first boot's startup time.
+- **Path** — a file on the node. Absolute (`/var/lib/libvirt/images/base.qcow2`) or home-relative (`~/images/base.qcow2`).
 
 The image must have cloud-init installed; a plain server image ignores the provisioning seed entirely.
 

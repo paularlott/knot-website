@@ -56,5 +56,6 @@ VMs persist across stop/start: the domain stays defined and the disk untouched. 
 ### Access
 
 - **SSH** uses the owner's knot username (`ssh <username>@<space>.<domain>`, or directly at the VM's address in bridged mode) — the VM's real sshd is per-user. Spaces whose images rely on knot's built-in SSH server accept any username.
-- **Console** access for debugging: `virsh domdisplay <domain>` with a VNC viewer, or `virt-viewer`. The console accepts the space owner's knot service password.
+- **Web console**: every running KVM space has a Console action in the spaces list (screen icon), opening the VM's serial console in the browser — a login prompt served by the VM itself, reached even when the agent has not connected. Log in with the owner's knot username and service password. The serial console requires the image to run a getty on `ttyS0` (standard on cloud images); on the host, the same console is available with `virsh console <domain>`.
+- **VNC** for a graphical console: `virsh domdisplay <domain>` with a VNC viewer, or `virt-viewer`. The console accepts the space owner's knot service password.
 - **Device passthrough**: PCI, USB and vendor:product devices can be handed to the VM exclusively — see the [VM specification](vm-spec/).
