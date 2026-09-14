@@ -32,6 +32,10 @@ navSection: docs
 - **Spaces list**: the log window action is hidden for KVM spaces — a VM has no container runtime to stream logs from (a syslog-to-agent integration would be the equivalent).
 {{< /changelog-item >}}
 
+{{< changelog-item "fixed" >}}
+- **Tunnels now survive a knot server restart**: instead of giving up after a few seconds, tunnel clients (daemon-mode web tunnels especially) retry with backoff indefinitely and reform the tunnel, same URL, once the server is back.
+{{< /changelog-item >}}
+
 ---
 
 {{< version "v0.34.4" >}}
