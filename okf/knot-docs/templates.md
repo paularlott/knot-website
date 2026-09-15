@@ -21,7 +21,7 @@ Templates are the foundation of Knot. They define reusable environment configura
 
 A template defines:
 
-- **Platform**: Where the environment runs (Nomad cluster, Docker, Podman, or Apple Container)
+- **Platform**: Where the environment runs (Nomad cluster, Docker, Podman, Apple Container, or KVM virtual machines)
 - **Container specification**: The image, environment variables, and runtime configuration
 - **Volumes**: Persistent storage that survives space restarts
 - **Resources**: CPU, memory, and storage allocations
@@ -31,7 +31,18 @@ A template defines:
 
 ---
 
+## Available Platforms
+
+Admins can restrict which backends templates may use with the server's `--enabled-backends` flag (`KNOT_ENABLED_BACKENDS`, config `server.enabled_backends`): a list of `manual`, `docker`, `podman`, `apple`, `nomad` and `kvm`. Empty (the default) offers everything — manual included. A non-empty list must name everything it wants offered, manual included: `["docker"]` disables manual templates too, `["docker", "manual"]` keeps them. The template editor only shows offered platforms — with a single container backend enabled it shows that backend as a plain option instead of the Local Container dropdown.
+
+The list also sets the auto-detection order for `Local Container` templates: container backends are probed in the order listed, so `--enabled-backends podman,docker` makes Podman the auto-detected runtime when both are available. (This flag replaced the former `--local-container-runtime-pref`.)
+
+This is a policy allowlist, separate from runtime detection: a listed backend still needs a node that can run it (see [runtime availability](templates/kvm-templates.md#requirements)). Existing templates on a since-disabled platform stay editable but can't be switched to another disabled one, and new templates can't use it.
+
 ## Template Types
+
+**KVM Templates**
+Run spaces as full virtual machines on KVM-capable nodes, booted from cloud images with bridged or NAT networking. Best for workloads that need their own kernel, systemd, or non-container toolchains. See [KVM Templates](templates/kvm-templates.md).
 
 **Nomad Templates**
 Run in a Nomad cluster using HCL job specifications. Best for production deployments with high availability and scalability.
