@@ -14,19 +14,15 @@ navSection: docs
 {{< version "v0.35.0" >}}
 
 {{< changelog-item "added" >}}
-- **KVM virtual machines**: a new template platform that runs spaces as full VMs on KVM-capable nodes — their own kernel and systemd, booted from a cloud-init qcow2 image, with everything interactive (terminal, VS Code, SSH, scripts, jobs) working exactly as with containers. Nodes advertise the `kvm` runtime automatically and placement behaves like local containers. Key capabilities:
-
-  - **Bridged or NAT networking**, chosen per template: bridged attaches VMs to a host bridge and gives every space a static IP picked from the template's range at creation (validated against the range and addresses in use, changeable while the space is stopped); NAT attaches to a libvirt network and DHCPs — no addresses to manage, ideal for WiFi hosts which cannot bridge.
-  - **Persistent lifecycle**: stopping a space shuts the VM down and starting boots the same machine; only deleting the space destroys it. A template change redefines the domain over the existing disk with a fresh cloud-init seed.
-  - **Cloud-init provisioning**: the OS account is the space owner (console login with their knot service password), the agent is installed to `/usr/local/bin/knot` and re-fetched from the server once per boot, and the seed's instance-id hashes its own content so configuration changes re-apply at the next boot.
-  - **Device passthrough**: PCI addresses, USB pairs or vendor:product IDs handed to the VM exclusively; edited in the raw YAML or the wizard's Host Devices section.
-  - **Web console**: a Console action on running KVM spaces opens the VM's serial console in the browser — login with the owner's knot username and service password, reachable even when the agent has not connected.
-  - **Full wizard support** — the spec wizard understands the VM YAML including the network block and host devices, alongside validation of every field at save time.
-  - Node setup, server options (`--kvm-images-path`, `--kvm-base-image-path`, `--kvm-cloud-image-path`, `--kvm-resolvers`) and troubleshooting are documented in [KVM Nodes](../docs/configuration/kvm/), the YAML in the [VM Specification](../docs/templates/kvm-templates/vm-spec/).
+- **KVM virtual machines**: a new template platform that runs spaces as full VMs on KVM-capable nodes — their own kernel and systemd, booted from a cloud-init image, with everything interactive (terminal, VS Code, SSH, scripts, jobs) working as with containers. Bridged or NAT networking per template, persistent stop/start over the same disk, device passthrough, a serial web console and the VM's graphical display in the browser, and full spec-wizard support. Nodes advertise the `kvm` runtime automatically and placement behaves like local containers — see [KVM Nodes](../docs/configuration/kvm/) and the [VM Specification](../docs/templates/kvm-templates/vm-spec/).
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
 - **Scriptling**: `knot.space` gains KVM IP support — `create()` and `update()` accept `ip_address`, new `get_ip_address()`/`set_ip_address()` helpers, and every space dict carries `ip_address`; `knot.template` responses expose the KVM network fields.
+{{< /changelog-item >}}
+
+{{< changelog-item "added" >}}
+- **Tunnel domain everywhere the wildcard domain is**: new `server.tunnel_domain` spec/stack variable (appended straight after a tunnel name, like `server.wildcard_domain` is for space ports) with editor autocomplete; the server-info API and `knot.server.info()` now return `tunnel_domain` alongside `wildcard_domain`.
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}

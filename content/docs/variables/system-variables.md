@@ -32,6 +32,7 @@ To use a system variable, simply specify it in the format `${{ .<group>.<name> }
 | **server**   | `server.url`           | The URL of the Knot server                                                 |
 |              | `server.agent_endpoint`| The endpoint agents should use to connect to the server                        |
 |              | `server.wildcard_domain`| The wildcard domain without the leading `*`                                    |
+|              | `server.tunnel_domain` | The domain web tunnel addresses are built on, without the leading `*` — append it straight after the tunnel name (`<user>--<tunnel>${{ server.tunnel_domain }}`); empty when the server has no `tunnel_domain` configured |
 |              | `server.zone`          | The server zone string                                                         |
 |              | `server.timezone`      | The server timezone                                                            |
 |              | `server.base_image_registry` | The configured base image registry prefix (default `docker.io/paularlott`). Used by the [template spec wizard](../configuration/spec-wizard/) to prefix manifest entries, and available to any job/volume template that wants to reference the same registry. |
