@@ -11,6 +11,30 @@ navSection: docs
 
 ## September 2026
 
+{{< version "v0.35.0" >}}
+
+{{< changelog-item "added" >}}
+- **KVM virtual machines**: a new template platform that runs spaces as full VMs on KVM-capable nodes — their own kernel and systemd, booted from a cloud-init image, with everything interactive (terminal, VS Code, SSH, scripts, jobs) working as with containers. Bridged or NAT networking per template, persistent stop/start over the same disk, device passthrough, a serial web console and the VM's graphical display in the browser, and full spec-wizard support. Nodes advertise the `kvm` runtime automatically and placement behaves like local containers — see [KVM Nodes](../docs/configuration/kvm/) and the [VM Specification](../docs/templates/kvm-templates/vm-spec/).
+{{< /changelog-item >}}
+
+{{< changelog-item "added" >}}
+- **Scriptling**: `knot.space` gains KVM IP support — `create()` and `update()` accept `ip_address`, new `get_ip_address()`/`set_ip_address()` helpers, and every space dict carries `ip_address`; `knot.template` responses expose the KVM network fields.
+{{< /changelog-item >}}
+
+{{< changelog-item "added" >}}
+- **Tunnel domain everywhere the wildcard domain is**: new `server.tunnel_domain` spec/stack variable (appended straight after a tunnel name, like `server.wildcard_domain` is for space ports) with editor autocomplete; the server-info API and `knot.server.info()` now return `tunnel_domain` alongside `wildcard_domain`.
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- **Spaces list**: the log window action is hidden for KVM spaces — a VM has no container runtime to stream logs from (a syslog-to-agent integration would be the equivalent).
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- **Tunnels now survive a knot server restart**: instead of giving up after a few seconds, tunnel clients (daemon-mode web tunnels especially) retry with backoff indefinitely and reform the tunnel, same URL, once the server is back.
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.34.4" >}}
 
 {{< changelog-item "added" >}}

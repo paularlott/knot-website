@@ -1,6 +1,6 @@
 ---
 title: knot.server
-description: Exposes server-wide information such as version and wildcard domain.
+description: Exposes server-wide information such as version, wildcard domain and tunnel domain.
 type: API Reference
 tags: [api, scripting]
 weight: 71
@@ -44,3 +44,4 @@ print(info['wildcard_domain'])
 `info()` returns:
 - `version` - The knot server version string.
 - `wildcard_domain` - The server's wildcard domain for space web-port URLs (e.g. `*.knot.example.com`); empty when none is configured.
+- `tunnel_domain` - The server's tunnel domain as a dot-prefixed suffix (e.g. `.tunnel.example.com`) that appends straight after a tunnel name; empty when none is configured.

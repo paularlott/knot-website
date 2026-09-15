@@ -101,7 +101,7 @@ print(content)
 
 ## Function Details
 
-### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', start_on_create=False)
+### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', ip_address='', start_on_create=False)
 
 Create a new space.
 
@@ -117,6 +117,7 @@ Create a new space.
 - `icon_url` (string, optional): Icon URL
 - `custom_fields` (list, optional): Custom field values as `{"name": "...", "value": "..."}`. Required fields must be set and select/autocomplete values must be one of the field's options — [template.get](../template/) with `resolve_options=True` lists each field's definition and valid values, and the API error names what to fix when a value is rejected
 - `startup_script_id` (string, optional): Startup script ID
+- `ip_address` (string, optional): Static IP for bridged KVM templates, chosen from the template's network range (validated against the range and the addresses already in use). Unused by other platforms; NAT KVM templates never take an IP
 - `start_on_create` (bool, optional): Start the space immediately after it is created
 
 **Returns:** `string` - The space ID of the newly created space
@@ -140,6 +141,7 @@ Update a space while preserving fields you do not pass.
 - `icon_url` (string, optional): New icon URL
 - `custom_fields` (list, optional): New custom field values
 - `startup_script_id` (string, optional): New startup script ID
+- `ip_address` (string, optional): New static IP for bridged KVM spaces — requires the space stopped; the address is validated against the template's range and applied to the VM at its next boot
 
 **Returns:** `bool` - True on success
 
