@@ -7,12 +7,12 @@ layout: index
 ---
 
 {{< big-title
-  title="Cloud Development Environment Orchestrator"
+  title="Manage Virtual Workspaces"
 >}}
 
 {{< hero
-  title="Local Speed. Global Consistency"
-  subtitle="Spin up secure managed environments in seconds. Knot runs as a single server or scales across multiple servers using Docker, Podman, or Apple Containers with no additional dependencies. For enterprise scale, deploy to Nomad clusters. Roles, groups and templates scale across regions so developers work close to home for low latency while teams everywhere share the same consistent workflows."
+  title="Consistent. Self-Service. Powerful."
+  subtitle="Knot is a platform for managing development environments, testing systems, automation workflows, and platform services across containers and virtual machines. Create, manage, and share everything from disposable sandboxes to long-running workloads through a single interface, whether running locally or across a cluster."
   btn1="Get Started"
   btn1Link="docs/quick-start/"
   btn2="Learn More"
