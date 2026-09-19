@@ -11,6 +11,18 @@ navSection: docs
 
 ## September 2026
 
+{{< version "v0.35.1" >}}
+
+{{< changelog-item "added" >}}
+- **Outbound network restrictions for server-side scripts**: a new `server.script_net_policy` setting points MCP tool and event sink scripts at a network policy file — the network equivalent of `server.script_fs_allowed_paths`. See [Network Policy](../docs/scripting/network-policy/).
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- **Scriptling updated to v0.25.2**.
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.35.0" >}}
 
 {{< changelog-item "added" >}}
