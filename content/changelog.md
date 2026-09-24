@@ -15,10 +15,14 @@ navSection: docs
 
 {{< changelog-item "added" >}}
 - **Outbound network restrictions for server-side scripts**: a new `server.script_net_policy` setting points MCP tool and event sink scripts at a network policy file — the network equivalent of `server.script_fs_allowed_paths`. See [Network Policy](../docs/scripting/network-policy/).
+
+- **MCP over stdio (`knot mcp`)**: run knot itself as a local MCP server for hosts that launch a subprocess instead of connecting over HTTP. The command proxies the remote server's `/mcp` endpoint over stdio: tool names arrive unprefixed, `--show-all` also surfaces discoverable tools, change notifications flow through, and authentication comes from the stored connection (`--alias`) or `--server`/`--token` — never from the host's config. Also built into the agent binary, so inside a space `knot mcp` connects through the agent socket with no configuration. See [`knot mcp`](../reference/cli/knot/#knot-mcp).
+
+- **MCP Apps in the AI chat**: a tool call linked to a `ui://` resource (the MCP Apps extension) now renders its app view inline in the conversation instead of staying buried in the tool-call disclosure. User-configured remote MCP servers expose their resources through knot — list and read — so each view is fetched from whichever server registered it, and the chat can now call those servers' tools too (previously scripts, methods and built-ins only). The MCP servers management page badges app tools, shows their icons, and reports each server's negotiated protocol version.
 {{< /changelog-item >}}
 
-{{< changelog-item "changed" >}}
-- **Scriptling updated to v0.25.2**.
+{{< changelog-item "fixed" >}}
+- **CSI volume deletes survive an in-flight operation**: Nomad serializes controller calls per volume and rejects a concurrent delete with `Aborted — an operation with the given Volume ID already exists`. knot now retries for up to five minutes until the earlier operation clears, and if it stays wedged says so — with the remedy (restart the CSI plugin or Nomad client on the node) — instead of failing with the raw error.
 {{< /changelog-item >}}
 
 ---

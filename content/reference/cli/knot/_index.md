@@ -108,6 +108,26 @@ Verify connectivity to a server.
 knot ping
 ```
 
+### `knot mcp`
+
+Serve the knot MCP server over stdio, proxying a remote knot server's `/mcp` endpoint — for MCP hosts that launch a server as a subprocess (e.g. Claude Desktop) rather than connecting over HTTP. Tool names arrive unprefixed, change notifications flow through, and authentication comes from the stored connection, so no token appears in the host's configuration.
+
+```json
+{
+  "mcpServers": {
+    "knot": { "command": "knot", "args": ["mcp", "--alias", "default"] }
+  }
+}
+```
+
+Options:
+- `--alias`: the stored connection to use (default `default`)
+- `--server`, `--token`: address and API token of the server, overriding the alias
+- `--tls-skip-verify`: skip TLS verification (default `true`)
+- `--show-all`: also expose discoverable tools, not just native ones
+
+Also built into the agent binary — inside a space, `knot mcp` connects through the agent socket with no configuration.
+
 ---
 
 ## Working with spaces
