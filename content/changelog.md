@@ -11,17 +11,23 @@ navSection: docs
 
 ## September 2026
 
-{{< version "v0.35.1" >}}
+{{< version "v0.36.0" >}}
 
 {{< changelog-item "added" >}}
 - **Outbound network restrictions for server-side scripts**: a new `server.script_net_policy` setting points MCP tool and event sink scripts at a network policy file — the network equivalent of `server.script_fs_allowed_paths`. See [Network Policy](../docs/scripting/network-policy/).
 
-- **MCP over stdio (`knot mcp`)**: run knot itself as a local MCP server for hosts that launch a subprocess instead of connecting over HTTP. The command proxies the remote server's `/mcp` endpoint over stdio: tool names arrive unprefixed, `--show-all` also surfaces discoverable tools, change notifications flow through, and authentication comes from the stored connection (`--alias`) or `--server`/`--token` — never from the host's config. Also built into the agent binary, so inside a space `knot mcp` connects through the agent socket with no configuration. See [`knot mcp`](../reference/cli/knot/#knot-mcp).
+- **MCP over stdio (`knot mcp`)**: run knot itself as a local MCP server for hosts that launch a subprocess instead of connecting over HTTP. The command proxies the remote server's `/mcp` endpoint over stdio: `--show-all` also surfaces discoverable tools, change notifications flow through, and authentication comes from the stored connection (`--alias`) or `--server`/`--token`, never from the host's config. Also built into the agent binary, so inside a space `knot mcp` connects through the agent socket with no configuration. See [`knot mcp`](../reference/cli/knot/#knot-mcp).
 
 - **MCP Apps in the AI chat**: a tool call linked to a `ui://` resource (the MCP Apps extension) now renders its app view inline in the conversation instead of staying buried in the tool-call disclosure. User-configured remote MCP servers expose their resources through knot — list and read — so each view is fetched from whichever server registered it, and the chat can now call those servers' tools too (previously scripts, methods and built-ins only). The MCP servers management page badges app tools, shows their icons, and reports each server's negotiated protocol version.
 {{< /changelog-item >}}
 
+{{< changelog-item "changed" >}}
+- **The `/mcp` endpoint serves knot's own tools only**: remote MCP servers (operator-configured via `server.mcp.remote_servers`, and user-configured alike) are no longer federated through the public endpoint, so its tool list describes knot alone and doesn't churn when a remote server is added, removed or changes. knot's own AI surfaces are unaffected: the web chat, the OpenAI-compatible endpoints and `knot.mcp` in scripts still list and call remote tools under their namespace prefix. External MCP clients that want a remote server's tools should connect to that server directly. See [Remote MCP Servers](../docs/ai/mcp-remote/).
+{{< /changelog-item >}}
+
 {{< changelog-item "fixed" >}}
+- **`knot.mcp` works again, with the web chat's tool view**: the scriptling library's `list_tools()`, `call_tool()`, `tool_search()` and `execute_tool()` called API routes that were removed when chat moved to the OpenAI endpoints in February, so every call failed. The routes are back (`api/chat/tools` and `api/chat/tools/call`), resolving tools exactly like the web chat: knot's own tools plus the calling user's remote MCP servers and the operator-configured ones, under their namespace prefix. See [knot.mcp](../reference/libraries/mcp/).
+
 - **CSI volume deletes survive an in-flight operation**: Nomad serializes controller calls per volume and rejects a concurrent delete with `Aborted — an operation with the given Volume ID already exists`. knot now retries for up to five minutes until the earlier operation clears, and if it stays wedged says so — with the remedy (restart the CSI plugin or Nomad client on the node) — instead of failing with the raw error.
 {{< /changelog-item >}}
 

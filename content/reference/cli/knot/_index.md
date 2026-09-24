@@ -110,7 +110,7 @@ knot ping
 
 ### `knot mcp`
 
-Serve the knot MCP server over stdio, proxying a remote knot server's `/mcp` endpoint — for MCP hosts that launch a server as a subprocess (e.g. Claude Desktop) rather than connecting over HTTP. Tool names arrive unprefixed, change notifications flow through, and authentication comes from the stored connection, so no token appears in the host's configuration.
+Serve the knot MCP server over stdio, proxying a remote knot server's `/mcp` endpoint, for MCP hosts that launch a server as a subprocess (e.g. Claude Desktop) rather than connecting over HTTP. The endpoint serves knot's own tools, `--show-all` also surfaces discoverable tools, change notifications flow through, and authentication comes from the stored connection, so no token appears in the host's configuration.
 
 ```json
 {
