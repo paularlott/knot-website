@@ -99,7 +99,7 @@ create_space({...}) → Direct tool call
 
 ## Tools
 
-The Knot MCP server exposes built-in tools for managing spaces, templates, stack definitions, stacks, files, commands, and skills. Write-capable tools require approval when called from the web assistant; read-only tools run without a confirmation. External MCP clients connected to `/mcp` are not prompted.
+The Knot MCP server exposes built-in tools for managing spaces, templates, stack definitions, stacks, files, and commands. Skills are served separately over the MCP skills extension (`skills/list`, `skills/get`), not as tools; see [Skills](skills.md). Write-capable tools require approval when called from the web assistant; read-only tools run without a confirmation. External MCP clients connected to `/mcp` are not prompted.
 
 For the full list grouped by what each tool operates on — plus whether each is **native** or **on-demand** — see [MCP Tools](mcp-tools.md).
 

@@ -204,13 +204,19 @@ description: "How to deploy applications to our environments"
 
 When a user interacts with the web assistant, Knot dynamically builds the system prompt to include skill awareness:
 
-1. **Skill summaries**: The names and descriptions of all active, accessible skills (both global and user-owned) are appended to the system prompt. The full skill content is NOT included — only the name and description.
+1. **Skill summaries**: Every active, accessible skill (both global and user-owned) is appended to the system prompt as one line: name, description and URI. The full skill content is NOT included, so the prompt stays compact. Skills served by attached remote MCP servers are listed too, prefixed with the server's namespace so same-named skills stay distinguishable.
 
-2. **On-demand retrieval**: The assistant uses the `get_skill` tool to fetch full skill content when needed. This keeps the system prompt compact while still making all skill knowledge available.
+2. **On-demand retrieval**: The assistant calls the `lmchatkit__get_skill` tool with a skill's URI to fetch the full content when needed. This keeps the system prompt compact while still making all skill knowledge available.
 
 3. **Platform-first behaviour**: The system prompt instructs the assistant to check for relevant skills before performing platform tasks (nomad, docker, podman), ensuring it follows documented procedures.
 
-For external MCP clients, skills are accessible via the `get_skill` tool (discoverable via `tool_search`). External clients are responsible for their own prompt engineering and skill retrieval logic.
+The OpenAI-compatible endpoints list skills in the system prompt the same way (without the retrieval tool, which is a web assistant feature).
+
+## Skills over MCP
+
+External MCP clients get skills through the MCP skills extension on `/mcp`: knot declares the `io.modelcontextprotocol/skills` capability, `skills/list` returns each skill's URI, frontmatter and file digest, `skills/get` returns one entry by URI, and the content itself is read with `resources/read` on the `skill://` URI, for example `skill://team-conventions/SKILL.md`. The listing is scoped to the requesting user: zone restrictions, group restrictions and user-over-global shadowing all apply exactly as in the web interface.
+
+External clients are responsible for their own prompt engineering and skill retrieval logic.
 
 ---
 

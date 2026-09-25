@@ -23,7 +23,7 @@ Knot's server can connect to external MCP servers and use their tools alongside 
 
 ### Knot's AI Features (Web Chat, OpenAI-Compatible API, Scripts)
 
-Remote servers' tools are listed and called here, prefixed with their namespace to avoid conflicts with Knot's own tools. These consumers resolve their tools in-process: they have no way to attach to MCP servers themselves, so Knot federates on their behalf.
+Remote servers' tools are listed and called here, prefixed with their namespace to avoid conflicts with Knot's own tools. These consumers resolve their tools in-process: they have no way to attach to MCP servers themselves, so Knot federates on their behalf. A remote server that supports the MCP skills extension contributes its skills to the web assistant's system prompt too (namespaced like its tools), with the content readable through the chat's skill retrieval; everything else stays knot's own.
 
 ### `/mcp` (External MCP Clients)
 

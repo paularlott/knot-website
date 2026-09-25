@@ -19,10 +19,14 @@ navSection: docs
 - **MCP over stdio (`knot mcp`)**: run knot itself as a local MCP server for hosts that launch a subprocess instead of connecting over HTTP. The command proxies the remote server's `/mcp` endpoint over stdio: `--show-all` also surfaces discoverable tools, change notifications flow through, and authentication comes from the stored connection (`--alias`) or `--server`/`--token`, never from the host's config. Also built into the agent binary, so inside a space `knot mcp` connects through the agent socket with no configuration. See [`knot mcp`](../reference/cli/knot/#knot-mcp).
 
 - **MCP Apps in the AI chat**: a tool call linked to a `ui://` resource (the MCP Apps extension) now renders its app view inline in the conversation instead of staying buried in the tool-call disclosure. User-configured remote MCP servers expose their resources through knot — list and read — so each view is fetched from whichever server registered it, and the chat can now call those servers' tools too (previously scripts, methods and built-ins only). The MCP servers management page badges app tools, shows their icons, and reports each server's negotiated protocol version.
+
+- **Skills served over the MCP skills extension**: knot's skills are now exposed the standard way on `/mcp`: `skills/list` and `skills/get`, with each skill's `SKILL.md` readable as a `skill://` resource carrying a digest, scoped to the requesting user's zone, group and own-skill access. The web assistant and the OpenAI-compatible endpoints list available skills in the system prompt as name, description and URI, now including skills from attached remote MCP servers, and the web assistant pulls the full content on demand with the `lmchatkit__get_skill` tool. See [Skills](../docs/ai/skills/).
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
 - **The `/mcp` endpoint serves knot's own tools only**: remote MCP servers (operator-configured via `server.mcp.remote_servers`, and user-configured alike) are no longer federated through the public endpoint, so its tool list describes knot alone and doesn't churn when a remote server is added, removed or changes. knot's own AI surfaces are unaffected: the web chat, the OpenAI-compatible endpoints and `knot.mcp` in scripts still list and call remote tools under their namespace prefix. External MCP clients that want a remote server's tools should connect to that server directly. See [Remote MCP Servers](../docs/ai/mcp-remote/).
+
+- **The `get_skill` MCP tool is removed**: skills are no longer exposed as a tool on any surface. External MCP clients use the skills extension instead (`skills/list`, `skills/get`, `resources/read` on the `skill://` URI). The CLI, the `knot.skill` scripting library and the skills API are unchanged.
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
