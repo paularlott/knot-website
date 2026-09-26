@@ -16,23 +16,23 @@ navSection: docs
 {{< changelog-item "added" >}}
 - **Outbound network restrictions for server-side scripts**: a new `server.script_net_policy` setting points MCP tool and event sink scripts at a network policy file — the network equivalent of `server.script_fs_allowed_paths`. See [Network Policy](../docs/scripting/network-policy/).
 
-- **MCP over stdio (`knot mcp`)**: run knot itself as a local MCP server for hosts that launch a subprocess instead of connecting over HTTP. The command proxies the remote server's `/mcp` endpoint over stdio: `--show-all` also surfaces discoverable tools, change notifications flow through, and authentication comes from the stored connection (`--alias`) or `--server`/`--token`, never from the host's config. Also built into the agent binary, so inside a space `knot mcp` connects through the agent socket with no configuration. See [`knot mcp`](../reference/cli/knot/#knot-mcp).
+- **MCP over stdio (`knot mcp`)**: run knot as a local MCP server — the command proxies the remote server's `/mcp` endpoint over stdio, authenticating from the stored connection (`--alias`) or `--server`/`--token`, never from the host's config. Also built into the agent binary, so inside a space `knot mcp` connects through the agent socket with no configuration. See [`knot mcp`](../reference/cli/knot/#knot-mcp).
 
-- **MCP Apps in the AI chat**: a tool call linked to a `ui://` resource (the MCP Apps extension) now renders its app view inline in the conversation instead of staying buried in the tool-call disclosure. User-configured remote MCP servers expose their resources through knot — list and read — so each view is fetched from whichever server registered it, and the chat can now call those servers' tools too (previously scripts, methods and built-ins only). The MCP servers management page badges app tools, shows their icons, and reports each server's negotiated protocol version.
+- **MCP Apps in the AI chat**: a tool call linked to a `ui://` resource (the MCP Apps extension) now renders its app view inline in the conversation instead of staying buried in the tool-call disclosure. Remote MCP servers' tools and resources are exposed to the chat too, and the MCP servers management page badges app tools and shows their icons.
 
-- **Skills served over the MCP skills extension**: knot's skills are now exposed the standard way on `/mcp`: `skills/list` and `skills/get`, with each skill's `SKILL.md` readable as a `skill://` resource carrying a digest, scoped to the requesting user's zone, group and own-skill access. The web assistant and the OpenAI-compatible endpoints list available skills in the system prompt as name, description and URI, now including skills from attached remote MCP servers, and the web assistant pulls the full content on demand with the `lmchatkit__get_skill` tool. See [Skills](../docs/ai/skills/).
+- **Skills served over the MCP skills extension**: knot's skills are now exposed the standard way on `/mcp`: `skills/list` and `skills/get`, with each `SKILL.md` readable as a `skill://` resource, scoped to the requesting user's access. The web assistant and the OpenAI-compatible endpoints list available skills in the system prompt — including skills from attached remote MCP servers — and pull the full content on demand. See [Skills](../docs/ai/skills/).
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
-- **The `/mcp` endpoint serves knot's own tools only**: remote MCP servers (operator-configured via `server.mcp.remote_servers`, and user-configured alike) are no longer federated through the public endpoint, so its tool list describes knot alone and doesn't churn when a remote server is added, removed or changes. knot's own AI surfaces are unaffected: the web chat, the OpenAI-compatible endpoints and `knot.mcp` in scripts still list and call remote tools under their namespace prefix. External MCP clients that want a remote server's tools should connect to that server directly. See [Remote MCP Servers](../docs/ai/mcp-remote/).
+- **The `/mcp` endpoint serves knot's own tools only**: remote MCP servers are no longer federated through the public endpoint, so its tool list describes knot alone and doesn't churn when a remote server is added, removed or changes. The web chat, the OpenAI-compatible endpoints and `knot.mcp` in scripts still list and call remote tools under their namespace prefix; external MCP clients that want a remote server's tools should connect to that server directly. See [Remote MCP Servers](../docs/ai/mcp-remote/).
 
 - **The `get_skill` MCP tool is removed**: skills are no longer exposed as a tool on any surface. External MCP clients use the skills extension instead (`skills/list`, `skills/get`, `resources/read` on the `skill://` URI). The CLI, the `knot.skill` scripting library and the skills API are unchanged.
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
-- **`knot.mcp` works again, with the web chat's tool view**: the scriptling library's `list_tools()`, `call_tool()`, `tool_search()` and `execute_tool()` called API routes that were removed when chat moved to the OpenAI endpoints in February, so every call failed. The routes are back (`api/chat/tools` and `api/chat/tools/call`), resolving tools exactly like the web chat: knot's own tools plus the calling user's remote MCP servers and the operator-configured ones, under their namespace prefix. See [knot.mcp](../reference/libraries/mcp/).
+- **`knot.mcp` works again**: the scriptling library's `list_tools()`, `call_tool()`, `tool_search()` and `execute_tool()` called API routes that were removed when chat moved to the OpenAI endpoints in February, so every call failed. The routes are back, resolving tools exactly like the web chat: knot's own tools plus remote MCP servers under their namespace prefix. See [knot.mcp](../reference/libraries/mcp/).
 
-- **CSI volume deletes survive an in-flight operation**: Nomad serializes controller calls per volume and rejects a concurrent delete with `Aborted — an operation with the given Volume ID already exists`. knot now retries for up to five minutes until the earlier operation clears, and if it stays wedged says so — with the remedy (restart the CSI plugin or Nomad client on the node) — instead of failing with the raw error.
+- **CSI volume deletes survive an in-flight operation**: Nomad rejects a concurrent delete with `Aborted — an operation with the given Volume ID already exists`; knot now retries for up to five minutes until the earlier operation clears, and if it stays wedged says so — with the remedy — instead of failing with the raw error.
 {{< /changelog-item >}}
 
 ---
@@ -40,7 +40,7 @@ navSection: docs
 {{< version "v0.35.0" >}}
 
 {{< changelog-item "added" >}}
-- **KVM virtual machines**: a new template platform that runs spaces as full VMs on KVM-capable nodes — their own kernel and systemd, booted from a cloud-init image, with everything interactive (terminal, VS Code, SSH, scripts, jobs) working as with containers. Bridged or NAT networking per template, persistent stop/start over the same disk, device passthrough, a serial web console and the VM's graphical display in the browser, and full spec-wizard support. Nodes advertise the `kvm` runtime automatically and placement behaves like local containers — see [KVM Nodes](../docs/configuration/kvm/) and the [VM Specification](../docs/templates/kvm-templates/vm-spec/).
+- **KVM virtual machines**: a new template platform that runs spaces as full VMs on KVM-capable nodes — their own kernel and systemd, booted from a cloud-init image, with everything interactive (terminal, VS Code, SSH, scripts, jobs) working as with containers. Bridged or NAT networking per template, persistent stop/start, device passthrough, serial and graphical consoles in the browser, and full spec-wizard support. Nodes advertise the `kvm` runtime automatically. See [KVM Nodes](../docs/configuration/kvm/) and the [VM Specification](../docs/templates/kvm-templates/vm-spec/).
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
@@ -48,133 +48,13 @@ navSection: docs
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
-- **Tunnel domain everywhere the wildcard domain is**: new `server.tunnel_domain` spec/stack variable (appended straight after a tunnel name, like `server.wildcard_domain` is for space ports) with editor autocomplete; the server-info API and `knot.server.info()` now return `tunnel_domain` alongside `wildcard_domain`.
+- **Tunnel domain everywhere the wildcard domain is**: new `server.tunnel_domain` spec/stack variable with editor autocomplete; the server-info API and `knot.server.info()` now return `tunnel_domain` alongside `wildcard_domain`.
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
-- **Spaces list**: the log window action is hidden for KVM spaces — a VM has no container runtime to stream logs from (a syslog-to-agent integration would be the equivalent).
+- **Spaces list**: the log window action is hidden for KVM spaces — a VM has no container runtime to stream logs from.
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
 - **Tunnels now survive a knot server restart**: instead of giving up after a few seconds, tunnel clients (daemon-mode web tunnels especially) retry with backoff indefinitely and reform the tunnel, same URL, once the server is back.
-{{< /changelog-item >}}
-
----
-
-{{< version "v0.34.4" >}}
-
-{{< changelog-item "added" >}}
-- **Spaces list**: the Shared badge now names who a space is shared with ("Shared With: alice +2"), mirroring the recipient's "Shared By"; hover lists every recipient.
-{{< /changelog-item >}}
-
-{{< changelog-item "fixed" >}}
-- **Fast user switching no longer randomly logs you out**: the switch raced the SSE logout signal against the page navigation (and other tabs logged the session out entirely); the switch now drops the old identity's streams without the logout signal.
-{{< /changelog-item >}}
-
-{{< changelog-item "changed" >}}
-- **Session cookies now carry the Secure attribute behind HTTPS-terminating proxies** (direct TLS or `X-Forwarded-Proto`), in addition to knot's own TLS setting.
-{{< /changelog-item >}}
-
----
-
-{{< version "v0.34.3" >}}
-
-{{< changelog-item "fixed" >}}
-- **Cleanup UI**: Improve visuals around linked accounts and linked users.
-{{< /changelog-item >}}
-
----
-
-{{< version "v0.34.2" >}}
-
-{{< changelog-item "fixed" >}}
-- **Required custom fields**: picking a value in an autocomplete or select custom field now clears the "This field cannot be left blank" error immediately. Previously the error stayed visible after selecting a value until the field was focused and blurred again (or the form was saved), because selection wrote the value without re-running the field's validation; select fields also validated against the pre-selection value.
-{{< /changelog-item >}}
-
----
-
-{{< version "v0.34.1" >}}
-
-{{< changelog-item "changed" >}}
-- **More libraries and unrestricted filesystem in plugin environments**: plugin handler environments now include `requests` for outbound HTTP — resolving through the server's configured DNS servers when any are set, under no other network policy — and their file IO is no longer jailed to the plugin folder: handlers read and write anywhere the knot process user can, the same authority a binary peer has (`subprocess` was never jailed, so the folder restriction was an inconsistency, not a boundary; a plugin that needs a database still ships the driver as a `bin/` peer). `html`, `io`, `msgpack`, `platform`, `textwrap`, `contextlib`, `difflib` and `urllib.parse` are now declarable in a plugin's `dependencies` metadata (they were already importable via the scriptling standard library; declarations naming them now resolve at load).
-{{< /changelog-item >}}
-
----
-
-{{< version "v0.34.0" >}}
-
-{{< changelog-item "added" >}}
-- **Plugins**: extend knot entirely from a script's metadata. Plugins ship their own assets (logos, SVG icons) and can be single-file Go binaries or scriptling scripts. Key capabilities: a **layout-driven page system** where handlers return column grids with independent data fetching and per-panel gates; **forms** branching on request method with success/error envelopes and per-field errors; **tables** with row-action icon buttons, kebab menus, confirm dialogs, and popup forms; **field handlers** turning template custom fields into plugin-backed autocompleters and code editors; **MCP tool** exposure; and **export modules** whose classes appear as `plugin.<name>` in user tools via the gated loopback SDK. Plugins declare their generation (`api = 1`) so future versions can coexist, and load as pure parsing — a broken plugin never affects startup. Plugin config lives in `[plugins.<name>]` in `knot.toml`, reaches every handler as `request["config"]` (always present, never mutable), and fails at load if required keys are missing. The agent can also load Scriptling plugins via `--plugin` / `--plugin-dir` (or env/config equivalents) — this is how spaces access database drivers (`scriptling.sql`, `scriptling.sqlite`, `scriptling.badgerdb`, `scriptling.valkey`) without bundling them. See [Plugins](../docs/plugins/) and [knot agent](../reference/cli/agent/).
-
-- **Become another user**: fast user switching between accounts. Link accounts a user may become from the user manager (new **Link Users** permission) — the link is one way, and the profile menu offers `Switch User` for the linked accounts plus `Back to <your account>` to return. Every switch is recorded in the audit trail {{< pro-badge >}}.
-
-- **Template custom fields**: four improvements — **defaults** (prefilled on space creation, applied when API/CLI omits the field, but a deliberate blank is never overridden); **bool type** (styled toggle showing `true`/`false`); **required fields** (space form and API reject blank values, default can satisfy the requirement); and **select type** (dropdown sourced from a plugin field handler or a manual one-per-line list; autocomplete takes the same two sources). The template editor now badges required fields. The `knot.template` library can declare custom fields (types and defaults) on create and update.
-
-- **Tunnels to any server from a space**: `knot tunnel` inside a space can now target any knot server — pass `--server` and `--token`, or an `-a` alias from the space's `knot.toml`, with or without `--daemon`. Several tunnels against different servers run side by side; each address is built from your username on the target and counts against its quota. `knot space tunnel` from the desktop gets the same via `--tunnel-server` / `--tunnel-token` / `--tunnel-alias`. Without an explicit target the tunnel uses the space's own server exactly as before. See [Agent Tunnels](../docs/tunnels/agent-tunnels/).
-
-- **Tunnels-only API tokens**: token scoping gains a **Tunnels** scope — a key that can create, list and delete web and port tunnels (`/tunnel/*`, `/api/tunnels*`) and nothing else, for machines that should only ever expose a port. Scope prefix matching is now boundary-aware, so `/api/tunnels` no longer covers paths like `/api/tunnels-extra`. Scripts mint and revoke keys via the new `knot.token` library. See [API Tokens](../docs/api-tokens/).
-{{< /changelog-item >}}
-
-{{< changelog-item "fixed" >}}
-- **Embedded `knot.apiclient`**: `get(path, params)` passed positionally was being dropped by the Go transport (breaking `knot.space.list()` for non-admins, `skill.search()`, `usage_history()`); it now honours a positional params dict like the standalone client, across pages, MCP and the CLI.
-
-- **Template picker vs quota**: the space-creation template picker now tints templates the owner lacks quota for ("Insufficient quota"), and when no available template fits, the out-of-quota dialog is shown instead of the picker.
-{{< /changelog-item >}}
-
-## August 2026
-
-{{< version "v0.33.0" >}}
-
-{{< changelog-item "breaking" >}}
-- **The agent listener is now TLS-only**: every server in a zone presents the same certificate, so agents verify one fingerprint for any of them. The `--agent-use-tls` flag has been removed, and manual agents must now pass `--registration-key` (shown in the web UI next to the space ID). See [Manual Space](../docs/spaces/manual-space/).
-
-- **An encryption key is required at startup**: the server now refuses to start without one (`server.encrypt`). The key derives agent registration keys, agent tokens, and the zone's agent TLS certificate, so every member of a zone must share the same one.
-
-- **`knot run-script` is now evaluation-only**: it runs a script to completion and nothing more. Interactive scriptling sessions and long-running method servers now run on the real Scriptling CLI in the space — use a Scriptling base image and start servers with `Server("/usr/local/bin/scriptling", args=["--json-rpc", ...])`.
-{{< /changelog-item >}}
-
-{{< changelog-item "added" >}}
-- **Desktop mode**: run `knot` with no arguments and the server starts in the background with a system tray icon — installable as a macOS app via `brew install --cask paularlott/tap/knot`; Windows builds detach from the console. The first run (with no config) opens a browser wizard that writes `~/.knot/knot.toml`, and it can also join an existing cluster. See [Client](../docs/quick-start/client/).
-
-- **Scriptlings get the knot library everywhere**: inside a space, scriptlings can now import `knot.*` and your user and global `lib` scripts — served as cached packages and refreshed automatically. Outside a space, the Scriptling CLI loads the knot binary as a plugin (`scriptling --plugin knot`), so the same scripts run from your desktop with API access routed through the plugin and the token kept out of your code.
-
-- **Space jobs**: a space can run its own shell commands on a cron schedule or on demand, executed by its agent while it runs. Definitions live on the space, so they survive restarts and can be edited while it's stopped — from the web UI, the CLI (`knot space jobs`), or a scriptling via `knot.jobs`. Templates can ship jobs that are copied into every space created from them; editing needs the new **Edit Space Jobs** permission. Output goes to the space's logs. See [Space Jobs](../docs/spaces/jobs/).
-
-- **Space log forwarding** {{< pro-badge >}}: space logs can now flow into the server's external logging — external services included — as a single copy per zone. Off by default. See [Logging Configuration](../docs/configuration/logging/).
-
-- **Space log sinks** {{< pro-badge >}}: run a log service (e.g. VictoriaLogs) in one space and query the logs of the owner's other spaces in the zone. Off by default, owner-scoped, requires the new **Use Log Sinks** permission. See [Log Sinks](../docs/spaces/log-sinks/).
-
-- **On-disk log spooling** {{< pro-badge >}}: undeliverable log batches spool to disk (bounded at 256 MB) and replay when the log service recovers, so an outage loses no records.
-
-- **More ways to ship logs**: `[log.output]` now supports GELF alongside ndjson, Loki, and Elasticsearch (straight to Graylog), the agent speaks VictoriaLogs natively so existing shippers work unchanged when pointed at it, and delivery retries with backoff — failed records mirror to stderr until the service recovers.
-
-- **Cluster-wide failed-login blocking**: login attempts spread across servers behind a load balancer now trip one shared block, not one per server. Thresholds are configurable.
-
-- **Audit anomaly detection** {{< pro-badge >}}: failed-login bursts, credential spraying, and bulk admin changes are detected automatically and emitted as `Anomaly Detected` audit events to your external logging.
-
-- **Data-access auditing**: see who read, wrote, or copied which file in a space, and who opened a terminal session — paths and sizes only, never file contents. Built for environments holding copies of production data; SSH logins are recorded per key attempt, success or failure. Off by default. See [Logging Configuration](../docs/configuration/logging/).
-
-- **A broader audit trail**: API token creation, update, and deletion; config changes made through the setup wizard; and the provider behind every login (password or OAuth) now land in the audit trail. `User Create` / `User Update` events also record the target's roles and a `granted_admin` flag.
-
-- **Config wizard**: new logging and cluster steps, a login-rate-limiting toggle, and a visual refresh.
-
-- **`knot.space.wait_for_start`**: pause a script until a space is running — returns True immediately if it already is, polls until timeout, and returns False instead of raising. For scripts that provision a space and then work against it.
-
-- **`${{ host_ip }}` in config addresses**: values like `server.agent_endpoint` can use `${{ host_ip }}`, resolved to the host's current IP on every start — no more hardcoding IPs on machines whose address changes.
-{{< /changelog-item >}}
-
-{{< changelog-item "changed" >}}
-- **Sifting knot records on a shared logging service**: every record knot delivers now carries `source: knot`, and knot's own services are prefixed — `knot_audit`, `knot_tunnel`, `knot_syslog` for ingested records with no service of their own — while application-chosen service names are left alone. One selector (`source:knot`) finds everything a knot shipped.
-
-- **The audit trail ignores the log level**: raising `log.level` to cut diagnostic noise no longer stops audit events (or forwarded space logs / tunnel requests) from reaching the external logging service — they travel their own always-on pipeline.
-
-- **Audit settings moved to `[server.audit]`**: routing, retention, and the new data-access options now live in one section; configs using the older flat `server.audit_*` keys keep working.
-
-- **Faster space start and stop**: spaces now start and stop several times faster — deployments, restarts, and stack operations included. A failed image pull falls back to the local image instead of failing the start.
-{{< /changelog-item >}}
-
-{{< changelog-item "security" >}}
-- **Agent registration now requires a per-space key**: previously any peer reaching the agent listener could register as any space and receive the owner's SSH key and agent token. Registration now proves possession of the space's registration key, and failed attempts no longer disturb a connected agent.
-
-- **Template export and node listing enforce template visibility**: both previously returned full job YAML — registry credentials included — for templates the caller couldn't access. They now apply the template-read visibility check, and deleted templates are no longer returned.
 {{< /changelog-item >}}
