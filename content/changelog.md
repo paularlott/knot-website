@@ -21,6 +21,10 @@ navSection: docs
 - **MCP Apps in the AI chat**: a tool call linked to a `ui://` resource (the MCP Apps extension) now renders its app view inline in the conversation instead of staying buried in the tool-call disclosure. Remote MCP servers' tools and resources are exposed to the chat too, and the MCP servers management page badges app tools and shows their icons.
 
 - **Skills served over the MCP skills extension**: knot's skills are now exposed the standard way on `/mcp`: `skills/list` and `skills/get`, with each `SKILL.md` readable as a `skill://` resource, scoped to the requesting user's access. The web assistant and the OpenAI-compatible endpoints list available skills in the system prompt — including skills from attached remote MCP servers — and pull the full content on demand. See [Skills](../docs/ai/skills/).
+
+- **Exclusive pool member leases**: pools gain a checkout flow for callers that need an instance to themselves — CI jobs, agents, scripts. `knot pool acquire` (or the API, or `knot.pool` in scripts) grants one healthy member exclusively: shared routing skips the member while it's held, and the holder reaches it directly by member name or by pinning method calls with a `space_id`. The default is no timeout — allocate, use, release — with `lease_max_time`/`lease_max_extensions` available as a safety net; leases can be extended, released early, or acquired with a bounded wait when every member is held. At expiry the member finishes its in-flight calls before rejoining the pool, and the reconciler never shrinks or stops a leased member. See [Space Pools](../docs/spaces/pools/).
+
+- **Scriptling: `knot.pool` leases**: `acquire(name, time=None, wait=None)`, `extend(name, lease_id, time=None)`, `release(name, lease_id)`, `leases(name)`, and a `leased()` context manager that releases on exit; durations accept `"5m"`-style strings, plain seconds, or `"none"` for a never-expiring lease on no-timeout pools. See [knot.pool](../reference/libraries/pool/).
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
