@@ -367,7 +367,7 @@ knot skill delete <name>
 
 ### `knot pool`
 
-Manage space pools (pre-warmed sets of spaces).
+Manage space pools (pre-warmed sets of spaces), including exclusive member leases on lease-enabled pools.
 
 ```shell
 knot pool list
@@ -375,7 +375,23 @@ knot pool start <pool>
 knot pool stop <pool>
 knot pool set-size <pool> <count>
 knot pool delete <pool>
+
+# Exclusive member leases (requires lease_max_time on the pool)
+knot pool acquire <pool> [--time 5m|none] [--wait 2m] [--json]
+knot pool extend <pool> <lease-id|member> [--time 5m|none] [--json]
+knot pool release <pool> <lease-id|member> [--json]
+knot pool leases <pool> [--json]
 ```
+
+`acquire` checks one member out for the caller's exclusive use until the
+lease ends — shared method routing and pool-name port routing skip it while
+held. `--time` bounds the hold (`none` = never expire, on no-timeout pools
+only, otherwise the pool's configured maximum); `--wait` optionally waits for
+a free member when all are leased. `extend` renews from now, bounded by the
+pool's extension count. `release` returns the member early; it rejoins the
+pool once in-flight work drains (~15s). The lease commands accept the lease
+id or the held member's name / space id, and `--json` emits the structured
+lease (or lease list) for piping into other tools.
 
 ---
 

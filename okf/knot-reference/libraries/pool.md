@@ -15,7 +15,7 @@ type: API Reference
 ---
 # knot.pool
 
-The `knot.pool` library manages space pools. A pool keeps a desired count of identical spaces (created from the same template) running and ready, so the server can hand out method, HTTP, and TCP traffic across healthy members. Pools are useful for scaling stateless services and for method backends that need more capacity than a single space.
+The `knot.pool` library manages space pools. A pool keeps a desired count of identical spaces (created from the same template) running and ready, so the server can hand out method, HTTP, and TCP traffic across healthy members. Pools are useful for scaling stateless services and for method backends that need more capacity than a single space. Lease-enabled pools additionally support exclusive member checkout — `acquire()`, `extend()`, `release()`, `leases()` and the `leased()` context manager — for callers that need a member to themselves.
 
 ---
 
@@ -41,6 +41,11 @@ The `knot.pool` library manages space pools. A pool keeps a desired count of ide
 | `set_size(name, desired_count)` | Set the pool's desired space count |
 | `start(name)` | Start a stopped pool (starts all members, creates any missing) |
 | `stop(name)` | Stop a running pool (stops all members without deleting them) |
+| `acquire(name, time=None, wait=None)` | Acquire a member exclusively until the lease ends (lease-enabled pools). `time`: `None` = the pool's maximum, `"none"` = never expire (no-timeout pools only), seconds or a `"5m"`-style string. `wait`: optionally wait this long for a free member before raising |
+| `extend(name, lease_id, time=None)` | Renew a held lease — the new deadline is now + `time` (or never, on no-timeout pools). Bounded by the pool's extension count |
+| `release(name, lease_id)` | Release a held lease early; the member returns to the pool after in-flight work drains (~15s) |
+| `leases(name)` | List the pool's held leases — active plus draining |
+| `leased(name, time=None, wait=None)` | Context manager: acquire on entry, release on exit |
 
 ---
 
@@ -72,6 +77,33 @@ pool.start("api-pool")
 pool.delete("api-pool")
 ```
 
+Exclusive member leases (requires a lease-enabled pool — `lease_max_time` set
+at creation or via the update API):
+
+```python
+import knot.apiclient
+import knot.pool as pool
+
+# Check a member out for 5 minutes; the held instance is
+# member["space_name"] / member["space_id"]
+member = pool.acquire("build-workers", time="5m", wait="30s")
+
+# Pin method calls to it while held
+knot.apiclient.post("/api/methods/call", {
+    "jsonrpc": "2.0", "id": 1,
+    "method": "run_build",
+    "params": {},
+    "space_id": member["space_id"],
+})
+
+pool.extend("build-workers", member["lease_id"], time="5m")
+pool.release("build-workers", member["lease_id"])
+
+# Or let the context manager release on exit (including on exception)
+with pool.leased("build-workers", "5m") as member:
+    ...
+```
+
 ---
 
 ## Pool Properties
@@ -85,6 +117,8 @@ pool.delete("api-pool")
 - `desired_count` - Target number of spaces
 - `alive_members` - Number of currently healthy members
 - `active` - Whether the pool is active (members are started as they are created)
+- `lease_max_time` - Lease time budget in seconds: `0` = leases disabled, `-1` = no timeout
+- `lease_max_extensions` - Max extensions per lease: `0` = extending forbidden, `-1` = unlimited
 - `utilization` - Aggregate utilization across members:
   - `combined_rps` - Total requests per second (method + HTTP + TCP)
   - `method_rps` - Method requests per second
@@ -112,6 +146,24 @@ Each member in `members` contains:
 - `is_pending` - Whether the member is pending creation
 - `is_deleting` - Whether the member is being deleted
 - `is_deployed` - Whether the member is deployed (running)
+- `lease_state` - Lease state: `""` free, `"active"` exclusively leased, `"draining"` lease ended and waiting for in-flight work to finish
+- `lease_holder` - Username of the lease holder (when leased)
+- `lease_expires_at` - Lease expiry (`None` = never expires)
+
+---
+
+## Lease Properties
+
+`acquire()`, `extend()` and `release()` return lease dicts, and `leases()`
+returns a list of them:
+
+- `lease_id` - Lease ID (used for extend/release)
+- `pool_id`, `pool_name` - The pool the lease was granted from
+- `space_id`, `space_name` - The held member; pin method calls with `space_id`
+- `user_id`, `username` - The lease holder
+- `expires_at` - When the lease ends (`None` = never expires)
+- `extensions_used`, `max_extensions` - Extension counter and cap (`-1` = unlimited)
+- `state` - `"active"` or `"draining"` (ended, waiting for in-flight work)
 
 ---
 
@@ -120,3 +172,4 @@ Each member in `members` contains:
 - `create()` accepts a template **name** (resolved to an ID internally). The template, startup script, and pool name are immutable after creation; only `desired_count` and `active` are mutable via `update()`.
 - `delete()` requires the pool to be stopped first.
 - `set_size()`, `start()`, and `stop()` are asynchronous: the server's sweep loop creates, drains, or deletes member spaces to reach the desired state.
+- Lease functions require the pool to be lease-enabled (`lease_max_time != 0`) and active. The simplest mode is a no-timeout pool (`lease_max_time = -1`): acquire, use, release — `time` can stay `None` everywhere. While a lease is held, shared method routing and pool-name port routing skip the member; on expiry or release the member returns to the pool after in-flight method work drains, normally within one 15-second sweep. `acquire()` raises when no member is free (after `wait`, if given); `extend()` raises once the pool's extension count is exhausted.

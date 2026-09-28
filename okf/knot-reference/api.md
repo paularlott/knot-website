@@ -13,4 +13,4 @@ type: Overview
 ---
 # API
 
-The Knot HTTP API reference — used by the CLI, the web interface, and third-party integrations, rendered from the same OpenAPI spec that powers the in-product `/api-docs` page. Authentication is with a bearer token passed in the `Authorization` header.
+The HTTP API reference ships with the knot executable and is served by every knot server at `/api-docs` (for example `https://knot.internal:3000/api-docs`), so it always matches the version you are running. It covers the REST API used by the CLI, the web interface and third-party integrations; authentication is with a bearer token passed in the `Authorization` header.

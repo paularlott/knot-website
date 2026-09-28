@@ -1,5 +1,5 @@
 ---
-description: Fixed-size, self-healing groups of spaces with HTTP/TCP port routing and method draining.
+description: Fixed-size, self-healing groups of spaces with HTTP/TCP port routing, method draining, and exclusive member leases.
 generated:
     by: knot-website/okf.py
 resource: https://getknot.dev/docs/spaces/pools/
@@ -22,7 +22,9 @@ members, and applies a grace period before deleting stopped spaces.
 
 Pools do not include built-in autoscaling. Knot exposes utilization stats and a
 runtime size API so you can write your own scaler in Scriptling or another
-external tool.
+external tool. Pools can also be configured for **exclusive member leases** —
+checking one member out for a caller's private use for a bounded time (see
+[Member Leases](#member-leases)).
 
 ## Port Routing
 
@@ -36,7 +38,9 @@ https://alice--search-api--8080.knot.example.com
 
 The proxy resolves the pool name, picks a healthy member via round-robin, and
 routes the request to it. Drained members (being removed) are skipped
-automatically. If no healthy member is available, the proxy returns 404.
+automatically. Exclusively leased members are skipped too — while held, a
+member serves only its lease holder. If no healthy member is available, the
+proxy returns 404.
 
 TCP ports work the same way via the WebSocket proxy endpoint
 `/proxy/spaces/{pool_name}/port/{port}`.
@@ -64,6 +68,106 @@ Deleting a pool requires it to be stopped first. Member space deletion is
 initiated (marked as deleting), then the pool definition is tombstoned. The
 container service completes volume cleanup and finalises space deletion
 asynchronously.
+
+## Member Leases
+
+By default every request into a pool is load-balanced across the healthy
+members — nothing is reserved. A lease-enabled pool adds a checkout flow on
+top: a caller **acquires** one warm, healthy member for exclusive use, works
+with it, and **releases** it back to the pool. Acquire is instant — it only
+ever picks members that are already running and healthy, so there is never a
+wait for a space to be ready. Typical uses are scripts, agents, and CI jobs
+that each need their own instance of a browser, build environment, or service
+without colliding.
+
+The simplest configuration is **no limit**: leases run until released, with
+no expiry to think about. This is the natural fit for personal development —
+the only failure mode is a script that crashes between acquire and release,
+which leaves the member leased until you release it by hand
+(`knot pool leases` shows what's held).
+
+Leases are configured per pool at creation (or later via the update API):
+
+- **`lease_max_time`** — `-1` (no limit) makes leases run until released;
+  a positive value sets an optional **safety net** — a lease that hits its
+  deadline returns its member to the pool automatically, which self-heals a
+  forgotten release. `0` (the default) disables leases entirely.
+- **`lease_max_extensions`** — how many times a lease may be extended, for
+  time-limited pools: `0` forbids extending, `-1` allows unlimited.
+
+Acquire takes an optional duration: omitted, it uses the pool's maximum
+(`-1` pools grant never-expiring leases); explicitly, it must not exceed the
+pool maximum, and `-1` (never expire) is only valid on no-timeout pools.
+
+Lease settings are read live at each operation — changing them takes effect
+immediately for new acquires, with nothing to roll out to members. Held
+leases are not rewritten: their deadlines were fixed when they were granted,
+though the extension cap applies to the next renewal attempt. Turning leases
+off lets held leases end naturally (expiry or release) but refuses renewals.
+
+### What exclusivity means
+
+While a lease is held:
+
+- Shared **method routing** (JSON-RPC and MCP) skips the member. If every
+  remaining provider of a method is leased, callers get a `409` response —
+  "method exclusively leased" — rather than a load-balanced call.
+- **Pool-name port routing** (`user--poolname--port`) skips the member.
+- The holder reaches their member two ways: by its **own member name**
+  (`user--poolname-3--port` — unchanged, direct), or by pinning method calls
+  to it with the `space_id` field on `/api/methods/call` requests.
+
+Leases are granted per member, not per user account — any token of the pool's
+owner sees the same pool, and the lease serialises concurrent consumers.
+
+### Expiry and in-flight work
+
+When a lease reaches its deadline (or is released early) the member does not
+re-enter rotation immediately: it stays excluded until in-flight **method
+calls** have finished — each bounded by its per-method timeout — and then the
+sweep returns it to the pool, normally within one 15-second cycle. A lease in
+this state shows as `draining`. Open HTTP/TCP connections do not hold a
+member. A lease can be extended while draining (until reclaimed), which
+rescues a lease that ran out by accident.
+
+The pool reconciler never shrinks, stops, or auto-stops (template max uptime)
+a leased member; stopping a pool is rejected while leases are active.
+
+### Acquire, extend, release
+
+```shell
+# The simple flow: allocate, use, release (on a no-timeout pool)
+knot pool acquire build-workers
+knot pool release build-workers build-workers-0     # by member name (or lease id)
+
+# See who holds what
+knot pool leases build-workers
+
+# Structured output for scripts
+knot pool acquire build-workers --json | jq -r .space_name
+
+# Time-boxed variant (pool with a limit): check out for 5 minutes,
+# optionally waiting up to 2m for a free member, and renew if needed
+knot pool acquire build-workers --time 5m --wait 2m
+knot pool extend build-workers build-workers-0 --time 5m
+```
+
+On a no-timeout pool a plain `acquire` (no `--time`) grants a
+never-expiring lease; `--time none` says so explicitly.
+
+In Scriptling:
+
+```python
+import knot.pool as pool
+
+with pool.leased("browsers") as member:
+    # member["space_id"] / member["space_name"] identify the held instance;
+    # pin method calls to it while held
+    ...
+# released automatically on exit — even on exception
+```
+
+See [knot.pool](../../knot-reference/libraries/pool.md) for the full lease API.
 
 ## What Pools Track
 
@@ -116,6 +220,8 @@ curl -X POST -H "Authorization: Bearer <token>" \
 - **`startup_script_id`**: Optional startup script for members.
 - **`desired_count`**: Runtime target member count (default 1).
 - **`active`**: Start the pool immediately when `true` (default `false`).
+- **`lease_max_time`**: Enable exclusive member leases — `-1` for allocate/use/release with no timeout (the web form's default when leases are enabled), a positive number of seconds for an optional expiry safety net, `0` (default) to disable leases.
+- **`lease_max_extensions`**: Max extensions per lease — `-1` for unlimited (the default pairing with no-limit), `0` to forbid extending.
 
 ---
 
@@ -131,6 +237,10 @@ The pool API is available to authenticated callers:
 - `POST /api/pools/{id_or_name}/size`
 - `POST /api/pools/{id_or_name}/start`
 - `POST /api/pools/{id_or_name}/stop`
+- `POST /api/pools/{id_or_name}/acquire` — grant an exclusive member lease (optionally long-poll with `wait_seconds`, max 300)
+- `GET /api/pools/{id_or_name}/leases` — list held leases
+- `POST /api/pools/{id_or_name}/leases/{lease_id}/extend` — renew a lease
+- `DELETE /api/pools/{id_or_name}/leases/{lease_id}` — release a lease early
 
 Pool operations require **Use Space Pools** permission.
 
@@ -142,4 +252,8 @@ knot pool start <name>                  # Start a stopped pool
 knot pool stop <name>                   # Stop a running pool
 knot pool set-size <name> <count>       # Change the desired space count
 knot pool delete <name> [-y]            # Delete a stopped pool (prompts unless -y)
+knot pool acquire <name> [--time 5m|none] [--wait 2m]   # Check a member out exclusively
+knot pool extend <name> <lease-id> [--time 5m|none]     # Renew a held lease
+knot pool release <name> <lease-id>     # Return a member early
+knot pool leases <name>                 # List held leases
 ```
