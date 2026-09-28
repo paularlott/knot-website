@@ -37,7 +37,7 @@ Pass the token in the `Authorization` header of any API request:
 curl -H "Authorization: Bearer <token>" https://knot.internal:3000/api/spaces
 ```
 
-The token carries your permissions — it can do everything your account can do. See the [API reference](/api-reference/) for every endpoint.
+The token carries your permissions — it can do everything your account can do. See the [API reference](/reference/api/) for every endpoint.
 
 ---
 
