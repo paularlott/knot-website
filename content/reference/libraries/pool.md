@@ -33,10 +33,10 @@ The `knot.pool` library manages space pools. A pool keeps a desired count of ide
 | `start(name)` | Start a stopped pool (starts all members, creates any missing) |
 | `stop(name)` | Stop a running pool (stops all members without deleting them) |
 | `acquire(name, time=None, wait=None)` | Acquire a member exclusively until the lease ends (lease-enabled pools). `time`: `None` = the pool's maximum, `"none"` = never expire (no-timeout pools only), seconds or a `"5m"`-style string. `wait`: optionally wait this long for a free member before raising |
-| `extend(name, lease_id, time=None)` | Renew a held lease — the new deadline is now + `time` (or never, on no-timeout pools). Bounded by the pool's extension count |
-| `release(name, lease_id)` | Release a held lease early; the member returns to the pool after in-flight work drains (~15s) |
+| `extend(space, time=None)` | Renew the lease held on a member (space name or id) — the new deadline is now + `time` (or never, on no-timeout pools). Bounded by the pool's extension count |
+| `release(space, destroy=False)` | Release the lease held on a member (space name or id — what acquire returned); the member returns to the pool after in-flight work drains (~15s). With `destroy=True` the member is deleted and a fresh replacement is created, so the next acquire gets a clean space |
 | `leases(name)` | List the pool's held leases — active plus draining |
-| `leased(name, time=None, wait=None)` | Context manager: acquire on entry, release on exit |
+| `leased(name, time=None, wait=None, destroy=False)` | Context manager: acquire on entry, release (or destroy) on exit |
 
 ---
 
@@ -87,8 +87,8 @@ knot.apiclient.post("/api/methods/call", {
     "space_id": member["space_id"],
 })
 
-pool.extend("build-workers", member["lease_id"], time="5m")
-pool.release("build-workers", member["lease_id"])
+pool.extend(member["space_name"], time="5m")
+pool.release(member["space_name"])
 
 # Or let the context manager release on exit (including on exception)
 with pool.leased("build-workers", "5m") as member:
@@ -148,7 +148,7 @@ Each member in `members` contains:
 `acquire()`, `extend()` and `release()` return lease dicts, and `leases()`
 returns a list of them:
 
-- `lease_id` - Lease ID (used for extend/release)
+- `lease_id` - Internal lease identifier (audit/logs); operations use `space_name` / `space_id`
 - `pool_id`, `pool_name` - The pool the lease was granted from
 - `space_id`, `space_name` - The held member; pin method calls with `space_id`
 - `user_id`, `username` - The lease holder
