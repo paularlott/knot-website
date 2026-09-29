@@ -148,10 +148,9 @@ Each member in `members` contains:
 `acquire()`, `extend()` and `release()` return lease dicts, and `leases()`
 returns a list of them:
 
-- `lease_id` - Internal lease identifier (audit/logs); operations use `space_name` / `space_id`
-- `pool_id`, `pool_name` - The pool the lease was granted from
-- `space_id`, `space_name` - The held member; pin method calls with `space_id`
-- `user_id`, `username` - The lease holder
+- `pool_name` - The pool the lease was granted from
+- `space_id`, `space_name` - The held member; extend/release take these, and method calls can be pinned with `space_id`
+- `username` - The lease holder
 - `expires_at` - When the lease ends (`None` = never expires)
 - `extensions_used`, `max_extensions` - Extension counter and cap (`-1` = unlimited)
 - `state` - `"active"` or `"draining"` (ended, waiting for in-flight work)
