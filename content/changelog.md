@@ -25,6 +25,12 @@ navSection: docs
 - **Exclusive pool member leases**: `knot pool acquire` checks out one healthy pool member for a caller's exclusive use — shared routing skips it while held, and the holder works with it by its space name, the same way they would ssh to it. The default is the simple allocate → use → release with no timeout; optional lease limits and extension caps cover shared pools and CI, and `release --destroy` swaps the member for a fresh one so the next acquire starts clean. See [Space Pools](../docs/spaces/pools/).
 
 - **Scriptling: `knot.pool` leases**: `acquire(name, time=None, wait=None)`, `extend(space, time=None)`, `release(space, destroy=False)`, `leases(name)` and a `leased()` context manager; extend and release take the member's space name or id, durations accept `"5m"`-style strings or `"none"`. See [knot.pool](../reference/libraries/pool/).
+
+- **Idle auto-stop for spaces**: a new template idle timeout stops a running space after it has had no user activity, an open terminal, SSH or web-port session (even idle), method calls, sustained CPU, and on Pro filesystem writes — for the configured time. Held pool leases are exempt. Set it next to Maximum Uptime in the template form, the API (`idle_timeout`, `idle_timeout_unit`), template export/import, and `knot.template.create`/`update`. See [Managing Templates](../docs/templates/managing/#runtime-limits).
+
+- **Shared ports and cross-user forwarding**: template ports gain a **shared** type (alongside http, https and tcp), not published anywhere but reachable by every user in the same zone through port forwards, addressed as `user--space`. `knot space port forward client 5432 paul--shared-pg 5432`. Forward targets resolve as your own space, your own pool (round-robin across healthy members, leased members excluded), or another user's space/pool on shared ports; access is re-checked on every connection. Templates, pool membership and users are now cached in memory on each node, invalidated on every write. See [Space Forwarding](../docs/spaces/space-space-port-forwarding/).
+
+- **Template port forward wiring** {{< pro-badge >}}: templates can carry port forwards seeded into every new space. Client spaces connect to their services (or a pool) automatically on start. Edited in the Pro template form; available through the API, export/import and `knot.template` everywhere.
 {{< /changelog-item >}}
 
 {{< changelog-item "changed" >}}
@@ -37,6 +43,12 @@ navSection: docs
 - **`knot.mcp` works again**: the scriptling library's `list_tools()`, `call_tool()`, `tool_search()` and `execute_tool()` called API routes that were removed when chat moved to the OpenAI endpoints in February, so every call failed. The routes are back, resolving tools exactly like the web chat: knot's own tools plus remote MCP servers under their namespace prefix. See [knot.mcp](../reference/libraries/mcp/).
 
 - **CSI volume deletes survive an in-flight operation**: Nomad rejects a concurrent delete with `Aborted — an operation with the given Volume ID already exists`; knot now retries for up to five minutes until the earlier operation clears, and if it stays wedged says so — with the remedy — instead of failing with the raw error.
+
+- **The template form could never enable Maximum Uptime**: the unit was submitted as `disabled` for every platform, so the setting silently did nothing regardless of what was chosen.
+
+- **Persistent forwards created on a stopped space never came up**: they stored the target as a space ID, which the proxy rejected, so the forward sat dead after the space started. Targets are now stored by name (`user--space` for other users' targets) and the proxy accepts names, qualified names and IDs.
+
+- **Non-admins got an empty space list from the CLI**: `knot space list` and every other client that calls the spaces API without a `user_id` filter received nothing back, because the endpoint only allowed admins an unfiltered list. An omitted `user_id` now means the requester's own spaces; asking for another user's id still returns nothing without the manage-spaces permission.
 {{< /changelog-item >}}
 
 ---

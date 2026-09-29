@@ -80,6 +80,20 @@ To create a new template:
 
 ---
 
+### Runtime Limits
+
+- **`Maximum Uptime`**:
+  The longest a space created from the template may run before knot stops it, regardless of activity. `No Limit` (the default) never stops it.
+
+- **`Idle Timeout`**:
+  Stop a running space after it has seen no user activity for the given time. Activity is an open terminal, SSH or web-port session (even one sitting idle — the session itself is enough), method calls, sustained CPU, and — on Pro servers — filesystem writes. Disabled by default. Starting the space again brings it back with its data intact.
+
+  Spaces holding an exclusive pool lease are never stopped by the idle timeout or maximum uptime — the lease owns their lifecycle.
+
+  One blind spot: a VS Code tunnel connects out to Microsoft's tunnel service, so its traffic never crosses knot and knot can't tell whether the tunnel is in use — leave the idle timeout off for spaces used mainly through a VS Code tunnel. (On Pro the filesystem tracking sees the edits and mostly covers it.)
+
+---
+
 ### Zones and Access Control
 
 - **`Limit to Zones`**:
@@ -92,6 +106,11 @@ To create a new template:
 ---
 
 ### Custom Fields and Features
+- **`Ports`**:
+  Ports declared for spaces created from the template. The type sets what a port is: **HTTP** and **HTTPS** ports get dev URLs (and `KNOT_HTTP_PORT` / `KNOT_HTTPS_PORT` environment variables), **TCP** ports are published on the host (`KNOT_TCP_PORT`), and **Shared** ports are not published anywhere; every user in the same zone can reach them through space-to-space port forwarding, addressed as `user--space`, which is useful for shared services like a team database or cache running in one space that many users' spaces connect to. Shared ports never appear in the space list port menus. Every other port is forwardable by the owner only; see [Space Forwarding](../spaces/space-space-port-forwarding/) for the addressing rules and pools.
+
+- **`Port Forwards`** {{< pro-badge >}}:
+  Forwards wired into every space created from the template, connected automatically when the space starts. The target is a space or pool name you own, or `user--space` for another user's shared port. See [Wiring Forwards into Templates](../spaces/space-space-port-forwarding/#wiring-forwards-into-templates).
 
 - **`Custom Fields`**:
   Add optional fields to pass additional information into a space. Each field has a **Variable Name**, a **Field Label / Description** (shown on the space creation and edit forms), and a **type** - set with the wrench icon next to the field, shown as a badge on each row:
@@ -185,7 +204,9 @@ groups:
 zones:
   - zone1
 max_uptime: 8
-max_uptime_unit: h
+max_uptime_unit: hour
+idle_timeout: 2
+idle_timeout_unit: hour
 startup_script: install-tools.sh
 jobs:
   - name: backup
