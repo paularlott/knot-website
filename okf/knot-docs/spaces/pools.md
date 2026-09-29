@@ -138,7 +138,11 @@ a leased member; stopping a pool is rejected while leases are active.
 ```shell
 # The simple flow: allocate, use, release (on a no-timeout pool)
 knot pool acquire build-workers
-knot pool release build-workers build-workers-0     # by member name (or lease id)
+knot pool release build-workers-0          # the member's name — no pool needed
+
+# Done with it and want a clean slate next time? Destroy the member —
+# a fresh replacement is created, and the next acquire gets a clean space
+knot pool release build-workers-0 --destroy
 
 # See who holds what
 knot pool leases build-workers
@@ -149,8 +153,15 @@ knot pool acquire build-workers --json | jq -r .space_name
 # Time-boxed variant (pool with a limit): check out for 5 minutes,
 # optionally waiting up to 2m for a free member, and renew if needed
 knot pool acquire build-workers --time 5m --wait 2m
-knot pool extend build-workers build-workers-0 --time 5m
+knot pool extend build-workers-0 --time 5m
 ```
+
+`acquire` waits up to 10 seconds by default — long enough to pick up a
+member that is mid-start or just being replaced — and `--wait 0s` fails
+immediately. `release --destroy` (or `destroy=true` on the API's
+`DELETE /api/spaces/{space_id_or_name}/lease`) deletes the member through the
+normal drain-and-delete flow and starts a fresh replacement right away, so
+the pool stays at its desired count.
 
 On a no-timeout pool a plain `acquire` (no `--time`) grants a
 never-expiring lease; `--time none` says so explicitly.
@@ -239,8 +250,8 @@ The pool API is available to authenticated callers:
 - `POST /api/pools/{id_or_name}/stop`
 - `POST /api/pools/{id_or_name}/acquire` — grant an exclusive member lease (optionally long-poll with `wait_seconds`, max 300)
 - `GET /api/pools/{id_or_name}/leases` — list held leases
-- `POST /api/pools/{id_or_name}/leases/{lease_id}/extend` — renew a lease
-- `DELETE /api/pools/{id_or_name}/leases/{lease_id}` — release a lease early
+- `POST /api/spaces/{space_id_or_name}/lease/extend` — renew a lease
+- `DELETE /api/spaces/{space_id_or_name}/lease` — release a lease early (`?destroy=true` destroys the member and starts a fresh replacement)
 
 Pool operations require **Use Space Pools** permission.
 
@@ -253,7 +264,7 @@ knot pool stop <name>                   # Stop a running pool
 knot pool set-size <name> <count>       # Change the desired space count
 knot pool delete <name> [-y]            # Delete a stopped pool (prompts unless -y)
 knot pool acquire <name> [--time 5m|none] [--wait 2m]   # Check a member out exclusively
-knot pool extend <name> <lease-id> [--time 5m|none]     # Renew a held lease
-knot pool release <name> <lease-id>     # Return a member early
+knot pool extend <member> [--time 5m|none]              # Renew the lease on a held member
+knot pool release <member> [--destroy]  # Return a member early (or destroy it for a clean replacement)
 knot pool leases <name>                 # List held leases
 ```

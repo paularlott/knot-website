@@ -23,7 +23,7 @@ Space-to-space port forwarding allows spaces to communicate directly with each o
 For space-to-space port forwarding to work:
 - The source space must be running and have an active agent (or use `--persistent` to pre-configure a forward for when it starts)
 - Spaces must be in the same zone
-- Spaces must be owned by the same user
+- The target must be a space or pool you own (any port), or another user's space or pool on a port their template declares **shared**
 - Local port must be in the range 1-65535
 
 ## Commands
@@ -81,6 +81,47 @@ Example:
 ```shell
 knot port stop 8080
 ```
+
+---
+
+## Targets: Spaces, Pools, and Other Users
+
+A forward target is resolved by name, in this order:
+
+1. **A space you own** with that name: any port.
+2. **A pool you own** with that name: any port. Traffic is spread across the pool's healthy, unleased members, round-robin per connection. Exclusively leased members are skipped; lease holders reach their own member by its space name.
+3. Another user's space or pool, written as `user--space`: only ports the target's template declares **shared**.
+
+A shared port is a template port declaration with type **Shared** instead of HTTP, HTTPS or TCP. Unlike those it is not published anywhere: no dev URL, no host port, and it does not appear in the space list port menus. It exists purely as a cross-user forward target. Every space (and pool) created from that template accepts forwards on that port from any user in the same zone, and access is re-checked on every connection, so changing a port's type takes effect on running spaces immediately. All other ports remain forwardable by the owner only, exactly like ports that aren't declared at all.
+
+```shell
+# Forward to a space you own
+knot space port forward frontend 8080 backend-api 3000
+
+# Forward to your pool; connections spread across members
+knot space port forward frontend 5432 db-pool 5432
+
+# Forward to another user's space (port must be shared on its template)
+knot space port forward frontend 5432 paul--shared-pg 5432
+
+# Another user's pool, same rule
+knot space port forward frontend 6379 paul--cache-pool 6379
+```
+
+
+"Shared" means every user in the zone can connect to that port, not the whole internet. If the service behind the port has no authentication of its own, any user in the zone can talk to it.
+
+
+A forward to a stopped target fails until the target starts again; nothing is auto-started. Pools keep capacity up for you: dead members are replaced and traffic moves to live ones on the next connection.
+
+### Wiring Forwards into Templates 
+
+A template can carry a list of port forwards that are seeded into every space created from it, so client spaces connect to their services automatically when they start, with no per-space setup:
+
+- Each entry is a local port, a target reference (space or pool name, or `user--space` for another user's shared port) and a remote port.
+- The Pro template form has a **Port Forwards** editor for this; the API (`port_forwards`), template export/import and `knot.template.create`/`update` accept it everywhere.
+- A pool target is the sturdiest wiring: the pool replaces dead members and keeps capacity, and each connection picks a live one.
+- The space owns its copy from creation; later template edits don't propagate to existing spaces, and users can manage the forwards like any others.
 
 ---
 
@@ -251,7 +292,7 @@ Response:
 Each forward entry supports optional `persistent` and `force` fields (same as individual port forward).
 
 
-Space-to-space port forwarding only works between spaces in the same zone and owned by the same user. The connection is authenticated and secure.
+Space-to-space port forwarding only works between spaces in the same zone. Same-user targets and shared ports are authenticated and authorized on every connection.
 
 
 ---
