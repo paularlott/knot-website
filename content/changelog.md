@@ -11,6 +11,16 @@ navSection: docs
 
 ## September 2026
 
+{{< version "v0.36.1" >}}
+
+{{< changelog-item "fixed" >}}
+- **The spaces page broke for users with only the share permission**: it requested the user list without being allowed it, and the resulting error stopped the page loading anything. The share permission now grants the user list read the share dialog needs, and the page keeps working if that request fails.
+
+- **UI improvements**: the Clients page command block is readable in dark mode, and share/transfer dropdown avatars load only when opened instead of on every page view.
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.36.0" >}}
 
 {{< changelog-item "added" >}}
