@@ -113,6 +113,8 @@ template.create("nginx", job=built["job"], volumes=built["volumes"], platform="n
 - `auto_start` - Auto-start enabled
 - `max_uptime` - Maximum uptime value
 - `max_uptime_unit` - Maximum uptime unit
+- `idle_timeout` - Idle timeout value; the space is stopped after this long without user activity (terminal input, SSH or web-port traffic, method calls, sustained CPU, and on Pro filesystem writes)
+- `idle_timeout_unit` - Idle timeout unit
 - `icon_url` - Icon URL
 - `groups` - List of group IDs
 - `zones` - List of zone names

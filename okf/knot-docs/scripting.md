@@ -131,6 +131,8 @@ name = tool.get_string("name", "World")
 tool.return_string(f"Hello, {name}!")
 ```
 
+Outbound network access for these scripts can also be restricted — see [Network Policy](scripting/network-policy.md).
+
 ### Space Environment
 
 **Used by:** every script that runs in a space under the agent — startup/shutdown scripts, user scripts (`knot space run-script`, eval), `knot run-script` (eval), health check scripts, and `knot methods register`. Serving and the interactive REPL run on the real Scriptling CLI in the space (Scriptling base images), not the embedded runtime.
@@ -170,7 +172,7 @@ See [Using knot.\* Libraries](scripting/using-libraries.md#the-knot-plugin-recom
 | Library            | MCP | Remote | External |
 | ------------------ | --- | ------ | -------- |
 | Standard Libraries | ✓   | ✓      | ✓        |
-| requests           | ✓   | ✓      | ✓        |
+| requests           | ✓ ² | ✓      | ✓        |
 | secrets            | ✓   | ✓      | ✓        |
 | yaml / toml        | ✓   | ✓      | ✓        |
 | shlex              | ✓   | ✓      | ✓        |
@@ -188,16 +190,18 @@ See [Using knot.\* Libraries](scripting/using-libraries.md#the-knot-plugin-recom
 
 ¹ On the knot server (MCP tool execution and event sink scripts) `fs` is only registered when the admin configures `server.script_fs_allowed_paths` (flag `--script-fs-allowed-paths`, env `KNOT_SCRIPT_FS_ALLOWED_PATHS`); without it, server-side scripts have no local filesystem access. In spaces (Remote) `fs` is always available, scoped to the container.
 
+² On the knot server (MCP tool execution and event sink scripts), outbound requests can be restricted via a [network policy](scripting/network-policy.md); left unconfigured, they're unrestricted. In spaces (Remote) `requests` is always unrestricted.
+
 ### scriptling.\* Libraries
 
 | Library                              | MCP                 | Remote              | External |
 | ------------------------------------ | ------------------- | ------------------- | -------- |
 | scriptling.secret                    | \* | ✗                   | ✓        |
-| scriptling.ai                        | ✓                   | ✓                   | ✓        |
+| scriptling.ai                        | ✓ ¹                 | ✓                   | ✓        |
 | scriptling.ai.agent                  | ✓                   | ✓                   | ✓        |
 | scriptling.ai.tools                  | ✓                   | ✓                   | ✓        |
 | scriptling.ai.memory                 | ✗                   | ✓                   | ✓        |
-| scriptling.mcp / scriptling.mcp.tool | ✓                   | ✓                   | ✓        |
+| scriptling.mcp / scriptling.mcp.tool | ✓ ¹                 | ✓                   | ✓        |
 | scriptling.toon                      | ✓                   | ✓                   | ✓        |
 | scriptling.messaging (telegram / discord / slack) | ✓       | ✓                   | ✓        |
 | scriptling.grep                      | ✗                   | ✓                   | ✓        |
@@ -206,13 +210,15 @@ See [Using knot.\* Libraries](scripting/using-libraries.md#the-knot-plugin-recom
 | scriptling.xml                       | ✓                   | ✓                   | ✓        |
 | scriptling.sed                       | ✗                   | ✓                   | ✓        |
 | scriptling.similarity                | ✓                   | ✓                   | ✓        |
-| scriptling.wait_for                  | ✓                   | ✓                   | ✓        |
+| scriptling.wait_for                  | ✓ ¹                 | ✓                   | ✓        |
 | scriptling.template.html             | ✓                   | ✓                   | ✓        |
 | scriptling.template.text             | ✓                   | ✓                   | ✓        |
 | scriptling.provision.file            | ✗                   | ✓                   | ✓        |
 | scriptling.provision.fetch           | ✗                   | ✓                   | ✓        |
 
 \* Requires a Pro license for secret provider access (Vault, 1Password). Standalone scriptling has built-in secret support.
+
+¹ On the knot server (MCP tool execution and event sink scripts), outbound connections can be restricted via a [network policy](scripting/network-policy.md), same as `requests` above; left unconfigured, they're unrestricted.
 
 ### knot.\* Libraries
 
@@ -313,5 +319,6 @@ Global scripts can be restricted to specific user groups. Only users in those gr
 - [Script Examples](scripting/examples.md) - Practical script examples
 - [Scriptling Language Guide](https://scriptling.dev/reference/) - Complete language reference
 - [Using knot.\* Libraries](scripting/using-libraries.md) - Configuration and authentication
+- [Network Policy](scripting/network-policy.md) - Restrict outbound access for server-side scripts
 - [Library Reference](../knot-reference/libraries.md) - knot.\* library documentation
 - [Startup/Shutdown Scripts](spaces/startup-scripts.md) - Space lifecycle scripts

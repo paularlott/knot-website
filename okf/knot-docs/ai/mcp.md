@@ -99,7 +99,7 @@ create_space({...}) → Direct tool call
 
 ## Tools
 
-The Knot MCP server exposes built-in tools for managing spaces, templates, stack definitions, stacks, files, commands, and skills. Write-capable tools require approval when called from the web assistant; read-only tools run without a confirmation. External MCP clients connected to `/mcp` are not prompted.
+The Knot MCP server exposes built-in tools for managing spaces, templates, stack definitions, stacks, files, and commands. Skills are served separately over the MCP skills extension (`skills/list`, `skills/get`), not as tools; see [Skills](skills.md). Write-capable tools require approval when called from the web assistant; read-only tools run without a confirmation. External MCP clients connected to `/mcp` are not prompted.
 
 For the full list grouped by what each tool operates on — plus whether each is **native** or **on-demand** — see [MCP Tools](mcp-tools.md).
 
@@ -107,8 +107,8 @@ For the full list grouped by what each tool operates on — plus whether each is
 
 ## Remote MCP Servers
 
-Knot can connect to external MCP servers and expose their tools alongside the built-in tools. This allows you to create a unified interface for AI assistants to access tools from multiple sources.
+Knot can connect to external MCP servers and use their tools alongside the built-in ones in Knot's own AI features: the web chat, the OpenAI-compatible endpoints, and `knot.mcp` in scripts. The public `/mcp` endpoint serves Knot's own tools only; external clients connect to remote servers directly.
 
-Remote tools are namespaced with a prefix (e.g., `ai.generate-text`) to avoid conflicts with local tools.
+Remote tools are namespaced with a prefix (e.g., `ai__generate-text`) to avoid conflicts with local tools.
 
 For detailed configuration and usage, see [Remote MCP Servers](mcp-remote.md).

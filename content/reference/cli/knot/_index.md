@@ -108,6 +108,26 @@ Verify connectivity to a server.
 knot ping
 ```
 
+### `knot mcp`
+
+Serve the knot MCP server over stdio, proxying a remote knot server's `/mcp` endpoint, for MCP hosts that launch a server as a subprocess (e.g. Claude Desktop) rather than connecting over HTTP. The endpoint serves knot's own tools, `--show-all` also surfaces discoverable tools, change notifications flow through, and authentication comes from the stored connection, so no token appears in the host's configuration.
+
+```json
+{
+  "mcpServers": {
+    "knot": { "command": "knot", "args": ["mcp", "--alias", "default"] }
+  }
+}
+```
+
+Options:
+- `--alias`: the stored connection to use (default `default`)
+- `--server`, `--token`: address and API token of the server, overriding the alias
+- `--tls-skip-verify`: skip TLS verification (default `true`)
+- `--show-all`: also expose discoverable tools, not just native ones
+
+Also built into the agent binary — inside a space, `knot mcp` connects through the agent socket with no configuration.
+
 ---
 
 ## Working with spaces
@@ -339,7 +359,7 @@ knot skill delete <name>
 
 ### `knot pool`
 
-Manage space pools (pre-warmed sets of spaces).
+Manage space pools (pre-warmed sets of spaces), including exclusive member leases on lease-enabled pools.
 
 ```shell
 knot pool list
@@ -347,7 +367,27 @@ knot pool start <pool>
 knot pool stop <pool>
 knot pool set-size <pool> <count>
 knot pool delete <pool>
+
+# Exclusive member leases (requires lease_max_time on the pool)
+knot pool acquire <pool> [--time 5m|none] [--wait 2m] [--json]
+knot pool extend <member> [--time 5m|none] [--json]
+knot pool release <member> [--destroy] [--json]
+knot pool leases <pool> [--json]
 ```
+
+`acquire` checks one member out for the caller's exclusive use until the
+lease ends — shared method routing and pool-name port routing skip it while
+held. `--time` bounds the hold (`none` = never expire, on no-timeout pools
+only, otherwise the pool's configured maximum); `--wait` waits for a member
+when none is free yet — including one that is mid-start or being replaced —
+and defaults to 10s (`--wait 0s` fails immediately). `release --destroy`
+deletes the member and creates a fresh replacement instead of returning it. `extend` renews from now, bounded by the
+pool's extension count. `release` returns the member early; it rejoins the
+pool once in-flight work drains (~15s). Lease operations key off the space —
+the name or id acquire returned — never a lease id; the space is what you
+ssh to, and a member holds at most one lease. The lease commands accept the lease
+id or the held member's name / space id, and `--json` emits the structured
+lease (or lease list) for piping into other tools.
 
 ---
 

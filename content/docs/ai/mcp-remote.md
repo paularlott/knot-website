@@ -1,39 +1,25 @@
 ---
 title: Remote MCP Servers
 linkTitle: Remote MCP
-description: Connect external MCP servers to knot and expose their tools alongside knot's built-in tools.
+description: Connect external MCP servers to knot for its own AI features (web chat, OpenAI-compatible API, scripts).
 type: Guide
 tags: [ai, mcp, networking]
 weight: 15
 ---
 
-Knot's MCP server can connect to external MCP servers to expose their tools alongside Knot's built-in tools. This provides a unified interface for accessing tools from multiple MCP servers.
+Knot's server can connect to external MCP servers and use their tools alongside Knot's own, in the web chat, the OpenAI-compatible endpoints, and `knot.mcp` in scripts. The public `/mcp` endpoint is deliberately not part of this: it serves Knot's own tools only, so an external MCP client that wants another server's tools connects to that server directly.
 
 ---
 
-## MCP Endpoints
+## Where Remote Tools Are Available
 
-Knot provides two MCP endpoints, each optimized for different use cases:
+### Knot's AI Features (Web Chat, OpenAI-Compatible API, Scripts)
 
-### `/mcp` - Native Tools Endpoint (External MCP Clients)
+Remote servers' tools are listed and called here, prefixed with their namespace to avoid conflicts with Knot's own tools. These consumers resolve their tools in-process: they have no way to attach to MCP servers themselves, so Knot federates on their behalf. A remote server that supports the MCP skills extension contributes its skills to the web assistant's system prompt too (namespaced like its tools), with the content readable through the chat's skill retrieval; everything else stays knot's own.
 
-This endpoint exposes all tools via standard MCP tool discovery (`tools/list`):
+### `/mcp` (External MCP Clients)
 
-- **Use case**: External MCP clients (Claude Desktop, VS Code extensions, etc.)
-- **Tool access**: Tools appear in `tools/list` and can be called directly
-- **Benefits**: Full compatibility with standard MCP clients
-- **Target**: Third-party MCP consumers integrating with Knot
-
-### `/mcp/discovery` - Discovery-Based Endpoint (Internal AI)
-
-This endpoint uses tool discovery to minimize context window usage. All tools are accessed via the `tool_search` → `execute_tool` pattern:
-
-- **Use case**: Internal AI assistants and chat interfaces
-- **Tool access**: Tools are discovered on-demand using `tool_search`, then called via `execute_tool`
-- **Benefits**: Tool definitions are not sent upfront, so large toolsets use far fewer tokens
-- **Target**: Knot's internal AI features and scriptling environments
-
-Both endpoints provide access to the same tools - only the discovery mechanism differs.
+The public endpoint serves Knot's own tools only: script tools, space methods and built-ins. Remote servers are never federated through it: the endpoint's tool list describes Knot alone, doesn't change when a remote server is added or removed, and clients connect to any other server directly.
 
 ---
 
@@ -75,7 +61,7 @@ talks to over stdin/stdout. stdio servers need no token.
 
 | Field | Description |
 |-------|-------------|
-| `namespace` | The namespace prefix for tools from this server (e.g., tools will appear as `ai.generate-text`) |
+| `namespace` | The namespace prefix for tools from this server (e.g., tools appear as `ai__generate-text` in the chat and scripts) |
 | `url` | The full URL of a remote **HTTP** MCP server endpoint (omit for stdio) |
 | `token` | Bearer token for **HTTP** authentication (omit for stdio) |
 | `command` | For **stdio** servers: the executable to launch as a subprocess (omit for HTTP) |
@@ -96,15 +82,17 @@ When the Knot server starts, it:
 
 1. Reads the remote server configuration
 2. Creates a Bearer token authenticator for each remote server
-3. Registers each remote server with the local MCP server
-4. Exposes all tools (local + remote) through a unified interface
+3. Registers each remote server with the internal MCP server
+4. Makes the remote tools available to Knot's own AI features (the public `/mcp` endpoint is not included)
 
 ### Tool Namespacing
 
 Tools from remote servers are prefixed with their namespace to avoid conflicts:
 
 - **Local tools**: `list_spaces`, `list_templates`, etc.
-- **Remote tools**: `ai.generate-text`, `data.query`, etc.
+- **Remote tools**: `ai__generate-text`, `data__query`, etc.
+
+The prefix appears wherever remote tools surface: the web chat's tool list and `knot.mcp` in scripts. External MCP clients never see it, because they never see remote tools through Knot.
 
 ### Hidden Tools
 
@@ -134,8 +122,8 @@ ways:
    each connected client re-fetches and receives its own, permission-scoped tool
    list.)
 2. **A remote server's tools change** — set `notifications = true` on a remote
-   server and Knot accepts its `listChanged` events, refreshes its merged tool
-   cache, and re-emits the notification to its own clients. stdio remote servers
+   server and Knot accepts its `listChanged` events and refreshes its merged
+   tool cache, so the chat and scripts see fresh tools. stdio remote servers
    propagate automatically (no flag needed); HTTP remote servers need the flag
    and must themselves support SSE push.
 
@@ -156,17 +144,17 @@ import knot.mcp
 tools = knot.mcp.list_tools()
 for tool in tools:
     print(f"Tool: {tool['name']}")
-    # Tools will include both local (list_spaces) and remote (ai.generate-text)
+    # Tools will include both local (list_spaces) and remote (ai__generate-text)
 
 # Call a remote tool directly
-response = knot.mcp.call_tool("ai.generate-text", {
+response = knot.mcp.call_tool("ai__generate-text", {
     "prompt": "Write a Python function",
     "max_tokens": 100
 })
 print(response)
 
 # Call a hidden tool (not listed but callable)
-response = knot.mcp.call_tool("internal.process-data", {
+response = knot.mcp.call_tool("internal__process-data", {
     "data_id": "12345"
 })
 print(response)
@@ -179,7 +167,7 @@ messages = [
     {"role": "user", "content": "Generate a Python function and save it to a file in my dev space"}
 ]
 response = client.completion(model, messages)
-# AI will automatically use both remote (ai.generate-text) and local (write_file) tools
+# AI will automatically use both remote (ai__generate-text) and local (write_file) tools
 ```
 
 ### In MCP Clients
@@ -199,12 +187,12 @@ When connecting to Knot's MCP server from external clients (like Claude Desktop 
 }
 ```
 
-All tools (local and remote) are available through standard MCP methods:
+The endpoint serves Knot's own tools through standard MCP methods:
 
-- `tools/list` - Lists all available tools with full schemas
+- `tools/list` - Lists Knot's tools with full schemas
 - `tools/call` - Executes a tool directly
 
-For internal use (AI chat, scriptling), Knot automatically uses the `/mcp/discovery` endpoint with tool discovery.
+Tools from remote servers are not available here; if your client needs them, add a second server entry pointing at the remote server directly. Knot's own AI features (web chat, scripts) continue to see remote tools with their namespace prefix.
 
 ---
 

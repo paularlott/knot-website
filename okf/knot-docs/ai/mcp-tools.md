@@ -111,9 +111,7 @@ Operations that execute inside a running space. `list_scripts` is the discovery 
 
 Skills are markdown knowledge documents that give AI assistants context and procedures (see [Skills](skills.md)).
 
-| Tool | Description | Visibility |
-|------|-------------|------------|
-| `get_skill` | Retrieve a skill by exact name, search by keyword, or list active skills. | On-demand |
+Skills are not exposed as a tool: they are served over the MCP skills extension, `skills/list` and `skills/get`, with each skill's content readable via `resources/read` on its `skill://` URI.
 
 ---
 
