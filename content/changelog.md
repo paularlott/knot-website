@@ -9,6 +9,20 @@ weight: 100
 navSection: docs
 ---
 
+## October 2026
+
+{{< version "v0.36.2" >}}
+
+{{< changelog-item "fixed" >}}
+- **UI stacks**: in some cases the auto completion of available stacks did not work.
+
+- **UI improvements**: to port forwarding.
+
+- **Apple Containers**: fixed an issue where it wasn't possible to delete the container.
+{{< /changelog-item >}}
+
+---
+
 ## September 2026
 
 {{< version "v0.36.1" >}}
