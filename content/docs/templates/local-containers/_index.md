@@ -33,14 +33,14 @@ When set to **Local Container**, Knot will attempt to use container runtimes in 
 2. Podman
 3. Apple Container
 
-This order can be customized in the server configuration:
+This order follows the server's `server.enabled_backends` list (`--enabled-backends`), which probes container backends in the order listed:
 
 ```toml
-[server.local_containers]
-runtime_pref = ["podman", "apple"]
+[server]
+enabled_backends = ["podman", "apple", "manual"]
 ```
 
-The above example configures Knot to prefer Podman first, then Apple Container.
+The above example prefers Podman, then Apple Container, and disables Docker for templates. Because the list is also a platform allowlist, include every backend templates may use — see [Available Platforms](/docs/templates/#available-platforms).
 
 #### Runtime Notes
 

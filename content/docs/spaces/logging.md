@@ -204,7 +204,7 @@ When mirrored to a log sink, `service` and `level` are automatically declared as
 {{< /tip >}}
 
 {{< tip >}}
-To carry space logs into a central store, enable `forward_space_logs` on the server so received logs are forwarded on to the server's configured log output — see [Logging Configuration](../configuration/logging/).
+To carry space logs into a central store, enable `forward_space_logs` on the server so received logs are forwarded on to the server's configured log output — see [Logging Configuration](/docs/configuration/logging/).
 {{< /tip >}}
 
 {{< tip >}}

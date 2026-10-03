@@ -3,7 +3,7 @@ title: knot.methods
 description: Register JSON-RPC methods for the current space from startup scripts.
 type: API Reference
 tags: [api, scripting]
-weight: 25
+weight: 100
 ---
 
 Register JSON-RPC methods for the current space from startup scripts or `knot methods register file.py`. Available in agent-side and `knot run-script` contexts only — not in MCP tool execution environments.

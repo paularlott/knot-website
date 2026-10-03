@@ -1,5 +1,6 @@
 ---
-title: In Go
+title: Writing Plugins in Go
+linkTitle: In Go
 description: Ship a plugin as a Go peer - manifest and handlers served from the handshake, no companion main.py.
 type: Guide
 tags: [plugins, go, scripting]

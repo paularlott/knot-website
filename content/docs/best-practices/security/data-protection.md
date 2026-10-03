@@ -69,10 +69,10 @@ key = "VF9hmdXZyzNF3rcP6M0P"
 
 ## Backup Security
 
-Encrypt backups to protect sensitive data:
+Encrypt backups with a 32-byte key to protect sensitive data (see [Backup and Restore](/docs/best-practices/backup-restore/)):
 
 ```shell
-knot backup --encrypt --output backup.enc
+knot admin backup --encrypt-key "$KNOT_BACKUP_KEY" backup.enc
 ```
 
 **Backup best practices**:

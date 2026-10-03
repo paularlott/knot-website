@@ -3,7 +3,7 @@ title: knot.skill
 description: Manage skills — markdown knowledge base content for AI agents.
 type: API Reference
 tags: [ai, scripting, api]
-weight: 40
+weight: 180
 ---
 
 The `knot.skill` library provides functions to manage skills (knowledge base content). Skills are markdown documents with YAML or TOML frontmatter that follow the [Agent Skills Specification](https://agentskills.io/specification).

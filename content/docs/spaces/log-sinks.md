@@ -13,11 +13,11 @@ weight: 115
 ## The Rules
 
 - **Owner-scoped, period.** A sink only ever receives the logs of spaces owned by the **same user** — never other users' logs, no exceptions.
-- **Tunnels included.** A user's sinks also receive the logs of requests proxied through that user's [web tunnels](../../configuration/logging/#tunnel-request-logging) — tagged with the tunnel name instead of a space — plus the tunnels opening and closing (`tunnel_open` / `tunnel_close` records), automatically, no extra configuration. Records carry `service: tunnel` so they select exactly like space records.
+- **Tunnels included.** A user's sinks also receive the logs of requests proxied through that user's [web tunnels](/docs/configuration/logging/#tunnel-request-logging) — tagged with the tunnel name instead of a space — plus the tunnels opening and closing (`tunnel_open` / `tunnel_close` records), automatically, no extra configuration. Records carry `service: tunnel` so they select exactly like space records.
 - **Off by default.** A space becomes a sink only when it explicitly advertises one (below); the base images ship with sink support but don't enable it.
 - **Zone-local.** Sinks receive logs from spaces in their own zone only.
 - **Permission-gated.** Registration requires the **Use Log Sinks** permission on the user's role; without it the registration is ignored (with a warning in the server log). Works in the free built-in Pro tier (2 users) — the licence only lifts the user cap.
-- **Retry, no disk buffering.** Batches and retries on failure, but if the local service is down for long, records are dropped. This is a developer convenience, not a compliance channel — for that, use [`forward_space_logs`](../configuration/logging/) on the server (also Pro).
+- **Retry, no disk buffering.** Batches and retries on failure, but if the local service is down for long, records are dropped. This is a developer convenience, not a compliance channel — for that, use [`forward_space_logs`](/docs/configuration/logging/) on the server (also Pro).
 
 ---
 
@@ -90,7 +90,7 @@ Any other image works too — point `KNOT_LOG_SINK_PORT` at any log service that
 Mirrored records are tagged with the source space (`space_id` and `space_name`), the space owner (`user`), `service` and level, so you can filter by space, owner or service in queries. These tags take precedence: a structured field logged by the application with the same name (`service`, `user`, …) is dropped from the mirrored copy rather than overwriting the origin tags. Multiple sinks per user are allowed — each receives its own copy.
 
 {{< tip "warning" >}}
-Log sinks are a **developer helper, not a compliance channel**. Delivery is best-effort: bounded buffers, no disk spool, drops when the local service is down, and no replay of records missed while a sink was absent. For compliance-grade log retention use the server-side [`forward_space_logs`](../configuration/logging/) option (Pro) into an external logging service instead.
+Log sinks are a **developer helper, not a compliance channel**. Delivery is best-effort: bounded buffers, no disk spool, drops when the local service is down, and no replay of records missed while a sink was absent. For compliance-grade log retention use the server-side [`forward_space_logs`](/docs/configuration/logging/) option (Pro) into an external logging service instead.
 
 Sinks and `forward_space_logs` are **independent features** that happen to trigger from the same log handling: enabling one does not enable the other. A server can forward space logs to its external logging service with no sinks registered, and sinks work with forwarding off — both can also run side by side, each with its own delivery path.
 {{< /tip >}}

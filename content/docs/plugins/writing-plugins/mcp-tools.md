@@ -88,7 +88,7 @@ Tool names share one namespace with knot's boot tools and script tools. Two plug
 
 ## Calling plugins from tools
 
-The [`knot.plugin`](../../../reference/libraries/plugin/) library calls declared handlers; what a call may reach depends on who wrote it:
+The [`knot.plugin`](/reference/libraries/plugin/) library calls declared handlers; what a call may reach depends on who wrote it:
 
 - **Plugin-exposed tools** (and plugin handlers) may call any plugin's *declared* handlers in-process through the `knot.plugin` library — same trust domain:
 
@@ -114,7 +114,7 @@ The [`knot.plugin`](../../../reference/libraries/plugin/) library calls declared
 
 Installed plugins are one trust domain sharing a single **plugin pool** - the exposed surfaces (`libs/*.py` and peers) importable as `plugin.<name>`. That pool is *attached* to plugin handler and plugin-tool environments, so those may `import plugin.<other>` and use another plugin's functions, classes and constants directly, ungated - [composition](../scriptling/#composition) in-process.
 
-User-created tools are the untrusted side: the plugin pool is **not** attached to their environment, so they cannot `import plugin.<name>` at all — with one deliberate exception, the [declared client module](#client-modules-plugins-in-user-tools) below. This attach/not-attach split is the structural isolation boundary. A user tool reaches a plugin only through [`knot.plugin.call`](../../../reference/libraries/plugin/) over the gated loopback, where the declared handler's gate is enforced for the requesting user - the same contract shown above.
+User-created tools are the untrusted side: the plugin pool is **not** attached to their environment, so they cannot `import plugin.<name>` at all — with one deliberate exception, the [declared client module](#client-modules-plugins-in-user-tools) below. This attach/not-attach split is the structural isolation boundary. A user tool reaches a plugin only through [`knot.plugin.call`](/reference/libraries/plugin/) over the gated loopback, where the declared handler's gate is enforced for the requesting user - the same contract shown above.
 
 Because that call rides the real web dispatch, the plugin's handler self-gates on the caller exactly as a page handler would - `request["user"]` for the caller's data, `knot.identity` for the authoritative check:
 

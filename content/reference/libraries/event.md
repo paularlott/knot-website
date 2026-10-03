@@ -3,7 +3,7 @@ title: knot.event
 description: Event emission in space-side scripts and payload accessors in sink scripts.
 type: API Reference
 tags: [events, api, scripting]
-weight: 135
+weight: 40
 ---
 
 The `knot.event` library provides event emission and access functions. The module is **context-sensitive** — `emit()` is available in space-side scripts, MCP tool execution, and external standalone scripts, while `get_*()` and metadata functions are available only in server-side sink scripts.

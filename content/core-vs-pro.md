@@ -80,6 +80,11 @@ hideSidebar: true
         <td>Everything in Core</td>
       </tr>
       <tr>
+        <td><strong>File storage</strong></td>
+        <td>Replicated buckets with sharing, quotas, the Files page and the <code>knot file</code> commands including sync</td>
+        <td>Everything in Core, plus an S3-compatible endpoint for rclone, backup tools and SDKs</td>
+      </tr>
+      <tr>
         <td><strong>Access control</strong></td>
         <td>Users, groups, roles, permissions, quotas</td>
         <td>Everything in Core</td>
@@ -152,7 +157,7 @@ hideSidebar: true
       <tr>
         <td><strong>User access overview</strong></td>
         <td><span class="compare-no">Not included</span></td>
-        <td><span class="compare-yes">Included</span> single panel view of what a user can access</td>
+        <td><span class="compare-yes">Included</span> single panel view of what a user can access, including file storage buckets</td>
       </tr>
       <tr>
         <td><strong>Commercial binaries</strong></td>

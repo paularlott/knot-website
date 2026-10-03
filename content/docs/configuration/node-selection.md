@@ -1,5 +1,7 @@
 ---
 title: Node Selection
+aliases:
+  - /docs/quick-start/local-containers/node-selection/
 description: Control which server hosts a space via automatic or manual selection.
 type: Guide
 tags: [deployment, configuration]
@@ -32,7 +34,7 @@ Knot evaluates servers in the zone and selects based on the following priorities
 
 1. **Runtime Requirements**
    - If the template specifies a container runtime, only servers with that runtime are considered
-   - If no runtime is specified, Knot uses the configured preference order: Docker > Podman > Apple Containers
+   - If no runtime is specified, Knot uses the auto-detection order (Docker > Podman > Apple Containers unless reordered by `server.enabled_backends`)
 
 2. **Zone Affinity**
    - Only servers in the same zone as the request are considered for local containers (Docker, Podman, Apple Containers)
@@ -55,11 +57,11 @@ Knot automatically detects available runtimes and picks the first available in t
 2. Podman
 3. Apple Containers (macOS only)
 
-The order can be pinned with `server.local_containers.runtime_pref` — see [Local Containers](../local-containers/):
+Container backends are probed in the order listed in `server.enabled_backends` (`--enabled-backends`, `KNOT_ENABLED_BACKENDS`); with an empty list (the default) the order is Docker, Podman, Apple Containers. The list is also a platform allowlist, so a non-empty list must name every backend templates may use, `manual` included — see [Available Platforms](/docs/templates/#available-platforms).
 
 ```toml {filename="knot.toml"}
-[server.local_containers]
-  runtime_pref = "docker"   # docker | podman | apple | container (auto)
+[server]
+  enabled_backends = ["podman", "docker", "manual"]
 ```
 
 {{< tip >}}
@@ -133,6 +135,6 @@ If an expected server doesn't appear:
 ### Wrong Server Selected
 
 If automatic selection chooses an unexpected server:
-- Review the runtime preference order in `knot.toml`
+- Review the backend order in `server.enabled_backends`
 - Check current space allocation across servers
 - Use manual selection to override automatic behavior

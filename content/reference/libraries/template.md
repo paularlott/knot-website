@@ -3,7 +3,7 @@ title: knot.template
 description: Template management functions for space configuration definitions.
 type: API Reference
 tags: [templates, api, scripting]
-weight: 50
+weight: 220
 ---
 
 The `knot.template` library provides template management functions. Templates define the configuration for creating spaces.
@@ -28,7 +28,7 @@ The `knot.template` library provides template management functions. Templates de
 | `get(template_id, resolve_options=False)` | Get template by ID or name; with `resolve_options`, handler-backed custom fields have their options resolved as the requesting user |
 | `field_options(handler_id)` | Resolve a plugin field handler's option keys as the requesting user — the values the space form offers and the API accepts — or `None` when the handler cannot be reached |
 | `validate(platform, job='', volumes='')` | Validate template job and volume specs without saving |
-| `build_spec(platform, spec, original_job='', original_volumes='')` | Build native job/volume text from a unified spec (image, env, ports, storage, resources). The same conversion the [UI spec wizard](../../docs/configuration/spec-wizard/) uses. |
+| `build_spec(platform, spec, original_job='', original_volumes='')` | Build native job/volume text from a unified spec (image, env, ports, storage, resources). The same conversion the [UI spec wizard](/docs/configuration/spec-wizard/) uses. |
 | `nodes(template_id)` | List available nodes for a local-container template |
 | `create(name, ...)` | Create a new template |
 | `update(template_id, ...)` | Update template properties |
@@ -97,7 +97,7 @@ template.create("nginx", job=built["job"], volumes=built["volumes"], platform="n
 - `with_ssh` - SSH access enabled
 - `with_run_command` - Run command enabled
 - `allow_node_migration` - Whether stopped spaces created from this local-container template can be reassigned to another node. Combined with `health_check_auto_restart`, automatic failed-node recovery is available in Knot Pro {{< pro-badge >}}
-- `kvm_network_mode` - KVM templates only: `bridged` (static IPs from the template's range) or `nat` (libvirt NAT, DHCP) — see the [VM specification](../../docs/templates/kvm-templates/vm-spec/)
+- `kvm_network_mode` - KVM templates only: `bridged` (static IPs from the template's range) or `nat` (libvirt NAT, DHCP) — see the [VM specification](/docs/templates/kvm-templates/vm-spec/)
 - `kvm_network_cidr`, `kvm_ip_range_start`, `kvm_ip_range_end`, `kvm_gateway`, `kvm_bridge` - KVM bridged network configuration derived from the template's `network:` block. The IP range is empty when the template uses the network's whole usable address space (the default when no range is set)
 - `runtime_available` - Whether any node in the zone currently offers the runtime this template needs (always true for manual and Nomad templates)
 - `schedule_enabled` - Schedule enabled
@@ -110,7 +110,7 @@ template.create("nginx", job=built["job"], volumes=built["volumes"], platform="n
 - `groups` - List of group IDs
 - `zones` - List of zone names
 - `schedule` - List of schedule day dicts (`enabled`, `from`, `to`)
-- `custom_fields` - List of custom field dicts: `name`, `description`, `type` (text, masked, number, bool, textarea, select or autocomplete), `required`, `default` (when set), and the option source — `options` (the manual list, also the resolved values when `get` ran with `resolve_options=True`) or `handler` (a plugin field handler id). These are the definitions to fill when creating a space: required fields must be set, and select/autocomplete values must be one of the field's options (see [space.create](../space/#create)).
+- `custom_fields` - List of custom field dicts: `name`, `description`, `type` (text, masked, number, bool, textarea, select or autocomplete), `required`, `default` (when set), and the option source — `options` (the manual list, also the resolved values when `get` ran with `resolve_options=True`) or `handler` (a plugin field handler id). These are the definitions to fill when creating a space: required fields must be set, and select/autocomplete values must be one of the field's options (see [space.create](/reference/libraries/space/#create)).
 - `health_check_type` - Health check type (`none`, `agent`, `tcp`, `http`, `program`, or `custom`)
 - `health_check_config` - Health check target, command, or custom script depending on type
 - `health_check_skip_ssl_verify` - Skip TLS verification for HTTP health checks
@@ -133,7 +133,7 @@ For `health_check_type="agent"`, no `health_check_config` value is required.
 
 ## Building Specs
 
-`build_spec(platform, spec, original_job='', original_volumes='')` converts a runtime-agnostic **unified spec** into the platform's native job definition (Nomad HCL or container YAML) plus volume-definition text. It's the same conversion the [UI spec wizard](../../docs/configuration/spec-wizard/) applies — useful when you want to assemble a template programmatically without hand-writing HCL or YAML.
+`build_spec(platform, spec, original_job='', original_volumes='')` converts a runtime-agnostic **unified spec** into the platform's native job definition (Nomad HCL or container YAML) plus volume-definition text. It's the same conversion the [UI spec wizard](/docs/configuration/spec-wizard/) applies — useful when you want to assemble a template programmatically without hand-writing HCL or YAML.
 
 `spec` is a dict with any of these keys (only `image` is required):
 

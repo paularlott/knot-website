@@ -110,7 +110,4 @@ Fetches a secret from an external provider when the template is resolved.
 
 ## What's Next
 
-- [System Variables](system-variables/)
-- [User-Defined Variables](user-defined-variables/)
-- [Custom Variables](custom-variables/)
-- [Secret Providers](secret-providers/)
+{{< page-list section="/docs/variables" >}}

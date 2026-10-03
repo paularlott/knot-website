@@ -3,7 +3,7 @@ title: knot.script
 description: Script management and execution functions for stored and inline scripts.
 type: API Reference
 tags: [scripting, api]
-weight: 42
+weight: 160
 ---
 
 The `knot.script` library provides script management and script execution functions.

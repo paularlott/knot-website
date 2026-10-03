@@ -1,0 +1,29 @@
+{{- /*
+  A–Z table of every library page under /reference/libraries/, keyed by its
+  import name. Library pages are titled with the import name (lowercase,
+  e.g. "knot.space", "knot.methods.schema"); the section landing page and any
+  guides have Title Case titles and are left out. Generated from front
+  matter, so it never goes stale.
+  Usage: {{< library-index >}}
+*/ -}}
+{{- $root := site.GetPage "/reference/libraries" -}}
+{{- if not $root -}}
+  {{- errorf "library-index: /reference/libraries not found (used in %s)" .Page.File.Path -}}
+{{- end -}}
+{{- $libs := slice -}}
+{{- range $root.RegularPagesRecursive -}}
+  {{- if and (findRE `^[a-z]` .Title) (not (index .Params "nav-skip")) -}}{{- $libs = $libs | append . -}}{{- end -}}
+{{- end -}}
+<div class="overflow-x-auto">
+<table>
+  <thead><tr><th>Library</th><th>Description</th></tr></thead>
+  <tbody>
+  {{- range sort $libs "Title" }}
+    <tr>
+      <td><a href="{{ .RelPermalink }}"><code>{{ .Title }}</code></a></td>
+      <td>{{ .Description }}</td>
+    </tr>
+  {{- end }}
+  </tbody>
+</table>
+</div>

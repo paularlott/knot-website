@@ -3,7 +3,7 @@ title: knot.ai
 description: AI client for chat completions, embeddings, and streaming responses.
 type: API Reference
 tags: [ai, api, scripting]
-weight: 20
+weight: 10
 ---
 
 The `knot.ai` library provides access to an AI client for scripts. In embedded contexts (MCP tool execution, remote/space scripts, `knot run-script`) it returns a pre-configured client connected to the server's AI provider. For standalone use outside knot, configure `knot.apiclient` with AI connection details.

@@ -14,7 +14,7 @@ Jobs only fire while the space is running. Occurrences that pass while the space
 
 ## Defining Jobs
 
-Each job has a name (unique within the space), a shell command, an optional schedule, and an enabled flag. Jobs are defined from the web UI, the CLI, or a scriptling — see [Running Jobs](#running-jobs) below. A template can also define jobs that are copied into each space created from it, giving every space its own editable copy (see [Managing Templates](../templates/managing/)).
+Each job has a name (unique within the space), a shell command, an optional schedule, and an enabled flag. Jobs are defined from the web UI, the CLI, or a scriptling — see [Running Jobs](#running-jobs) below. A template can also define jobs that are copied into each space created from it, giving every space its own editable copy (see [Managing Templates](/docs/templates/managing/)).
 
 Editing job definitions (adding, changing, removing, toggling) requires the **Edit Space Jobs** permission; without it users can still view their jobs and trigger them manually. A user the space is shared with can edit its jobs when they hold the permission, just like the owner. The **Manage Spaces** permission also allows editing the jobs of any space, and leaf nodes imply the permission for their local spaces.
 
@@ -41,7 +41,7 @@ Scheduled firing is controlled by the job runner, a per-space switch that is sto
 
 ### From the web UI
 
-{{< zoom-picture src="images/space-jobs.webp" caption="The Space Jobs Panel" >}}
+{{< zoom-picture src="/docs/spaces/images/space-jobs.webp" caption="The Space Jobs Panel" >}}
 
 Spaces with jobs show a **clock icon** in the space row while running — green when the job runner is enabled, grey when it is stopped. Clicking it opens the jobs panel: each job shows its schedule, next and last run, and a **Run now** button, and a **Job Runner Enabled** toggle starts and stops scheduled firing. Job output appears in the space's logs, each line prefixed with the job name.
 

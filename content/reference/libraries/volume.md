@@ -3,7 +3,7 @@ title: knot.volume
 description: Volume management functions for CSI volume definitions attached to spaces.
 type: API Reference
 tags: [storage, api, scripting]
-weight: 60
+weight: 260
 ---
 
 The `knot.volume` library provides volume management functions. Volumes are CSI volume definitions that can be attached to spaces.

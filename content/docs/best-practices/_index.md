@@ -9,7 +9,7 @@ weight: 95
 Guidelines for deploying and managing Knot effectively. Topic guides live in their own pages:
 
 - [Security](security/) — authentication hardening, data protection, monitoring, network
-- [Backup & Restore](backup-restore/) — every `knot backup` / `knot restore` flag plus an automation script
+- [Backup & Restore](backup-restore/) — every `knot admin backup` / `knot admin restore` flag plus an automation script
 - [Access Control](/docs/access-control/) — roles, groups, quotas, and the permission reference
 - [UI Customization](ui-customization/) — branding and logo configuration
 - [Variables](variables/) — variable hygiene for templates

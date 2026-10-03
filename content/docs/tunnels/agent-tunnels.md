@@ -23,7 +23,7 @@ agent-owned registry, so a tunnel started one way is visible to the other.
 
 ## Prerequisites
 
-- The knot server must be [configured for tunnels](./#configuring-the-server).
+- The knot server must be [configured for tunnels](/docs/tunnels/#configuring-the-server).
 - **Inside a space:** run `knot tunnel ...` in a terminal in the space. The
   `--daemon`, `stop`, and `list` subcommands require the knot agent.
 - **From the desktop:** run `knot space tunnel ...` (the space must be running).
@@ -83,7 +83,7 @@ knot tunnel http 8080 test1 --server https://other.knot.internal --token <api-to
 
 A **Tunnels**-only scoped token is enough — and the right key to hand a
 machine that should do nothing but expose a port; see
-[API Tokens](../../api-tokens/#scoping-a-token).
+[API Tokens](/docs/api-tokens/#scoping-a-token).
 
 With `--daemon` the agent owns the tunnel like any other: it survives the
 launching command exiting, appears in `knot tunnel list`, and is stopped with

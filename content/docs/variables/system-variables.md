@@ -35,7 +35,7 @@ To use a system variable, simply specify it in the format `${{ .<group>.<name> }
 |              | `server.tunnel_domain` | The domain web tunnel addresses are built on, without the leading `*` — append it straight after the tunnel name (`<user>--<tunnel>${{ server.tunnel_domain }}`); empty when the server has no `tunnel_domain` configured |
 |              | `server.zone`          | The server zone string                                                         |
 |              | `server.timezone`      | The server timezone                                                            |
-|              | `server.base_image_registry` | The configured base image registry prefix (default `docker.io/paularlott`). Used by the [template spec wizard](../configuration/spec-wizard/) to prefix manifest entries, and available to any job/volume template that wants to reference the same registry. |
+|              | `server.base_image_registry` | The configured base image registry prefix (default `docker.io/paularlott`). Used by the [template spec wizard](/docs/configuration/spec-wizard/) to prefix manifest entries, and available to any job/volume template that wants to reference the same registry. |
 |              | `server.base_image_registry_user` | The configured base image registry username (empty if not set). |
 |              | `server.base_image_registry_password` | The configured base image registry password (empty if not set). |
 | **nomad**    | `nomad.dc`             | The Nomad datacenter the server is running in. Defaults to the `NOMAD_DC` environment variable (set automatically when knot runs as a Nomad job); override with `server.nomad.dc` / `--nomad-dc`. |
@@ -45,7 +45,7 @@ To use a system variable, simply specify it in the format `${{ .<group>.<name> }
 
 ### Stack Variables
 
-When a space is part of a [stack](../stacks/), it can reference variables belonging to any **sibling space** in the same stack via the `.stack` group. This lets one space consume values produced by another — for example, a web space reading a database password defined on a `db` space.
+When a space is part of a [stack](/docs/stacks/), it can reference variables belonging to any **sibling space** in the same stack via the `.stack` group. This lets one space consume values produced by another — for example, a web space reading a database password defined on a `db` space.
 
 The syntax is:
 

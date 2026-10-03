@@ -117,6 +117,9 @@ Customize the web interface with logos and Gravatar support.
 ### [Logging](logging)
 Forward structured logs to VictoriaLogs, Grafana Loki, or Elasticsearch.
 
+### [File Storage](/docs/file-storage/)
+Replicated buckets for the Files page and the `knot file` commands (and S3 on Knot Pro), enabled by setting `server.files.path`.
+
 ### [Anomaly Detection](anomaly-detection)
 Detect failed-login bursts, credential spraying and event sink failures over the audit stream. {{< pro-badge >}}
 

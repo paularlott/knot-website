@@ -28,7 +28,7 @@
       {{ end }}
     </div>
     <div class="ml-4 {{ $textColor }} text-sm">
-      {{ $content := .Inner | markdownify }}
+      {{ $content := partial "utils/markdownify.html" (dict "page" .Page "text" .Inner) }}
       {{ if findRE "^<" $content }}
         {{ $content }}
       {{ else }}

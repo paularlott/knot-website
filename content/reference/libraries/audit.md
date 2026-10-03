@@ -3,7 +3,7 @@ title: knot.audit
 description: Audit log search and filtering functions.
 type: API Reference
 tags: [security, api, scripting]
-weight: 130
+weight: 30
 ---
 
 The `knot.audit` library provides audit log search and filtering functions. {{< pro-badge >}}

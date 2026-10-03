@@ -3,7 +3,7 @@ title: knot.identity
 description: The authoritative requesting-user surface for plugin and tool code - a real User object with permission checks, over the gated loopback.
 type: API Reference
 tags: [api, scripting, plugins]
-weight: 25
+weight: 70
 ---
 
 The `knot.identity` library returns the requesting user as a real `User` object — with `has_permission` / `in_group` — re-bound on every dispatch. It is the **authoritative** identity surface: use it for any permission decision.
@@ -43,5 +43,5 @@ def export_report():
 
 ## See also
 
-- [The request argument](../../docs/plugins/writing-plugins/scriptling/#the-request-argument) — how a handler receives the caller as `request["user"]` data.
-- [The trust boundary: import vs call](../../docs/plugins/writing-plugins/mcp-tools/#the-trust-boundary-import-vs-call) — why exported code self-gates for cross-plugin composition.
+- [The request argument](/docs/plugins/writing-plugins/scriptling/#the-request-argument) — how a handler receives the caller as `request["user"]` data.
+- [The trust boundary: import vs call](/docs/plugins/writing-plugins/mcp-tools/#the-trust-boundary-import-vs-call) — why exported code self-gates for cross-plugin composition.

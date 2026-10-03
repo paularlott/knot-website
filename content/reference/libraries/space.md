@@ -3,7 +3,7 @@ title: knot.space
 description: Space management functions for creating, running, and editing spaces.
 type: API Reference
 tags: [spaces, api, scripting]
-weight: 10
+weight: 200
 ---
 
 The `knot.space` library provides space management functions for scripts.
@@ -101,7 +101,7 @@ print(content)
 
 ## Function Details
 
-### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', ip_address='', start_on_create=False)
+### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', ip_address='', start_on_create=False) {#create}
 
 Create a new space.
 

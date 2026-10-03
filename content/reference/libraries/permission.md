@@ -3,7 +3,7 @@ title: knot.permission
 description: Permission constants and a function to list available permissions.
 type: API Reference
 tags: [security, authentication, api, scripting]
-weight: 110
+weight: 120
 ---
 
 The `knot.permission` library provides permission constants and a function to list available permissions.

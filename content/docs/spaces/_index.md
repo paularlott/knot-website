@@ -131,10 +131,6 @@ The space owner retains full control and can revoke sharing at any time.
 
 ---
 
-## What's Next
+## In This Section
 
-- [Managing Spaces](managing/)
-- [Provisioning](provisioning/)
-- [SSH Access](ssh/)
-- [Web Terminal](terminal/)
-- [Port Forwarding](port-forwarding/)
+{{< page-list section="/docs/spaces" >}}

@@ -1,5 +1,5 @@
 {{- $index := .Ordinal -}}
 
 <div id="tabs-{{ .Parent.Ordinal }}-{{ $index }}" class="tab-content {{ if gt $index 0 }}hidden{{ end }}">
-  {{ .Inner | markdownify }}
+  {{ partial "utils/markdownify.html" (dict "page" .Page "text" .Inner) }}
 </div>

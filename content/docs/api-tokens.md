@@ -50,6 +50,7 @@ By default a token has **Full Access** — every endpoint your account can reach
 | **Methods** | Discover and call space methods (`/api/methods*`). |
 | **MCP** | The MCP server endpoint (`/mcp`). |
 | **Tunnels** | Web and port tunnels only (`/tunnel/*`) plus the tunnel management API (`/api/tunnels*`) — list, create and delete tunnels and nothing else. |
+| **Files** | [File storage](/docs/file-storage/): the files API (`/api/files*`) used by `knot file`, and on Knot Pro the S3 endpoint when the token is used as the secret key. |
 
 A **Tunnels**-only key is what a machine that should only ever expose a port wants:
 

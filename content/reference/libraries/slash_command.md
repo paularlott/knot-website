@@ -3,7 +3,7 @@ title: knot.slash_command
 description: Manage slash commands — reusable prompt templates invoked from the AI chat.
 type: API Reference
 tags: [ai, scripting, api]
-weight: 45
+weight: 190
 ---
 
 The `knot.slash_command` library provides functions to manage slash commands — reusable prompt templates invoked from the AI assistant chat window via `/<command-name>`.

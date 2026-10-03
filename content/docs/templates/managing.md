@@ -37,7 +37,7 @@ To create a new template:
 - **`Nomad Job (HCL)`** or **`Container Specification (YAML)`**:
   Provide the job description in either Nomad HCL or YAML format, depending on the selected platform. This field is not shown for `Manual` templates.
 
-  Next to the label is a wand icon that opens the **template spec wizard** — a UI-driven builder that picks a base image from the [catalog](../configuration/spec-wizard/), sets memory/CPU, ports, environment variables, and bind mounts, then writes the spec for you. The wizard only enables for specs it can safely round-trip (single-task Nomad `docker` jobs, or any well-formed container spec); multi-task Nomad jobs disable the wizard with an explanatory tooltip.
+  Next to the label is a wand icon that opens the **template spec wizard** — a UI-driven builder that picks a base image from the [catalog](/docs/configuration/spec-wizard/), sets memory/CPU, ports, environment variables, and bind mounts, then writes the spec for you. The wizard only enables for specs it can safely round-trip (single-task Nomad `docker` jobs, or any well-formed container spec); multi-task Nomad jobs disable the wizard with an explanatory tooltip.
 
 ---
 
@@ -107,10 +107,10 @@ To create a new template:
 
 ### Custom Fields and Features
 - **`Ports`**:
-  Ports declared for spaces created from the template. The type sets what a port is: **HTTP** and **HTTPS** ports get dev URLs (and `KNOT_HTTP_PORT` / `KNOT_HTTPS_PORT` environment variables), **TCP** ports are published on the host (`KNOT_TCP_PORT`), and **Shared** ports are not published anywhere; every user in the same zone can reach them through space-to-space port forwarding, addressed as `user--space`, which is useful for shared services like a team database or cache running in one space that many users' spaces connect to. Shared ports never appear in the space list port menus. Every other port is forwardable by the owner only; see [Space Forwarding](../spaces/space-space-port-forwarding/) for the addressing rules and pools.
+  Ports declared for spaces created from the template. The type sets what a port is: **HTTP** and **HTTPS** ports get dev URLs (and `KNOT_HTTP_PORT` / `KNOT_HTTPS_PORT` environment variables), **TCP** ports are published on the host (`KNOT_TCP_PORT`), and **Shared** ports are not published anywhere; every user in the same zone can reach them through space-to-space port forwarding, addressed as `user--space`, which is useful for shared services like a team database or cache running in one space that many users' spaces connect to. Shared ports never appear in the space list port menus. Every other port is forwardable by the owner only; see [Space Forwarding](/docs/spaces/space-space-port-forwarding/) for the addressing rules and pools.
 
 - **`Port Forwards`** {{< pro-badge >}}:
-  Forwards wired into every space created from the template, connected automatically when the space starts. The target is a space or pool name you own, or `user--space` for another user's shared port. See [Wiring Forwards into Templates](../spaces/space-space-port-forwarding/#wiring-forwards-into-templates).
+  Forwards wired into every space created from the template, connected automatically when the space starts. The target is a space or pool name you own, or `user--space` for another user's shared port. See [Wiring Forwards into Templates](/docs/spaces/space-space-port-forwarding/#wiring-forwards-into-templates).
 
 - **`Custom Fields`**:
   Add optional fields to pass additional information into a space. Each field has a **Variable Name**, a **Field Label / Description** (shown on the space creation and edit forms), and a **type** - set with the wrench icon next to the field, shown as a badge on each row:
@@ -124,7 +124,7 @@ To create a new template:
   Every field can also carry a **Default value** (set in the same wrench-icon dialog). The default is pre-filled when a space is created and applied when an API/CLI request omits the field. Clearing the pre-filled value keeps the field empty — a deliberately blank field never falls back to the default.
 
 - **`Jobs`**:
-  Define scheduled or manual jobs that are copied into spaces created from the template, where each space can edit or remove its own copy. Each job has a name, a shell command and an optional 5-field cron schedule; see [Space Jobs](../spaces/jobs/).
+  Define scheduled or manual jobs that are copied into spaces created from the template, where each space can edit or remove its own copy. Each job has a name, a shell command and an optional 5-field cron schedule; see [Space Jobs](/docs/spaces/jobs/).
 
 - **`Features`**:
   Define the features available to the space (e.g., Visual Studio Code Tunnels). Users require the appropriate role permissions to access these features.
@@ -228,4 +228,4 @@ volumes: |
 ## What's Next
 
 - [Nomad Templates](../nomad-templates/)
-- [Local Container Templates](local-containers/)
+- [Local Container Templates](/docs/templates/local-containers/)

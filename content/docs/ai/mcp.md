@@ -93,7 +93,7 @@ create_space({...}) → Direct tool call
 
 The Knot MCP server exposes built-in tools for managing spaces, templates, stack definitions, stacks, files, and commands. Skills are served separately over the MCP skills extension (`skills/list`, `skills/get`), not as tools; see [Skills](../skills/). Write-capable tools require approval when called from the web assistant; read-only tools run without a confirmation. External MCP clients connected to `/mcp` are not prompted.
 
-For the full list grouped by what each tool operates on — plus whether each is **native** or **on-demand** — see [MCP Tools](mcp-tools/).
+For the full list grouped by what each tool operates on — plus whether each is **native** or **on-demand** — see [MCP Tools](/docs/ai/mcp-tools/).
 
 ---
 
@@ -103,4 +103,4 @@ Knot can connect to external MCP servers and use their tools alongside the built
 
 Remote tools are namespaced with a prefix (e.g., `ai__generate-text`) to avoid conflicts with local tools.
 
-For detailed configuration and usage, see [Remote MCP Servers](mcp-remote/).
+For detailed configuration and usage, see [Remote MCP Servers](/docs/ai/mcp-remote/).

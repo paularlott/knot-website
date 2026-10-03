@@ -3,7 +3,7 @@ title: knot.apiclient
 description: Transport layer used by all knot.* libraries for HTTP and AI connectivity.
 type: API Reference
 tags: [api, scripting]
-weight: 15
+weight: 20
 ---
 
 The `knot.apiclient` library is the transport layer used by all `knot.*` libraries. In embedded contexts (MCP, remote, local scripts) it is provided by the Go runtime — `configure()` is a no-op and tokens are never exposed to scripts.

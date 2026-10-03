@@ -3,7 +3,7 @@ title: knot.jobs
 description: Scheduled job management for spaces.
 type: API Reference
 tags: [spaces, api, scripting, automation]
-weight: 17
+weight: 80
 ---
 
 The `knot.jobs` library manages the scheduled jobs of a space. Job definitions are stored on the space and pushed to its agent, so they survive restarts and can be changed while the space is stopped.
@@ -174,4 +174,4 @@ Each job definition contains:
 ## See Also
 
 - [Space Jobs](/docs/spaces/jobs/) — the user-facing guide, including the cron schedule syntax and behaviour notes (no catch-up while stopped, overlap skipping, run history)
-- [knot.template](template/) — templates can define jobs that are copied into new spaces (`create(..., jobs=[...])`)
+- [knot.template](/reference/libraries/template/) — templates can define jobs that are copied into new spaces (`create(..., jobs=[...])`)

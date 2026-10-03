@@ -3,7 +3,7 @@ title: knot.role
 description: Role management functions for creating roles and assigning permissions.
 type: API Reference
 tags: [security, authentication, api, scripting]
-weight: 90
+weight: 150
 ---
 
 The `knot.role` library provides role management functions.

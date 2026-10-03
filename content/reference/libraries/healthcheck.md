@@ -3,7 +3,7 @@ title: knot.healthcheck
 description: Functions for space health monitoring in agent-side health check scripts.
 type: API Reference
 tags: [api, scripting]
-weight: 40
+weight: 60
 ---
 
 The `knot.healthcheck` library provides functions for space health monitoring. It is only available in agent-side health check scripts. The check functions (`http_head`, `tcp_port`, `program`) return `True` or `False` so you can combine them, then call `check_result()` to report the final status and exit.

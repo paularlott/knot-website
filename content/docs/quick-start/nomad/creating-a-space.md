@@ -15,7 +15,7 @@ Now that we have a usable template, we can create a space from it. You can creat
 
 1. From the `Templates` page, click the menu icon (three dots) next to the template you want to use, then select `Create Space`.
 
-{{< zoom-picture src="../../local-containers/images/template-picker.webp" caption="Select a Template" >}}
+{{< zoom-picture src="/docs/quick-start/local-containers/images/template-picker.webp" caption="Select a Template" >}}
 
 2. Fill out the form with the following details:
    - **Name**: Enter `phptest`.
@@ -23,7 +23,7 @@ Now that we have a usable template, we can create a space from it. You can creat
    - **Terminal**: Select the terminal you'd like to use.
    - **Icon**: Optionally, change the icon shown for the space.
 
-{{< zoom-picture src="../../local-containers/images/space-form.webp" caption="Create Space Form" >}}
+{{< zoom-picture src="/docs/quick-start/local-containers/images/space-form.webp" caption="Create Space Form" >}}
 
 3. Leave the `Start Space on Create` option checked, then click `Create Space`. You'll be returned to the `Spaces` page, where the new space will now be visible.
 
@@ -34,7 +34,7 @@ Now that we have a usable template, we can create a space from it. You can creat
 - While the space is starting, its **Status** will show as `Starting`.
 - Once the space is running, the **Status** will change to `Running`, and icons will appear, allowing access to the space's features.
 
-{{< zoom-picture src="../../local-containers/images/spaces-list.webp" caption="Running Space" >}}
+{{< zoom-picture src="/docs/quick-start/local-containers/images/spaces-list.webp" caption="Running Space" >}}
 
 Once the space is running the icons will show:
 
@@ -52,7 +52,7 @@ Once the space is running the icons will show:
 echo "<?php phpinfo();" > public_html/index.php
 ```
 
-{{< zoom-picture src="../../local-containers/images/terminal.webp" caption="Creating a phpinfo Script" >}}
+{{< zoom-picture src="/docs/quick-start/local-containers/images/terminal.webp" caption="Creating a phpinfo Script" >}}
 
 ---
 

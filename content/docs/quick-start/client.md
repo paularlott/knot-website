@@ -3,7 +3,7 @@ title: Client
 description: Install the Knot client CLI for SSH access, tunnels, and exposing ports from spaces.
 type: Overview
 tags: [deployment]
-weight: 5
+weight: 6
 ---
 
 While not required to use the Knot web interface, the client CLI provides additional functionality, including:

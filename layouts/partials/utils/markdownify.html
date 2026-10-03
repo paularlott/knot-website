@@ -1,0 +1,11 @@
+{{- /*
+  Drop-in for `markdownify` that renders in the context of the owning page,
+  so render hooks (render-link) resolve relative links against that page
+  rather than the home page. Like markdownify, a lone paragraph is unwrapped.
+  Usage: {{ partial "utils/markdownify.html" (dict "page" .Page "text" .Inner) }}
+*/ -}}
+{{- $html := .page.RenderString (dict "display" "block") .text | string | strings.TrimSpace -}}
+{{- if and (strings.HasPrefix $html "<p>") (strings.HasSuffix $html "</p>") (eq (len (findRE `<p[\s>]` $html)) 1) -}}
+  {{- $html = $html | strings.TrimPrefix "<p>" | strings.TrimSuffix "</p>" -}}
+{{- end -}}
+{{- return ($html | safeHTML) -}}

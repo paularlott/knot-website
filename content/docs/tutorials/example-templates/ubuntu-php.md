@@ -91,7 +91,7 @@ volumes:
 
 ### Accessing the Web Interface
 
-The space exposes **port 80** via the web interface, which can be accessed from the space's [web interface](../../../docs/spaces/web-server).
+The space exposes **port 80** via the web interface, which can be accessed from the space's [web interface](/docs/spaces/web-server/).
 
 Once the space is running, any **HTML** or **PHP** files placed within the `~/public_html` folder will be processed and served by **Caddy**.
 

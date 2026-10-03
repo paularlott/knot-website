@@ -3,7 +3,7 @@ title: User Interface
 description: Customize the knot web interface with custom logos and Gravatar integration.
 type: Overview
 tags: [configuration]
-weight: 70
+weight: 76
 ---
 
 Customize the Knot web interface with your organization's branding, including custom logos and Gravatar integration.

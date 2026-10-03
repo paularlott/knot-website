@@ -3,7 +3,7 @@ title: Provisioning Scripts
 description: Write idempotent provisioning scripts that put files and directories into a desired state on space start or on demand.
 type: Guide
 tags: [spaces]
-weight: 210
+weight: 205
 ---
 
 Provisioning ensures that files and directories are in the desired state when a space starts or on demand. Knot provides the `scriptling.provision.file` library for writing idempotent provisioning scripts that only make changes when needed.
@@ -161,7 +161,7 @@ curl -sf http://localhost:8080/health || exit 1
 
 ## Combining with Variables
 
-Provisioning scripts can read [variables](../variables/) to adapt configuration per space or environment:
+Provisioning scripts can read [variables](/docs/variables/) to adapt configuration per space or environment:
 
 ```python
 import scriptling.provision.file as file

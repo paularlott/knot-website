@@ -3,7 +3,7 @@ title: knot.stack
 description: Stack template management and stack lifecycle functions.
 type: API Reference
 tags: [stacks, templates, api, scripting]
-weight: 15
+weight: 210
 ---
 
 The `knot.stack` library provides stack template (definition) management and stack lifecycle functions. Stack templates are blueprints describing which spaces make up a stack and how they are wired together. When you create a stack from a template, spaces are created with the stack field set, dependencies resolved, and port forwards applied.

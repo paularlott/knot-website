@@ -3,7 +3,7 @@ title: Anomaly Detection
 description: Audit stream anomaly detection for logins, privilege changes, bulk deletions and event sink failures.
 type: Overview
 tags: [security, configuration, audit]
-weight: 71
+weight: 74
 ---
 
 {{< pro-badge >}} Anomaly detection watches Knot's audit event stream and raises an **`Anomaly Detected`** audit event when a rule fires — failed-login bursts, successful logins after failure bursts, attempts while blocked, admin role grants, bulk creations, edits and deletions, distinct login IPs per account, bursts of script executions, space shares and log sink changes, and event sink delivery failures.

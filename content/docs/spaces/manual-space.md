@@ -52,7 +52,7 @@ unzip knot_agent_darwin_arm64.zip
 chmod +x knot-agent
 ```
 
-For Windows, download the full Knot binary from the [client download](../quick-start/client) page and use `knot agent start` with the same flags shown below.
+For Windows, download the full Knot binary from the [client download](/docs/quick-start/client/) page and use `knot agent start` with the same flags shown below.
 
 Replace `your-knot-server` with the actual address of your Knot server.
 

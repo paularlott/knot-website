@@ -3,7 +3,7 @@ title: Template Spec Wizard
 description: Configure the base image registry and manifest that power the template spec wizard.
 type: Overview
 tags: [configuration, templates]
-weight: 60
+weight: 62
 ---
 
 The **template spec wizard** is a UI-driven builder for template specs (Nomad HCL or local container YAML). Instead of writing HCL/YAML by hand, administrators pick a base image from a catalog, set resources, mounts, env vars, and ports — knot writes the spec for them.
@@ -20,7 +20,7 @@ The wizard doesn't replace hand-editing — it patches only the fields it contro
 
 ---
 
-{{< zoom-picture src="images/spec-wizard.webp" caption="The Spec Wizard's Base Image Catalog" >}}
+{{< zoom-picture src="/docs/configuration/spec-wizard/images/spec-wizard.webp" caption="The Spec Wizard's Base Image Catalog" >}}
 
 ## Base Image Registry
 

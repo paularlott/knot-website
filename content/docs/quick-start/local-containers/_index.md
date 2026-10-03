@@ -65,4 +65,4 @@ Local Containers mode runs knot directly on Docker, Podman, or Apple Containers.
 
 - [Server Setup](server-setup/) - Start with single-server setup
 - [Multi-Server Setup](multi-server/) - Scale across multiple servers
-- [Node Selection](node-selection/) - How servers are chosen for spaces
+- [Node Selection](/docs/configuration/node-selection/) - How servers are chosen for spaces

@@ -6,7 +6,7 @@ tags: [troubleshooting]
 weight: 90
 ---
 
-Every section below lists the symptom, the command or file to check first, and the fix. Dedicated guides exist for [DNS](dns/), [UI customisation](ui/), and [template variables](variables/).
+Every section below lists the symptom, the command or file to check first, and the fix. Dedicated guides exist for [DNS](dns/), [UI customisation](ui/), and [template variables](variables/); backup and restore problems are covered in [Backup and Restore](/docs/best-practices/backup-restore/#troubleshooting).
 
 ---
 

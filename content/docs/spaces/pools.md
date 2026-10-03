@@ -170,7 +170,7 @@ with pool.leased("browsers") as member:
 # released automatically on exit — even on exception
 ```
 
-See [knot.pool](../../reference/libraries/pool/) for the full lease API.
+See [knot.pool](/reference/libraries/pool/) for the full lease API.
 
 ## What Pools Track
 
@@ -200,7 +200,7 @@ if util["combined_rps"] > 100:
 `set_size()` updates the target count immediately. The sweep loop handles
 draining, stopping, and deleting excess spaces within 1-2 cycles.
 
-{{< zoom-picture src="images/pools.webp" caption="Creating a Pool from the Spaces Page" >}}
+{{< zoom-picture src="/docs/spaces/images/pools.webp" caption="Creating a Pool from the Spaces Page" >}}
 
 ## Creating a Pool
 

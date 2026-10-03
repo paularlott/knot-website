@@ -3,7 +3,7 @@ title: Logging
 description: Console and structured HTTP logging with VictoriaLogs, Loki, and Elasticsearch support.
 type: Overview
 tags: [logging, configuration]
-weight: 70
+weight: 72
 ---
 
 Knot supports two logging modes: **console** output for local development and **structured HTTP output** for forwarding logs to centralized log aggregation services such as VictoriaLogs, Grafana Loki, and Elasticsearch.
@@ -302,7 +302,7 @@ Forwarded records are tagged with `stream = "space"`, `type = "space_log"`, plus
 
 ---
 
-## Tunnel Request Logging {{< pro-badge >}}
+## Tunnel Request Logging {{< pro-badge >}} {#tunnel-request-logging}
 
 {{< pro-badge >}} Each request proxied through a web tunnel can be logged to the server's log output — the access-log equivalent for tunnels. Records carry the method, path, host, response status and duration, tagged with `stream = "tunnel"`, `type = "tunnel_request"`, plus `tunnel` (the tunnel name) and `actor` (the owning user) fields. Tunnels have no space identity by design — a tunnel can be run from the user's desktop — so records are always tagged with the tunnel name and user:
 

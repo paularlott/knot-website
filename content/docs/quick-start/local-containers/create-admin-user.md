@@ -17,7 +17,7 @@ Open your web browser and navigate to `https://knot.internal:3000`. Since knot u
 
 If the server is running correctly, you'll see the setup form prompting you to create the initial user.
 
-{{< zoom-picture src="../images/create-admin-user.webp" caption="Initial User Setup" >}}
+{{< zoom-picture src="/docs/quick-start/local-containers/images/create-admin-user.webp" caption="Initial User Setup" >}}
 
 ---
 
@@ -25,7 +25,7 @@ If the server is running correctly, you'll see the setup form prompting you to c
 
 Complete the form with the required information and click `Create User`. This will create your admin account. Once the account is created, the login form will appear.
 
-{{< zoom-picture src="../images/sign-in.webp" caption="Login" >}}
+{{< zoom-picture src="/docs/quick-start/local-containers/images/sign-in.webp" caption="Login" >}}
 
 ---
 
@@ -33,7 +33,7 @@ Complete the form with the required information and click `Create User`. This wi
 
 Enter your username and password to log in. After logging in, click your name in the top-right corner of the screen to open the profile menu.
 
-{{< zoom-picture src="../images/user-menu.webp" caption="Profile Menu" >}}
+{{< zoom-picture src="/docs/quick-start/local-containers/images/user-menu.webp" caption="Profile Menu" >}}
 
 ---
 

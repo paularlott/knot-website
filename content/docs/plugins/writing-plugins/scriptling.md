@@ -1,5 +1,6 @@
 ---
-title: In Scriptling
+title: Writing Plugins in Scriptling
+linkTitle: In Scriptling
 description: Write the plugin entry, handlers, and modules in Scriptling - knot's scripting language.
 type: Guide
 tags: [plugins, scripting]
@@ -262,7 +263,7 @@ Choose `libs/` for pure compute that travels as source; choose a scriptling `bin
 
 `demo-scriptling` ships a working library — `libs/calc.py` (a constant, `add`/`scale`, the `Counter` class and a self-gating `gated_report()`), exercised by the *Plugin peers* row on its showcase page and declared as `plugin.calc via calc >= 1.0` in its metadata. Its Go twin is `demo-go`'s `demolib` (functions plus the `Counter` class over the plugin protocol).
 
-Libraries travel to *other installed plugins* too: because installed plugins share one trust domain and one plugin pool, another plugin's handler imports them the same way (`import plugin.calc as calc`, `import plugin.demolib as demolib` — scriptling and Go peers alike, the Go ones through the host-side stubs scriptling auto-generates from the peer's handshake) — see [composition](#composition). User-created MCP tools are the untrusted side and **cannot** import them: the pool is not attached to their environment, so they reach a plugin only through `knot.plugin.call` over the gated loopback. Within a plugin or library, the authority for any permission check is [`knot.identity`](../../../reference/libraries/identity/); libraries are modules and cannot see a handler's `request`, so they read `knot.identity` directly.
+Libraries travel to *other installed plugins* too: because installed plugins share one trust domain and one plugin pool, another plugin's handler imports them the same way (`import plugin.calc as calc`, `import plugin.demolib as demolib` — scriptling and Go peers alike, the Go ones through the host-side stubs scriptling auto-generates from the peer's handshake) — see [composition](#composition). User-created MCP tools are the untrusted side and **cannot** import them: the pool is not attached to their environment, so they reach a plugin only through `knot.plugin.call` over the gated loopback. Within a plugin or library, the authority for any permission check is [`knot.identity`](/reference/libraries/identity/); libraries are modules and cannot see a handler's `request`, so they read `knot.identity` directly.
 
 ## The request argument
 
@@ -337,7 +338,7 @@ The `demo-scriptling` plugin shows the whole loop: its showcase page has a **Plu
 | `.has_permission(key)` | method | permission check — the argument picks: an integer is a built-in permission id (the `knot.permission` constants), a `"plugin."`-prefixed string a qualified grant, any other string a built-in's stable key; admins pass every check |
 | `.in_group(name)` | method | membership of one group |
 
-Permission keys are stable identifiers — display names are for the role editor and may be reworded, keys never change. One method answers all of it because the forms can't collide: an integer names a built-in by id (`knot.permission.MANAGE_SPACES`), and among strings qualified grants always start with `plugin.`, which no built-in key contains. See [the identity library](../../../reference/libraries/identity/) for the full surface.
+Permission keys are stable identifiers — display names are for the role editor and may be reworded, keys never change. One method answers all of it because the forms can't collide: an integer names a built-in by id (`knot.permission.MANAGE_SPACES`), and among strings qualified grants always start with `plugin.`, which no built-in key contains. See [the identity library](/reference/libraries/identity/) for the full surface.
 
 ## Composition
 

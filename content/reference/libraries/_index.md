@@ -12,34 +12,7 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 
 ## Available Libraries
 
-| Library | Description |
-|---------|-------------|
-| [knot.apiclient](apiclient/) | Transport configuration for standalone use |
-| [knot.space](space/) | Space management operations |
-| [knot.pool](pool/) | Space pool management and scaling |
-| [knot.jobs](jobs/) | Scheduled job management for spaces |
-| [knot.server](server/) | Server information |
-| [knot.ai](ai/) | AI completion functions |
-| [knot.methods](methods/) | Register JSON-RPC methods (agent-side only) |
-| [knot.methods.schema](methods-schema/) | JSON Schema builder for method params and results |
-| [knot.mcp](mcp/) | MCP tool interaction |
-| [knot.skill](skill/) | Skills management |
-| [knot.slash_command](slash_command/) | Slash command management |
-| [knot.script](script/) | Script management and execution |
-| [knot.stack](stack/) | Stack definition and instance management |
-| [knot.template](template/) | Template management |
-| [knot.token](token/) | API token management — mint scoped keys, revoke them |
-| [knot.volume](volume/) | Volume management |
-| [knot.user](user/) | User management |
-| [knot.group](group/) | Group management |
-| [knot.role](role/) | Role management |
-| [knot.vars](vars/) | Variables management |
-| [knot.permission](permission/) | Permission checking |
-| [knot.plugin](plugin/) | Call plugins' declared handlers as the requesting user |
-| [knot.identity](identity/) | The requesting user for module code (plugin libraries, lib scripts) |
-| [knot.healthcheck](healthcheck/) | Space health monitoring (agent-side scripts) |
-| [knot.event](event/) | Event emission (space-side) and sink accessors (server-side) |
-| [knot.audit](audit/) | Audit log search and filtering |
+{{< library-index >}}
 
 ---
 

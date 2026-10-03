@@ -28,7 +28,4 @@ Executes spaces. Options include: Docker, Podman, Nomad, or Apple Container.
 
 ## Topics
 
-- [Deployment Modes](deployment-modes/) - Standalone, cluster, and leaf configurations
-- [Cluster Architecture](cluster-architecture/) - Leaderless design and data flow
-- [Network Architecture](network/) - Ports, communication, and security
-- [Scalability](scalability/) - Scaling strategies and performance
+{{< page-list section="/reference/architecture" >}}

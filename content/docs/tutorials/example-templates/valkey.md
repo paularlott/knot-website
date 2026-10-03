@@ -104,7 +104,7 @@ environment:
 
 ### Connecting to Valkey
 
-As with the Nomad version, you can connect a local port to the Valkey server running within the space using [port forwarding](../../../docs/spaces/port-forwarding). For example:
+As with the Nomad version, you can connect a local port to the Valkey server running within the space using [port forwarding](/docs/spaces/port-forwarding/). For example:
 
 ```shell
 knot forward port 127.0.0.1:6379 <space> 6379

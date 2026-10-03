@@ -1,0 +1,52 @@
+{{- /*
+  Resolves internal markdown links to the target page's permalink, so a
+  relative link works whatever the bundle depth of the page it is written in.
+
+  For a link without a scheme whose path has no extension (or ends in .md):
+    1. absolute ("/docs/x/")      -> the page at that content path
+    2. relative, as a URL         -> joined to this page's URL (what browsers
+                                     do; keeps links that already work)
+    3. relative, as a file path   -> joined to the directory of this page's
+                                     source file (how authors usually think;
+                                     fixes links one level off in leaf pages)
+  The first match wins and its RelPermalink (+ query + fragment) is emitted.
+  Unresolved links are left untouched and reported with a warning.
+
+  Passed through unchanged: external URLs (any scheme, mailto:, //host),
+  fragment-only links (#x), and links to files with an extension (static
+  assets, images, downloads).
+*/ -}}
+{{- $dest := .Destination -}}
+{{- $href := $dest -}}
+{{- $u := urls.Parse $dest -}}
+{{- $p := $u.Path -}}
+{{- if and (not $u.Scheme) (not $u.Host) $p (not (strings.HasPrefix $dest "//")) -}}
+  {{- $ext := path.Ext (strings.TrimSuffix "/" $p) -}}
+  {{- if or (eq $ext "") (eq $ext ".md") -}}
+    {{- $target := false -}}
+    {{- if strings.HasPrefix $p "/" -}}
+      {{- $target = site.GetPage (path.Clean $p) -}}
+    {{- else -}}
+      {{- $target = site.GetPage (path.Join .Page.RelPermalink $p) -}}
+      {{- if not $target -}}
+        {{- with .Page.File -}}
+          {{- $target = site.GetPage (path.Join "/" .Dir $p) -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- with $target -}}
+      {{- $href = .RelPermalink -}}
+      {{- with $u.RawQuery }}{{ $href = printf "%s?%s" $href . }}{{ end -}}
+      {{- with $u.Fragment }}{{ $href = printf "%s#%s" $href . }}{{ end -}}
+    {{- else -}}
+      {{- $static := and (strings.HasPrefix $p "/") (or (fileExists (path.Join "static" $p)) (fileExists (path.Join "okf" (strings.TrimPrefix "/okf" $p)))) -}}
+      {{- if not $static -}}
+        {{- $src := .Page.RelPermalink -}}
+        {{- with .Page.File }}{{ $src = .Path }}{{ end -}}
+        {{- warnf "render-link: cannot resolve %q in %s" $dest $src -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<a href="{{ $href | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text }}</a>
+{{- /* chomp trailing newline */ -}}

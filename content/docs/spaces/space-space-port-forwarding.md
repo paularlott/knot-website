@@ -107,7 +107,7 @@ knot space port forward frontend 6379 paul--cache-pool 6379
 
 A forward to a stopped target fails until the target starts again; nothing is auto-started. Pools keep capacity up for you: dead members are replaced and traffic moves to live ones on the next connection.
 
-### Wiring Forwards into Templates {{< pro-badge >}}
+### Wiring Forwards into Templates {{< pro-badge >}} {#wiring-forwards-into-templates}
 
 A template can carry a list of port forwards that are seeded into every space created from it, so client spaces connect to their services automatically when they start, with no per-space setup:
 
@@ -290,7 +290,7 @@ Space-to-space port forwarding only works between spaces in the same zone. Same-
 
 ---
 
-## Direct Agent-to-Agent Connections {{< pro-badge >}}
+## Direct Agent-to-Agent Connections {{< pro-badge >}} {#direct-agent-to-agent-connections}
 
 In Knot Pro, port-forwarded traffic between spaces on the same host or network can flow **directly** between agents without relaying through the server. This reduces latency and server load.
 

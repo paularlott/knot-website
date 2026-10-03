@@ -21,4 +21,4 @@ The same values can be provided as server flags or through environment variables
 
 To confirm a license is active, check the server log at startup — an invalid or missing key logs a warning and the server continues on the open-source edition — or the web UI footer, which shows the licensed name on a licensed server.
 
-See [Pro Installation](../quick-start/pro-installation/) for obtaining a license key.
+See [Pro Installation](/docs/quick-start/pro-installation/) for obtaining a license key.

@@ -119,6 +119,6 @@ Update any `docker run` commands or Docker Compose files to reference `paularlot
 
 ## What's Next
 
-- [Local Containers Setup](local-containers/server-setup/) - Configure and run the server
-- [Nomad Deployment](nomad/server-setup/) - Deploy to a Nomad cluster
-- [Client](client/) - Install the client CLI
+- [Local Containers Setup](/docs/quick-start/local-containers/server-setup/) - Configure and run the server
+- [Nomad Deployment](/docs/quick-start/nomad/server-setup/) - Deploy to a Nomad cluster
+- [Client](/docs/quick-start/client/) - Install the client CLI

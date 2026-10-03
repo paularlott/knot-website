@@ -191,7 +191,7 @@ EOF
 ```
 
 {{< tip >}}
-**Knot Pro** {{< pro-badge >}}: Replace `paularlott/knot:latest` with `paularlott/knot-pro:latest` and add your license configuration. See [Pro Installation](../pro-installation/) for details.
+**Knot Pro** {{< pro-badge >}}: Replace `paularlott/knot:latest` with `paularlott/knot-pro:latest` and add your license configuration. See [Pro Installation](/docs/quick-start/pro-installation/) for details.
 {{< /tip >}}
 
 ---

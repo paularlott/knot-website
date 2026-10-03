@@ -3,10 +3,10 @@ title: knot.token
 description: Manage API tokens — mint scoped keys, list them, revoke them.
 type: API Reference
 tags: [security, authentication, api]
-weight: 46
+weight: 230
 ---
 
-The `knot.token` library manages the current user's API tokens: mint keys for machines and pipelines (optionally narrowed by [scopes](../../api-tokens/#scoping-a-token)), list existing tokens, and revoke them.
+The `knot.token` library manages the current user's API tokens: mint keys for machines and pipelines (optionally narrowed by [scopes](/docs/api-tokens/#scoping-a-token)), list existing tokens, and revoke them.
 
 ---
 

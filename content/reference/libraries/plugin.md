@@ -3,7 +3,7 @@ title: knot.plugin
 description: Call plugins' declared handlers as the requesting user - in-process between plugins, over the authenticated loopback from user-created tools.
 type: API Reference
 tags: [api, scripting, plugins]
-weight: 24
+weight: 130
 ---
 
 The `knot.plugin` library calls a plugin's **declared** handlers — the `[[tool.knot.handlers]]` contract the browser's `pluginFetch` uses — as the requesting user. One call contract, two transports: the environment decides which, and both behave identically — same signature (`method` kwarg included), same name validation, declared-handlers-only, the declaration's gate enforced before any plugin code runs. Only the transport differs.
@@ -41,5 +41,5 @@ result = kp.call("metrics", "submit", {"range": "1h"}, method="POST")
 
 ## See also
 
-- [MCP Tools — calling plugins from tools](../../docs/plugins/writing-plugins/mcp-tools/) — the trust boundary the two transports draw.
-- [Plugin Pages](../../docs/plugins/writing-plugins/pages/) — the handler-URL and gate contract underneath every call.
+- [MCP Tools — calling plugins from tools](/docs/plugins/writing-plugins/mcp-tools/) — the trust boundary the two transports draw.
+- [Plugin Pages](/docs/plugins/writing-plugins/pages/) — the handler-URL and gate contract underneath every call.

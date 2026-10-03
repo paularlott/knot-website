@@ -3,7 +3,7 @@ title: knot.pool
 description: Manage space pools that keep a desired count of identical spaces running.
 type: API Reference
 tags: [spaces, api, scripting]
-weight: 16
+weight: 140
 ---
 
 The `knot.pool` library manages space pools. A pool keeps a desired count of identical spaces (created from the same template) running and ready, so the server can hand out method, HTTP, and TCP traffic across healthy members. Pools are useful for scaling stateless services and for method backends that need more capacity than a single space. Lease-enabled pools additionally support exclusive member checkout — `acquire()`, `extend()`, `release()`, `leases()` and the `leased()` context manager — for callers that need a member to themselves.

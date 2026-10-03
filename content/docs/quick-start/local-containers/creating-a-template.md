@@ -9,7 +9,7 @@ weight: 30
 
 Once logged in to the Knot web interface at `http://knot.internal:3000`, you'll be presented with a list of available spaces. Initially, this list will be blank.
 
-{{< zoom-picture src="../images/spaces-empty.webp" caption="Spaces on First Login" >}}
+{{< zoom-picture src="/docs/quick-start/local-containers/images/spaces-empty.webp" caption="Spaces on First Login" >}}
 
 In this tutorial, we'll create a space that runs PHP and includes a web server powered by Caddy.
 
@@ -20,7 +20,7 @@ In this tutorial, we'll create a space that runs PHP and includes a web server p
 Start by clicking `Admiinistration`, `Templates` and then `+ Template`.
 
 - Click on Templates in the navigation menu, then select New Template.
-  {{< zoom-picture src="../images/template-general.webp" caption="Template General Section" >}}
+  {{< zoom-picture src="/docs/quick-start/local-containers/images/template-general.webp" caption="Template General Section" >}}
 - Fill out the following fields:
   - **Name:** Enter phptest.
   - **Description:** Enter a short description, such as A test space that runs PHP..
@@ -57,7 +57,7 @@ environment:
 
 The `Container Specification`, `Volume Definition` and `Ports` fields all live in the `Orchestration` section of the form:
 
-{{< zoom-picture src="../images/template-spec.webp" caption="Container Spec, Volumes and Ports" >}}
+{{< zoom-picture src="/docs/quick-start/local-containers/images/template-spec.webp" caption="Container Spec, Volumes and Ports" >}}
 
 ---
 
@@ -93,7 +93,7 @@ For this tutorial, we won't apply any restrictions. However, we'll enable the fo
 - **Web Terminal**
 - **SSH Access**
 
-{{< zoom-picture src="../images/template-features.webp" caption="Enable Template Features" >}}
+{{< zoom-picture src="/docs/quick-start/local-containers/images/template-features.webp" caption="Enable Template Features" >}}
 
 ---
 
@@ -101,7 +101,7 @@ For this tutorial, we won't apply any restrictions. However, we'll enable the fo
 
 Once saved, you'll be redirected to the `Templates` page, where your new template will be displayed.
 
-{{< zoom-picture src="../images/templates-list.webp" caption="Templates" >}}
+{{< zoom-picture src="/docs/quick-start/local-containers/images/templates-list.webp" caption="Templates" >}}
 
 ---
 

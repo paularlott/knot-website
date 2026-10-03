@@ -3,7 +3,7 @@ title: knot.group
 description: Group management functions including quotas and membership.
 type: API Reference
 tags: [security, authentication, api, scripting]
-weight: 80
+weight: 50
 ---
 
 The `knot.group` library provides group management functions.

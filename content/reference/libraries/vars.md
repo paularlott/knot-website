@@ -3,7 +3,7 @@ title: knot.vars
 description: Template variable management functions including protected variables.
 type: API Reference
 tags: [variables, api, scripting]
-weight: 100
+weight: 250
 ---
 
 The `knot.vars` library provides template variable management functions.

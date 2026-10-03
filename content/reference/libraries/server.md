@@ -3,7 +3,7 @@ title: knot.server
 description: Exposes server-wide information such as version, wildcard domain and tunnel domain.
 type: API Reference
 tags: [api, scripting]
-weight: 71
+weight: 170
 ---
 
 The `knot.server` library exposes server-wide information.
