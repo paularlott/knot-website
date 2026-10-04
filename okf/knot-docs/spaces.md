@@ -138,10 +138,4 @@ The space owner retains full control and can revoke sharing at any time.
 
 ---
 
-## What's Next
-
-- [Managing Spaces](spaces/managing.md)
-- [Provisioning](spaces/provisioning.md)
-- [SSH Access](spaces/ssh.md)
-- [Web Terminal](spaces/terminal.md)
-- [Port Forwarding](spaces/port-forwarding.md)
+## In This Section

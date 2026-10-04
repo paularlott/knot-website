@@ -13,7 +13,7 @@ type: Overview
 ---
 # Troubleshooting
 
-Every section below lists the symptom, the command or file to check first, and the fix. Dedicated guides exist for [DNS](troubleshooting/dns.md), [UI customisation](troubleshooting/ui.md), and [template variables](troubleshooting/variables.md).
+Every section below lists the symptom, the command or file to check first, and the fix. Dedicated guides exist for [DNS](troubleshooting/dns.md), [UI customisation](troubleshooting/ui.md), and [template variables](troubleshooting/variables.md); backup and restore problems are covered in [Backup and Restore](best-practices/backup-restore.md#troubleshooting).
 
 ---
 

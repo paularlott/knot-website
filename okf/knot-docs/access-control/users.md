@@ -30,7 +30,7 @@ To create a new user:
 ### User Details
 
 - **`Username`**:
-  The username to assign to the user.
+  The username to assign to the user: letters, digits, `-` and `.`, starting with a letter and ending with a letter or digit, at most 30 characters, without `--` or `..`. It can't be changed later. File storage buckets are named after it.
 
 - **`Email`**:
   The user's email address, which they will use to log in.
@@ -72,6 +72,12 @@ To create a new user:
 
 - **`Maximum Tunnels`**:
   The maximum number of tunnels the user can have at any one time. Set to `0` for no limit.
+
+- **`File Storage (MB)`**:
+  The maximum size, in MB, of the files in [file storage](../file-storage.md) buckets the user owns. Set to `0` to use the server default (unlimited unless configured).
+
+- **`Maximum Buckets`**:
+  The maximum number of [file storage](../file-storage.md) buckets the user can own. Set to `0` to use the server default (3 unless configured).
 
 ---
 

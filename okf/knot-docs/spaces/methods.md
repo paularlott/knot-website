@@ -336,7 +336,7 @@ def search(params):
     }
 ```
 
-Each request runs on a fresh, isolated evaluator, so the server is concurrent by default — leave `mode = "concurrent"` (the default). See the [Scriptling JSON-RPC example](https://scriptling.dev/examples/jsonrpc-server) for a complete working server with notifications and structured errors.
+Each request runs on a fresh, isolated evaluator, so the server is concurrent by default — leave `mode = "concurrent"` (the default). See [JSON-RPC Server Mode](https://scriptling.dev/docs/cli/jsonrpc-server/) and the [`runtime.jsonrpc` reference](https://scriptling.dev/reference/libraries/runtime/jsonrpc/) for notifications and structured errors.
 
 ---
 

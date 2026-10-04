@@ -9,10 +9,10 @@ status: stable
 tags:
     - plugins
     - scripting
-title: In Scriptling
+title: Writing Plugins in Scriptling
 type: Guide
 ---
-# In Scriptling
+# Writing Plugins in Scriptling
 
 The entry file (`main.py`, or the single `.py`) is a [Scriptling](https://scriptling.dev/) script: it carries the [metadata declarations](../writing-plugins.md) and defines the handler functions your pages call. Nothing in it runs at load - knot parses the declarations only, and the code below executes per-request when a page is opened.
 

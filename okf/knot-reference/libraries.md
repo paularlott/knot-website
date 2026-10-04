@@ -20,34 +20,7 @@ Knot provides several libraries in the `knot.*` namespace for interacting with t
 
 ## Available Libraries
 
-| Library | Description |
-|---------|-------------|
-| [knot.apiclient](libraries/apiclient.md) | Transport configuration for standalone use |
-| [knot.space](libraries/space.md) | Space management operations |
-| [knot.pool](libraries/pool.md) | Space pool management and scaling |
-| [knot.jobs](libraries/jobs.md) | Scheduled job management for spaces |
-| [knot.server](libraries/server.md) | Server information |
-| [knot.ai](libraries/ai.md) | AI completion functions |
-| [knot.methods](libraries/methods.md) | Register JSON-RPC methods (agent-side only) |
-| [knot.methods.schema](libraries/methods-schema.md) | JSON Schema builder for method params and results |
-| [knot.mcp](libraries/mcp.md) | MCP tool interaction |
-| [knot.skill](libraries/skill.md) | Skills management |
-| [knot.slash_command](libraries/slash_command.md) | Slash command management |
-| [knot.script](libraries/script.md) | Script management and execution |
-| [knot.stack](libraries/stack.md) | Stack definition and instance management |
-| [knot.template](libraries/template.md) | Template management |
-| [knot.token](libraries/token.md) | API token management — mint scoped keys, revoke them |
-| [knot.volume](libraries/volume.md) | Volume management |
-| [knot.user](libraries/user.md) | User management |
-| [knot.group](libraries/group.md) | Group management |
-| [knot.role](libraries/role.md) | Role management |
-| [knot.vars](libraries/vars.md) | Variables management |
-| [knot.permission](libraries/permission.md) | Permission checking |
-| [knot.plugin](libraries/plugin.md) | Call plugins' declared handlers as the requesting user |
-| [knot.identity](libraries/identity.md) | The requesting user for module code (plugin libraries, lib scripts) |
-| [knot.healthcheck](libraries/healthcheck.md) | Space health monitoring (agent-side scripts) |
-| [knot.event](libraries/event.md) | Event emission (space-side) and sink accessors (server-side) |
-| [knot.audit](libraries/audit.md) | Audit log search and filtering |
+
 
 ---
 

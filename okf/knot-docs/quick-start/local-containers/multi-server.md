@@ -282,7 +282,7 @@ Add a `zone` setting to each server's `knot.toml`:
 zone = "us-west"  # or "us-east", "eu-central", etc.
 ```
 
-See [Node Selection](node-selection.md) for details on assigning spaces to zones.
+See [Node Selection](../../configuration/node-selection.md) for details on assigning spaces to zones.
 
 ---
 
@@ -400,7 +400,7 @@ knot space create test-space-2 --template test-template --server server2.example
 
 ## Next Steps
 
-- [Node Selection](node-selection.md) - Learn how spaces are assigned to servers
+- [Node Selection](../../configuration/node-selection.md) - Learn how spaces are assigned to servers
 - [Configuration](../../configuration.md) - Detailed configuration options
-- [Cluster Architecture](../../reference/architecture/cluster-architecture/) - Deep dive on clustering
+- [Cluster Architecture](../../../knot-reference/architecture/cluster-architecture.md) - Deep dive on clustering
 - [Troubleshooting](../../troubleshooting.md) - Common issues and solutions

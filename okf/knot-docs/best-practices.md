@@ -16,7 +16,7 @@ type: Overview
 Guidelines for deploying and managing Knot effectively. Topic guides live in their own pages:
 
 - [Security](best-practices/security.md) — authentication hardening, data protection, monitoring, network
-- [Backup & Restore](best-practices/backup-restore.md) — every `knot backup` / `knot restore` flag plus an automation script
+- [Backup & Restore](best-practices/backup-restore.md) — every `knot admin backup` / `knot admin restore` flag plus an automation script
 - [Access Control](access-control.md) — roles, groups, quotas, and the permission reference
 - [UI Customization](best-practices/ui-customization.md) — branding and logo configuration
 - [Variables](best-practices/variables.md) — variable hygiene for templates

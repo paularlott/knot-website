@@ -42,6 +42,10 @@ To create a new group:
 
 - **`Maximum Tunnels`**: Limits the number of tunnels a user can create as a member of this group. Set to a number greater than 0 to enforce a limit.
 
+- **`File Storage (MB)`**: The [file storage](../file-storage.md), in MB, each member of this group adds to their quota.
+
+- **`Maximum Buckets`**: The number of [file storage](../file-storage.md) buckets each member of this group adds to their limit.
+
 ---
 
 ### Deleting a Group

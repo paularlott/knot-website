@@ -310,7 +310,7 @@ Forwarded records are tagged with `stream = "space"`, `type = "space_log"`, plus
 
 ---
 
-## Tunnel Request Logging 
+## Tunnel Request Logging  {#tunnel-request-logging}
 
  Each request proxied through a web tunnel can be logged to the server's log output — the access-log equivalent for tunnels. Records carry the method, path, host, response status and duration, tagged with `stream = "tunnel"`, `type = "tunnel_request"`, plus `tunnel` (the tunnel name) and `actor` (the owning user) fields. Tunnels have no space identity by design — a tunnel can be run from the user's desktop — so records are always tagged with the tunnel name and user:
 

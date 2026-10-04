@@ -15,7 +15,7 @@ type: API Reference
 ---
 # knot.token
 
-The `knot.token` library manages the current user's API tokens: mint keys for machines and pipelines (optionally narrowed by [scopes](../../api-tokens/#scoping-a-token)), list existing tokens, and revoke them.
+The `knot.token` library manages the current user's API tokens: mint keys for machines and pipelines (optionally narrowed by [scopes](../../knot-docs/api-tokens.md#scoping-a-token)), list existing tokens, and revoke them.
 
 ---
 

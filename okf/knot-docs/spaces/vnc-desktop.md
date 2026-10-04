@@ -8,10 +8,10 @@ sources:
 status: stable
 tags:
     - spaces
-title: Desktop
+title: VNC Desktop
 type: Guide
 ---
-# Desktop
+# VNC Desktop
 
 If a space exposes a web-based VNC server, such as [KasmVNC](https://github.com/kasmtech/KasmVNC), a **`Desktop`** button will be displayed on the **`Spaces`** page for the running space.
 

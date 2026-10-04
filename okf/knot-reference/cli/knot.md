@@ -399,6 +399,45 @@ lease (or lease list) for piping into other tools.
 
 ---
 
+## File storage
+
+### `knot file`
+
+Work with [file storage](../../knot-docs/file-storage.md) buckets. Remote paths are `bucket/key`. Buckets are named `<username>--<name>`: use the short name for your own buckets and the full name for buckets shared with you.
+
+```shell
+knot file ls [bucket[/prefix]] [-r] [--all] [--json]
+knot file put <file|dir|-> <bucket[/key]> [-r]
+knot file get <bucket/key> [destination] | knot file get -r <bucket[/prefix]> [directory]
+knot file cat <bucket/key>
+knot file rm <bucket/key> | knot file rm -r <bucket[/prefix]>
+knot file sync up <directory> <bucket[/prefix]> [--delete] [--dry-run]
+knot file sync down <bucket[/prefix]> <directory> [--delete] [--dry-run]
+knot file usage [--json]
+
+knot file bucket list [--all] [--json]
+knot file bucket create <name>
+knot file bucket delete <name> [--force]
+knot file bucket info <name> [--json]
+knot file bucket permissions <name> [--json]
+knot file bucket share <name> (--user NAME | --group NAME | --all) [--write]
+knot file bucket unshare <name> (--user NAME | --group NAME | --all)
+knot file bucket transfer <name> <user> [--force]
+```
+
+- `put` to a bucket or a key ending in `/` keeps the file's name; `-` uploads stdin. Modification times are recorded on upload and restored by `get`.
+- `sync` transfers only files whose size or SHA-256 differ, keeping modification times; `--delete` removes destination files missing from the source, `-n`/`--dry-run` shows the changes without making them.
+- `ls` with no path lists your buckets; `--all` lists every bucket for file storage managers.
+- `bucket delete` refuses a bucket that still holds files unless `--force` is given.
+- `bucket create` takes the short name (3–30 lowercase letters, digits and hyphens, no `--`) and creates `<username>--<name>`.
+- `--json` prints the result as JSON for scripts: `ls` of a bucket gives `{"bucket", "prefix", "prefixes", "objects"}`, `ls` and `bucket list` give an array of buckets, `bucket info` one bucket, `bucket permissions` `{"bucket", "owner", "access", "grants"}` and `usage` the usage and limits. Empty results are empty arrays.
+- `bucket share` and `unshare` need the Share Buckets permission. `bucket transfer` needs Transfer Buckets for your own buckets; file storage managers can transfer any bucket.
+- `bucket transfer` renames the bucket into the new owner's namespace (`paul--configs` becomes `bob--configs`). It refuses when the new owner already has that name. It also refuses when the bucket would take them over their limits, unless a file storage manager gives `--force`.
+- `bucket permissions` lists the owner and grants (the full list for the owner and file storage managers, your own access otherwise).
+- Inside a space the server and credentials are discovered through the agent; on the desktop `--alias` picks the saved connection. An explicit `--server`/`--token` pair overrides both.
+
+---
+
 ## Methods
 
 ### `knot method`
@@ -516,8 +555,8 @@ knot ssh-config remove
 Server administration commands.
 
 ```shell
-knot admin backup [--encrypt-key KEY]
-knot admin restore <backup-file>
+knot admin backup [--encrypt-key KEY] [--files-dir DIR] <backup-file>
+knot admin restore [--encrypt-key KEY] [--files-dir DIR] <backup-file>
 knot admin rename-zone <old> <new>
 knot admin reset-totp <email-address>
 knot admin set-password <email-address> <password>

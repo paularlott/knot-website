@@ -73,6 +73,15 @@ Roles grant the permissions below; when a user holds multiple roles, the permiss
 | Manage Variables | Create, edit, and delete system variables. |
 | Manage Volumes | Create, edit, and delete volumes. |
 
+### File Storage
+
+| Permission | Description |
+|---|---|
+| Use File Storage | Create and delete own buckets and manage their files. |
+| Share Buckets | Share own buckets with users, groups or everyone. |
+| Transfer Buckets | Transfer own buckets to another user. |
+| Manage File Storage | Full access to every bucket, including sharing and transferring any bucket. |
+
 ### AI Tools
 
 | Permission | Description |

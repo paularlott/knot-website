@@ -30,7 +30,7 @@ agent-owned registry, so a tunnel started one way is visible to the other.
 
 ## Prerequisites
 
-- The knot server must be [configured for tunnels](agent-tunnels.md#configuring-the-server).
+- The knot server must be [configured for tunnels](../tunnels.md#configuring-the-server).
 - **Inside a space:** run `knot tunnel ...` in a terminal in the space. The
   `--daemon`, `stop`, and `list` subcommands require the knot agent.
 - **From the desktop:** run `knot space tunnel ...` (the space must be running).
