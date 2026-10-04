@@ -245,8 +245,8 @@ Creates a tunnel at `<user>--myapp.<tunnel-domain>`.
 The [`knot file`](/reference/cli/knot/#knot-file) commands are built into the agent, so inside a space they work with no configuration, connecting through the agent as the space's owner:
 
 ```shell
-knot file get configs/app/settings.toml ~/.config/app/settings.toml
-knot file put -r ./build artifacts/builds/$(date +%F)
+knot file copy configs:app/settings.toml ~/.config/app/settings.toml
+knot file copy -r ./build artifacts:builds/$(date +%F)/
 ```
 
 ---

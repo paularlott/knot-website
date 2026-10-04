@@ -395,16 +395,14 @@ lease (or lease list) for piping into other tools.
 
 ### `knot file`
 
-Work with [file storage](/docs/file-storage/) buckets. Remote paths are `bucket/key`. Buckets are named `<username>--<name>`: use the short name for your own buckets and the full name for buckets shared with you.
+Work with [file storage](/docs/file-storage/) buckets. A bucket's files are written `bucket:path` (`bucket:` is the whole bucket); any other path is local. Buckets are named `<username>--<name>`: use the short name for your own buckets and the full name for buckets shared with you.
 
 ```shell
-knot file ls [bucket[/prefix]] [-r] [--all] [--json]
-knot file put <file|dir|-> <bucket[/key]> [-r]
-knot file get <bucket/key> [destination] | knot file get -r <bucket[/prefix]> [directory]
-knot file cat <bucket/key>
-knot file rm <bucket/key> | knot file rm -r <bucket[/prefix]>
-knot file sync up <directory> <bucket[/prefix]> [--delete] [--dry-run]
-knot file sync down <bucket[/prefix]> <directory> [--delete] [--dry-run]
+knot file ls [bucket:[path]] [-r] [--all] [--json]
+knot file copy [-r] <source>... <destination>
+knot file cat <bucket:path>...
+knot file rm [-r] <bucket:path>...
+knot file sync <source> <destination> [--delete] [--dry-run]
 knot file usage [--json]
 
 knot file bucket list [--all] [--json]
@@ -417,12 +415,16 @@ knot file bucket unshare <name> (--user NAME | --group NAME | --all)
 knot file bucket transfer <name> <user> [--force]
 ```
 
-- `put` to a bucket or a key ending in `/` keeps the file's name; `-` uploads stdin. Modification times are recorded on upload and restored by `get`.
-- `sync` transfers only files whose size or SHA-256 differ, keeping modification times; `--delete` removes destination files missing from the source, `-n`/`--dry-run` shows the changes without making them.
-- `ls` with no path lists your buckets; `--all` lists every bucket for file storage managers.
+`ls` is also `list`, `copy` is also `cp` and `rm` is also `delete`.
+
+- `copy` goes from the sources to the last argument, in the direction the paths imply: local to bucket, bucket to local, or bucket to bucket (on the server, moving no data). `-r` copies directories and bucket folders; their contents go into the destination folder. Several sources, a folder or a wildcard need a destination folder: a bucket path ending in `/` (or `bucket:`), or a local directory. A wildcard (`*`, `?`, `[...]`, and `**` for any number of folders) in a bucket path is quoted: `'bucket:logs/*.log'`. `-` is stdin as the source or stdout as the destination. Files at the destination are replaced. See [Working with Files](/docs/file-storage/#working-with-files) for the full rules.
+- Modification times are recorded on upload and restored on download, and kept when copying between buckets.
+- `sync` makes the destination match the source, either side being a local directory or a bucket folder, so it uploads, downloads or copies between buckets as the paths imply. It transfers only files whose size or SHA-256 differ, keeping modification times; `--delete` removes destination files missing from the source, `-n`/`--dry-run` shows the changes without making them.
+- `ls` with no path lists your buckets; `--all` lists every bucket for file storage managers. A path may be a folder (listed one level, or everything below with `-r`), a file or a wildcard.
+- `rm` takes several paths and wildcards; a folder or `bucket:` needs `-r`. It never deletes the bucket itself.
 - `bucket delete` refuses a bucket that still holds files unless `--force` is given.
 - `bucket create` takes the short name (3–30 lowercase letters, digits and hyphens, no `--`) and creates `<username>--<name>`.
-- `--json` prints the result as JSON for scripts: `ls` of a bucket gives `{"bucket", "prefix", "prefixes", "objects"}`, `ls` and `bucket list` give an array of buckets, `bucket info` one bucket, `bucket permissions` `{"bucket", "owner", "access", "grants"}` and `usage` the usage and limits. Empty results are empty arrays.
+- `--json` prints the result as JSON for scripts: `ls` of a bucket path gives `{"bucket", "prefix", "prefixes", "objects"}`, `ls` and `bucket list` give an array of buckets, `bucket info` one bucket, `bucket permissions` `{"bucket", "owner", "access", "grants"}` and `usage` the usage and limits. Empty results are empty arrays.
 - `bucket share` and `unshare` need the Share Buckets permission. `bucket transfer` needs Transfer Buckets for your own buckets; file storage managers can transfer any bucket.
 - `bucket transfer` renames the bucket into the new owner's namespace (`paul--configs` becomes `bob--configs`). It refuses when the new owner already has that name. It also refuses when the bucket would take them over their limits, unless a file storage manager gives `--force`.
 - `bucket permissions` lists the owner and grants (the full list for the owner and file storage managers, your own access otherwise).

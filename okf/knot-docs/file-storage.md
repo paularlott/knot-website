@@ -17,6 +17,7 @@ File storage keeps files in **buckets** that are replicated to every knot server
 
 - the **Files** page in the web interface;
 - the **`knot file`** commands, from your desktop or from inside a space with no configuration;
+- the [**`knot.files`**](../knot-reference/libraries/files.md) scripting library, for scripts and MCP tools;
 - the files **API** (`/api/files/*`);
 - any **S3 client** (rclone, the AWS CLI, SDKs) at `<server>/s3` .
 
@@ -31,17 +32,19 @@ File storage is off until a storage directory is set. Set it on each server that
 ```toml
 [server.files]
 path = "/var/lib/knot/files"
-# enabled = true          # false turns file storage off while keeping the path
+# sync = "always"         # "off" skips forcing writes to disk, see below
 # default_quota_mb = 0    # quota for users with no user or group limit, 0 = unlimited
 # default_max_buckets = 3 # bucket limit for users with no user or group limit, 0 = unlimited
 ```
 
 | Setting | Flag / environment | Meaning |
 |---|---|---|
-| `path` | `--files-path` / `KNOT_FILES_PATH` | Storage directory. File storage is off when not set. |
-| `enabled` | `--files-enabled` / `KNOT_FILES_ENABLED` | Set `false` to turn file storage off without removing the path. Default `true`. |
+| `path` | `--files-path` / `KNOT_FILES_PATH` | Storage directory. File storage, and on Knot Pro the S3 endpoint, are off when it is not set; remove it to turn them off. |
+| `sync` | `--files-sync` / `KNOT_FILES_SYNC` | `always` (default) forces every upload and every change to disk before it is reported done. `off` doesn't. |
 | `default_quota_mb` | `--files-default-quota-mb` / `KNOT_FILES_DEFAULT_QUOTA_MB` | Quota, in MB, for users whose own and group limits are all 0. Default `0` (unlimited). |
 | `default_max_buckets` | `--files-default-max-buckets` / `KNOT_FILES_DEFAULT_MAX_BUCKETS` | How many buckets a user may own when their own and group limits are all 0. Default `3`; `0` means unlimited. |
+
+With `sync = "always"` a write that has been reported successful survives a crash or power loss, and on fast drives such as NVMe the cost is small. With `off` it is much quicker for many small files on slow storage, but a crash or power loss can lose the last writes and, in the worst case, leave a file whose content is incomplete. In a cluster the other servers usually hold the data, and a server that lost writes catches up from them, but a write lost on the server that took it before it had been gossiped is gone. Keep `always` unless you have a reason; the setting doesn't change the data format and can be changed at any restart. Restoring from a backup always syncs.
 
 The directory holds the file content, the bucket and file metadata, and in-progress multipart uploads; give it room for every user's files. Servers without file storage answer file requests with `503 file storage is not enabled on this server` and don't serve `/s3`.
 
@@ -106,8 +109,8 @@ A bucket can be shared with up to 256 users and groups. Sharing with the same us
 Alice then reaches the bucket by its full name:
 
 ```shell
-knot file ls paul--configs
-knot file get paul--configs/app/settings.toml
+knot file ls paul--configs:
+knot file cat paul--configs:app/settings.toml
 ```
 
 ### Listing permissions
@@ -164,45 +167,63 @@ The page is keyboard and screen reader friendly and uses nothing from outside th
 
 ## Working with Files
 
-Remote paths are written `bucket/key`, e.g. `configs/app/settings.toml` for your own bucket or `alice--configs/app/settings.toml` for one shared with you. Keys may contain `/` to organise files into folders.
+A bucket's files are written `bucket:path`, e.g. `configs:app/settings.toml` for your own bucket or `alice--configs:app/settings.toml` for one shared with you; `configs:` on its own is the bucket itself. Any other path is local, so which way a copy goes follows from the arguments. Keys may contain `/` to organise files into folders, but not empty, `.` or `..` segments.
 
 ```shell
-knot file ls                                  # your buckets
-knot file ls configs                          # one level
-knot file ls -r configs/app                   # everything below app/
+knot file ls                                   # your buckets (alias: list)
+knot file ls configs:                          # one level of a bucket
+knot file ls -r configs:app                    # everything below app/
+knot file ls 'configs:app/*.toml'              # files matching a wildcard
 
-knot file put settings.toml configs/app/      # keeps the file name
-knot file put -r ./dotfiles configs/dotfiles  # a directory
-echo "debug = true" | knot file put - configs/app/debug.toml
+knot file copy settings.toml configs:app/      # upload, keeping the name (alias: cp)
+knot file copy settings.toml configs:app/main.toml   # upload under another name
+knot file copy -r ./dotfiles configs:dotfiles/ # a directory and everything in it
+echo "debug = true" | knot file copy - configs:app/debug.toml
 
-knot file get configs/app/settings.toml       # into the current directory
-knot file get -r configs/dotfiles ~/dotfiles
-knot file cat configs/app/settings.toml
+knot file copy configs:app/settings.toml .     # download into the current directory
+knot file copy configs:app/settings.toml ~/.config/app/main.toml
+knot file copy -r configs:dotfiles ~/dotfiles
+knot file copy configs:app/settings.toml -     # to stdout; so does: knot file cat configs:app/settings.toml
 
-knot file rm configs/app/debug.toml
-knot file rm -r configs/old
+knot file copy configs:app/settings.toml backups:app/   # between buckets, on the server
+knot file copy -r configs: backups:2026-10-05/
 
-knot file usage                               # usage against your quota
+knot file rm configs:app/debug.toml            # alias: delete
+knot file rm -r configs:old
+
+knot file usage                                # usage against your quota
 ```
 
-Uploads record the file's modification time and downloads restore it. Downloaded files are created readable by others (0644), or keep the mode of the file they replace. Remote paths may not contain empty, `.` or `..` segments.
+### How `copy` works
+
+- **Direction.** A path of the form `bucket:path` is in a bucket, anything else is local, and `-` is stdin or stdout. A copy goes from the sources to the destination, the last argument; at least one side must be a bucket. A local path with a colon in its name is written with a leading `./` (`./notes:v2.txt`) so it isn't read as a bucket, and a bucket name is at least three characters, so a Windows drive such as `C:\` is always local.
+- **Into a folder.** Several sources, a directory or folder source, or a wildcard need a destination that is a folder: an existing local directory (or one ending in `/`, which is created), or a bucket path ending in `/`, or just `bucket:`. A single file goes to the name you give it, so write the `/` to copy into a folder. Files already at the destination are replaced, and two sources that would land on the same destination are refused before anything is copied.
+- **Folders.** `-r` copies a directory or bucket folder with everything below it. Its *contents* go into the destination folder, as with `rsync` and `rclone copy`, rather than the directory itself, so `copy -r ./site configs:site/` puts `./site/index.html` at `site/index.html`. Without `-r` a directory or folder is refused. Empty folders in a bucket become empty directories on download.
+- **Wildcards.** `*` and `?` match within one name and `[abc]` a set of characters, as in a shell; `**` matches any number of folders. Quote a pattern for a bucket path, `'configs:logs/*.log'`, so the shell leaves it alone (an unquoted pattern with no match is an error in zsh). Unquoted local patterns are expanded by the shell as usual, and `copy` expands a quoted one itself. A pattern takes only files, unless `-r` is given, when a folder it matches is taken with everything below it. Files keep their path below the part of the pattern before the first wildcard: `'logs/**/*.log'` copies `logs/2026/10/a.log` as `2026/10/a.log`. To match a character that is a wildcard, put it in brackets: `a[*]b`.
+- **Between buckets.** A copy from one bucket to another, or within one, happens on the server and moves no data, however large the files, and keeps their content type, metadata and modification time. You need read access to the source and write access to the destination, and the destination bucket's owner is charged for the new file against their quota.
+- **Standard input and output.** `copy - bucket:path/file` uploads stdin as one file, and `copy bucket:path/file -` writes one file to stdout.
+
+`rm` takes several paths and wildcards the same way: `knot file rm 'configs:logs/*.tmp' configs:old.txt`. A folder, or `bucket:`, needs `-r`, which deletes every file below it (the bucket itself stays; see `knot file bucket delete`). A path that matches nothing deletes nothing.
+
+Uploads record the file's modification time and downloads restore it. Downloaded files are created readable by others (0644), or keep the mode of the file they replace.
 
 Files fetched through the API are sent as attachments with a sandboxing `Content-Security-Policy`, so opening another user's HTML or SVG file in a browser downloads it rather than running it on the knot server.
 
 ### Syncing a directory
 
-`knot file sync` transfers only what differs between a local directory and a bucket prefix, comparing files by size and SHA-256:
+`knot file sync` makes a destination match a source, transferring only what differs, comparing files by size and SHA-256. Either side is a local directory or a bucket folder, and the direction follows from which is which:
 
 ```shell
-knot file sync up ./site configs/site              # local -> bucket
-knot file sync down configs/site ./site            # bucket -> local
-knot file sync up ./site configs/site --delete     # also remove remote files not present locally
-knot file sync down configs/site ./site -n         # dry run: show what would change
+knot file sync ./site configs:site                 # local -> bucket
+knot file sync configs:site ./site                 # bucket -> local
+knot file sync configs:site backups:site           # bucket -> bucket, on the server
+knot file sync ./site configs:site --delete        # also remove files at the destination not in the source
+knot file sync configs:site ./site -n              # dry run: show what would change
 ```
 
-Modification times are kept in both directions. `--delete` removes files at the destination that aren't in the source.
+Modification times are kept in every direction. `--delete` removes files at the destination that aren't in the source. Between buckets only the files whose content differs are copied, with no data transferred, and folders in the same bucket that overlap are refused. `sync` takes folders, not wildcards.
 
-**Which server.** Inside a space the commands discover the space's server and credentials through the agent — nothing to configure, so a space startup script can pull its configuration with `knot file get`. On the desktop they use the connection saved by `knot connect`, choosing the server with `--alias` (default `default`). An explicit `--server`/`--token` pair overrides both, as with other knot commands.
+**Which server.** Inside a space the commands discover the space's server and credentials through the agent — nothing to configure, so a space startup script can pull its configuration with `knot file copy`. On the desktop they use the connection saved by `knot connect`, choosing the server with `--alias` (default `default`). An explicit `--server`/`--token` pair overrides both, as with other knot commands.
 
 ---
 

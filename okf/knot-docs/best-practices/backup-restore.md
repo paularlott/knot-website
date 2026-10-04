@@ -131,19 +131,19 @@ To rebuild one server of a healthy cluster, you rarely need a backup: an empty s
 
 To get back files deleted or overwritten by mistake, copy them from the `--files-dir` export back into the bucket while the server runs; no restore is needed. A restore can't do this, as the deletion is newer than the backed up file and wins, but uploading the file again is a new change.
 
-`knot file sync up` uploads only files that are missing or differ from the export, leaving the rest alone:
+`knot file sync` uploads only files that are missing or differ from the export, leaving the rest alone:
 
 ```shell
 # See what would be uploaded, then upload it
-knot file sync up /backups/knot-files-20261003/alice--docs alice--docs --dry-run
-knot file sync up /backups/knot-files-20261003/alice--docs alice--docs
+knot file sync /backups/knot-files-20261003/alice--docs alice--docs: --dry-run
+knot file sync /backups/knot-files-20261003/alice--docs alice--docs:
 
 # Or a single file or folder
-knot file put /backups/knot-files-20261003/alice--docs/reports/q3.pdf alice--docs/reports/
-knot file put -r /backups/knot-files-20261003/alice--docs/reports alice--docs/reports
+knot file copy /backups/knot-files-20261003/alice--docs/reports/q3.pdf alice--docs:reports/
+knot file copy -r /backups/knot-files-20261003/alice--docs/reports alice--docs:reports/
 ```
 
-Files listed in `.knot-conflicts/index.txt` are named by checksum; put each back under the key the index gives. Don't use `--delete` here unless the bucket should match the backup exactly, as it removes files added since.
+Files listed in `.knot-conflicts/index.txt` are named by checksum; copy each back to the bucket under the key the index gives. Don't use `--delete` here unless the bucket should match the backup exactly, as it removes files added since.
 
 ---
 

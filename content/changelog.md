@@ -14,7 +14,7 @@ navSection: docs
 {{< version "v0.37.0" >}}
 
 {{< changelog-item "added" >}}
-- **File storage** {{< experimental-badge >}}: store files in buckets that are replicated to every server in the cluster. Use them from the new **Files** page (upload, edit, share), the `knot file` commands (including `sync up` / `sync down`) or the API. Enable it by setting `server.files.path`. Buckets are private until shared with users, groups or everyone, and are controlled by four new permissions, per-user and per-group quotas and `server.files.*` settings. File storage is included in `knot admin backup`. See [File Storage](../docs/file-storage/).
+- **File storage** {{< experimental-badge >}}: store files in buckets that are replicated to every server in the cluster. Use them from the new **Files** page (upload, edit, share), the `knot file` commands (`copy`, `ls`, `cat`, `rm` and `sync`, between your machine and buckets or between buckets, with wildcards), the `knot.files` scripting library or the API. Enable it by setting `server.files.path`. Buckets are private until shared with users, groups or everyone, and are controlled by four new permissions, per-user and per-group quotas and `server.files.*` settings. File storage is included in `knot admin backup`. See [File Storage](../docs/file-storage/).
 
 - **S3 access to file storage** {{< pro-badge >}}{{< experimental-badge >}}: Knot Pro serves file storage over the S3 API at `<server>/s3`, so rclone, the AWS CLI and SDKs work unchanged. Use your username as the access key and an API token with the new **Files** scope as the secret. See [S3 Access](../docs/file-storage/#s3-access).
 
