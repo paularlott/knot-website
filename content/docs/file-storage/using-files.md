@@ -8,11 +8,12 @@ weight: 10
 
 ## The Files Page
 
-**Files** in the sidebar lists the buckets you own or that are shared with you, with your access, size and your usage against your quota. The page updates by itself when files or buckets change, whether the change was made by you, someone else, or on another server in the cluster: changes are gathered for a moment and the page then refreshes what it shows. Open a bucket to browse its folders, then:
+**Files** in the sidebar lists the buckets you own or that are shared with you, with your access, size and your usage against your quota. The page updates by itself when files or buckets change, whether the change was made by you, someone else, or on another server in the cluster: changes are gathered for a moment and the page then refreshes what it shows. Click the folder icon on a bucket, or its name, to browse its folders. The path above the file list shows where you are and takes you back up. Then:
 
 - **Upload files** or **Upload folder**, or drag files and folders onto the list; progress is shown per file.
-- **Download** any file, or **View**/**Edit** text files up to 1 MB in place. Saving is refused if someone else changed the file since you opened it, so no change is silently lost.
+- **Download** any file, or **View**/**Edit** text files up to 1 MB in place. The editor highlights the language it recognises from the file name, including Markdown, YAML, TOML, JSON, PHP, Python, shell, JavaScript, HTML, CSS, XML, INI, SQL, Go, Dockerfile and HCL, and a **Language** picker changes it. Ctrl+S or ⌘S saves. Saving is refused if someone else changed the file since you opened it, so no change is silently lost.
 - **New file** creates a text file, with `/` in the name for folders.
+- **Rename** a file, or a folder with everything in it. The new name stays in the same folder; to move something to another folder use [`knot file mv`](#working-with-files) or the VS Code extension.
 - **Delete** files, or a folder and everything in it.
 
 As the owner with **Share Buckets**, **Share** lists who has access, changes each grant between read only and read & write, removes grants and adds users, groups or all users. As the owner with **Transfer Buckets**, **Transfer** gives the bucket to another user and shows the name it will have. File storage managers can share and transfer any bucket and tick **Show all buckets** to see every bucket. Users with read-only access see only View and Download.
