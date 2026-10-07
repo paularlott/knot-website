@@ -8,7 +8,7 @@ weight: 10
 
 ## The Files Page
 
-**Files** in the sidebar lists the buckets you own or that are shared with you, with your access, size and your usage against your quota. Open a bucket to browse its folders, then:
+**Files** in the sidebar lists the buckets you own or that are shared with you, with your access, size and your usage against your quota. The page updates by itself when files or buckets change, whether the change was made by you, someone else, or on another server in the cluster: changes are gathered for a moment and the page then refreshes what it shows. Open a bucket to browse its folders, then:
 
 - **Upload files** or **Upload folder**, or drag files and folders onto the list; progress is shown per file.
 - **Download** any file, or **View**/**Edit** text files up to 1 MB in place. Saving is refused if someone else changed the file since you opened it, so no change is silently lost.
@@ -44,6 +44,10 @@ knot file copy configs:app/settings.toml -     # to stdout; so does: knot file c
 knot file copy configs:app/settings.toml backups:app/   # between buckets, on the server
 knot file copy -r configs: backups:2026-10-05/
 
+knot file mv configs:app/old.toml configs:app/new.toml   # rename (alias: move)
+knot file mv configs:app/new.toml configs:archive/       # move into a folder, keeping the name
+knot file mv configs:app configs:app-2026                # a folder, with everything in it
+
 knot file rm configs:app/debug.toml            # alias: delete
 knot file rm -r configs:old
 
@@ -58,6 +62,8 @@ knot file usage                                # usage against your quota
 - **Wildcards.** `*` and `?` match within one name and `[abc]` a set of characters, as in a shell; `**` matches any number of folders. Quote a pattern for a bucket path, `'configs:logs/*.log'`, so the shell leaves it alone (an unquoted pattern with no match is an error in zsh). Unquoted local patterns are expanded by the shell as usual, and `copy` expands a quoted one itself. A pattern takes only files, unless `-r` is given, when a folder it matches is taken with everything below it. Files keep their path below the part of the pattern before the first wildcard: `'logs/**/*.log'` copies `logs/2026/10/a.log` as `2026/10/a.log`. To match a character that is a wildcard, put it in brackets: `a[*]b`.
 - **Between buckets.** A copy from one bucket to another, or within one, happens on the server and moves no data, however large the files, and keeps their content type, metadata and modification time. You need read access to the source and write access to the destination, and the destination bucket's owner is charged for the new file against their quota.
 - **Standard input and output.** `copy - bucket:path/file` uploads stdin as one file, and `copy bucket:path/file -` writes one file to stdout.
+
+`mv` renames or moves files and folders, with the same `bucket:path` arguments. A destination ending in `/`, or naming an existing folder, takes the sources into it and keeps their names; otherwise it is the new name, which needs a single source. Several sources and quoted wildcards (`'configs:logs/*.log'`) work as with `copy`, and a folder moves with everything below it. Within a bucket the move happens on the server and transfers no content, however large the files. Between buckets the files are copied on the server and then removed from the source, and you need write access to both. A move that would replace an existing file is refused before anything changes, unless `--overwrite` (`-f`) is given.
 
 `rm` takes several paths and wildcards the same way: `knot file rm 'configs:logs/*.tmp' configs:old.txt`. A folder, or `bucket:`, needs `-r`, which deletes every file below it (the bucket itself stays; see `knot file bucket delete`). A path that matches nothing deletes nothing.
 

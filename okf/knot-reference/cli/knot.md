@@ -408,6 +408,7 @@ Work with [file storage](../../knot-docs/file-storage.md) buckets. A bucket's fi
 ```shell
 knot file ls [bucket:[path]] [-r] [--all] [--json]
 knot file copy [-r] <source>... <destination>
+knot file mv [--overwrite] <source>... <destination>
 knot file cat <bucket:path>...
 knot file rm [-r] <bucket:path>...
 knot file sync <source> <destination> [--delete] [--dry-run]
@@ -423,9 +424,10 @@ knot file bucket unshare <name> (--user NAME | --group NAME | --all)
 knot file bucket transfer <name> <user> [--force]
 ```
 
-`ls` is also `list`, `copy` is also `cp` and `rm` is also `delete`.
+`ls` is also `list`, `copy` is also `cp`, `mv` is also `move` and `rm` is also `delete`.
 
 - `copy` goes from the sources to the last argument, in the direction the paths imply: local to bucket, bucket to local, or bucket to bucket (on the server, moving no data). `-r` copies directories and bucket folders; their contents go into the destination folder. Several sources, a folder or a wildcard need a destination folder: a bucket path ending in `/` (or `bucket:`), or a local directory. A wildcard (`*`, `?`, `[...]`, and `**` for any number of folders) in a bucket path is quoted: `'bucket:logs/*.log'`. `-` is stdin as the source or stdout as the destination. Files at the destination are replaced. See [Working with Files](../../knot-docs/file-storage/using-files.md#working-with-files) for the full rules.
+- `mv` renames or moves files and folders: into a destination folder (ending in `/`) keeping the names, or to a new name for a single source. Within a bucket it happens on the server and moves no data; between buckets it copies on the server and then removes the source. It refuses to replace an existing file unless `--overwrite` is given.
 - Modification times are recorded on upload and restored on download, and kept when copying between buckets.
 - `sync` makes the destination match the source, either side being a local directory or a bucket folder, so it uploads, downloads or copies between buckets as the paths imply. It transfers only files whose size or SHA-256 differ, keeping modification times; `--delete` removes destination files missing from the source, `-n`/`--dry-run` shows the changes without making them.
 - `ls` with no path lists your buckets; `--all` lists every bucket for file storage managers. A path may be a folder (listed one level, or everything below with `-r`), a file or a wildcard.
