@@ -13,32 +13,26 @@ navSection: docs
 
 {{< version "v0.37.0" >}}
 
-{{< changelog-item "added" >}}
-- **File storage** {{< experimental-badge >}}: store files in buckets that are replicated to every server in the cluster. Use them from the new **Files** page (upload, edit, share), the `knot file` commands (`copy`, `ls`, `cat`, `rm` and `sync`, between your machine and buckets or between buckets, with wildcards), the `knot.files` scripting library or the API. Enable it by setting `server.files.path`. Buckets are private until shared with users, groups or everyone, and are controlled by four new permissions, per-user and per-group quotas and `server.files.*` settings. File storage is included in `knot admin backup`. See [File Storage](../docs/file-storage/).
-
-- **S3 access to file storage** {{< pro-badge >}}{{< experimental-badge >}}: Knot Pro serves file storage over the S3 API at `<server>/s3`, so rclone, the AWS CLI and SDKs work unchanged. Use your username as the access key and an API token with the new **Files** scope as the secret. See [S3 Access](../docs/file-storage/#s3-access).
-
-- **Usage shown as bars**: the Usage and Users pages show each resource, now including file storage and buckets, as a bar against its limit, amber from 80% and red at the limit.
-
-- **Bucket access in the user access overview** {{< pro-badge >}}: the Users page access panel lists the buckets each user can reach and how that access is granted.
+{{< changelog-item "changed" >}}
+- **Breaking:** back up through the API into a folder, and restore into a running new server; backup files made by earlier versions can't be restored ([docs](../docs/best-practices/backup-restore/))
+- Start API tokens with `tk_`, so none can begin with `-`; existing tokens keep working
+- Limit usernames of new users to 30 characters ending in a letter or digit
 {{< /changelog-item >}}
 
-{{< changelog-item "changed" >}}
-- **API tokens** now start with `tk_`, so they're easy to recognise and none can begin with `-`, which a command line would take for another flag. Existing tokens keep working.
-
-- **Usernames for new users** are limited to 30 characters and must end with a letter or digit, so bucket names built from them stay within S3's limit. Existing usernames are unaffected.
+{{< changelog-item "added" >}}
+- Add file storage {{< experimental-badge >}}: buckets replicated across the cluster, with sharing, quotas, the Files page, `knot file` commands, the `knot.files` library and an API ([docs](../docs/file-storage/))
+- Add S3 access to file storage at `<server>/s3` {{< pro-badge >}}{{< experimental-badge >}} ([docs](../docs/file-storage/s3/))
+- Add the Backup Server permission and a `backup` API token scope; a new server creates a Backup User role and gives it, with Admin, to its first user
+- Improve usage visualization for the Usage and Users pages
+- Add the buckets each user can reach to the Users access overview {{< pro-badge >}}
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
-- **MySQL 8 and later**: a new installation failed to create its tables. MySQL reserves the name `groups`, rejects literal defaults on TEXT and JSON columns, and lacks `IF [NOT] EXISTS` for columns and indexes. All three are now handled, and MariaDB is unaffected.
-
-- **Deleting a tunnel on a busy server**: the tunnel client could miss the close request, take it for a dropped connection and reconnect. The server now waits for the client to acknowledge the request before closing the connection.
-
-- **`knot admin` with Redis**: admin commands ignored `server.redis.hosts`, so on a server using Redis they retried connecting forever. They now use `server.redis.hosts` (`--redis-hosts`, `KNOT_REDIS_HOSTS`) like the server.
-
-- **Creating templates through the API without an idle timeout unit** failed validation; a missing unit now means disabled, as it did before idle timeouts existed.
-
-- **The Users page showed no users** when any user had been created through the API without roles or groups.
+- Fix new installations failing to create their tables on MySQL 8 and later
+- Fix tunnel clients reconnecting after a tunnel was deleted on a busy server
+- Fix `knot admin` ignoring `server.redis.hosts`
+- Fix creating templates through the API without an idle timeout unit
+- Fix the Users page showing no users when one was created without roles or groups
 {{< /changelog-item >}}
 
 ---

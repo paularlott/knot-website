@@ -82,6 +82,12 @@ Roles grant the permissions below; when a user holds multiple roles, the permiss
 | Transfer Buckets | Transfer own buckets to another user. |
 | Manage File Storage | Full access to every bucket, including sharing and transferring any bucket. |
 
+### System
+
+| Permission | Description |
+|---|---|
+| Backup Server | Back up all of the server's data, including every user's files and credentials, and restore it. Equivalent to full access, so it is **not** part of the Admin role. A new server creates a **Backup User** role with it, and gives that role to the first user. |
+
 ### AI Tools
 
 | Permission | Description |

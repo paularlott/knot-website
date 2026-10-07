@@ -60,6 +60,7 @@ By default a token has **Full Access** — every endpoint your account can reach
 | **MCP** | The MCP server endpoint (`/mcp`). |
 | **Tunnels** | Web and port tunnels only (`/tunnel/*`) plus the tunnel management API (`/api/tunnels*`) — list, create and delete tunnels and nothing else. |
 | **Files** | [File storage](file-storage.md): the files API (`/api/files*`) used by `knot file`, and on Knot Pro the S3 endpoint when the token is used as the secret key. |
+| **Backup** | [Backup and restore](best-practices/backup-restore.md): the backup and restore endpoints (`/api/backup/*`, `/api/restore/*`) used by `knot admin backup` and `knot admin restore`, and nothing else. The user still needs the Backup Server permission. |
 
 A **Tunnels**-only key is what a machine that should only ever expose a port wants:
 

@@ -1,27 +1,20 @@
 ---
-description: Store files in buckets replicated to every server in the cluster, from the web UI, the knot CLI, inside spaces, or (Knot Pro) any S3 client.
-generated:
-    by: knot-website/okf.py
-resource: https://getknot.dev/docs/file-storage/
-sources:
-    - resource: https://getknot.dev/docs/file-storage/
-status: stable
-tags:
-    - storage
 title: File Storage
+description: Store files in buckets replicated to every server in the cluster, from the web UI, the knot CLI, inside spaces, or (Knot Pro) any S3 client.
 type: Overview
+tags: [storage]
+weight: 42
 ---
-# File Storage
 
 File storage keeps files in **buckets** that are replicated to every knot server in the cluster. Use it to share configuration files between spaces, hand files to teammates, or keep small artifacts close to where you work. Files can be reached through:
 
 - the **Files** page in the web interface;
 - the **`knot file`** commands, from your desktop or from inside a space with no configuration;
-- the [**`knot.files`**](../knot-reference/libraries/files.md) scripting library, for scripts and MCP tools;
+- the [**`knot.files`**](/reference/libraries/files/) scripting library, for scripts and MCP tools;
 - the files **API** (`/api/files/*`);
-- any **S3 client** (rclone, the AWS CLI, SDKs) at `<server>/s3` .
+- any **S3 client** (rclone, the AWS CLI, SDKs) at `<server>/s3` {{< pro-badge >}}.
 
-Every server holds a full copy of every file, so reads are served locally and a server that is offline catches up when it returns. Because each file is stored on every server, file storage suits configuration, dotfiles, scripts and modest artifacts rather than bulk data; set [quotas](file-storage/operations.md#quotas) to keep it that way.
+Every server holds a full copy of every file, so reads are served locally and a server that is offline catches up when it returns. Because each file is stored on every server, file storage suits configuration, dotfiles, scripts and modest artifacts rather than bulk data; set [quotas](/docs/file-storage/operations/#quotas) to keep it that way.
 
 ---
 
@@ -154,6 +147,6 @@ Should a user ever be deleted without their buckets going, each server notices w
 
 ## More
 
-- [Using Files](file-storage/using-files.md): the Files page and the `knot file` commands
-- [S3 Access](file-storage/s3.md) : use rclone, the AWS CLI or any S3 client
-- [Quotas, Replication and Maintenance](file-storage/operations.md): limits, how files replicate, backups, checking and repairing
+- [Using Files](/docs/file-storage/using-files/): the Files page and the `knot file` commands
+- [S3 Access](/docs/file-storage/s3/) {{< pro-badge >}}: use rclone, the AWS CLI or any S3 client
+- [Quotas, Replication and Maintenance](/docs/file-storage/operations/): limits, how files replicate, backups, checking and repairing

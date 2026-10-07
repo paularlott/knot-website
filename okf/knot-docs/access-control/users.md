@@ -74,10 +74,10 @@ To create a new user:
   The maximum number of tunnels the user can have at any one time. Set to `0` for no limit.
 
 - **`File Storage (MB)`**:
-  The maximum size, in MB, of the files in [file storage](../file-storage.md) buckets the user owns. Set to `0` to use the server default (unlimited unless configured).
+  The maximum size, in MB, of the files in [file storage](../file-storage.md) buckets the user owns. The limit is this plus the values of the user's groups. When all are `0` the server default applies (unlimited unless configured); a non-zero value here or in a group means the user always has a limit. See [Quotas](../file-storage/operations.md#quotas).
 
 - **`Maximum Buckets`**:
-  The maximum number of [file storage](../file-storage.md) buckets the user can own. Set to `0` to use the server default (3 unless configured).
+  The maximum number of [file storage](../file-storage.md) buckets the user can own. The limit is this plus the values of the user's groups. When all are `0` the server default applies (unlimited unless configured); a non-zero value here or in a group means the user always has a limit. See [Quotas](../file-storage/operations.md#quotas).
 
 ---
 

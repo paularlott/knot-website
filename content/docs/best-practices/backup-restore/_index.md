@@ -9,27 +9,65 @@ aliases:
   - /docs/troubleshooting/backup-restore/
 ---
 
-Back up the knot database with `knot admin backup` and load it back with `knot admin restore`. Both commands connect directly to the database, so run them on a server host with the same configuration as the server (database settings and `server.encrypt` key), e.g. `knot admin backup --config /etc/knot/knot.toml backup.json`.
+Back up a running server with `knot admin backup` and rebuild a lost one with `knot admin restore`. Both work through the server's API, so they run from anywhere with a token: no access to the server's host, its database or its configuration is needed. A backup is a folder; to get back one file or folder from it, without restoring everything, use `knot admin file ls` and `knot admin file restore`.
+
+```shell
+knot admin backup /backups/knot-20261007
+knot admin restore /backups/knot-20261007 --server https://new.example.com
+```
+
+---
+
+## Who Can Back Up
+
+A backup holds everything: every user's password hash and API tokens, every file. It needs the **Backup Server** permission, which is **not** part of the Admin role: an administrator can't back up the server, or restore into it, unless they are also given a role that holds it. That way the people who run the server day to day are separate from the people, or the unattended job, who can read all of its data.
+
+- A **new server** creates a **Backup User** role in its database, holding just this permission, and gives it, along with the Admin role, to its first user. It is an ordinary role: edit it, give it to others, or delete it if you'd rather not have it.
+- A server upgraded from an earlier version gets no such role and nobody holds the permission. Create a role with **Backup Server** (Administration → Roles) and assign it to whoever should back up.
+- Give an automated job its own user with only that role, and an [API token](/docs/api-tokens/) for it. Scope the token to **Backup** and it can reach the backup and restore endpoints and nothing else, so a token left in a cron job can't be used to sign in or change anything.
+- Every backup and restore is recorded in the audit log, once when it starts and once when it ends, with the user and the number of records.
+
+Choose the server with `--server` and `--token` (or `KNOT_SERVER` and `KNOT_TOKEN`), or with `--alias` to use one defined in your configuration file's `[client.connection.<alias>]` section, as for the other `knot` commands. With none of these the `default` alias is used.
 
 ---
 
 ## What Gets Backed Up
 
-**Included**: templates, template variables, volume definitions, groups, roles, users, user API tokens, spaces (metadata), scripts, skills, slash commands, responses, configuration values, audit logs and, when the server has [file storage](/docs/file-storage/), its buckets and file details. With `--files-dir` the content of every file is copied too (see [File Storage](#file-storage)).
+**Included**: templates, template variables, volume definitions, groups, roles, users, user API tokens, spaces (metadata), scripts, skills, slash commands, responses, configuration values, audit logs and, when the server has [file storage](/docs/file-storage/), every bucket, every file's details and every file's content.
 
 **Not included**: the contents of space volumes, container images and the server configuration file.
-
-Protected template variables are decrypted with the server's `server.encrypt` key when written to the backup and re-encrypted with the target server's key on restore. Use `--encrypt-key` to keep them out of a plain-text file.
 
 ---
 
 ## Creating a Backup
 
 ```shell
-knot admin backup backup.json
+knot admin backup /backups/knot-20261007
 ```
 
-By default everything is backed up (`--all`). Passing any of the selection flags backs up only the items selected:
+The backup goes into a folder, which must be new, empty or hold an earlier backup. It looks like this:
+
+```text
+/backups/knot-20261007/
+├── manifest.json        what the backup holds, written when it is complete
+├── users.jsonl          one file of records for each kind
+├── tokens.jsonl
+├── templates.jsonl
+├── file-buckets.jsonl
+├── file-objects.jsonl
+├── ...
+└── content/aa/bb/<sha256>   file content, by checksum
+```
+
+The records are JSON lines, streamed from the server and written as they arrive, so a backup of any size needs little memory. File content is stored once however many files share it. A folder without a `manifest.json` is an unfinished backup. The end of each stream carries a count, so a stream cut short, even through a proxy, fails the backup instead of being kept.
+
+**Run it again into the same folder to refresh the backup**: it is a sync, not a fresh copy. The records, which are small, are streamed afresh and replace the old ones only when the whole backup has been taken, so a refresh that fails leaves the previous backup as it was; file content, which is most of the data, is copied only if the folder doesn't already hold it, so a nightly backup of a large file store copies just what changed. Add `--prune` to remove content from the folder that no file refers to any more, so the folder mirrors the server; without it, content for deleted files stays, which keeps older files recoverable.
+
+Backups survive a poor connection. A stream that breaks is retried with a growing pause, and a file whose transfer broke carries on from the byte it reached, so a large file isn't started again. A partial copy is also kept when the command is stopped, and running it again into the same folder carries on from what is there. Content is checked against its SHA-256 before it is kept.
+
+The records are taken as they are when the backup starts and content is copied afterwards. A file replaced during the backup may no longer have its old content, which is reported, and the command exits with an error although everything else is saved.
+
+By default everything is backed up. Passing any of the selection flags backs up only the items selected:
 
 | Flag | Backs up |
 |------|----------|
@@ -39,107 +77,82 @@ By default everything is backed up (`--all`). Passing any of the selection flags
 | `--groups`, `-g` | Groups |
 | `--roles`, `-r` | Roles |
 | `--users`, `-u` | Users |
-| `--tokens`, `-k` | User API tokens (with `--users`) |
-| `--spaces`, `-s` | Spaces (with `--users`) |
+| `--tokens`, `-k` | User API tokens |
+| `--spaces`, `-s` | Spaces |
 | `--scripts`, `-c` | Scripts |
 | `--skills`, `-i` | Skills |
 | `--commands` | Slash commands |
 | `--responses`, `-p` | Responses |
 | `--cfg-values`, `-o` | Configuration values |
 | `--audit-logs` | Audit logs |
-| `--files` | File storage buckets, sharing and file details (needs the storage directory) |
+| `--files` | File storage: buckets, files and their content |
+| `--no-content` | With file storage, the records of buckets and files but not their content |
+| `--prune` | With file storage, remove content from the folder that no file refers to |
 
 `--limit-user <username>` and `--limit-template <name>` restrict the backup to a single user or template; `--limit-user` also limits file storage to the buckets that user owns.
 
 ```shell
-# Users with their spaces and tokens only
-knot admin backup --users --spaces --tokens users.json
+# Users with their tokens and spaces only
+knot admin backup users-backup --users --tokens --spaces
 ```
 
 ### Encrypted Backups
 
-Pass a 32-byte key with `--encrypt-key` (`-e`) or `KNOT_BACKUP_ENCRYPT_KEY`. Store the key securely — it is required to restore.
+The records include password hashes and API tokens. Pass a 32-byte key with `--encrypt-key` (`-e`) or `KNOT_BACKUP_ENCRYPT_KEY` to encrypt them, in blocks so a large backup is still read a block at a time. Store the key securely: it is required to restore, and to list files.
 
 ```shell
-knot admin backup --encrypt-key "$KNOT_BACKUP_KEY" backup.enc
+knot admin backup --encrypt-key "$KNOT_BACKUP_KEY" /backups/knot-20261007
 ```
+
+File content is stored as it is, so protect the folder in any case.
 
 ---
 
-## Restoring from Backup
+## Restoring a Lost Server
+
+To rebuild a server, install knot, start a **new server**, create its first user, and restore the backup into it with that user's token. A restore, like a backup, needs the Backup Server permission, and a new server's first user receives it (see above), so there is never a time when a server accepts a restore from anyone who asks.
 
 ```shell
-knot admin restore backup.json
-knot admin restore --encrypt-key "$KNOT_BACKUP_KEY" backup.enc
+# 1. Create the first user in the new server's web UI, and give it an API token.
+#    Use a username and email that the backup doesn't contain: the backup's own
+#    users are restored over the new server's, and one that clashes is refused.
+# 2. Restore with that token:
+knot admin restore /backups/knot-20261007 --server https://new.example.com --token "$TOKEN" --encrypt-key "$KNOT_BACKUP_KEY"
+# 3. Log in as one of the restored users and delete the temporary one.
 ```
 
-Restore loads everything contained in the file; to restore a subset, create a backup with only those items. Restored records are saved by ID, overwriting matching records in the target database.
+- The users, with their API tokens and passwords, come back in the backup, so the same logins work on the new server.
+- The users are restored last, so a restore that stops part way can simply be run again with the same token.
+- Without a token, or from a user without the Backup Server permission, a restore is refused, including on a server with no users.
+- Records are saved over any the server already holds, by id. File records keep their timestamps, so a newer version of a bucket or file already on the server wins, and restoring the same backup twice changes nothing. Audit log entries are added, with new numbers, so restoring twice adds them twice.
+- File content is uploaded for the files whose content the server doesn't hold, checked against its SHA-256. `--no-content` restores the records only; `knot admin file fsck --repair --from-backup` can bring the content in later.
+- Protected template variables are encrypted with the server's `server.encrypt` key, so the new server needs the same key as the old one to read them.
+- The restore ends with a summary and a non-zero exit status if any record or content could not be restored.
+
+For a cluster, restore into the first server, then start the others and let them join: they take everything from it.
 
 ---
 
-## File Storage
+## Recovering Files
 
-When the configuration sets `server.files.path` (or `--files-path` / `KNOT_FILES_PATH` is given), a full backup includes file storage: every bucket with its owner and sharing, and every file's name, size, checksum, content type, metadata and modification time. Deleted buckets and files are left out. The backup is read from the storage directory, so it can be taken while the server is running.
-
-The backup file holds no file content. Add `--files-dir <dir>` to copy the content of every backed up file into an empty directory, laid out as `<bucket>/<key>` with each file's modification time:
+To get back files deleted or overwritten by mistake you don't need to restore anything. List what the backup holds, then restore just what you want into the running server:
 
 ```shell
-knot admin backup --config /etc/knot/knot.toml --files-dir /backups/knot-files-$DATE backup.enc
+knot admin file ls /backups/knot-20261007                       # the buckets
+knot admin file ls /backups/knot-20261007 alice--docs:reports/  # a folder
+knot admin file ls -r /backups/knot-20261007 alice--docs:       # everything below it
+
+knot admin file restore /backups/knot-20261007 alice--docs:reports/q3.pdf
+knot admin file restore -r /backups/knot-20261007 alice--docs:reports/
 ```
 
-```text
-/backups/knot-files-20261003/
-├── alice--docs/
-│   ├── readme.md
-│   └── reports/2026/q3.pdf
-├── bob--logs/
-│   └── app.log
-└── .knot-conflicts/
-    ├── index.txt
-    └── 9209d6f6...
-```
+- Buckets are named in full, `<username>--<name>`, as they were when the backup was taken. `ls` works on the folder alone, with no server.
+- Files go back to the bucket they came from, found by its id, so it works even after the owner was renamed. The bucket must still exist.
+- **Nothing is replaced without your say-so.** A file that already exists is skipped and reported; add `--overwrite` to replace it. `--dry-run` (`-n`) shows what would be restored and changes nothing.
+- `--to bucket:folder/` restores into another bucket or folder instead, for example to look at the files first.
+- The files are written as the user the command connects as, who needs the **Manage File Storage** permission to write into other users' buckets. Content type and modification time are kept, and the owner's quota is charged.
 
-A key that can't be written as a path is copied to `.knot-conflicts/<sha256>` instead, and listed with its bucket and key in `.knot-conflicts/index.txt`. This covers:
-
-- `a` and `a/b` both existing;
-- keys differing only in case, on a case-insensitive filesystem;
-- keys with an empty segment (`//`) or a backslash;
-- names longer than 255 bytes.
-
-`--files-dir` must name an empty or new directory, so use a new one for each backup. Only the backup file is encrypted by `--encrypt-key`; the copied files are written as they are, so protect the directory accordingly. A file whose content this server doesn't hold, such as one still replicating, is reported, and the backup exits with an error once the rest are copied. On a cluster, back up any one server; each holds every file.
-
-### Restoring File Storage
-
-Stop the server first. Restore opens the storage directory exclusively and refuses to run while a server is using it, before changing anything:
-
-```shell
-knot admin restore --config /etc/knot/knot.toml --files-dir /backups/knot-files-20261003 backup.enc
-```
-
-- Buckets and file details are merged into the storage directory. They keep their original timestamps, so a newer version already held, or on another server in the cluster, wins, and restoring the same backup twice changes nothing.
-- With `--files-dir`, the content of each file is read from `<bucket>/<key>`, or from `.knot-conflicts`, and checked against its SHA-256 before it is stored. Content the server already holds is skipped.
-- Without `--files-dir`, only the details are restored. A server that joins a cluster then fetches the missing content from the other servers. A standalone server lists the files but can't serve them until their content is restored.
-- If the backup holds file storage but `--files-path` isn't set, file storage is skipped with a warning and the rest is restored.
-
-To rebuild one server of a healthy cluster, you rarely need a backup: an empty storage directory fills itself from the other servers.
-
-### Recovering Deleted or Overwritten Files
-
-To get back files deleted or overwritten by mistake, copy them from the `--files-dir` export back into the bucket while the server runs; no restore is needed. A restore can't do this, as the deletion is newer than the backed up file and wins, but uploading the file again is a new change.
-
-`knot file sync` uploads only files that are missing or differ from the export, leaving the rest alone:
-
-```shell
-# See what would be uploaded, then upload it
-knot file sync /backups/knot-files-20261003/alice--docs alice--docs: --dry-run
-knot file sync /backups/knot-files-20261003/alice--docs alice--docs:
-
-# Or a single file or folder
-knot file copy /backups/knot-files-20261003/alice--docs/reports/q3.pdf alice--docs:reports/
-knot file copy -r /backups/knot-files-20261003/alice--docs/reports alice--docs:reports/
-```
-
-Files listed in `.knot-conflicts/index.txt` are named by checksum; copy each back to the bucket under the key the index gives. Don't use `--delete` here unless the bucket should match the backup exactly, as it removes files added since.
+Damaged or lost content on a server, as opposed to deleted files, is repaired with [`knot admin file fsck`](/docs/file-storage/operations/#checking-and-repairing), which fetches it from the cluster and, with `--from-backup`, from a backup folder.
 
 ---
 
@@ -155,32 +168,38 @@ Files listed in `.knot-conflicts/index.txt` are named by checksum; copy each bac
 
 ## Migration
 
-1. Create a full backup on the old server
-2. Install knot on the new server and configure its database
-3. Restore the backup with `knot admin restore`
-4. Update the configuration and verify the data
+1. Create a full backup of the old server.
+2. Install knot on the new server, configure it and start it.
+3. Restore the backup into it with `knot admin restore --server <new server>`.
+4. Update the configuration, point your clients at it and verify the data.
 
 ---
 
 ## Automated Backups
 
+Create a user with only a role holding the **Backup Server** permission, give it an API token scoped to **Backup**, and keep the token and the encryption key in the job's environment:
+
 ```bash
 #!/bin/bash
-BACKUP_DIR="/backups"
-DATE=$(date +%Y%m%d-%H%M%S)
-BACKUP_FILE="$BACKUP_DIR/knot-$DATE.enc"
+export KNOT_SERVER=https://knot.example.com
+export KNOT_TOKEN=...                # the Backup User's token
+export KNOT_BACKUP_ENCRYPT_KEY=...   # 32 bytes
 
-# Create encrypted backup (key from KNOT_BACKUP_ENCRYPT_KEY), with file content
-knot admin backup --config /etc/knot/knot.toml --files-dir "$BACKUP_DIR/knot-files-$DATE" "$BACKUP_FILE"
+# One folder, synced each night: only new file content is copied, and content
+# for deleted files is dropped
+knot admin backup --prune /backups/knot || exit 1
 
-# Remove backups older than 7 days
-find "$BACKUP_DIR" -maxdepth 1 -name "knot-*" -mtime +7 -exec rm -rf {} +
+# Keep dated copies of the small record files
+DATE=$(date +%Y%m%d)
+mkdir -p /backups/history/$DATE
+cp /backups/knot/*.jsonl /backups/knot/manifest.json /backups/history/$DATE/
+find /backups/history -mindepth 1 -maxdepth 1 -mtime +30 -exec rm -rf {} +
 
-# Upload to remote storage
-rsync -az "$BACKUP_FILE" "$BACKUP_DIR/knot-files-$DATE" backup-server:/backups/knot/
+# Copy off site: only new content moves
+rsync -az /backups/knot backup-server:/backups/
 ```
 
-Alert on a non-zero exit status or an unexpectedly small backup file.
+Alert on a non-zero exit status.
 
 ---
 
@@ -188,12 +207,14 @@ Alert on a non-zero exit status or an unexpectedly small backup file.
 
 | Symptom | Check |
 |---------|-------|
+| `No permission to back up the server` | The token's user needs a role holding the Backup Server permission. Admins don't have it unless given the Backup User role. |
+| `token scopes do not permit this endpoint` | The token is scoped; it needs the **Backup** scope. |
 | `Encrypt key must be 32 bytes long` | The `--encrypt-key` value must be exactly 32 bytes. |
-| `Error unmarshalling backup file` | The file is encrypted and no key, or the wrong key, was given — or the file is corrupt. |
-| `Error loading backup file` | The path is wrong or the file isn't readable. |
-| Database connection errors | Run with the server's configuration file (`--config`) so the command uses the same database settings. |
-| `No encryption key set` | Protected template variables need `server.encrypt` set in the configuration used by the command. |
-| `backing up file storage needs --files-path` | `--files` or `--files-dir` was given without the storage directory; use the server's configuration or pass `--files-path`. |
-| `the files directory ... must be empty` | `--files-dir` must be a new or empty directory. |
-| `files have no content on this server` | Some files are still replicating to this server; back up again, or from another server. |
-| `file storage in ... is in use; stop the server before restoring` | Stop the server using the storage directory, then restore. |
+| `the backup is encrypted: give the key` | The backup was made with `--encrypt-key`; give the same key to restore or list it. |
+| `cannot decrypt the backup: wrong key, or the file is damaged` | The key is wrong, or the record file was changed or truncated. |
+| `holds no complete backup: it has no manifest.json` | The backup didn't finish. Run it again into the same folder. |
+| `is not empty and holds no backup` | `backup` needs a new or empty folder, or one that holds an earlier backup. |
+| `the backup is complete except for the content of N files` | Those files were replaced or deleted during the backup, or no server holds their content; run `knot admin file fsck` on the server, then back up again. |
+| `the backup lists N records, M were read` | A record file is damaged or was truncated. |
+| `No permission to restore the server` (401/403) | The server already has users: restore needs a token with the Backup Server permission. |
+| `the bucket ... no longer exists on the server` | `file restore` needs the bucket; create it, or restore into another with `--to`. |

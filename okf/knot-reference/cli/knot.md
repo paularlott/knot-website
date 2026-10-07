@@ -425,7 +425,7 @@ knot file bucket transfer <name> <user> [--force]
 
 `ls` is also `list`, `copy` is also `cp` and `rm` is also `delete`.
 
-- `copy` goes from the sources to the last argument, in the direction the paths imply: local to bucket, bucket to local, or bucket to bucket (on the server, moving no data). `-r` copies directories and bucket folders; their contents go into the destination folder. Several sources, a folder or a wildcard need a destination folder: a bucket path ending in `/` (or `bucket:`), or a local directory. A wildcard (`*`, `?`, `[...]`, and `**` for any number of folders) in a bucket path is quoted: `'bucket:logs/*.log'`. `-` is stdin as the source or stdout as the destination. Files at the destination are replaced. See [Working with Files](../../knot-docs/file-storage.md#working-with-files) for the full rules.
+- `copy` goes from the sources to the last argument, in the direction the paths imply: local to bucket, bucket to local, or bucket to bucket (on the server, moving no data). `-r` copies directories and bucket folders; their contents go into the destination folder. Several sources, a folder or a wildcard need a destination folder: a bucket path ending in `/` (or `bucket:`), or a local directory. A wildcard (`*`, `?`, `[...]`, and `**` for any number of folders) in a bucket path is quoted: `'bucket:logs/*.log'`. `-` is stdin as the source or stdout as the destination. Files at the destination are replaced. See [Working with Files](../../knot-docs/file-storage/using-files.md#working-with-files) for the full rules.
 - Modification times are recorded on upload and restored on download, and kept when copying between buckets.
 - `sync` makes the destination match the source, either side being a local directory or a bucket folder, so it uploads, downloads or copies between buckets as the paths imply. It transfers only files whose size or SHA-256 differ, keeping modification times; `--delete` removes destination files missing from the source, `-n`/`--dry-run` shows the changes without making them.
 - `ls` with no path lists your buckets; `--all` lists every bucket for file storage managers. A path may be a folder (listed one level, or everything below with `-r`), a file or a wildcard.
@@ -557,13 +557,19 @@ knot ssh-config remove
 Server administration commands.
 
 ```shell
-knot admin backup [--encrypt-key KEY] [--files-dir DIR] <backup-file>
-knot admin restore [--encrypt-key KEY] [--files-dir DIR] <backup-file>
+knot admin backup [selection flags] [--encrypt-key KEY] [--no-content] [--limit-user USER] <folder>
+knot admin restore [--encrypt-key KEY] [--no-content] <folder>
+knot admin file ls [-r] [--encrypt-key KEY] <folder> [bucket:path]
+knot admin file restore [-r] [--overwrite] [-n] [--to bucket:path] [--encrypt-key KEY] <folder> <bucket:path>
+knot admin file fsck [--repair] [--deep] [--from-backup FOLDER] [--json]
 knot admin rename-zone <old> <new>
 knot admin reset-totp <email-address>
 knot admin set-password <email-address> <password>
 knot admin refresh-base-images [--local-only]
+knot admin file fsck [--repair] [--deep] [--server URL --token TOKEN] [--json]
 ```
+
+`backup` and `restore` stream a running server's data to and from a folder through its API, so they need a token with the Backup Server permission; to restore into a new server, create its first user and use that user's token. See [Backup and Restore](../../knot-docs/best-practices/backup-restore.md). The `admin` commands that talk to a server choose it with `--server` and `--token`, or `--alias` for one in the config file, like other `knot` commands. `file ls` and `file restore` list and restore files from a backup folder. `file fsck` checks [file storage](../../knot-docs/file-storage/operations.md#checking-and-repairing) for damage and, with `--repair`, fixes it.
 
 `refresh-base-images` forces every server in the cluster to fetch the base image manifest from its update URL immediately (`--local-only` limits the refresh to the local server).
 
