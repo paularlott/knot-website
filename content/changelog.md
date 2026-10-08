@@ -18,6 +18,7 @@ navSection: docs
 - Template export and import now require the Manage Templates permission and moved to `knot admin template export|import`; `knot template list` remains available to all users ([docs](../docs/templates/managing/))
 - Start API tokens with `tk_`, so none can begin with `-`; existing tokens keep working
 - Limit usernames of new users to 30 characters ending in a letter or digit
+- Use the chat `provider` setting on its own, with `base_url` defaulting to the provider's API; `type` with `base_url` is for other OpenAI-compatible servers, and takes precedence ([docs](../docs/ai/ai-assistant/))
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
@@ -26,6 +27,7 @@ navSection: docs
 - Add the Backup Server permission and a `backup` API token scope; a new server creates a Backup User role and gives it, with Admin, to its first user
 - Improve usage visualization for the Usage and Users pages
 - Add the buckets each user can reach to the Users access overview {{< pro-badge >}}
+- Add Grok (xAI) support: set the chat `provider` to `grok`, or use `provider=ai.GROK` in scripts ([docs](../docs/ai/ai-assistant/))
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
@@ -34,6 +36,7 @@ navSection: docs
 - Fix `knot admin` ignoring `server.redis.hosts`
 - Fix creating templates through the API without an idle timeout unit
 - Fix the Users page showing no users when one was created without roles or groups
+- Fix the chat ignoring `provider` and never sending `reasoning_effort` to the model
 {{< /changelog-item >}}
 
 ---

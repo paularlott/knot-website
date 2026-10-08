@@ -19,10 +19,7 @@ To enable the chat interface, add the following configuration to the `knot.toml`
 ```toml
 [server.chat]
 enabled = true
-type = "openai"                              # API protocol: openai, anthropic, google, ollama
-provider = "ollama"                          # provider preset: openai, claude, gemini, ollama, mistral, zai
-base_url = "http://localhost:8085/v1/"
-api_key = ""
+provider = "ollama"                            # openai, claude, gemini, ollama, mistral, zai or grok
 model = "Qwen3-4B-Thinking-2507-GGUF:Q4_0"
 max_tokens = 4096
 temperature = 0.7
@@ -31,12 +28,22 @@ ui_style = "avatar"
 openai_endpoints = true
 ```
 
+For any other OpenAI-compatible server, such as a local LM Studio or llama.cpp, set `type` and `base_url` instead of `provider`:
+
+```toml
+[server.chat]
+enabled = true
+type = "openai"
+base_url = "http://localhost:8085/v1/"
+model = "Qwen3-4B-Thinking-2507-GGUF:Q4_0"
+```
+
 ### Configuration Options
 
 - **`enabled`**: Must be set to `true` to activate the web assistant.
-- **`type`**: The AI API protocol used to talk to the LLM — `openai` (default), `anthropic`, `google`, or `ollama`.
-- **`provider`**: A provider preset that fills in sensible defaults — `openai`, `claude`, `gemini`, `ollama`, `mistral`, or `zai`.
-- **`base_url`**: The address of the server hosting the LLM. (`openai_base_url` is a deprecated alias.)
+- **`provider`**: The AI provider — `openai`, `claude`, `gemini`, `ollama`, `mistral`, `zai`, or `grok`. On its own it's all that's needed: `base_url` defaults to the provider's API (e.g. `http://127.0.0.1:11434/v1` for Ollama).
+- **`type`**: The API protocol of the server at `base_url` — `openai`, `anthropic`, `google`, `ollama`, or `xai` — for servers that aren't a provider's own API. Takes precedence over `provider`. Without a `base_url`, `openai` and `ollama` assume a server at `http://127.0.0.1:11434/v1`, which is also the default when neither `provider` nor `type` is set.
+- **`base_url`**: The address of the server hosting the LLM; overrides the provider's default. (`openai_base_url` is a deprecated alias.)
 - **`api_key`**: The API key required to authenticate with the LLM server. (`openai_api_key` is a deprecated alias.)
 - **`model`**: The model to be used. The assistant's performance depends on the selected model.
 - **`max_tokens`**: The maximum number of tokens the model may generate per response.
