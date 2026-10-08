@@ -169,12 +169,12 @@ Editing a template is similar to creating one:
 
 ## Exporting and Importing Templates
 
-Templates can be exported to a portable YAML format for version control, backup, or transfer between knot instances.
+Templates can be exported to a portable YAML format for version control, backup, or transfer between knot instances. Export and import are admin functions: they need a token with the **Manage Templates** permission, and the commands live under `knot admin template`. Any user can still see what is available with `knot template list`.
 
 ### Export
 
 ```bash
-knot template export "Ubuntu Desktop" > ubuntu.yaml
+knot admin template export "Ubuntu Desktop" > ubuntu.yaml
 ```
 
 The YAML file contains the full template definition: metadata, job spec (HCL/YAML), volume definitions, schedule, custom fields, feature flags, health check configuration, and space jobs (including port definitions). Template variables (`${{ .X }}`) are preserved verbatim. Scripts are referenced by name (not UUID) for portability.
@@ -183,13 +183,13 @@ The YAML file contains the full template definition: metadata, job spec (HCL/YAM
 
 ```bash
 # From a file
-knot template import --file ubuntu.yaml
+knot admin template import --file ubuntu.yaml
 
 # From stdin
-cat ubuntu.yaml | knot template import
+cat ubuntu.yaml | knot admin template import
 
 # With a name override
-knot template import --file ubuntu.yaml --name "Ubuntu Dev"
+knot admin template import --file ubuntu.yaml --name "Ubuntu Dev"
 ```
 
 The import creates a new template on the server. Script names are resolved to IDs automatically — if a script doesn't exist on the target server, it's skipped with a warning.

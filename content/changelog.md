@@ -15,6 +15,7 @@ navSection: docs
 
 {{< changelog-item "changed" >}}
 - **Breaking:** back up through the API into a folder, and restore into a running new server; backup files made by earlier versions can't be restored ([docs](../docs/best-practices/backup-restore/))
+- Template export and import now require the Manage Templates permission and moved to `knot admin template export|import`; `knot template list` remains available to all users ([docs](../docs/templates/managing/))
 - Start API tokens with `tk_`, so none can begin with `-`; existing tokens keep working
 - Limit usernames of new users to 30 characters ending in a letter or digit
 {{< /changelog-item >}}
