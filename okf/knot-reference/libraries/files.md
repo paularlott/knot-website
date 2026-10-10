@@ -42,7 +42,7 @@ A script holds a file's content in memory, so one read or write is limited to 64
 | `read_file(bucket, key)` | Read a file's content as bytes |
 | `read_text(bucket, key)` | Read a file's content as UTF-8 text |
 | `write_file(bucket, key, data, content_type="")` | Write a file, replacing any file with that key |
-| `delete_file(bucket, key)` | Delete a file |
+| `delete_file(bucket, key, if_match="")` | Delete a file, optionally only if unchanged |
 | `copy_file(source_bucket, source_key, dest_bucket, dest_key)` | Copy a file on the server, within or between buckets |
 | `file_exists(bucket, key)` | Check whether a file exists |
 | `list_buckets(all=False)` | List the buckets you own or that are shared with you |
@@ -126,9 +126,22 @@ Raises if you may not write to the bucket, the owner's quota would be exceeded, 
 
 ---
 
-### delete_file(bucket, key)
+### delete_file(bucket, key, if_match="")
 
-**Returns:** `bool` - `True`. Raises if the file does not exist or you may not delete it.
+Delete a file.
+
+**Parameters:**
+- `bucket` (string): Bucket name
+- `key` (string): The file's key
+- `if_match` (string, optional): Only delete the file if it is still this version — the `etag` from `list_files`, `list_changes`, `write_file` or `copy_file`. A file changed since is left alone and an exception raised (HTTP 412), so a script never deletes a change it didn't see.
+
+**Returns:** `bool` - `True`. Raises if the file does not exist, has changed since `if_match`, or you may not delete it.
+
+```python
+info = files.write_file("work", "job.lock", "mine")
+# ... later, release the lock only if nobody replaced it meanwhile
+files.delete_file("work", "job.lock", if_match=info["etag"])
+```
 
 ---
 

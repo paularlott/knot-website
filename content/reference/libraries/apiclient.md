@@ -32,7 +32,7 @@ For standalone use outside knot, configure it explicitly or set environment vari
 | `get(path, params=None)` | Make a GET request |
 | `post(path, body=None)` | Make a POST request |
 | `put(path, body=None)` | Make a PUT request |
-| `delete(path)` | Make a DELETE request |
+| `delete(path, headers=None)` | Make a DELETE request, with any extra request headers (such as `If-Match`) |
 | `get_bytes(path)` | Make a GET request, returning the response body as bytes (file content) |
 | `put_bytes(path, data, content_type="")` | Make a PUT request with a string or bytes body (file content) |
 

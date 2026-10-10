@@ -104,7 +104,7 @@ knot file sync --two-way --watch ./notes notes:        # changes either side, ma
 knot file sync --two-way --watch --delete ./notes notes:  # deletions are passed across too
 ```
 
-- **Conflicts.** A file changed on both sides since they last matched is kept both ways: the bucket's version keeps the name and the local one is renamed beside it, on both sides, as `name.conflict-<host>-<time>.ext`. Nothing is ever silently overwritten; an upload is only made against the version of the file it was planned against.
+- **Conflicts.** A file changed on both sides since they last matched is kept both ways: the bucket's version keeps the name and the local one is renamed beside it, on both sides, as `name.conflict-<host>-<time>.ext`. Nothing is ever silently overwritten or deleted: an upload or a deletion in the bucket is only made against the version of the file it was planned against, so a file changed there meanwhile is left for the next pass, where the change wins.
 - **Deletions.** Without `--delete` a file deleted on one side is put back from the other. With it the deletion is made on the other side, unless the file was changed there since, in which case the change wins and the file comes back.
 - **State.** The sync remembers what the two sides last agreed on, so it can tell a deletion from a new file. The state is kept in your configuration directory (`~/.config/knot/sync` on Linux, `~/Library/Application Support/knot/sync` on macOS), or where `--state-file` says. The first run of a pair, with no state, deletes nothing: files on one side only are copied to the other and files that differ are kept both ways.
 
