@@ -1,6 +1,6 @@
 ---
 title: Storage Systems
-description: Choose between BadgerDB, MySQL/MariaDB, and Redis/Valkey for data storage.
+description: Choose between BadgerDB, MySQL/MariaDB, PostgreSQL, and Redis/Valkey for data storage.
 type: Overview
 tags: [storage, configuration]
 weight: 10
@@ -18,7 +18,15 @@ The Knot server supports multiple storage systems for managing data. Each storag
 
 ---
 
-### 2. BadgerDB
+### 2. PostgreSQL
+
+- **Description**: Requires a PostgreSQL server. Stores sessions as well as data, so users stay signed in when a server restarts without Redis / Valkey.
+
+- **Use Case**: Suitable for production environments that already run PostgreSQL, or want an external database without a separate session store.
+
+---
+
+### 3. BadgerDB
 
 - **Description**: An embedded database with no external dependencies. Data is stored locally, making it a simple and lightweight option that's production-ready.
 
@@ -26,9 +34,9 @@ The Knot server supports multiple storage systems for managing data. Each storag
 
 ---
 
-### 3. Redis / Valkey
+### 4. Redis / Valkey
 
-- **Description**: Requires a Redis or Valkey server or cluster. Can be used as the primary storage system or in combination with another storage system (e.g., MySQL). When used alongside another system, Redis / Valkey is utilized exclusively for session data.
+- **Description**: Requires a Redis or Valkey server or cluster. Can be used as the primary storage system or in combination with another storage system (e.g., MySQL). When used alongside another system, Redis / Valkey is utilized exclusively for session data, including with PostgreSQL.
 
 - **Use Case**: Ideal for setups requiring fast, in-memory data storage or session management. High availability and clustering options make it suitable for distributed environments.
 
@@ -37,5 +45,6 @@ The Knot server supports multiple storage systems for managing data. Each storag
 Each storage system offers unique benefits, allowing you to choose the one that best fits your deployment needs. For detailed configuration instructions, refer to the respective guides:
 
 - [MySQL / MariaDB Configuration](mysql)
+- [PostgreSQL Configuration](postgres)
 - [BadgerDB Configuration](badgerdb)
 - [Redis / Valkey Configuration](redis)

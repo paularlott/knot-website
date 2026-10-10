@@ -9,7 +9,7 @@ weight: 60
 The Knot server can be configured to use Redis / Valkey as the database storage. It supports both single-server mode and high-availability cluster setups.
 
 {{< tip >}}
-Redis / Valkey can be enabled alongside another storage system (e.g., MySQL). In such cases, Redis / Valkey is used exclusively for session data.
+Redis / Valkey can be enabled alongside another storage system (e.g., MySQL or PostgreSQL). In such cases, Redis / Valkey is used exclusively for session data. PostgreSQL can store sessions itself, so it doesn't need Redis / Valkey; enabling it moves the sessions to Redis / Valkey.
 {{< /tip >}}
 
 ---

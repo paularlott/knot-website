@@ -41,7 +41,7 @@ Best for:
 - Multiple geographic locations
 
 Use:
-- BadgerDB, MySQL/MariaDB, or Redis for storage
+- BadgerDB, MySQL/MariaDB, PostgreSQL, or Redis for storage
 - Nomad for container orchestration (optional - can use Local Containers)
 - Multiple servers with cluster configuration
 
@@ -75,6 +75,11 @@ Use:
 - Supports large-scale deployments
 - Good for existing database infrastructure
 
+**PostgreSQL**
+- External database
+- Stores sessions too, so they survive a restart without Redis
+- Good for existing PostgreSQL infrastructure
+
 **Redis/Valkey**
 - In-memory database
 - Highest performance
@@ -86,7 +91,7 @@ Use:
 ## Configuration Topics
 
 ### [Storage Systems](configuration/storage-systems.md)
-Configure BadgerDB, MySQL/MariaDB, or Redis/Valkey for data storage.
+Configure BadgerDB, MySQL/MariaDB, PostgreSQL, or Redis/Valkey for data storage.
 
 ### [Cluster Mode](configuration/cluster-mode.md)
 Set up multiple servers for high availability and geographic distribution.

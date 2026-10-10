@@ -42,10 +42,10 @@ The wizard walks through ten steps, starting with the server settings:
 Choose **Single Server**, **Cluster**, or **Leaf Node**. This sets sensible defaults for the remaining steps (storage backend, platforms, DNS).
 
 ### 2. Database
-Pick **BadgerDB** (embedded, no external dependencies), **MySQL / MariaDB** (external, proven at scale), or **Redis / Valkey** (in-memory, highest performance). When the primary database is BadgerDB or MySQL, you can optionally enable **Redis for session storage** so sessions survive server restarts. When Redis is the primary database, sessions go to Redis automatically.
+Pick **BadgerDB** (embedded, no external dependencies), **MySQL / MariaDB** (external, proven at scale), **PostgreSQL** (external, stores sessions too), or **Redis / Valkey** (in-memory, highest performance). PostgreSQL keeps sessions over a server restart by itself. When the primary database is BadgerDB or MySQL, you can optionally enable **Redis for session storage** so sessions survive server restarts. When Redis is the primary database, sessions go to Redis automatically.
 
 {{< tip "warning" >}}
-Never use the same database (same MySQL database name or Redis DB number) for multiple knot instances — each server must have its own.
+Never use the same database (same MySQL or PostgreSQL database name, or Redis DB number) for multiple knot instances — each server must have its own.
 {{< /tip >}}
 
 ### 3. Server Address

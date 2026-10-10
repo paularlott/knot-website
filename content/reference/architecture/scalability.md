@@ -41,6 +41,10 @@ Add more servers to cluster:
 - Cluster configurations
 - Read replicas for queries
 
+**PostgreSQL**:
+- Streaming replication
+- High availability with a failover manager such as Patroni
+
 **Redis/Valkey**:
 - Cluster mode
 - Sentinel for HA

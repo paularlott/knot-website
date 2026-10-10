@@ -19,7 +19,7 @@ The knot server provides the web interface, API, and manages all resources. It s
 The agent runs inside containers and communicates with the server. It handles SSH, terminal access, and space lifecycle commands.
 
 **Database**
-Stores users, templates, spaces, and configuration. Options: BadgerDB, MySQL/MariaDB, or Redis/Valkey.
+Stores users, templates, spaces, and configuration. Options: BadgerDB, MySQL/MariaDB, PostgreSQL, or Redis/Valkey.
 
 **Container Runtime**
 Executes spaces. Options include: Docker, Podman, Nomad, or Apple Container.

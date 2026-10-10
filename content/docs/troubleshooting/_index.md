@@ -24,7 +24,7 @@ knot server 2>&1 | tail -5
 |---|---|---|
 | `address already in use` | Port 3000 (or your `listen`) is taken | `lsof -i :3000` and stop the other process, or change `--listen` |
 | `an encryption key is required` | No `server.encrypt` set | `knot genkey` and set it in the config |
-| `connection refused` to MySQL/Redis | Database down or wrong credentials | See [Database Connection Errors](#database-connection-errors) |
+| `connection refused` to MySQL/PostgreSQL/Redis | Database down or wrong credentials | See [Database Connection Errors](#database-connection-errors) |
 | `invalid license key` | Pro license missing/expired | Server continues on the OSS edition — update `server.license.key` if Pro is expected |
 
 ### Database Connection Errors
@@ -33,6 +33,7 @@ Test reachability before blaming Knot:
 
 ```shell
 mysql -h <host> -u <user> -p -e "SELECT 1"        # MySQL / MariaDB
+psql -h <host> -U <user> -d <database> -c "SELECT 1"  # PostgreSQL
 redis-cli -h <host> -p 6379 ping                  # Redis / Valkey
 ```
 

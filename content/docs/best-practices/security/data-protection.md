@@ -54,6 +54,13 @@ key = "VF9hmdXZyzNF3rcP6M0P"
 - Restrict database access to knot servers only
 - Enable encryption at rest
 
+**PostgreSQL**:
+- Use strong database passwords
+- Create dedicated database user for knot
+- Grant only necessary permissions
+- Set `sslmode` to `verify-full` so connections use TLS and check the server's certificate
+- Restrict database access to knot servers only
+
 **Redis/Valkey**:
 - Set strong Redis password
 - Use Redis ACLs for fine-grained access control

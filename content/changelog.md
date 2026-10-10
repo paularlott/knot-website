@@ -28,6 +28,7 @@ navSection: docs
 - Improve usage visualization for the Usage and Users pages
 - Add the buckets each user can reach to the Users access overview {{< pro-badge >}}
 - Add Grok (xAI) support: set the chat `provider` to `grok`, or use `provider=ai.GROK` in scripts ([docs](../docs/ai/ai-assistant/))
+- Add PostgreSQL as a database; it stores sessions too, so they survive a restart without Redis / Valkey, which still takes the sessions when enabled ([docs](../docs/configuration/storage-systems/postgres/))
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
