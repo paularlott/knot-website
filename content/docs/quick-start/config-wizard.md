@@ -34,14 +34,19 @@ If a config file already exists at the target path, the wizard still runs — th
 
 ## What the Wizard Covers
 
-The wizard walks through ten steps, starting with the server settings:
-
-{{< zoom-picture src="/docs/quick-start/images/config-wizard-settings.webp" caption="Wizard: Server Settings" >}}
+The wizard walks through ten steps.
 
 ### 1. Deployment Type
-Choose **Single Server**, **Cluster**, or **Leaf Node**. This sets sensible defaults for the remaining steps (storage backend, platforms, DNS).
+Choose **Single Server**, **Cluster**, or **Desktop / Leaf Mode**. This sets the defaults for the remaining steps, which you can change as you go:
+
+- **Single Server**: MySQL / MariaDB with Redis for sessions, local Docker and Podman, the system nameservers, and failed-login blocking.
+- **Cluster**: MySQL / MariaDB with Redis for sessions, Nomad on `http://127.0.0.1:4646`, custom nameservers (for Consul SRV lookups, etc.), failed-login blocking, and the cluster settings.
+- **Desktop / Leaf Mode**: BadgerDB, local Docker and Podman, the web UI on `http://127.0.0.1:3000`, the built-in DNS server answering `knot.internal`, and an optional origin server to link to.
 
 ### 2. Database
+
+{{< zoom-picture src="/docs/quick-start/images/config-wizard-settings.webp" caption="Wizard: Database" >}}
+
 Pick **BadgerDB** (embedded, no external dependencies), **MySQL / MariaDB** (external, proven at scale), **PostgreSQL** (external, stores sessions too), or **Redis / Valkey** (in-memory, highest performance). PostgreSQL keeps sessions over a server restart by itself. When the primary database is BadgerDB or MySQL, you can optionally enable **Redis for session storage** so sessions survive server restarts. When Redis is the primary database, sessions go to Redis automatically.
 
 {{< tip "warning" >}}
@@ -70,7 +75,7 @@ Enable AI/Chat (OpenAI, Anthropic, Google, Ollama) and MCP server.
 Configure external log output (VictoriaLogs, Loki, Elasticsearch or Graylog endpoint, with optional basic auth or bearer token credentials) and audit log routing/retention. The Pro wizard additionally configures space log forwarding {{< pro-badge >}}, the on-disk log spool {{< pro-badge >}} and audit anomaly detection {{< pro-badge >}} (per-rule thresholds and windows — failed logins, successes after failure bursts, blocked attempts, admin grants, bulk deletions, distinct login IPs, and more). The external logging service is the long-term log store — the internal audit store expires entries after the retention period. See [Logging Configuration](/docs/configuration/logging/).
 
 ### 10. Review
-The generated `knot.toml` is shown in an embedded TOML editor with syntax highlighting. Edit anything directly, then click **write to disk** or **copy to clipboard**.
+The generated `knot.toml` is shown in an embedded TOML editor with syntax highlighting. Edit anything directly, then click **Write to Disk** or **Copy to Clipboard**.
 
 ---
 
