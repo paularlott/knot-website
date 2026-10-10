@@ -91,6 +91,40 @@ knot file sync ./site configs:site --delete        # also remove files at the de
 knot file sync configs:site ./site -n              # dry run: show what would change
 ```
 
-Modification times are kept in every direction. `--delete` removes files at the destination that aren't in the source. Between buckets only the files whose content differs are copied, with no data transferred, and folders in the same bucket that overlap are refused. `sync` takes folders, not wildcards.
+Modification times are kept in every direction. `--delete` removes files at the destination that aren't in the source. Between buckets only the files whose content differs are copied, with no data transferred, and folders in the same bucket that overlap are refused. `sync` takes folders, not wildcards. A file renamed or copied locally isn't uploaded again when the bucket already has its content: it is copied on the server, or, if the old file was deleted within the last hour, its content is reused.
+
+#### Keeping a directory in sync
+
+`--watch` keeps the sync running after the first pass and makes each change as it happens, until you stop it with Ctrl+C. Local changes are seen as they are made; the bucket's arrive through the server's live updates, so a file written from the web interface, another machine or S3 reaches the directory within a second or so. If the live updates are unavailable the bucket is checked every 15 seconds instead, and both sides are looked at in full every few minutes as a safety net. Each file uploaded, downloaded or deleted is logged as it happens; `knot --log-level debug file sync ...` also logs each pass and the state of the live updates, and `--log-level warn` only conflicts and problems.
+
+```shell
+knot file sync ./site configs:site --watch --delete   # publish as you edit
+knot file sync configs:site ./site --watch --delete   # follow a bucket folder
+```
+
+#### Two-way sync
+
+`--two-way` syncs a directory and a bucket folder in both directions: a change on either side is made on the other. Add `--watch` to keep them in step continually, for example to work on the same files from your desktop and a space, or from two machines:
+
+```shell
+knot file sync --two-way --watch ./notes notes:        # changes either side, made on the other
+knot file sync --two-way --watch --delete ./notes notes:  # deletions are passed across too
+```
+
+- **Conflicts.** A file changed on both sides since they last matched is kept both ways: the bucket's version keeps the name and the local one is renamed beside it, on both sides, as `name.conflict-<host>-<time>.ext`. Nothing is ever silently overwritten; an upload is only made against the version of the file it was planned against.
+- **Deletions.** Without `--delete` a file deleted on one side is put back from the other. With it the deletion is made on the other side, unless the file was changed there since, in which case the change wins and the file comes back.
+- **State.** The sync remembers what the two sides last agreed on, so it can tell a deletion from a new file. The state is kept in your configuration directory (`~/.config/knot/sync` on Linux, `~/Library/Application Support/knot/sync` on macOS), or where `--state-file` says. The first run of a pair, with no state, deletes nothing: files on one side only are copied to the other and files that differ are kept both ways.
+
+#### What is left out
+
+`--exclude` (`-x`, repeatable) leaves out paths matching a pattern, such as `node_modules/` (a trailing `/` matches folders only) or `*.log`; patterns match a file's name or its path, and excluding a folder excludes everything in it. Excluded files are neither copied nor deleted on either side.
+
+A continual (`--watch`) or two-way sync also leaves out version control folders (`.git`, `.hg`, `.svn`) and the scratch files editors and the system write beside your files (`.DS_Store`, `Thumbs.db`, swap and backup files such as `.*.swp` and `*~`). Give `--no-default-excludes` to sync them too. A single one-way sync copies everything not excluded, `.git` included.
+
+#### Safety
+
+- **Mass deletions.** A pass that would delete more than half of a side's files (when that's more than 10), or everything because the other side came up empty — a directory not mounted, a share withdrawn — is refused, and a single sync then changes nothing. While watching, the deletions are held back with a warning and everything else carries on. Give `--allow-mass-delete` when you do mean it.
+- **Case.** Bucket names are case-sensitive. On a file system that ignores case (macOS and Windows by default) two bucket files whose names differ only in case can't both be stored, so the second is skipped with a warning rather than written over the first, and a local file spelled differently from the bucket's is treated as the same file.
+- `--dry-run` shows what a single pass would do; it can't be combined with `--watch`.
 
 **Which server.** Inside a space the commands discover the space's server and credentials through the agent — nothing to configure, so a space startup script can pull its configuration with `knot file copy`. On the desktop they use the connection saved by `knot connect`, choosing the server with `--alias` (default `default`). An explicit `--server`/`--token` pair overrides both, as with other knot commands.

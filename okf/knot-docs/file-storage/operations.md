@@ -43,6 +43,7 @@ The Users page shows each user's file storage and bucket use in the **Files** co
 - A server that learns of content it doesn't hold streams it over a direct connection from the server that wrote it, or any other server, and verifies the checksum. Content is never gossiped. A transfer that breaks resumes from where it stopped. A read that arrives before the content does fetches it on demand.
 - Every 30 seconds each server reconciles with a random peer, and a server that rejoins reconciles straight away, so missed updates and outages heal on their own. Each bucket's records are summarised in 64 parts, and only the records of parts that differ are exchanged. A few changes in a bucket of a million files therefore move a few thousand records, not the whole bucket.
 - Deletes are remembered for 3 days, the same as deleted records elsewhere in knot, so a server returning from an outage cannot bring deleted files back. A server offline for longer than that should have its storage directory cleared before rejoining, as it should for the rest of its data.
+- Each server numbers the changes it applies to a bucket, its own and those gossiped from others, so a client can follow a bucket by asking for what changed since it last looked (`/api/files/changes/{bucket}`, used by `knot file sync --watch` and the VS Code extension) instead of listing it again. The numbering belongs to that server: a client that moves to another server, or follows one that stopped uncleanly (it renumbers on start-up), is told to read the bucket again in full.
 
 ## Backups
 
@@ -73,7 +74,7 @@ A server notices lost content only when a file is read or when fsck runs, so run
 
 Nothing is left behind on disk:
 
-- Deleting or overwriting a file removes its content as soon as no file references it (identical content shared by several files stays until the last goes).
+- Deleting or overwriting a file removes its content an hour after no file references it (identical content shared by several files stays until the last goes). For that hour the bucket can take the content back without it being sent again, which is how a renamed file, or a change undone, is synced without uploading it. Content held this way doesn't count against quotas.
 - Deleting a bucket, or a user and with them their buckets, removes its files' content and records straight away on every server.
 - An hourly sweep, also run shortly after start-up, removes anything that slipped through: content no file references (for example after a crash between writing and recording it), temporary files of uploads and fetches abandoned for an hour, multipart uploads older than 7 days or whose bucket was deleted, and empty directories.
 - Deletion records are removed once they are 3 days old, and the space of removed small files is reclaimed in the background.

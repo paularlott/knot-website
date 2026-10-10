@@ -29,6 +29,7 @@ A script holds a file's content in memory, so one read or write is limited to 64
 | Function | Description |
 |----------|-------------|
 | `list_files(bucket, prefix="", recursive=False)` | List the files in a bucket |
+| `list_changes(bucket, prefix="", cursor="")` | List what changed in a bucket since a cursor |
 | `read_file(bucket, key)` | Read a file's content as bytes |
 | `read_text(bucket, key)` | Read a file's content as UTF-8 text |
 | `write_file(bucket, key, data, content_type="")` | Write a file, replacing any file with that key |
@@ -60,6 +61,33 @@ List the files in a bucket.
 - `folders` (list): Folder prefixes, each ending in `/` (empty when `recursive`)
 
 Every page of a large bucket is fetched.
+
+---
+
+### list_changes(bucket, prefix="", cursor="")
+
+List what changed in a bucket since a cursor, to follow a bucket without listing it again.
+
+**Parameters:**
+- `bucket` (string): Bucket name
+- `prefix` (string, optional): Only keys starting with this. End it with `/` for a folder.
+- `cursor` (string, optional): The cursor from the last call. Without one every file is returned; `"now"` returns no files, only a cursor to follow the bucket from now on.
+
+**Returns:** `dict` containing:
+- `changes` (list): Dicts with `key`, `size`, `etag`, `sha256`, `content_type`, `modified_at` and `deleted`. Each file changed since the cursor appears once, as it is now; a deleted file has `deleted` set and only its `key` and `modified_at`.
+- `cursor` (string): Pass it next time
+- `reset` (bool): `True` when the cursor couldn't be followed — the server renumbered its changes after an unclean stop, or the cursor came from another server. `changes` is then empty: start again without a cursor.
+
+```python
+import knot.files as files
+
+state = files.list_changes("configs", cursor="now")
+# ... later ...
+step = files.list_changes("configs", cursor=state["cursor"])
+for f in step["changes"]:
+    print(("deleted " if f["deleted"] else "changed ") + f["key"])
+state = step
+```
 
 ---
 
