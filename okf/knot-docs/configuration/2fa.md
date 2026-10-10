@@ -38,12 +38,16 @@ After making these changes, restart Knot to apply the configuration.
 
 ## First-Time Login with 2FA
 
-Once 2FA is enabled, the login screen will include an additional entry box for the **One Time Password (OTP)**.
+Once 2FA is enabled, the login screen includes an extra **Authenticator code** field.
 
-1. On the **first login**, enter your **Email** and **Password**, leaving the **One Time Password** field blank.
-2. Click **Sign In**. A new one-time password will be generated, and a QR code will be displayed on the screen.
-3. Scan the QR code or record the secret within your authenticator application.
-4. Click **I Have Recorded The Code** to complete the setup.
+1. On the **first login**, enter your **Email** and **Password** and leave the **Authenticator code** field blank.
+2. Click **Sign In**. A new secret is generated and shown with a QR code.
+3. Scan the QR code, or enter the secret by hand, in your authenticator application.
+4. Enter the 6-digit code your authenticator application shows and click **Verify and continue**.
+
+If the code doesn't match, check that the secret in your app is the one shown on screen, wait for the next code and try again; the secret stays the same, so you can scan the QR code again. Repeated wrong codes count towards the same rate limit as failed logins and are recorded in the audit log.
+
+You can view the secret again later from your profile page.
 
 ---
 
@@ -53,7 +57,7 @@ For all future logins, complete all three fields:
 
 - **Email**
 - **Password**
-- **One Time Password**
+- **Authenticator code**
 
 If all three fields match, you will be successfully logged into the system.
 

@@ -30,7 +30,7 @@ enabled = true
 issuer = "Knot"
 ```
 
-Users configure 2FA in their profile using authenticator apps.
+Users set up their authenticator app at their first sign-in after 2FA is enabled, entering a code from the app to confirm it works. The secret can be viewed again from their profile.
 
 **When to require 2FA**:
 - All admin accounts (always)
