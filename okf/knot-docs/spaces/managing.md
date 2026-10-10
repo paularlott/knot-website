@@ -40,6 +40,8 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
 
 
 
+
+
 3. Click `Create Space` to finalize the process.
 
 

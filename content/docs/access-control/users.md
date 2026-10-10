@@ -17,7 +17,7 @@ To create a new user:
 
 1. From the `Administration` menu, select `Users` and then click `New User`.
 
-{{< zoom-picture src="images/users.webp" caption="The Users Page" >}}
+{{< zoom-picture src="/docs/access-control/images/users.webp" caption="The Users Page" >}}
 2. Fill out the form presented:
 
 ### User Details

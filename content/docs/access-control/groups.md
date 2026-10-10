@@ -18,9 +18,9 @@ To create a new group:
 
 1. From the `Administration` menu, select `Groups` and then click `New Group`.
 
-{{< zoom-picture src="images/groups.webp" caption="The Groups Page" >}}
+{{< zoom-picture src="/docs/access-control/images/groups.webp" caption="The Groups Page" >}}
 2. Fill out the form presented:
-   {{< zoom-picture src="images/group-form.webp" caption="Group Create and Edit Form" >}}
+   {{< zoom-picture src="/docs/access-control/images/group-form.webp" caption="Group Create and Edit Form" >}}
 
 #### Group Configuration Options
 

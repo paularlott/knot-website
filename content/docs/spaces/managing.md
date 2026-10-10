@@ -34,6 +34,8 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
 
 {{< zoom-picture src="/docs/quick-start/local-containers/images/space-form.webp" caption="Create Space Form" >}}
 
+{{< zoom-picture src="/docs/spaces/images/space-custom-fields.webp" caption="Custom Fields When Creating a Space" >}}
+
 3. Click `Create Space` to finalize the process.
 
 {{< tip >}}

@@ -10,11 +10,15 @@ weight: 10
 
 **Files** in the sidebar lists the buckets you own or that are shared with you, with your access, size and your usage against your quota. The page updates by itself when files or buckets change, whether the change was made by you, someone else, or on another server in the cluster: changes are gathered for a moment and the page then refreshes what it shows. Click the folder icon on a bucket, or its name, to browse its folders. The path above the file list shows where you are and takes you back up. Then:
 
+{{< zoom-picture src="/docs/file-storage/images/files-buckets.webp" caption="The Files Page" >}}
+
 - **Upload files** or **Upload folder**, or drag files and folders onto the list; progress is shown per file.
 - **Download** any file, or **View**/**Edit** text files up to 1 MB in place. The editor highlights the language it recognises from the file name, including Markdown, YAML, TOML, JSON, PHP, Python, shell, JavaScript, HTML, CSS, XML, INI, SQL, Go, Dockerfile and HCL, and a **Language** picker changes it. Ctrl+S or ⌘S saves. Saving is refused if someone else changed the file since you opened it, so no change is silently lost.
 - **New file** creates a text file, with `/` in the name for folders.
 - **Rename or move** a file, or a folder with everything in it: the dialog takes the new path in the bucket, so changing just the name renames it and adding folders (`archive/2026/report.txt`) moves it, creating the folders if they don't exist. Or drag a row onto a folder, or onto a part of the path above the list, to move it there. Moves happen on the server without transferring any content, and are refused rather than replacing an existing file. Files can't be moved between buckets here; use [`knot file mv`](#working-with-files).
 - **Delete** files, or a folder and everything in it.
+
+{{< zoom-picture src="/docs/file-storage/images/files-browse.webp" caption="Browsing a Bucket" >}}
 
 As the owner with **Share Buckets**, **Share** lists who has access, changes each grant between read only and read & write, removes grants and adds users, groups or all users. As the owner with **Transfer Buckets**, **Transfer** gives the bucket to another user and shows the name it will have. File storage managers can share and transfer any bucket and tick **Show all buckets** to see every bucket. Users with read-only access see only View and Download.
 

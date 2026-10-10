@@ -16,9 +16,9 @@ To create a new role:
 
 1. From the `Administration` menu, select `Roles` and then click `New Role`.
 
-{{< zoom-picture src="images/roles.webp" caption="The Roles Page" >}}
+{{< zoom-picture src="/docs/access-control/images/roles.webp" caption="The Roles Page" >}}
 2. Fill out the form presented:
-   {{< zoom-picture src="images/role-form.webp" caption="Create and Edit Role Form" >}}
+   {{< zoom-picture src="/docs/access-control/images/role-form.webp" caption="Create and Edit Role Form" >}}
 
 #### Role Configuration Options
 

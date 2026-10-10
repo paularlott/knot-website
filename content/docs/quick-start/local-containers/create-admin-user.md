@@ -31,7 +31,17 @@ Complete the form with the required information and click `Create User`. This wi
 
 ### Step 3: Log In
 
-Enter your username and password to log in. After logging in, click your name in the top-right corner of the screen to open the profile menu.
+Enter your username and password to log in.
+
+The sidebar groups the pages into **Workspace** (spaces, files, tunnels and API tokens), **Build** (templates, variables, stack templates, volumes, scripts and the AI tools), **Admin** (users, groups, roles and the server) and **Extensions** (plugin pages); you only see the sections and pages your role allows. Each section opens and closes, and remembers how you left it. Star a page with the star beside it to put it in a **Starred** block at the top; reorder starred pages by dragging or with their up and down arrows.
+
+{{< zoom-picture src="/docs/quick-start/local-containers/images/sidebar.webp" caption="The Sidebar, with Two Starred Pages" >}}
+
+To find anything quickly, press **Shift+⌘+K** (**Shift+Ctrl+K** on Windows and Linux) or click **Search** at the top of the page: it searches spaces, templates, scripts and the rest at once, and opens what you pick. On a list page, **⌘+K** (**Ctrl+K**) jumps to that page's own search box; **Alt** works in place of ⌘/Ctrl for both.
+
+{{< zoom-picture src="/docs/quick-start/local-containers/images/search.webp" caption="Search Everything" >}}
+
+After logging in, click your name in the top-right corner of the screen to open the profile menu.
 
 {{< zoom-picture src="/docs/quick-start/local-containers/images/user-menu.webp" caption="Profile Menu" >}}
 
