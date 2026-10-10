@@ -70,7 +70,12 @@ An action has:
 - `icon` - a relative path to one of the plugin's declared icon assets (`icons = ["assets/view.svg"]` in `[tool.knot]`): loaded and sanitized at load like every plugin asset, inlined themed with the UI, and shared by inline buttons and kebab items. With an icon the button renders icon-only, like the spaces list rows; anything the plugin did not declare renders a text button. Plugins bring their own icons - knot ships no built-in action set.
 - `style` - `success`, `warning`, `danger` or default blue colour semantics.
 - `menu: true` - collect into the row's kebab dropdown instead of an inline button. A row can have any mix: any number of inline buttons (icon or text) and any number of menu items; the kebab only appears when there is something to put in it.
-- `confirm` - ask first in a modal; the action's `style` picks the treatment. A `danger` action gets knot's delete look - *Confirm Delete* title, trash header icon, a **Keep** button, and a trash-icon'd confirm button carrying the action label (the group delete's `Delete Group` with your label instead); any other style gets the neutral confirm (Cancel / action label).
+- `confirm` - ask first in a modal; the action's `style` picks the treatment. A `danger` action gets knot's delete look - *Confirm Delete* title, trash header icon, a **Keep** button, and a trash-icon'd confirm button carrying the action label (the group delete's `Delete Group` with your label instead); any other style gets the neutral confirm (Cancel / action label). Pass a string for the message, or an object `{"title": ..., "message": ..., "label": ...}` to set the dialog title and the confirm button text too (`label` defaults to the action's label; an optional `"danger": true/false` overrides the style's treatment):
+
+  ```python
+  {"label": "Archive", "action": "archive", "style": "danger", "menu": True,
+   "confirm": {"title": "Archive Widget", "message": "Archive this widget?", "label": "Archive"}}
+  ```
 - `handler` - clicking GETs this function with `key` and opens a popup (below).
 
 Actions without `handler` POST `{action, key}` to the column's handler URL and handle the envelope like a form POST.
@@ -83,7 +88,7 @@ A **form popup** returns `{title?, fields, submit?, cancel?}` - the same [field 
 
 An **information popup** returns `{title?, markdown}` (or `html`) - read-only, rendered server-side like a markdown column, with a Close button.
 
-Popups are knot dialogs: draggable, resizable, focus-trapped, closable with Escape and restored focus on close.
+Popups are knot dialogs: focus-trapped, closable with Escape and restored focus on close.
 
 ### Success dialogs
 

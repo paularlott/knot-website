@@ -8,7 +8,7 @@ weight: 40
 
 ## The admin inventory
 
-The **Plugins** page (in the sidebar's *More* section, `/plugins`, gated by the *View Plugins* permission, granted to the admin role by default) lists every plugin in the server's plugins path: loaded plugins with their declared permissions, menus, pages, peers (with health), and themed logos - plus failed plugins with their load reasons and any warnings (ignored files, unloadable binaries, multiple site-logo or default-page claimants). The inventory is read-only: the folder is the source of truth, so changes are made on disk and the server restarted.
+The **Plugins** page (in the sidebar's *Admin* section, `/plugins`, gated by the *View Plugins* permission, granted to the admin role by default) lists every plugin in the server's plugins path: loaded plugins with their declared permissions, menus, pages, peers (with health), and themed logos - plus failed plugins with their load reasons and any warnings (ignored files, unloadable binaries, multiple site-logo or default-page claimants). The inventory is read-only: the folder is the source of truth, so changes are made on disk and the server restarted.
 
 `GET /api/plugins` returns the same data for automation.
 

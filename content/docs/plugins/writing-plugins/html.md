@@ -119,6 +119,27 @@ def echo_word(request):
 
 POSTing from a widget follows the same envelope contract as forms and actions: return `{status, message, field_errors?, refresh?}` and let the page react, or return plain data and let the widget render it. Give interactive columns **no `refresh`** - a refresh replaces the markup and resets the widget (see [refresh semantics](#refresh-semantics)). The showcase's "Alpine calling the plugin" column is a live example.
 
+## Confirms and notifications
+
+Widgets get knot's own confirm dialog and notifications, so they look and behave like the rest of the UI (focus-trapped, Escape cancels, announced to screen readers). Both are globals on every knot page, alongside `pluginFetch`:
+
+- `knotConfirm({ title, message, name, detail, confirmLabel, cancelLabel, danger, icon })` - opens the confirm dialog and returns a promise that resolves `true` (confirmed) or `false` (cancelled, Escape, or replaced by another confirm). `{name}` in `message` is replaced by `name` in bold; `detail` is an optional second paragraph. `danger: true` gives the delete look (title *Confirm Delete*, **Keep** button, red confirm button); otherwise the neutral look (*Confirm*, **Cancel**). `icon` is `trash`, `stop`, `warning` or `info`. Everything is rendered as text, never HTML. Adding `checkbox: { label, checked }` shows a checkbox and resolves `{ confirmed, checked }` instead.
+- `knotToast(message, kind)` - shows a notification; `kind` is `success` (default), `error` or `info`. The message is plain text (it is HTML-escaped).
+
+```html
+<div class="kp-card" x-data="{ busy: false }">
+  <button class="kp-button" :disabled="busy"
+          @click="if (await knotConfirm({ danger: true, message: 'Purge the cache for {name}?', name: 'widgets', confirmLabel: 'Purge' })) {
+                    busy = true
+                    try { const r = await pluginFetch('purge', { method: 'POST' }); knotToast(r.message, r.status === 'ok' ? 'success' : 'error') }
+                    catch (e) { knotToast('Purge failed: ' + e.message, 'error') }
+                    finally { busy = false }
+                  }">Purge cache</button>
+</div>
+```
+
+For table actions and forms you do not need these - declare `confirm` on the [action](../pages/#table-actions) or the [form](../forms/), and envelope `message`s become notifications automatically. The showcase's echo widget has a Clear button using both.
+
 ## Refresh semantics
 
 A column with `refresh` is re-fetched and its content **replaced** on every tick. Anything stateful in the markup (Alpine `x-data`, script-modified DOM) resets on refresh - treat refresh-capable html columns as render functions of their payload, and keep state server-side. The showcase's clock column is the pattern: the handler returns the time, the markup just displays it.

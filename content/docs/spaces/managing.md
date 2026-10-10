@@ -13,19 +13,25 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
 
 ## Creating a Space
 
-1. Navigate to the `Spaces` page, click the `+ Space` button to get a list of the available templates, select the required template.
+1. Navigate to the `Spaces` page and click the `+ Space` button to get a list of the available templates, then select the required template. When only one template is available to you, the list is skipped and the form opens straight away.
 
 {{< zoom-picture src="/docs/quick-start/local-containers/images/template-picker.webp" caption="Select a Template" >}}
-2. Complete the form for the new space:
-   - **`Name`**: The name of the space.
+2. The form starts with just what a new space needs:
+   - **`Name`**: The name of the space. A name based on the template's is filled in, numbered if you already have a space by that name; change it as you like.
+   - **`Custom Fields`**: Any custom fields the template requires.
+   - **`IP Address`**: For bridged KVM templates, the virtual machine's static IP.
+   - **`Start Space on Create`**: If checked, the space will start automatically after creation.
+
+   Everything else has sensible defaults and sits behind **More options**, and can be changed later by editing the space:
    - **`Description`**: (Optional) A description for the space.
    - **`Icon`**: (Optional) An icon for the space. By default, the template's icon will be used if one is set.
+   - **`Stack`**: (Optional) Group the space with others under a stack name.
    - **`Additional Space Names`**: Add additional names for the space by clicking the `+` icon. This is useful for accessing the space under multiple domain names when using the web proxy service. Each additional name can be assigned a specific HTTP port from the dropdown; the first available port is selected by default.
    - **`Terminal Shell`**: The shell to use for the terminal. By default, the user's profile shell is used.
+   - **`Node`**: Where the space runs, when there is a choice; by default the least loaded node is picked.
    - **`User Startup Script`**: An optional script to run when the space starts, the user startup script is run after the system startup script. This field is unavailable for `Manual` templates. The script must be one defined under scripts and owned by the user creating the space.
-   - **`Custom Fields`**: If the template includes custom fields, they will appear here. Set values for each field as needed.
+   - **Optional custom fields**: Template custom fields that are not required.
    - **`Depends On`**: (Optional) Select spaces that this space depends on. Dependent spaces will need to be started before this space starts.
-   - **`Start Space on Create`**: If checked, the space will start automatically after creation.
 
 {{< zoom-picture src="/docs/quick-start/local-containers/images/space-form.webp" caption="Create Space Form" >}}
 

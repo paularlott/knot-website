@@ -178,6 +178,6 @@ The metadata gates remain the enforcement boundary knot applies before the handl
 
 ## Menus and icons
 
-A `[[tool.knot.menus]]` entry adds a link to the sidebar's *More* section - internal (`/...`) or external (`http(s)://...`). Items are visible to any logged-in user unless gated. A `permission` requires one of the user's roles to carry the grant. Items are pinnable like built-in navigation and appear in the global search.
+A `[[tool.knot.menus]]` entry adds a link to the sidebar's *Extensions* section - internal (`/...`) or external (`http(s)://...`). Items are visible to any logged-in user unless gated. A `permission` requires one of the user's roles to carry the grant. Items are pinnable like built-in navigation and appear in the global search.
 
 `icon` is a relative path to an **SVG asset in the plugin folder**. The SVG's inner markup is rendered inline with the site's icon styling, so an icon stroked with `currentColor` themes with the UI exactly like knot's own icons - write yours the same way (any heroicons-style 24×24 outline SVG works). Icons are size-capped and sanitized at load: scripts, event handlers, and external references are refused.

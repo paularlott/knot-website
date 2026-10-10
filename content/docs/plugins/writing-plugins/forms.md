@@ -27,7 +27,14 @@ def widget_form(request):
     ], "submit": "Create widget"}
 ```
 
-The GET definition is `{fields: [...], submit?: "...", cancel?: "...", auto_submit?: true}` - `submit` defaults to `Apply`, `cancel` (which defaults to `Cancel`) adds a second button, and `auto_submit` turns the form into a filter (below).
+The GET definition is `{fields: [...], submit?: "...", cancel?: "...", auto_submit?: true, confirm?: ...}` - `submit` defaults to `Apply`, `cancel` (which defaults to `Cancel`) adds a second button, and `auto_submit` turns the form into a filter (below).
+
+`confirm` asks before the form POSTs, in knot's shared confirm dialog - the same contract as a [table action's confirm](../pages/#table-actions): a string is the message, or pass `{"title": ..., "message": ..., "label": ..., "danger": true}`, where `label` is the confirm button text (default: the submit button's text) and `danger` gives the delete look. Cancelling leaves the form and its values untouched. It works on form columns and form popups alike; `auto_submit` filter forms never ask.
+
+```python
+return {"fields": [...], "submit": "Purge cache",
+        "confirm": {"title": "Purge Cache", "message": "Purge every cached entry?", "danger": True}}
+```
 
 ## Fields
 
