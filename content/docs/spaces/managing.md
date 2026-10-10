@@ -18,7 +18,7 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
 {{< zoom-picture src="/docs/quick-start/local-containers/images/template-picker.webp" caption="Select a Template" >}}
 2. The form starts with just what a new space needs:
    - **`Name`**: The name of the space. A name based on the template's is filled in, numbered if you already have a space by that name; change it as you like.
-   - **`Custom Fields`**: Any custom fields the template requires.
+   - **`Custom Fields`**: The fields the template requires (marked with an asterisk) and any optional ones it chooses to show. The template's other optional fields are behind a toggle in the same section, shown as **Show 2 more fields**; opening it adds them below the toggle.
    - **`IP Address`**: For bridged KVM templates, the virtual machine's static IP.
    - **`Start Space on Create`**: If checked, the space will start automatically after creation.
 
@@ -30,7 +30,6 @@ This guide explains how to create, start, stop, update, edit, and delete spaces 
    - **`Terminal Shell`**: The shell to use for the terminal. By default, the user's profile shell is used.
    - **`Node`**: Where the space runs, when there is a choice; by default the least loaded node is picked.
    - **`User Startup Script`**: An optional script to run when the space starts, the user startup script is run after the system startup script. This field is unavailable for `Manual` templates. The script must be one defined under scripts and owned by the user creating the space.
-   - **Optional custom fields**: Template custom fields that are not required.
    - **`Depends On`**: (Optional) Select spaces that this space depends on. Dependent spaces will need to be started before this space starts.
 
 {{< zoom-picture src="/docs/quick-start/local-containers/images/space-form.webp" caption="Create Space Form" >}}

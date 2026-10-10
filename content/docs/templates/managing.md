@@ -123,6 +123,10 @@ To create a new template:
 
   Every field can also carry a **Default value** (set in the same wrench-icon dialog). The default is pre-filled when a space is created and applied when an API/CLI request omits the field. Clearing the pre-filled value keeps the field empty — a deliberately blank field never falls back to the default.
 
+  In the same dialog, **Field Required** stops a space being created or saved with the field blank; required fields are marked with an asterisk on the space forms. **Show When Creating a Space** puts an optional field on the create form next to the required ones (rows with it set show a *shown* badge). Other optional fields wait behind a **Show more fields** toggle on the create form, so a field used now and then stays out of the way but is one click from view. The edit form always shows every field.
+
+  Use the up and down arrows on each row to set the order the fields appear in on the space forms.
+
 - **`Jobs`**:
   Define scheduled or manual jobs that are copied into spaces created from the template, where each space can edit or remove its own copy. Each job has a name, a shell command and an optional 5-field cron schedule; see [Space Jobs](/docs/spaces/jobs/).
 

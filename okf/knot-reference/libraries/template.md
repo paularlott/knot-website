@@ -80,6 +80,23 @@ built = template.build_spec("nomad", {
 template.create("nginx", job=built["job"], volumes=built["volumes"], platform="nomad")
 ```
 
+### Custom fields
+
+`create()` and `update()` take `custom_fields`, a list of field definitions. The list order is the order the space forms show the fields in, so reordering is just passing the list in a new order (`update()` replaces the whole list).
+
+```python
+template.update("nginx", custom_fields=[
+    # Required: always shown, and a space can't be created with it blank.
+    {"name": "site", "description": "Site name", "required": True},
+    # Optional, but shown on the create form with the required fields.
+    {"name": "branch", "description": "Git branch", "default": "main", "show_on_create": True},
+    # Optional and seldom needed: behind the create form's optional fields toggle.
+    {"name": "seed", "description": "Database seed", "type": "textarea", "language": "yaml"},
+])
+```
+
+Each definition takes `name`, `description`, `type` (`text`, `masked`, `number`, `bool`, `select`, `autocomplete` or `textarea`), `handler` or `options` (select and autocomplete, exactly one), `language` (textarea), `default`, `required` and `show_on_create`. `show_on_create` only affects how the create form is laid out and is ignored on required fields; the edit form always shows every field.
+
 ---
 
 ## Template Properties
@@ -119,7 +136,7 @@ template.create("nginx", job=built["job"], volumes=built["volumes"], platform="n
 - `groups` - List of group IDs
 - `zones` - List of zone names
 - `schedule` - List of schedule day dicts (`enabled`, `from`, `to`)
-- `custom_fields` - List of custom field dicts: `name`, `description`, `type` (text, masked, number, bool, textarea, select or autocomplete), `required`, `default` (when set), and the option source — `options` (the manual list, also the resolved values when `get` ran with `resolve_options=True`) or `handler` (a plugin field handler id). These are the definitions to fill when creating a space: required fields must be set, and select/autocomplete values must be one of the field's options (see [space.create](space.md#create)).
+- `custom_fields` - List of custom field dicts: `name`, `description`, `type` (text, masked, number, bool, textarea, select or autocomplete), `required`, `show_on_create` (when set: an optional field shown on the create-space form without opening its optional fields toggle), `default` (when set), and the option source — `options` (the manual list, also the resolved values when `get` ran with `resolve_options=True`) or `handler` (a plugin field handler id). These are the definitions to fill when creating a space: required fields must be set, and select/autocomplete values must be one of the field's options (see [space.create](space.md#create)).
 - `health_check_type` - Health check type (`none`, `agent`, `tcp`, `http`, `program`, or `custom`)
 - `health_check_config` - Health check target, command, or custom script depending on type
 - `health_check_skip_ssl_verify` - Skip TLS verification for HTTP health checks
