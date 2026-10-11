@@ -28,13 +28,13 @@ The docs are also published as OKF knowledge bundles at `/okf/`. The bundles are
 | Command | What it does |
 |---|---|
 | `make okf` | Regenerate the bundles in `okf/` (run after changing `content/`, then commit) |
-| `make mcp-server` | Run the knot KB MCP server locally on `:8765` |
-| `make pack` | Build `dist/knot-kb.zip`: the KB MCP server plus the bundles |
-| `make bundle-pack` | Build `dist/knot-okf-bundles.zip`: the bundles only |
-| `make release` | Regenerate and commit the bundles, push, then tag and publish a GitHub release with both zips, versioned from `../knot` |
+| `make bundle-pack` | Build `dist/knot-okf-bundles.zip` from the bundles |
+| `make release` | Regenerate and commit the bundles, push, then tag and publish a GitHub release with `knot-okf-bundles.zip`, versioned from `../knot` |
 | `make api-spec` | Copy the OpenAPI spec from `../knot-pro-src` into `static/api-reference/` |
 
 Run `make` on its own to list the targets.
+
+To serve the bundles to an AI agent over MCP, use [OKF Server](https://github.com/paularlott/okf-server): unzip `knot-okf-bundles.zip` from a release into its bundle directory.
 
 ## Contributing
 

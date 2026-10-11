@@ -5,21 +5,8 @@ default: help
 okf:
 	scriptling scripts/okf.py
 
-## Run the Knot KB MCP server (tools: knotkb_list, knotkb_get, knotkb_search, knotkb_grep)
-mcp-server:
-	scriptling --server :8765 --mcp-tools mcp/tools
-
-## Pack the KB MCP server + OKF bundles into dist/knot-kb.zip (portable)
-pack: okf
-	@rm -rf dist/knot-kb dist/knot-kb.zip
-	@mkdir -p dist/knot-kb/okf dist
-	cp -R mcp/tools dist/knot-kb/tools
-	cp -R okf/knot-docs okf/knot-reference dist/knot-kb/okf/
-	cp mcp/README.md dist/knot-kb/
-	cd dist/knot-kb && zip -qr ../knot-kb.zip .
-	@echo "Built dist/knot-kb.zip"
-
-## Pack just the OKF bundles into dist/knot-okf-bundles.zip
+# Unzip into an okf-server bundle directory: https://github.com/paularlott/okf-server
+## Pack the OKF bundles into dist/knot-okf-bundles.zip, for okf-server
 bundle-pack: okf
 	@rm -f dist/knot-okf-bundles.zip
 	@mkdir -p dist
@@ -35,33 +22,33 @@ okf-sync: okf
 		echo "OKF bundles up to date"; \
 	fi
 
-## Tag and publish a GitHub release with the KB + OKF bundles archives.
+## Tag and publish a GitHub release with the OKF bundles archive.
 ## Ordering matters: regenerate + commit the bundles, then push — the push
 ## either no-ops or pushes the code and triggers the Cloudflare site build —
-## and only then pack the zips, upload, and tag, so the hosted bundles and
+## and only then pack the zip, upload, and tag, so the hosted bundles and
 ## the release archive can never diverge from the committed docs.
 release:
 	@$(MAKE) okf-sync
 	@test -d ../knot || { echo "knot repo not found at ../knot"; exit 1; }
 	@command -v gh >/dev/null 2>&1 || { echo "gh CLI not installed"; exit 1; }
 	@git push
-	@$(MAKE) pack bundle-pack
+	@$(MAKE) bundle-pack
 	@V=$$(cd ../knot && go run ./scripts/getversion); \
-	echo "Releasing knot-kb v$$V"; \
+	echo "Releasing knot OKF bundles v$$V"; \
 	if git tag -l v$$V | grep -q v$$V; then \
 		echo "Tag v$$V already exists, skipping tag creation"; \
 	else \
 		git tag -a v$$V -m "Release $$V" && git push origin v$$V; \
 	fi; \
-	gh release create v$$V dist/knot-kb.zip dist/knot-okf-bundles.zip \
-		-t "Release $$V" -n "Knot knowledge bundles and MCP server $$V"
+	gh release create v$$V dist/knot-okf-bundles.zip \
+		-t "Release $$V" -n "Knot OKF knowledge bundles $$V, for use with https://github.com/paularlott/okf-server"
 
 ## Sync the OpenAPI spec from the pro repo into static/api-reference/ (committed;
 ## the site builds on Cloudflare, which cannot read sibling repos)
 api-spec:
 	cp ../knot-pro-src/internal/api/spec/knot-openapi.yaml static/api-reference/knot-openapi.yaml
 
-.PHONY: help okf mcp-server pack bundle-pack okf-sync release api-spec
+.PHONY: help okf bundle-pack okf-sync release api-spec
 ## This help screen
 help:
 	@printf "Available targets:\n\n"
