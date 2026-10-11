@@ -9,7 +9,7 @@ aliases: ["/docs/base-images/"]
 
 knot ships a curated catalog of base images that the [template spec wizard](../../configuration/spec-wizard/) presents as a picker. Each is an ordinary OCI image built from [`knot-base-images`](https://github.com/paularlott/knot-base-images), preloaded with the knot entrypoint, an agent, and common dev tooling. You can also use any image (private or public) by typing its reference directly.
 
-The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can [keep it up to date](#keeping-the-catalog-up-to-date) automatically from `https://getknot.dev/base-images.toml`.
+The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can [keep it up to date](#keeping-the-catalog-up-to-date) by fetching it from a URL of your choosing.
 
 <div class="not-prose my-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
 
@@ -18,7 +18,6 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="font-semibold text-gray-900 dark:text-gray-100">Ubuntu</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Base Ubuntu shell with code-server and dev tools.</div>
     <div class="flex flex-wrap justify-center gap-1">
-      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">24.04</span>
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">26.04</span>
     </div>
   </div>
@@ -28,7 +27,6 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="font-semibold text-gray-900 dark:text-gray-100">Ubuntu Desktop</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Ubuntu + XFCE desktop over web VNC.</div>
     <div class="flex flex-wrap justify-center gap-1">
-      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">24.04</span>
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">26.04</span>
     </div>
   </div>
@@ -75,7 +73,7 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="font-semibold text-gray-900 dark:text-gray-100">Go</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Ubuntu + the Go toolchain. Pure runtime image.</div>
     <div class="flex flex-wrap justify-center gap-1">
-      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">1.26</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">1.27</span>
     </div>
   </div>
 
@@ -103,7 +101,7 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="font-semibold text-gray-900 dark:text-gray-100">Scriptling</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Ubuntu + the Scriptling interpreter and CLI. Pure runtime image.</div>
     <div class="flex flex-wrap justify-center gap-1">
-      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">0.24</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">0.30</span>
     </div>
   </div>
 
@@ -212,19 +210,19 @@ Web images (PHP, FrankenPHP, FrankenScriptling) also pre-fill a template port la
 
 ## Keeping the catalog up to date
 
-The catalog compiled into the binary is a snapshot taken at release time. knot can fetch a published catalog from `https://getknot.dev/base-images.toml` (the default), or a URL of your choosing. Updates are gated by a master flag, **off by default**:
+The catalog compiled into the binary is a snapshot taken at release time. knot can fetch a published catalog from a URL of your choosing: there is **no default URL**, so nothing is fetched unless you configure one. To track the catalog shipped with knot releases, point `update_url` at the manifest in the knot repository:
 
 ```toml
 [server.base_image]
-update_enabled = true                          # master gate; off by default
-update_url     = "https://your-mirror/base-images.toml"  # optional; defaults to getknot.dev
+update_enabled = true          # master gate; off by default
+update_url     = "https://raw.githubusercontent.com/paularlott/knot/main/internal/specwizard/manifest.toml"
 ```
 
-When the gate is on, the server fetches once on startup and on demand via the admin command — there's no periodic loop, so the catalog only changes on restart or an explicit refresh.
+A fetch happens only when **both** `update_enabled` and `update_url` are set. When both are set, the server fetches once on startup and on demand via the admin command; there's no periodic loop, so the catalog only changes on restart or an explicit refresh.
 
-- **Gate off** → no remote fetch at all (not on startup, not via the admin command); the bundled or file catalog is used as-is.
-- **No manifest file configured** → the server fetches from your `update_url` (or the default URL). A fetched catalog overlays the bundled one only when its `manifest_version` is newer.
-- **Manifest file configured** → the file is used and **read from disk on every request**, so editing it takes effect immediately. The server only fetches a remote when an explicit `update_url` is also set; otherwise the file is authoritative. When a remote is fetched, it overlays the file only when newer — bump the file's version and it wins again straight away.
+- **Either option missing** → no remote fetch at all (not on startup, not via the admin command); the bundled or file catalog is used as-is.
+- **No manifest file configured** → a fetched catalog overlays the bundled one only when its `manifest_version` is newer.
+- **Manifest file configured** → the file is used and **read from disk on every request**, so editing it takes effect immediately. A fetched remote overlays the file only when newer; bump the file's version and it wins again straight away.
 - **Every node fetches independently** (full members and leaves alike), so the fleet converges on identical content with no cluster coordination.
 
 To update a running cluster without restarting, the admin command fans the refresh out to every server:
@@ -233,7 +231,7 @@ To update a running cluster without restarting, the admin command fans the refre
 knot admin refresh-base-images --server https://knot.example.com --token <admin-token>
 ```
 
-Each server must have `update_enabled` on; a server using a manifest file must also have `update_url` set, otherwise it reports a conflict and keeps its file. Pass `--local-only` to refresh just the connected server. See [Template Spec Wizard → Base image updates](../../configuration/spec-wizard/#base-image-updates) for the full rules.
+Each server must have both `update_enabled` and `update_url` set, otherwise it reports a conflict and keeps its current catalog. Pass `--local-only` to refresh just the connected server. See [Template Spec Wizard → Base image updates](../../configuration/spec-wizard/#base-image-updates) for the full rules.
 
 ---
 

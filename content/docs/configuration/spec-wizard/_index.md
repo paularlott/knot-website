@@ -125,26 +125,24 @@ The default manifest's metadata mirrors the OCI labels in [`docker-bake.hcl`](ht
 
 ## Base image updates
 
-The catalog compiled into the binary is a snapshot taken at release time. knot can fetch a published catalog from `https://getknot.dev/base-images.toml` (the default) or a URL of your choosing. Updates are gated by a single master flag — **off by default** — that enables both the startup fetch and the manual refresh command:
+The catalog compiled into the binary is a snapshot taken at release time. knot can fetch a published catalog from a URL of your choosing: there is **no default URL**, so nothing is fetched unless you configure one. To track the catalog shipped with knot releases, point `update_url` at the manifest in the knot repository:
 
 ```toml
 [server.base_image]
-update_enabled = true                                       # master gate; off by default
-update_url     = "https://your-mirror/base-images.toml"     # optional; defaults to getknot.dev
+update_enabled = true          # master gate; off by default
+update_url     = "https://raw.githubusercontent.com/paularlott/knot/main/internal/specwizard/manifest.toml"
 ```
 
-When the gate is **off**, no remote fetch ever happens (not on startup, not via the admin command) — the bundled or file catalog is used as-is. When it's **on**, a fetch happens once on startup and on demand via `knot admin refresh-base-images`, subject to the manifest/url rules below. There is no periodic loop — the catalog only changes on restart or an explicit refresh.
+A fetch happens only when **both** `update_enabled` and `update_url` are set. When either is missing, no remote fetch ever happens (not on startup, not via the admin command) and the bundled or file catalog is used as-is. When both are set, the server fetches once on startup and on demand via `knot admin refresh-base-images`. There is no periodic loop, so the catalog only changes on restart or an explicit refresh.
 
-Whether a fetch happens when the gate is on depends on whether a `manifest` file is configured (M) and an explicit `update_url` is set (U):
+What the fetch overlays depends on whether a `manifest` file is configured (M):
 
-| Configured file (M) | Fetches? | Source |
+| Manifest file (M) | Fetches? | Baseline the fetch overlays |
 |---|---|---|
-| **No file** | yes | `update_url`, or the default URL if none is set |
-| **File set** | only if an explicit `update_url` is set | `update_url` |
+| **No file** | yes (with the gate on and a URL set) | the bundled catalog |
+| **File set** | yes (with the gate on and a URL set) | the file, which stays authoritative on its own |
 
-So with no file you always get a fetch (the default URL is fine); with a file, the file is used unless you've also set an explicit `update_url`.
-
-In every case where a fetch happens, the fetched manifest **overlays the baseline only when its `manifest_version` (yyyymmddbb) is strictly newer** — so the baseline is never silently downgraded, and bumping a file's version keeps it ahead of the remote. If the fetch fails, the server falls back to the baseline and logs a warning.
+In every case where a fetch happens, the fetched manifest **overlays the baseline only when its `manifest_version` (yyyymmddbb) is strictly newer**, so the baseline is never silently downgraded, and bumping a file's version keeps it ahead of the remote. If the fetch fails, the server falls back to the baseline and logs a warning.
 
 While a configured file is the active catalog it is **read from disk on every request**, so editing it takes effect immediately (no restart). Every node (full members and leaves) fetches independently from the same URL, so the fleet converges on identical content with no cluster coordination.
 
@@ -156,7 +154,7 @@ To update a running fleet without restarting, run the admin command — it fans 
 knot admin refresh-base-images --server https://knot.example.com --token <token>
 ```
 
-Each server applies the same fetch rule as startup (gate on; file requires an explicit `update_url`). A server whose gate is off, or which uses a file without a `update_url`, reports a conflict and keeps its current catalog. Pass `--local-only` to refresh just the connected server. Leaf nodes aren't gossip members and won't be reached by the fan-out — refresh them individually (they also fetch on their own startup).
+Each server applies the same fetch rule as startup: both `update_enabled` and `update_url` must be set. A server missing either reports a conflict and keeps its current catalog. Pass `--local-only` to refresh just the connected server. Leaf nodes aren't gossip members and won't be reached by the fan-out; refresh them individually (they also fetch on their own startup).
 
 Or via the API — `POST /api/base-images/refresh` (requires the `manage-templates` permission) refreshes a single server.
 
@@ -171,7 +169,7 @@ All options are available as CLI flags or environment variables:
 | `--base-image-registry` | `KNOT_BASE_IMAGE_REGISTRY` | `server.base_image.registry_url` | `docker.io/paularlott` |
 | `--base-images-manifest` | `KNOT_BASE_IMAGES_MANIFEST` | `server.base_image.manifest` | (bundled) |
 | `--base-images-update-enabled` | `KNOT_BASE_IMAGES_UPDATE_ENABLED` | `server.base_image.update_enabled` | `false` |
-| `--base-images-update-url` | `KNOT_BASE_IMAGES_UPDATE_URL` | `server.base_image.update_url` | `https://getknot.dev/base-images.toml` (only used when no manifest file is set) |
+| `--base-images-update-url` | `KNOT_BASE_IMAGES_UPDATE_URL` | `server.base_image.update_url` | (none; no fetch happens without it) |
 | `--base-image-registry-user` | `KNOT_BASE_IMAGE_REGISTRY_USER` | `server.base_image.registry_user` | (none) |
 | `--base-image-registry-password` | `KNOT_BASE_IMAGE_REGISTRY_PASSWORD` | `server.base_image.registry_password` | (none) |
 

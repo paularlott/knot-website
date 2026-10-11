@@ -573,7 +573,7 @@ knot admin template import [--file path] [--name NAME]
 
 `backup` and `restore` stream a running server's data to and from a folder through its API, so they need a token with the Backup Server permission; to restore into a new server, create its first user and use that user's token. See [Backup and Restore](../../knot-docs/best-practices/backup-restore.md). The `admin` commands that talk to a server choose it with `--server` and `--token`, or `--alias` for one in the config file, like other `knot` commands. `file ls` and `file restore` list and restore files from a backup folder. `file fsck` checks [file storage](../../knot-docs/file-storage/operations.md#checking-and-repairing) for damage and, with `--repair`, fixes it.
 
-`refresh-base-images` forces every server in the cluster to fetch the base image manifest from its update URL immediately (`--local-only` limits the refresh to the local server).
+`refresh-base-images` forces every server in the cluster to fetch the base image manifest from its update URL immediately (`--local-only` limits the refresh to the local server). Each server must have both `server.base_image.update_enabled` and `server.base_image.update_url` configured.
 
 `template export` writes a portable YAML representation of a template to stdout — pipe it to a file for version control. `template import` creates (or updates) a template from a YAML file, or stdin when no file is given, resolving referenced scripts by name. Both need a token with the manage templates permission; see [Managing Templates](../../knot-docs/templates/managing.md#exporting-and-importing-templates).
 
