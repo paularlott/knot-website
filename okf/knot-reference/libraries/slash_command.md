@@ -23,7 +23,7 @@ The `knot.slash_command` library provides functions to manage slash commands —
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -33,11 +33,11 @@ The `knot.slash_command` library provides functions to manage slash commands —
 
 | Function | Description |
 |----------|-------------|
-| `create(content, is_global=False, groups=None, zones=None, active=True)` | Create a new slash command |
+| `create(content, is_global=False, groups=None, zones=None, active=True)` | Create a new slash command (your own unless `is_global=True`) and return its ID |
 | `get(name_or_id)` | Get a command by name or UUID |
-| `update(name_or_id, content=None, groups=None, zones=None, active=None)` | Update a command |
-| `delete(name_or_id)` | Delete a command |
-| `list(owner=None, all_zones=False)` | List accessible commands |
+| `update(name_or_id, content=None, groups=None, zones=None, active=None)` | Update a command, keeping fields you do not pass; returns `True` |
+| `delete(name_or_id)` | Delete a command; returns `True` |
+| `list(owner=None, all_zones=False)` | List accessible commands; `owner` filters by owner user ID |
 
 ---
 
@@ -79,7 +79,8 @@ import knot.slash_command as command
 commands = command.list()
 
 # List only the current user's commands
-my_commands = command.list(owner="current-user-id")
+import knot.user as user
+my_commands = command.list(owner=user.get_me()["id"])
 
 # Get a specific command
 cmd = command.get("review-pr")
@@ -89,7 +90,7 @@ print(cmd["body"])
 command_id = command.create(
     content='---\nname: "greet"\ndescription: "Greet by name"\nargument-hint: "<name>"\n---\n\nSay hello to $ARGUMENTS',
     is_global=True,
-    groups=["developers"],
+    groups=["group-uuid"],  # group IDs; global commands only
 )
 
 # Update a command
@@ -112,7 +113,7 @@ command.delete("greet")
 | `allowed_tools` | list | Auto-allowed tool names |
 | `body` | string | Command body markdown (get() only) |
 | `user_id` | string | Owner user ID (empty = global) |
-| `groups` | list | Group restrictions (global only) |
+| `groups` | list | Group IDs the command is restricted to (global only) |
 | `zones` | list | Zone restrictions |
 | `active` | bool | Whether the command appears in the picker |
 | `is_managed` | bool | Read-only managed command |

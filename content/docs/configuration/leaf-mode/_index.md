@@ -36,12 +36,12 @@ Begin by setting up a Knot server on the local workstation. Follow the [Local Co
 
 ### 2. Create a Personal Access Token
 
-A personal access token is required for the leaf server to connect to the cluster. To create one:
+A personal access token with **Full Access** is required for the leaf server to connect to the cluster — a scoped token is rejected. To create one:
 
 1. Log in to the Knot server that the leaf will connect to.
 2. Click on `API Tokens` in the menu. If this option is unavailable, request permission from your site administrator.
-3. Click `New Token` and provide a name for the token (e.g., `Leaf Test`) to identify it.
-   {{< zoom-picture src="/docs/api-tokens/images/token-form.webp" caption="New Token Form" >}}
+3. Click `New API Token` and enter a **Token Name** (e.g., `Leaf Test`) to identify it. Leave **Full Access** selected.
+   {{< zoom-picture src="/docs/api-tokens/images/token-form.webp" caption="New API Token Form" >}}
 4. Click `Create Token` to generate the access token.
    {{< zoom-picture src="/docs/api-tokens/images/token-list.webp" caption="List of Available Tokens" >}}
 
@@ -56,7 +56,7 @@ Add the token and server information to the `knot.toml` configuration file of th
 ```toml
 [server.origin]
 server = "https://knot-server.internal"
-token = "dp2IlH_wQWIA_ad_UApHjAGYLZMcvn4vsH383N-AB2I="
+token = "tk_dp2IlH_wQWIA_ad_UApHjAGYLZMcvn4vsH383N-AB2I="
 ```
 
 #### Configuration Parameters

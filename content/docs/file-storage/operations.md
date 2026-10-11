@@ -6,6 +6,8 @@ tags: [storage]
 weight: 30
 ---
 
+{{< experimental-badge >}} File storage is experimental: its behaviour, commands and on-disk formats may change in later releases.
+
 ## Quotas
 
 Each user and group has two file storage limits alongside the other resource limits:
@@ -40,7 +42,14 @@ The Users page shows each user's file storage and bucket use in the **Files** co
 
 ## Backups
 
-`knot admin backup` copies buckets, sharing, file details and every file's content, from the running server, into a folder; `knot admin restore` rebuilds a lost server from it, and `knot admin file ls` and `knot admin file restore` list the files in a backup and put one file or folder back without a full restore. It needs the **Backup Server** permission, which administrators don't have unless they are given it. See [Backup and Restore](/docs/best-practices/backup-restore/).
+`knot admin backup` copies buckets, sharing, file details and every file's content, from the running server, into a folder; `knot admin restore` rebuilds a lost server from it, and `knot admin file ls` and `knot admin file restore` list the files in a backup and put one file or folder back without a full restore.
+
+- `backup` and `restore` need the **Backup Server** permission, which administrators don't have unless they are given it, and a token scoped to **Backup** is enough for them.
+- `file ls` reads the backup folder alone and needs no server or permission.
+- `file restore` writes through the files API, as the user the token belongs to: that user needs **Manage File Storage** to restore into other users' buckets, and a scoped token needs the **Files** scope.
+- `file fsck --from-backup` needs both **Manage File Storage** and **Backup Server**, and a scoped token needs both the **Files** and **Backup** scopes.
+
+See [Backup and Restore](/docs/best-practices/backup-restore/).
 
 ## Checking and Repairing
 
@@ -53,7 +62,7 @@ knot admin file fsck --deep ...                                                 
 knot admin file fsck --repair --from-backup /backups/knot ...                    # and restore content nothing else holds
 ```
 
-The token belongs to a user with the **Manage File Storage** permission, and `--from-backup` also needs **Backup Server**. Choose the server with `--server` and `--token`, or `--alias`, as for other commands. It finds:
+The token belongs to a user with the **Manage File Storage** permission, and `--from-backup` also needs **Backup Server** (a scoped token needs the **Files** scope, and **Backup** too for `--from-backup`). Choose the server with `--server` and `--token`, or `--alias`, as for other commands. It finds:
 
 - file content that is missing from the server, or the wrong size or (with `--deep`) checksum, such as after a disk failure or a restore of part of the storage directory;
 - reference counts, the queue of content to fetch, the index of deleted files and bucket statistics that disagree with the file records;

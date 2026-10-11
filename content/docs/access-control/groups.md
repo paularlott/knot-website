@@ -16,7 +16,7 @@ Groups can also define limits for Compute and Storage Units, as well as other re
 
 To create a new group:
 
-1. From the `Administration` menu, select `Groups` and then click `New Group`.
+1. From the `Admin` menu, select `Groups` and then click `New Group`.
 
 {{< zoom-picture src="/docs/access-control/images/groups.webp" caption="The Groups Page" >}}
 2. Fill out the form presented:

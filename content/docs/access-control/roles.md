@@ -8,13 +8,15 @@ weight: 20
 
 In Knot, roles are used to control access to features. Each role is assigned one or more permissions, which define what a user can do within the system. When a user is assigned multiple roles, the permissions from all roles are combined, granting the user access to all associated features.
 
+The built-in **Admin** role holds every permission except **Backup Server**; it can't be edited or deleted. A new server also creates a **Backup User** role holding **Backup Server** and gives it to the first user. Backup User is an ordinary role — it can be edited, assigned, or deleted like any role you create.
+
 ---
 
 ### Creating Roles
 
 To create a new role:
 
-1. From the `Administration` menu, select `Roles` and then click `New Role`.
+1. From the `Admin` menu, select `Roles` and then click `New Role`.
 
 {{< zoom-picture src="/docs/access-control/images/roles.webp" caption="The Roles Page" >}}
 2. Fill out the form presented:
@@ -47,6 +49,8 @@ Roles grant the permissions below; when a user holds multiple roles, the permiss
 | Permission | Description |
 |---|---|
 | View Cluster Info | View cluster node and topology information. |
+| View Plugins | View the loaded plugins inventory. |
+| Backup Server | Back up all of the server's data, including every user's files and credentials, and restore it. Equivalent to full access, so it is **not** part of the Admin role. A new server creates a **Backup User** role with it, and gives that role to the first user. |
 
 ### User Management
 
@@ -55,6 +59,7 @@ Roles grant the permissions below; when a user holds multiple roles, the permiss
 | Manage Groups | Create, edit, and delete user groups. |
 | Manage Roles | Create, edit, and delete roles and their permissions. |
 | Manage Users | Create, edit, and delete user accounts. |
+| Link Users | Grant one user the ability to switch into another account from the profile menu. Treat as impersonation-grade: the holder can link to any account, administrators included. |
 
 ### Resource Management
 
@@ -73,12 +78,6 @@ Roles grant the permissions below; when a user holds multiple roles, the permiss
 | Share Buckets | Share own buckets with users, groups or everyone. |
 | Transfer Buckets | Transfer own buckets to another user. |
 | Manage File Storage | Full access to every bucket, including sharing and transferring any bucket. |
-
-### System
-
-| Permission | Description |
-|---|---|
-| Backup Server | Back up all of the server's data, including every user's files and credentials, and restore it. Equivalent to full access, so it is **not** part of the Admin role. A new server creates a **Backup User** role with it, and gives that role to the first user. |
 
 ### AI Tools
 
@@ -138,7 +137,7 @@ Roles grant the permissions below; when a user holds multiple roles, the permiss
 | View Logs | View the log window for a space. |
 | Use SSH | Connect to spaces over SSH. |
 | Use VNC | Use the VNC graphical desktop in a space. |
-| Use VS Code Tunnel | Connect to a space via a VS Code tunnel. |
+| Use VSCode Tunnel | Connect to a space via a VS Code tunnel. |
 | Use Web Terminal | Use the web terminal in a space. |
 | Run Commands | Execute commands inside a space. |
 | Copy Files | Copy files to and from a space. |
@@ -162,5 +161,5 @@ To delete a role:
 
 Editing a role is similar to creating one:
 
-1. Select the `Edit` option from the role menu.
+1. Select the `Edit` option from the role menu. The built-in Admin role has no `Edit` or `Delete` option.
 2. Update the role details, such as its name or assigned permissions.

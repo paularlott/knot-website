@@ -50,6 +50,14 @@ The Knot server supports multiple storage systems for managing data. Each storag
 
 ---
 
+### Enabling More Than One Storage System
+
+Only one storage system holds the data. If more than one is enabled, the server uses the first enabled in this order: MySQL / MariaDB, PostgreSQL, BadgerDB, Redis / Valkey. Redis / Valkey is the exception — when it's enabled alongside another system it stores the sessions rather than being ignored.
+
+Without Redis / Valkey, sessions are kept in PostgreSQL when it is the database, and otherwise in memory on each server, so restarting a BadgerDB or MySQL / MariaDB server signs its users out.
+
+---
+
 Each storage system offers unique benefits, allowing you to choose the one that best fits your deployment needs. For detailed configuration instructions, refer to the respective guides:
 
 - [MySQL / MariaDB Configuration](storage-systems/mysql.md)

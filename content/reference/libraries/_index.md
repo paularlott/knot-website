@@ -42,24 +42,25 @@ import knot.mcp as mcp
 # Use the libraries
 spaces = space.list()
 client = ai.Client()
-tools = mcp.Client().tools()
+tools = mcp.list_tools()
 ```
 
 ---
 
 ## Environment Compatibility
 
-Each library's availability depends on where the script runs. Not every library is available in every context — most notably, MCP tool execution environments do **not** provide `knot.methods`, `knot.event.emit()`, or system access libraries. Every reference page opens with an **Execution Environment** table showing exactly where that library works.
+Each library's availability depends on where the script runs. Not every library is available in every context — most notably, MCP tool execution, event sink and plugin handler environments do **not** provide `knot.methods`, and MCP tool and event sink environments have no system access libraries. Every reference page opens with an **Execution Environment** table showing exactly where that library works.
 
 Summary of the embedded execution contexts:
 
-- **MCP tool execution**, **event sink scripts**, **remote/space scripts**, and **`knot run-script`** register the Go-provided `knot.apiclient` transport, so the API libraries (`knot.space`, `knot.user`, `knot.group`, `knot.role`, `knot.audit`, `knot.files`, `knot.permission`, `knot.vars`, `knot.volume`, `knot.script`, `knot.skill`, `knot.slash_command`, `knot.server`, `knot.template`, `knot.stack`, `knot.pool`, `knot.jobs`, `knot.token`), plus `knot.ai` and `knot.mcp`, are available and authenticated automatically.
-- **`knot.methods` / `knot.methods.schema`** are agent-side only: remote/space scripts, `knot run-script`, and `knot methods register`. They are not available in MCP tool execution or event sink scripts.
-- **`knot.event`** is context-sensitive: `emit()` runs in space-side scripts, MCP tool execution, and external standalone scripts; the payload/metadata accessors run only in event sink scripts.
-- **`knot.healthcheck`** runs in every agent-side (space) script — health check scripts, startup scripts, `knot run-script` — but not in MCP tool execution or event sink scripts.
+- **MCP tool execution**, **event sink scripts**, **plugin handlers**, **remote/space scripts**, and **`knot run-script`** register the Go-provided `knot.apiclient` transport, so the API libraries (`knot.space`, `knot.user`, `knot.group`, `knot.role`, `knot.audit`, `knot.files`, `knot.permission`, `knot.vars`, `knot.volume`, `knot.script`, `knot.skill`, `knot.slash_command`, `knot.server`, `knot.template`, `knot.stack`, `knot.pool`, `knot.jobs`, `knot.token`), plus `knot.ai` and `knot.mcp`, are available and authenticated automatically.
+- **`knot.methods` / `knot.methods.schema`** are agent-side only: remote/space scripts, `knot run-script`, and `knot methods register`. They are not available in MCP tool execution, event sink scripts or plugin handlers.
+- **`knot.event`** is context-sensitive: `emit()` runs in space-side scripts, MCP tool execution, plugin handlers, and external standalone scripts; the payload/metadata accessors run only in event sink scripts, where `emit()` is not available.
+- **`knot.healthcheck`** runs in every agent-side (space) script — health check scripts, startup scripts, `knot run-script` — but not in MCP tool execution, event sink scripts or plugin handlers.
+- **`knot.identity`** and **`knot.plugin`** are server-side only: MCP tool execution, event sink scripts and plugin handlers.
 - **Health check scripts** run agent-side in the space and share the full Space environment; they have no `knot.apiclient` transport, so the API libraries are not usable there.
 
-For standalone scripts running outside knot (the scriptling CLI), the Python implementations resolve over HTTP via `knot.apiclient` configuration; `knot.methods`, `knot.event`, and `knot.healthcheck` have no standalone form.
+For standalone scripts running outside knot (the scriptling CLI), the Python implementations resolve over HTTP via `knot.apiclient` configuration (`knot.event.emit()` included); `knot.methods`, the `knot.event` sink accessors, `knot.healthcheck`, `knot.identity` and `knot.plugin` have no standalone form.
 
 ---
 

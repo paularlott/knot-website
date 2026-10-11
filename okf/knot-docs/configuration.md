@@ -190,6 +190,42 @@ peers = [
 
 ---
 
+## Server TLS
+
+By default the server serves HTTPS. With no certificate configured it generates a self-signed certificate at startup covering the host in `server.url` and `localhost`; point it at your own certificate for production:
+
+```toml
+[server.tls]
+cert_file = "/etc/knot/tls/knot.crt"
+key_file = "/etc/knot/tls/knot.key"
+use_tls = true
+```
+
+| Config | Flag | Environment | Default | Description |
+|---|---|---|---|---|
+| `server.tls.cert_file` | `--cert-file` | `KNOT_CERT_FILE` | | PEM encoded certificate. Used only when `key_file` is also set |
+| `server.tls.key_file` | `--key-file` | `KNOT_KEY_FILE` | | PEM encoded private key |
+| `server.tls.use_tls` | `--use-tls` | `KNOT_USE_TLS` | `true` | Serve HTTPS. Set to `false` to serve plain HTTP, for example behind a TLS-terminating reverse proxy |
+
+When the server runs in desktop mode with the default `http://127.0.0.1:3000` URL, it serves plain HTTP on loopback instead.
+
+---
+
+## Other Server Options
+
+| Config | Flag | Environment | Default | Description |
+|---|---|---|---|---|
+| `server.hostname` | `--hostname` | `KNOT_HOSTNAME` | System hostname | The name this server advertises to the other servers in a cluster |
+| `server.timezone` | `--timezone` | `KNOT_TIMEZONE` | Server's local timezone | Timezone used to evaluate template schedules; exposed to templates as `${{ .server.timezone }}` |
+| `server.auth_ip_rate_limiting` | `--auth-ip-rate-limiting` | `KNOT_AUTH_IP_RATE_LIMITING` | `true` | Rate limit failed logins per IP address and account (tuned with `server.auth_rate_limit_*`) |
+| `server.disable_space_create` | `--disable-space-create` | `KNOT_DISABLE_SPACE_CREATE` | `false` | Stop all users creating new spaces; existing spaces keep working |
+| `server.disable_user_activity`  | `--disable-user-activity` | `KNOT_DISABLE_USER_ACTIVITY` | `false` | Turn off filesystem write tracking in every space, so file changes no longer count as user activity (for example towards a template's idle timeout) |
+| `server.mcp_tool_timeout` | `--mcp-tool-timeout` | `KNOT_MCP_TOOL_TIMEOUT` | `180` | Maximum time in seconds an MCP tool call may run |
+| `server.mcp_tools_path` | `--mcp-tools-path` | `KNOT_MCP_TOOLS_PATH` | | Directory of MCP tools to use instead of the tools built into the server |
+| `server.mcp.disable_builtin_tools` | `--mcp-disable-builtin-tools` | `KNOT_MCP_DISABLE_BUILTIN_TOOLS` | | List of built-in MCP tool names to disable |
+
+---
+
 ## Security Considerations
 
 - Always use HTTPS in production

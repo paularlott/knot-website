@@ -15,7 +15,7 @@ type: API Reference
 ---
 # knot.event
 
-The `knot.event` library provides event emission and access functions. The module is **context-sensitive** — `emit()` is available in space-side scripts, MCP tool execution, and external standalone scripts, while `get_*()` and metadata functions are available only in server-side sink scripts.
+The `knot.event` library provides event emission and access functions. The module is **context-sensitive** — `emit()` is available in space-side scripts, MCP tool execution, plugin handlers, and external standalone scripts, while `get_*()` and metadata functions are available only in server-side sink scripts.
 
 ---
 
@@ -26,7 +26,7 @@ The `knot.event` library provides event emission and access functions. The modul
 | Environment | Behaviour |
 |-------------|-----------|
 | Remote/space scripts, `knot run-script` | `emit()` only. Raises custom events from inside a space via the local agent API (the `custom.` prefix is added automatically). Events are associated with the originating space. |
-| MCP tool execution | `emit()` only. Raises user-scoped custom events through the server's loopback API. There is no space context, so events use the nil space id and are not space-associated. |
+| MCP tool execution, plugin handlers | `emit()` only. Raises user-scoped custom events (as the requesting user) through the server's loopback API. There is no space context, so events use the nil space id and are not space-associated. |
 | External (standalone scripts) | `emit()` only. With no local agent present, falls back to `knot.apiclient` and the server's `/api/events/emit` endpoint. User-scoped (nil space id). |
 | Event sink scripts (server-side) | Payload and metadata accessors only (`get_string()`, `get_int()`, `get_bool()`, `get_list()`, `get_dict()`, `type()`, `id()`, `ts()`, `space()`, `space_urls()`, `actor()`, `custom()`). `emit()` is not available. |
 | Health check scripts | Not available. |
@@ -35,11 +35,11 @@ The `knot.event` library provides event emission and access functions. The modul
 
 ## Space-side: emit()
 
-Available in any script running inside a space (startup scripts, run-scripts, MCP tools).
+Available everywhere except event sink scripts: inside a space (startup scripts, run-scripts) the event is space-associated; in MCP tools, plugin handlers and external scripts it is user-scoped.
 
 | Function | Description |
 |----------|-------------|
-| `emit(type, payload={})` | Emit a custom event. The `custom.` prefix is added automatically. |
+| `emit(event_type, payload=None)` | Emit a custom event and return `True` once accepted; raises on delivery failure. The `custom.` prefix is added automatically. |
 
 ### Usage
 

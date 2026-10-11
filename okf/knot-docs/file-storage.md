@@ -13,44 +13,33 @@ type: Overview
 ---
 # File Storage
 
+ File storage is experimental: its behaviour, commands and on-disk formats may change in later releases.
+
 File storage keeps files in **buckets** that are replicated to every knot server in the cluster. Use it to share configuration files between spaces, hand files to teammates, or keep small artifacts close to where you work. Files can be reached through:
 
 - the **Files** page in the web interface;
 - the **`knot file`** commands, from your desktop or from inside a space with no configuration;
 - the [**`knot.files`**](../knot-reference/libraries/files.md) scripting library, for scripts and MCP tools;
-- the files **API** (`/api/files/*`);
+- the files **API** (`/api/files/*`, see the [API reference](../knot-reference/api.md)), with an [API token](api-tokens.md) that can be limited to the **Files** scope;
 - any **S3 client** (rclone, the AWS CLI, SDKs) at `<server>/s3` .
 
 Every server holds a full copy of every file, so reads are served locally and a server that is offline catches up when it returns. Because each file is stored on every server, file storage suits configuration, dotfiles, scripts and modest artifacts rather than bulk data; set [quotas](file-storage/operations.md#quotas) to keep it that way.
 
 ---
 
-## Enabling File Storage
+## Quick Start
 
-File storage is off until a storage directory is set. Set it on each server that should store files:
+Once an administrator has [enabled file storage](#enabling-file-storage) and you have the **Use File Storage** permission, create a bucket and put a file in it. A file in a bucket is written `bucket:path`, the bucket's name, a colon and the file's path inside it, such as `configs:app/settings.toml`; anything without the colon is a local path.
 
-```toml
-[server.files]
-path = "/var/lib/knot/files"
-# default_quota_mb = 0    # quota only for users with no user or group limit, 0 = unlimited
-# default_max_buckets = 0 # bucket limit only for users with no user or group limit, 0 = unlimited
+```shell
+knot file bucket create configs                    # a bucket of your own
+knot file copy settings.toml configs:app/          # upload settings.toml into the app/ folder
+knot file ls -r configs:                           # list everything in the bucket
+knot file bucket share configs --user alice        # let alice read it
+knot file copy configs:app/settings.toml .         # download it again, here or inside any space
 ```
 
-| Setting | Flag / environment | Meaning |
-|---|---|---|
-| `path` | `--files-path` / `KNOT_FILES_PATH` | Storage directory. File storage, and on Knot Pro the S3 endpoint, are off when it is not set; remove it to turn them off. |
-| `default_quota_mb` | `--files-default-quota-mb` / `KNOT_FILES_DEFAULT_QUOTA_MB` | Quota, in MB, used only for users whose own and group limits are all 0; any non-zero user or group value replaces it. Default `0` (unlimited). |
-| `default_max_buckets` | `--files-default-max-buckets` / `KNOT_FILES_DEFAULT_MAX_BUCKETS` | How many buckets a user may own, used only when their own and group limits are all 0; any non-zero user or group value replaces it. Default `0` (unlimited). |
-
-Every write is forced to disk before it is reported done, so a write that was reported successful survives a crash or power loss. Writes arriving together share one flush, so on fast drives such as NVMe the cost is small.
-
-The directory holds an embedded database with the bucket and file metadata and the content of files up to 64 KB, a folder of files for larger content, and in-progress multipart uploads; give it room for every user's files. Keeping small files beside their metadata makes millions of small files cheap: the server starts within moments however many there are, and its memory use doesn't grow with their number. Servers without file storage answer file requests with `503 file storage is not enabled on this server` and don't serve `/s3`.
-
-In a cluster, servers with file storage find each other automatically and replicate over the cluster's gossip port: a change to a bucket or file is gossiped as soon as it is made (within a fraction of a second), with a reconcile every 30 seconds as a safety net for anything missed, and a server missing a file's content streams it directly from a peer over the same port, encrypted with the cluster key. No extra ports or configuration are needed.
-
-### Leaf nodes
-
-A leaf node's buckets are local to it. Files never replicate between a leaf and its origin servers, in either direction. Leaves reach their origin over the leaf protocol, which carries no file data. Each server also advertises whether it is an origin or a leaf and only exchanges files with servers of the same kind. On a leaf, every user has full use of their own buckets: creating, sharing and transferring them needs no permission, as with spaces on a leaf.
+Alice reaches the bucket by its full name, `paul--configs:` if you are `paul` (see [Bucket names](#bucket-names)). [Using Files](file-storage/using-files.md) covers the Files page and every `knot file` command.
 
 ---
 
@@ -149,6 +138,50 @@ knot file bucket transfer configs bob
 Deleting a user deletes the buckets they own, with their files, along with their spaces and other resources; their access to buckets shared with them is removed. Transfer any bucket worth keeping to another user first.
 
 Should a user ever be deleted without their buckets going, each server notices within the hour and removes them, logging a warning. A bucket whose owner isn't in the user database at all is only logged, since a new user may not have replicated to that server yet; an administrator can transfer or delete it.
+
+---
+
+## Scripting
+
+Scripts, MCP tools and event sinks reach the same buckets through the [`knot.files`](../knot-reference/libraries/files.md) library, with the same access rules as the `knot file` commands:
+
+```python
+import knot.files as files
+
+files.write_file("configs", "app/settings.toml", "debug = true\n")
+print(files.read_text("configs", "app/settings.toml"))
+for f in files.list_files("configs", "app/")["files"]:
+    print(f["key"], f["size"])
+```
+
+---
+
+## Enabling File Storage
+
+File storage is off until a storage directory is set. Set it on each server that should store files:
+
+```toml
+[server.files]
+path = "/var/lib/knot/files"
+# default_quota_mb = 0    # quota only for users with no user or group limit, 0 = unlimited
+# default_max_buckets = 0 # bucket limit only for users with no user or group limit, 0 = unlimited
+```
+
+| Setting | Flag / environment | Meaning |
+|---|---|---|
+| `path` | `--files-path` / `KNOT_FILES_PATH` | Storage directory. File storage, and on Knot Pro the S3 endpoint, are off when it is not set; remove it to turn them off. |
+| `default_quota_mb` | `--files-default-quota-mb` / `KNOT_FILES_DEFAULT_QUOTA_MB` | Quota, in MB, used only for users whose own and group limits are all 0; any non-zero user or group value replaces it. Default `0` (unlimited). |
+| `default_max_buckets` | `--files-default-max-buckets` / `KNOT_FILES_DEFAULT_MAX_BUCKETS` | How many buckets a user may own, used only when their own and group limits are all 0; any non-zero user or group value replaces it. Default `0` (unlimited). |
+
+Every write is forced to disk before it is reported done, so a write that was reported successful survives a crash or power loss. Writes arriving together share one flush, so on fast drives such as NVMe the cost is small.
+
+The directory holds an embedded database with the bucket and file metadata and the content of files up to 64 KB, a folder of files for larger content, and in-progress multipart uploads; give it room for every user's files. Keeping small files beside their metadata makes millions of small files cheap: the server starts within moments however many there are, and its memory use doesn't grow with their number. Servers without file storage answer file requests with `503 file storage is not enabled on this server` and don't serve `/s3`.
+
+In a cluster, servers with file storage find each other automatically and replicate over the cluster transport: a change to a bucket or file is gossiped as soon as it is made (within a fraction of a second), with a reconcile every 30 seconds as a safety net for anything missed, and a server missing a file's content streams it directly from a peer over the same transport, secured like the rest of the cluster traffic (the cluster key on the gossip port, or TLS when `advertise_addr` is an `https://` URL). No extra ports or configuration are needed.
+
+### Leaf nodes
+
+A leaf node's buckets are local to it. Files never replicate between a leaf and its origin servers, in either direction. Leaves reach their origin over the leaf protocol, which carries no file data. Each server also advertises whether it is an origin or a leaf and only exchanges files with servers of the same kind. On a leaf, every user has full use of their own buckets: creating, sharing and transferring them needs no permission, as with spaces on a leaf.
 
 ---
 

@@ -24,7 +24,7 @@ The `knot.role` library provides role management functions.
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -35,7 +35,7 @@ The `knot.role` library provides role management functions.
 | Function | Description |
 |----------|-------------|
 | `list()` | List all roles |
-| `get(role_id)` | Get role by ID or name |
+| `get(role_id)` | Get role by ID (UUID; use `list()` to find an ID by name) |
 | `create(name, permissions=None, plugin_permissions=None)` | Create a new role — built-in permission IDs and/or qualified plugin grant strings |
 | `update(role_id, name=None, permissions=None, plugin_permissions=None)` | Update role properties; omitted lists keep their current values |
 | `delete(role_id)` | Delete a role |
@@ -67,3 +67,4 @@ print(f"{r['name']}: {r['permissions']}")
 
 `get()` also includes:
 - `permissions` - List of permission IDs (integers)
+- `plugin_permissions` - List of qualified plugin grant strings (e.g. `plugin.metrics.read`)

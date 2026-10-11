@@ -47,7 +47,7 @@ flowchart TD
 ### Key Components
 
 1. **Gossip Protocol**: Servers discover each other and sync data automatically
-2. **Local Database**: Each server runs its own database (MySQL, MariaDB, Redis, or BadgerDB)
+2. **Local Database**: Each server runs its own database (MySQL, MariaDB, PostgreSQL, Redis, or BadgerDB)
 3. **Data Synchronization**: Cluster data is synced via gossip protocol between servers
 4. **Runtime Detection**: Each server reports available container runtimes
 5. **Node Selection**: Spaces are automatically assigned to the best available server
@@ -60,7 +60,7 @@ flowchart TD
 
 - **2+ servers** (Linux, macOS, or Windows)
 - **Container runtime** on each server: Docker, Podman, or Apple Containers
-- **Database** on each server: MySQL, MariaDB, Redis/Valkey, or BadgerDB
+- **Database** on each server: MySQL, MariaDB, PostgreSQL, Redis/Valkey, or BadgerDB
 - **Network connectivity** between all servers
 
 ### Software
@@ -76,6 +76,7 @@ Each server runs its own database instance. Data is synchronized between servers
 |----------|----------------|-------|
 | **BadgerDB** | Production | Embedded, no external dependency, simple setup |
 | **MySQL/MariaDB** | Production | Most reliable, recommended for large clusters |
+| **PostgreSQL** | Production | For sites already running PostgreSQL |
 | **Redis/Valkey** | High performance | In-memory, fastest option |
 
 ---
@@ -84,7 +85,7 @@ Each server runs its own database instance. Data is synchronized between servers
 
 ### Step 1: Install and Configure Database on Each Server
 
-Each server needs its own database. Install MySQL, MariaDB, Redis, or use BadgerDB (embedded).
+Each server needs its own database. Install MySQL, MariaDB, PostgreSQL, Redis, or use BadgerDB (embedded).
 
 #### MySQL/MariaDB Example (run on each server)
 
@@ -93,6 +94,25 @@ CREATE DATABASE knot;
 CREATE USER 'knot'@'localhost' IDENTIFIED BY 'strong-password';
 GRANT ALL PRIVILEGES ON knot.* TO 'knot'@'localhost';
 FLUSH PRIVILEGES;
+```
+
+#### PostgreSQL Example (run on each server)
+
+```sql
+CREATE USER knot WITH PASSWORD 'strong-password';
+CREATE DATABASE knot OWNER knot;
+```
+
+Then enable it in `knot.toml` in place of the `[server.badgerdb]` section used below:
+
+```toml
+[server.postgres]
+enabled = true
+host = "localhost"
+port = 5432
+user = "knot"
+password = "strong-password"
+database = "knot"
 ```
 
 #### BadgerDB Example (recommended)
@@ -247,14 +267,9 @@ Servers will:
 
 ### Step 6: Verify Cluster Formation
 
-Check logs on each server. You should see messages like:
+Check the logs on each server for `enabling cluster mode on` (with the server's `advertiseAddr`), `starting gossip cluster` and `full state sync complete`.
 
-```
-[INFO] Cluster member joined: server2.example.com
-[INFO] Cluster member joined: server3.example.com
-[INFO] Detected runtime: docker
-[INFO] Cluster ready: 3 members
-```
+Then sign in to any server and open **Admin** → **Cluster Info**: every server should be listed. The page needs the Cluster Info permission and is only shown when `advertise_addr` is set.
 
 ---
 
@@ -307,40 +322,24 @@ Users can access any server directly. If the space is on a different server, the
 
 ### 1. Create a Template
 
-Create a simple template that uses Local Containers:
-
-```yaml {filename="test-template.yaml"}
-name: test-space
-container:
-  image: ubuntu:latest
-  command: sleep infinity
-```
+Create a template named `test-template` with the platform set to `Local Container`, as in [Creating a Template](../creating-a-template/). A Local Container template can run on any server, whichever container runtime it has.
 
 ### 2. Create a Space
 
-Create a space without specifying a server - knot will auto-select:
+Create a space from the template — knot picks the server automatically:
 
 ```bash
-knot space create test-space --template test-template
+knot space create test-space test-template
+knot space start test-space
 ```
 
 ### 3. Verify Node Selection
 
-Check which server the space was deployed to:
-
-```bash
-knot space get test-space
-```
-
-Look for the `server` or `node` field in the output.
+Check which server the space was deployed to: on the **Spaces** page, the host running the space is shown under its name (`Host: …`).
 
 ### 4. Test Manual Selection
 
-Create a space on a specific server:
-
-```bash
-knot space create test-space-2 --template test-template --server server2.example.com
-```
+To put a space on a specific server, create it from the web interface: click `More options` on the create form and pick the server in the **Node** list (shown when more than one node can run the template). Leave it on auto-select to let knot choose the node with the least load.
 
 ---
 
@@ -353,7 +352,7 @@ knot space create test-space-2 --template test-template --server server2.example
 **Solutions**:
 - Verify `peers` list matches on all servers
 - Check `advertise_addr` is accessible from other servers
-- Ensure firewall allows gossip traffic (default port 3010)
+- Ensure the firewall lets each server reach the others' `advertise_addr` (with an `https://` address, cluster traffic uses the server's web port at `/cluster`)
 - Verify all servers use the same `cluster.key`
 
 ### Spaces Not Distributing
@@ -361,8 +360,8 @@ knot space create test-space-2 --template test-template --server server2.example
 **Problem**: All spaces go to one server.
 
 **Solutions**:
-- Verify all servers are in the cluster (check logs for "Cluster member joined")
-- Verify runtime detection: check logs for `Detected runtime` messages
+- Verify all servers are in the cluster (**Admin** → **Cluster Info**)
+- Verify each server has a container runtime configured and running
 - Ensure templates don't have server constraints
 - Review node selection settings
 

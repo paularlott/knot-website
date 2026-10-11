@@ -24,13 +24,11 @@ Now that we have a usable template, we can create a space from it. You can creat
   
 
 2. Fill out the form with the following details:
-   - **Name**: Enter `phptest`.
-   - **Description**: Enter `A test PHP space.`.
-   - **Terminal**: Select the terminal you'd like to use.
-   - **Icon**: Optionally, change the icon shown for the space.
+   - **Space Name**: Enter `phptest`.
+   - Optionally, click `More options` to show the rest of the form, where you can set a **Description** (for example `A test PHP space.`), change the **Icon** shown for the space, and pick the **Terminal Shell** you'd like to use. The defaults suit most spaces, and everything can be changed later.
   
 
-3. Leave the `Start Space on Create` option checked, then click `Create Space`. You'll be returned to the `Spaces` page, where the new space will now be visible.
+3. Leave the `Start Space on Create` option checked, then click `Create`. You'll be returned to the `Spaces` page, where the new space will now be visible.
 
 ---
 

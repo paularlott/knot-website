@@ -17,13 +17,11 @@ Now that we have a usable template, we can create a space from it. You can creat
   {{< zoom-picture src="/docs/quick-start/local-containers/images/template-picker.webp" caption="Select a Template" >}}
 
 2. Fill out the form with the following details:
-   - **Name**: Enter `phptest`.
-   - **Description**: Enter `A test PHP space.`.
-   - **Terminal**: Select the terminal you'd like to use.
-   - **Icon**: Optionally, change the icon shown for the space.
+   - **Space Name**: Enter `phptest`.
+   - Optionally, click `More options` to show the rest of the form, where you can set a **Description** (for example `A test PHP space.`), change the **Icon** shown for the space, and pick the **Terminal Shell** you'd like to use. The defaults suit most spaces, and everything can be changed later.
   {{< zoom-picture src="/docs/quick-start/local-containers/images/space-form.webp" caption="Create Space Form" >}}
 
-3. Leave the `Start Space on Create` option checked, then click `Create Space`. You'll be returned to the `Spaces` page, where the new space will now be visible.
+3. Leave the `Start Space on Create` option checked, then click `Create`. You'll be returned to the `Spaces` page, where the new space will now be visible.
 
 ---
 

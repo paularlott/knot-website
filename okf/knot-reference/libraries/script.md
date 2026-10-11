@@ -22,7 +22,7 @@ The `knot.script` library provides script management and script execution functi
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -32,14 +32,14 @@ The `knot.script` library provides script management and script execution functi
 
 | Function | Description |
 |----------|-------------|
-| `list(owner=None, all_zones=False)` | List scripts visible to the current user |
+| `list(owner=None, all_zones=False, include_inactive=False, script_type=None)` | List scripts visible to the current user; `owner="current"` limits to your own scripts, inactive scripts are skipped unless `include_inactive=True`, and `script_type` filters by type (e.g. `"tool"`) |
 | `list_global(all_zones=False)` | List global scripts available for template editing |
 | `get(script_id)` | Get script details by UUID |
-| `get_by_name(name)` | Get script details by name |
-| `get_content(name, script_type='script')` | Get script content by name and type |
-| `create(name, content, ...)` | Create a script |
-| `update(script_id, ...)` | Update a script |
-| `delete(script_id)` | Delete a script |
+| `get_by_name(name)` | Get script details by name (your own script shadows a global script of the same name) |
+| `get_content(name, script_type='script')` | Get script content (a string) by name and type |
+| `create(name, content, description='', owner=None, groups=None, zones=None, active=True, script_type='script', mcp_input_schema_toml='', mcp_keywords=None, discoverable=False)` | Create a script and return its ID; `owner="current"` creates an own script, omitted creates a global script |
+| `update(script_id, name=None, content=None, description=None, groups=None, zones=None, active=None, script_type=None, mcp_input_schema_toml=None, mcp_keywords=None, discoverable=None)` | Update a script, keeping fields you do not pass; returns `True` |
+| `delete(script_id)` | Delete a script; returns `True` |
 | `execute(space_name, script_name=None, script_id=None, content=None, args=None)` | Execute a script in a running space |
 | `execute_content(space_name, content, args=None)` | Execute inline script content in a running space |
 
@@ -121,7 +121,7 @@ tool_id = script.create(
 
 ## Execution
 
-`execute()` accepts exactly one of `script_name`, `script_id`, or `content`.
+`execute()` needs one of `script_id`, `script_name`, or `content`; if more than one is given, they are used in that order of precedence (`script_id` first).
 
 ```python
 import knot.script as script

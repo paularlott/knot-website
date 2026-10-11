@@ -17,7 +17,7 @@ type: Guide
 
 To create a new template:
 
-1. Navigate to the `Templates` page via the `Administration` menu and select `+ Template`.
+1. Navigate to the `Templates` page under the `Build` menu and select `New Template`.
 2. Fill out the form presented:
 
 
@@ -38,8 +38,9 @@ To create a new template:
 ### Platform and Job Description
 
 - **`Platform`**:
-  Choose the platform to run the template: Docker, Podman, Nomad, or Manual.
+  Choose the platform to run the template: Manual, Nomad, Local Container (or a specific container runtime: Docker, Podman, or Apple), or KVM. Only the platforms the server offers are shown.
   - **Manual templates**: Require the Knot agent to be started manually on the remote server.
+  - **Local Container**: Runs on whichever container runtime the node uses; pick Docker, Podman, or Apple from the same control to tie the template to one runtime.
 
 - **`Nomad Job (HCL)`** or **`Container Specification (YAML)`**:
   Provide the job description in either Nomad HCL or YAML format, depending on the selected platform. This field is not shown for `Manual` templates.
@@ -73,9 +74,6 @@ To create a new template:
 
 - **`Storage Units`**:
   The number of storage units the space will use. This is used to calculate the cost of creating the space. Set to `0` for no cost.
-
-- **`Maximum Uptime`**:
-  The maximum time a space can run. Specify the time in minutes, hours, or days.
 
 ---
 
@@ -122,17 +120,22 @@ To create a new template:
 - **`Custom Fields`**:
   Add optional fields to pass additional information into a space. Each field has a **Variable Name**, a **Field Label / Description** (shown on the space creation and edit forms), and a **type** - set with the wrench icon next to the field, shown as a badge on each row:
   - **Text** (default): a single-line input.
-  - **Password**: a masked input.
+  - **Masked**: hides the value while typing; it is stored like any other value, so it is not a secret.
   - **Number**: a digit-validated input, stored as a string.
-  - **Text area**: a code editor for multi-line values, with a configurable language (text, scriptling, yaml, toml, json, markdown, or shell); scriptling gets the editor's completions.
+  - **Bool**: a true/false value.
+  - **Text Area**: a code editor for multi-line values, with a configurable language (text, scriptling, yaml, toml, json, markdown, or shell); scriptling gets the editor's completions.
   - **Autocomplete**: a searchable box whose suggestions come from a [plugin field handler](../plugins/writing-plugins/fields.md) (offered only when a plugin provides one); the value must be one of the suggested options.
   - **Select**: a dropdown whose options come from a plugin field handler or a manual list on the field; the value must be one of the options.
 
+  All values are stored as strings. On the space form, text typed into an autocomplete box matches an option's value or label case-insensitively; if nothing matches, it is tried again with leading and trailing decoration (such as `#` or `[]`) removed, so a pasted `#wr1234` or `[wr1234]` finds the `wr1234` option. The API itself only accepts the exact option values.
+
   Every field can also carry a **Default value** (set in the same wrench-icon dialog). The default is pre-filled when a space is created and applied when an API/CLI request omits the field. Clearing the pre-filled value keeps the field empty — a deliberately blank field never falls back to the default.
 
-  In the same dialog, **Field Required** stops a space being created or saved with the field blank; required fields are marked with an asterisk on the space forms. **Show When Creating a Space** puts an optional field on the create form next to the required ones (rows with it set show a *shown* badge). Other optional fields wait behind a **Show more fields** toggle on the create form, so a field used now and then stays out of the way but is one click from view. The edit form always shows every field.
+  In the same dialog, **Field Required** stops a space being created or saved with the field blank (the API rejects it too); required fields are marked with an asterisk on the space forms. **Always Show When Creating a Space** puts an optional field on the create form next to the required ones (rows with it set show a *shown* badge); the toggle is disabled for required fields, which are always shown. Other optional fields wait behind a **Show N more field(s)** toggle on the create form, so a field used now and then stays out of the way but is one click from view. The edit form always shows every field.
 
   Use the up and down arrows on each row, or drag a row by its handle, to set the order the fields appear in on the space forms.
+
+  Changing a field's name, label, type, options, default or required setting, or the order of the fields, changes the template, so running spaces created from it show an [Update Available](../spaces/managing.md) badge. **Always Show When Creating a Space** only changes the create form's layout, so it doesn't.
 
   
 
@@ -200,7 +203,7 @@ cat ubuntu.yaml | knot admin template import
 knot admin template import --file ubuntu.yaml --name "Ubuntu Dev"
 ```
 
-The import creates a new template on the server. Script names are resolved to IDs automatically — if a script doesn't exist on the target server, it's skipped with a warning.
+The import creates the template, or updates the existing template with the same name — use `--name` to import a copy alongside it. Script names are resolved to IDs automatically; a startup or shutdown script that doesn't exist on the target server is silently dropped from the template.
 
 ### YAML format
 
@@ -222,6 +225,16 @@ max_uptime: 8
 max_uptime_unit: hour
 idle_timeout: 2
 idle_timeout_unit: hour
+custom_fields:
+  - name: TICKET
+    description: Ticket reference
+    required: true
+  - name: SIZE
+    description: Instance size
+    type: select
+    options: [small, medium, large]
+    default: medium
+    show_on_create: true
 startup_script: install-tools.sh
 jobs:
   - name: backup

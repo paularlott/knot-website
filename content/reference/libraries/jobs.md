@@ -16,7 +16,7 @@ Functions that change definitions (`add`, `update`, `remove`, `enable`, `disable
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -103,6 +103,8 @@ Trigger a job immediately by name. Works for disabled and manual-only jobs; the 
 - `space` - Space name or ID
 - `name` - The name of the job to run
 
+**Returns:** `True` once the job has started.
+
 ### add
 
 ```python
@@ -117,6 +119,8 @@ Add a job to a space. Raises `ValueError` if a job with the same name already ex
 - `command` - Shell command the job runs in the space
 - `schedule` - 5-field cron expression (`minute hour day month weekday`), e.g. `"0 2 * * *"` or `"*/5 * * * *"`; empty for a manual-only job
 - `enabled` - If `False` the job is listed but never fires automatically
+
+**Returns:** `True` on success.
 
 ### update
 
@@ -133,13 +137,15 @@ Update a job's command, schedule or enabled state. Only the given arguments are 
 - `schedule` - New cron expression, `""` for manual only, or `None` to keep
 - `enabled` - New enabled state, or `None` to keep
 
+**Returns:** `True` on success.
+
 ### remove
 
 ```python
 remove(space, name)
 ```
 
-Remove a job from a space. Raises `ValueError` if the job does not exist.
+Remove a job from a space and return `True`. Raises `ValueError` if the job does not exist.
 
 ### enable / disable
 
@@ -148,7 +154,7 @@ enable(space, name)
 disable(space, name)
 ```
 
-Enable or disable a job. A disabled job never fires automatically; manual triggering keeps working either way.
+Enable or disable a job and return `True`. A disabled job never fires automatically; manual triggering keeps working either way.
 
 ### enable_runner / disable_runner
 
@@ -157,7 +163,7 @@ enable_runner(space)
 disable_runner(space)
 ```
 
-Start or stop the space's job runner. A stopped runner suspends all scheduled firing while manual runs keep working. The state is persisted on the space.
+Start or stop the space's job runner and return `True`. A stopped runner suspends all scheduled firing while manual runs keep working. The state is persisted on the space.
 
 ---
 

@@ -28,6 +28,9 @@ The agent runs inside containers and communicates with the server. It handles SS
 **Database**
 Stores users, templates, spaces, and configuration. Options: BadgerDB, MySQL/MariaDB, PostgreSQL, or Redis/Valkey.
 
+**File Storage** 
+Optional [buckets of files](../knot-docs/file-storage.md), kept in a storage directory on each server rather than in the database and replicated to every server in the cluster. Reached from the web interface, `knot file`, the `knot.files` library, the API and, on Knot Pro, an S3 endpoint.
+
 **Container Runtime**
 Executes spaces. Options include: Docker, Podman, Nomad, or Apple Container.
 

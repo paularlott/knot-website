@@ -19,6 +19,9 @@ navSection: docs
 - Start API tokens with `tk_`, so none can begin with `-`; existing tokens keep working
 - Limit usernames of new users to 30 characters ending in a letter or digit
 - Use the chat `provider` setting on its own, with `base_url` defaulting to the provider's API; `type` with `base_url` is for other OpenAI-compatible servers, and takes precedence ([docs](../docs/ai/ai-assistant/))
+- Match custom field values case-insensitively, ignoring decoration around a pasted reference such as `#1234` or `[1234]`
+- Improve accessibility and usability across the web interface, and tidy the login page
+- Warn before the web session expires, with the option to stay signed in
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
@@ -27,8 +30,13 @@ navSection: docs
 - Add the Backup Server permission and a `backup` API token scope; a new server creates a Backup User role and gives it, with Admin, to its first user
 - Improve usage visualization for the Usage and Users pages
 - Add the buckets each user can reach to the Users access overview {{< pro-badge >}}
-- Add Grok (xAI) support: set the chat `provider` to `grok`, or use `provider=ai.GROK` in scripts ([docs](../docs/ai/ai-assistant/))
+- Add Grok (xAI) support: set the chat `provider` to `grok`, or use `provider=ai.GROK` with `scriptling.ai` in scripts ([docs](../docs/ai/ai-assistant/))
 - Add PostgreSQL as a database; it stores sessions too, so they survive a restart without Redis / Valkey, which still takes the sessions when enabled ([docs](../docs/configuration/storage-systems/postgres/))
+- Add two-way and continual sync between a directory and a bucket with `knot file sync --two-way` and `--watch` ([docs](../docs/file-storage/))
+- Add `knot file move` (alias `mv`), and move files on the Files page by dragging them onto a folder
+- Add the template custom field option Always Show When Creating a Space ([docs](../docs/templates/managing/))
+- Cache API tokens and groups to cut database reads
+- Suggest the closest commands, with their aliases, when the CLI is given an unknown command
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
@@ -38,6 +46,14 @@ navSection: docs
 - Fix creating templates through the API without an idle timeout unit
 - Fix the Users page showing no users when one was created without roles or groups
 - Fix the chat ignoring `provider` and never sending `reasoning_effort` to the model
+- Fix a slow direct connection blocking a port forward from accepting further connections
+- Fix syslog lines without a priority, such as web access logs, being logged as errors
+- Fix space health checks ignoring the template's timeout and skip SSL verification settings
+- Fix `knot.template.update()` turning off VNC on KVM templates
+- Fix `knot.role.get()` leaving out plugin permissions, so `knot.role.update()` cleared them
+- Fix `knot.stack.list()` reporting every space as not running
+- Fix the OAuth provider `scopes` setting being ignored {{< pro-badge >}}
+- Fix a mistyped CLI subcommand running a different command, such as `knot file buket list` running `knot file list`
 {{< /changelog-item >}}
 
 ---
@@ -45,9 +61,9 @@ navSection: docs
 {{< version "v0.36.2" >}}
 
 {{< changelog-item "fixed" >}}
-- **UI stacks**: in some cases the auto completion of available stacks did not work.
+- **UI stacks**: stack name auto completion on the space form offered no suggestions to users without permission to set space dependencies.
 
-- **UI improvements**: to port forwarding.
+- **UI port forwarding**: the target picker lists other users' spaces that share a port, narrowed to those sharing the remote port entered {{< pro-badge >}}.
 
 - **Apple Containers**: fixed an issue where it wasn't possible to delete the container.
 {{< /changelog-item >}}

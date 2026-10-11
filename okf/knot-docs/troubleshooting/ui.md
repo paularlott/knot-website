@@ -56,12 +56,8 @@ Troubleshooting UI customization issues.
    logo_invert = true
    ```
 
-2. **Provide separate dark theme logo**:
-   ```toml
-   [server.ui]
-   logo_url = "/public-files/logo-light.svg"
-   logo_dark_url = "/public-files/logo-dark.svg"
-   ```
+2. **Use a logo that suits both themes**:
+   There is no separate dark theme logo setting. If inverting doesn't suit the logo, use an image with a transparent background and colours that contrast with both the light and dark themes.
 
 ---
 

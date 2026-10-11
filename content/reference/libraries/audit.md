@@ -6,7 +6,7 @@ tags: [security, api, scripting]
 weight: 30
 ---
 
-The `knot.audit` library provides audit log search and filtering functions. {{< pro-badge >}}
+The `knot.audit` library provides audit log search and filtering functions.
 
 ---
 
@@ -14,7 +14,7 @@ The `knot.audit` library provides audit log search and filtering functions. {{< 
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -117,13 +117,33 @@ Each audit log entry contains:
 | `System Start` | Server started |
 | `Login Success` | Successful authentication |
 | `Login Failed` | Failed authentication attempt |
+| `Login Blocked` | Authentication attempt while the source is blocked |
+| `Anomaly Detected` | An anomaly detection rule fired {{< pro-badge >}} |
 | `User Create` / `Update` / `Delete` | User management |
+| `User Link` / `User Unlink` | Linking accounts for user switching |
+| `User Switch` / `User Switch Denied` | Switching into a linked account |
 | `Space Create` / `Update` / `Delete` | Space lifecycle |
+| `Space Start` / `Space Stop` / `Space Restart` | Space state changes |
 | `Space Transfer` / `Space Shared` / `Space Stop Share` | Space sharing |
+| `Space File Op` | File read/write in a space (when `server.audit.file_operations` is enabled; paths and byte counts only) |
+| `Space Session Open` | Interactive session opened to a space (when `server.audit.space_sessions` is enabled) |
+| `Tunnel Create` / `Tunnel Close` | Public tunnels |
 | `Template Create` / `Update` / `Delete` | Template management |
 | `Group Create` / `Update` / `Delete` | Group management |
 | `Role Create` / `Update` / `Delete` | Role management |
 | `Variable Create` / `Update` / `Delete` | Variable management |
 | `Volume Create` / `Update` / `Delete` | Volume management |
+| `Bucket Create` / `Delete` / `Rename` | File storage bucket management |
+| `Bucket Share` / `Bucket Unshare` / `Bucket Transfer` | File storage bucket sharing and ownership |
+| `Backup` / `Restore` | Server backup and restore |
 | `Script Create` / `Update` / `Delete` / `Execute` | Script management |
 | `Skill Create` / `Update` / `Delete` | Skill management |
+| `Slash Command Create` / `Update` / `Delete` | Slash command management |
+| `MCP Server Create` / `Update` / `Delete` | MCP server management |
+| `Stack Definition Create` / `Update` / `Delete` | Stack definition management |
+| `Stack Start` / `Stack Stop` / `Stack Restart` / `Stack Delete` | Stack lifecycle |
+| `Event Sink Create` / `Update` / `Delete` | Event sink management |
+| `Event Sink Delivery Failed` / `Event Sink Script Failed` / `Event Sink Dropped` | Event sink delivery problems |
+| `Log Sink Register` / `Log Sink Deregister` | A space registered or removed as a log sink {{< pro-badge >}} |
+| `Token Create` / `Update` / `Delete` | API token management (OAuth flow tokens are not audited) |
+| `Config Update` | Runtime configuration change |

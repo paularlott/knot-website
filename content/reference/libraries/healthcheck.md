@@ -31,6 +31,8 @@ Template health checks can also use the `Agent` type. Agent health checks do not
 | `program(command, timeout=10)` | Run a command — returns `True` if exit code 0 |
 | `check_result(healthy)` | Report the health result and exit |
 
+Optional arguments can be passed positionally or by keyword, e.g. `hc.http_head(url, timeout=5)` or `hc.http_head(url, True, 5)`.
+
 ---
 
 ## Usage
@@ -48,9 +50,12 @@ hc.check_result(hc.tcp_port(8080))
 ok = hc.http_head("http://localhost:8080/health") and hc.tcp_port(6379)
 hc.check_result(ok)
 
-# Custom logic
-ok = hc.tcp_port(5432) and hc.program("pg_isready -q")
+# Custom logic, with per-check timeouts
+ok = hc.tcp_port(5432, timeout=2) and hc.program("pg_isready -q", timeout=5)
 hc.check_result(ok)
+
+# HTTPS endpoint with a self-signed certificate
+hc.check_result(hc.http_head("https://localhost:8443/health", skip_ssl_verify=True, timeout=5))
 ```
 
 ---
@@ -84,10 +89,12 @@ Attempt a TCP connection to `127.0.0.1` on the given port. Returns `True` if the
 
 ### program(command, timeout=10)
 
-Execute a shell command. Returns `True` if the command exits with code 0, `False` for any non-zero exit code or error.
+Run a program. Returns `True` if it exits with code 0, `False` for any non-zero exit code, timeout or error.
+
+The command is **not** run through a shell: it is split on whitespace into the program and its arguments, so quoting, pipes, redirects, `&&`, globs and environment variable expansion are not supported. To use shell features, call the shell explicitly with a script file (e.g. `program("/bin/sh /opt/check.sh")`) or write a `custom` check.
 
 **Parameters:**
-- `command` (string): The command to execute
+- `command` (string): The program and its arguments, separated by whitespace
 - `timeout` (int, optional): Execution timeout in seconds (default: 10)
 
 **Returns:** `bool` — `True` if healthy
@@ -105,6 +112,6 @@ Report the final health check result and exit the script immediately.
 
 ## How Health Check Scripts Run
 
-When a template configures a script-backed health check type (HTTP, TCP, or Program), the agent automatically generates and runs a script using these functions. For the `custom` health check type, you write a script that imports `knot.healthcheck` directly, combines check functions as needed, and calls `check_result()` with the final result. The `Agent` health check type is handled by the server and does not use this library.
+When a template configures a script-backed health check type (HTTP, TCP, or Program), the agent automatically generates and runs a script using these functions, passing the template's timeout (and, for HTTP, its skip-TLS-verification setting) as keyword arguments. For the `custom` health check type, you write a script that imports `knot.healthcheck` directly, combines check functions as needed, and calls `check_result()` with the final result. The `Agent` health check type is handled by the server and does not use this library.
 
 Health check scripts run inside the space under the agent and share the full Space environment with every other agent-side script — the standard and extended scriptling libraries plus `knot.*` libraries. They have no `knot.apiclient` transport, so the API libraries are not usable there.

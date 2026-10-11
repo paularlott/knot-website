@@ -24,7 +24,7 @@ For standalone use outside knot, configure it explicitly or set environment vari
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Go runtime provides the transport. `configure()` is a no-op and tokens are never exposed to scripts. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Go runtime provides the transport. `configure()` is a no-op and tokens are never exposed to scripts. |
 | Real Scriptling in a space (via `knot.zip`) | Auto-configured: `knot.apiclient` fetches the server URL and token from the agent's `/connect` endpoint on `127.0.0.1:$KNOT_API_PORT` and talks to the server directly as the space owner. No `configure()` needed. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation. Call `configure()` or set the `KNOT_*` environment variables. |
@@ -105,7 +105,7 @@ spaces = space.list()
 | `ai_url` | str | AI endpoint URL (defaults to `url + "/v1"`) |
 | `ai_token` | str | AI access token (defaults to `token`) |
 | `ai_model` | str | Default model for `knot.ai.get_default_model()` |
-| `ai_provider` | str | Provider: `openai`, `claude`, `gemini`, `ollama`, `mistral` |
+| `ai_provider` | str | Provider: `openai`, `claude`, `gemini`, `ollama`, `mistral`, `zai`, `grok` |
 
 ---
 
@@ -118,3 +118,5 @@ spaces = space.list()
 | `gemini` | Google Gemini |
 | `ollama` | Ollama (local) |
 | `mistral` | Mistral AI |
+| `zai` | Z.AI |
+| `grok` | xAI Grok |

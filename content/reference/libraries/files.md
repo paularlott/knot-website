@@ -16,7 +16,7 @@ Buckets are named `<owner>--<name>`. Give your own buckets by their short name; 
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -76,7 +76,7 @@ List what changed in a bucket since a cursor, to follow a bucket without listing
 **Returns:** `dict` containing:
 - `changes` (list): Dicts with `key`, `size`, `etag`, `sha256`, `content_type`, `modified_at` and `deleted`. Each file changed since the cursor appears once, as it is now; a deleted file has `deleted` set and only its `key` and `modified_at`.
 - `cursor` (string): Pass it next time
-- `reset` (bool): `True` when the cursor couldn't be followed — the server renumbered its changes after an unclean stop, or the cursor came from another server. `changes` is then empty: start again without a cursor.
+- `reset` (bool): `True` when the cursor couldn't be followed — the server's index was rebuilt, or the cursor came from another server. `changes` is then empty and `cursor` is `""`: start again without a cursor.
 
 ```python
 import knot.files as files

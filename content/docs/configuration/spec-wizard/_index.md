@@ -26,13 +26,13 @@ The wizard doesn't replace hand-editing — it patches only the fields it contro
 
 The wizard's image picker shows a curated catalog of base images (Ubuntu, PHP, MariaDB, Valkey, etc.). See the [base images reference](../../templates/base-images/) for the full grid of supplied images and their versions. Each catalog entry references the registry via the `${{ .server.base_image_registry }}` [system variable](../../variables/system-variables/), which resolves at deploy time to the configured value.
 
-**Default:** `docker.io/paularlott`
+**Default:** `registry-1.docker.io/paularlott`
 
 ```toml
 [server.base_image]
 # Prefix prepended to relative image references in specs and the bundled
 # base image manifest. Exposed to templates as ${{ .server.base_image_registry }}.
-registry_url = "docker.io/paularlott"
+registry_url = "registry-1.docker.io/paularlott"
 manifest = "/etc/knot/base-images.toml"
 # Optional: when both are set, the wizard injects an auth block into specs
 # when the user picks a base image from the catalog. Exposed as
@@ -45,7 +45,7 @@ Common overrides:
 
 | Registry | Value |
 |----------|-------|
-| Docker Hub (upstream) | `docker.io/paularlott` (default) |
+| Docker Hub (upstream) | `registry-1.docker.io/paularlott` (default) |
 | Internal mirror      | `hub.example.com/library` |
 | GHCR                 | `ghcr.io/yourorg` |
 | Self-hosted Harbor   | `harbor.example.com/knot` |
@@ -60,7 +60,7 @@ The catalog itself comes from a TOML manifest. By default knot uses a manifest c
 
 ```toml
 [server.base_image]
-registry_url = "docker.io/paularlott"
+registry_url = "registry-1.docker.io/paularlott"
 manifest = "/etc/knot/base-images.toml"
 ```
 
@@ -166,7 +166,7 @@ All options are available as CLI flags or environment variables:
 
 | Flag | Env var | Config path | Default |
 |------|---------|-------------|---------|
-| `--base-image-registry` | `KNOT_BASE_IMAGE_REGISTRY` | `server.base_image.registry_url` | `docker.io/paularlott` |
+| `--base-image-registry` | `KNOT_BASE_IMAGE_REGISTRY` | `server.base_image.registry_url` | `registry-1.docker.io/paularlott` |
 | `--base-images-manifest` | `KNOT_BASE_IMAGES_MANIFEST` | `server.base_image.manifest` | (bundled) |
 | `--base-images-update-enabled` | `KNOT_BASE_IMAGES_UPDATE_ENABLED` | `server.base_image.update_enabled` | `false` |
 | `--base-images-update-url` | `KNOT_BASE_IMAGES_UPDATE_URL` | `server.base_image.update_url` | (none; no fetch happens without it) |

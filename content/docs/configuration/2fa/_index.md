@@ -23,6 +23,13 @@ issuer = 'Knot'
 
 - The `enabled` field must be set to `true` to activate 2FA.
 - The `issuer` field can be set to a string to identify your installation (e.g., "Knot").
+- The optional `window` field sets how many 30-second time steps either side of the current one are accepted, to allow for clock drift. The default `1` accepts the previous, current and next code.
+
+| Config | Flag | Environment | Default |
+|---|---|---|---|
+| `server.totp.enabled` | `--enable-totp` | `KNOT_ENABLE_TOTP` | `false` |
+| `server.totp.issuer` | `--totp-issuer` | `KNOT_TOTP_ISSUER` | `Knot` |
+| `server.totp.window` | `--totp-window` | `KNOT_TOTP_WINDOW` | `1` |
 
 After making these changes, restart Knot to apply the configuration.
 

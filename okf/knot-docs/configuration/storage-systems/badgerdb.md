@@ -45,4 +45,10 @@ knot server --badgerdb-enabled --badgerdb-path /var/lib/knot/badger
 
 - **`enabled`**: Must be set to `true` to enable the use of BadgerDB.
 
-- **`path`**: The directory where BadgerDB files will be stored. This directory **must** be mounted to persistent storage to ensure configurations are preserved between restarts of the Knot server.
+- **`path`**: The directory, `./badger` by default, where BadgerDB files will be stored. This directory **must** be mounted to persistent storage to ensure configurations are preserved between restarts of the Knot server.
+
+---
+
+### Sessions
+
+BadgerDB doesn't store sessions. Without Redis / Valkey, sessions are held in memory on each server, so restarting the server signs users out. To keep users signed in across restarts, use [PostgreSQL](postgres.md) or enable [Redis / Valkey](redis.md) alongside BadgerDB for sessions.

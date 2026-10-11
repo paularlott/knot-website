@@ -20,6 +20,10 @@ knot admin backup /backups/knot-20261007
 knot admin restore /backups/knot-20261007 --server https://new.example.com
 ```
 
+
+**Changed in v0.37.0.** Backups are now taken through the API into a folder, and restored into a running new server, instead of a single file written and read on the server's host. Backup files made by earlier versions can't be restored: take a fresh backup as soon as you have upgraded.
+
+
 ---
 
 ## Who Can Back Up
@@ -28,7 +32,7 @@ A backup holds everything: every user's password hash and API tokens, every file
 
 - A **new server** creates a **Backup User** role in its database, holding just this permission, and gives it, along with the Admin role, to its first user. It is an ordinary role: edit it, give it to others, or delete it if you'd rather not have it.
 - A server upgraded from an earlier version gets no such role and nobody holds the permission. Create a role with **Backup Server** (Administration → Roles) and assign it to whoever should back up.
-- Give an automated job its own user with only that role, and an [API token](../api-tokens.md) for it. Scope the token to **Backup** and it can reach the backup and restore endpoints and nothing else, so a token left in a cron job can't be used to sign in or change anything.
+- Give an automated job its own user with only that role, and an [API token](../api-tokens.md) for it. Scope the token to **Backup** and it can reach the backup and restore endpoints and nothing else, so a token left in a cron job can't be used to sign in or change anything. A Backup-scoped token can't run `knot admin file restore`, which writes through the files API: use a token with the **Files** scope, or an unscoped one, for that.
 - Every backup and restore is recorded in the audit log, once when it starts and once when it ends, with the user and the number of records.
 
 Choose the server with `--server` and `--token` (or `KNOT_SERVER` and `KNOT_TOKEN`), or with `--alias` to use one defined in your configuration file's `[client.connection.<alias>]` section, as for the other `knot` commands. With none of these the `default` alias is used.
@@ -71,7 +75,7 @@ Backups survive a poor connection. A stream that breaks is retried with a growin
 
 The records are taken as they are when the backup starts and content is copied afterwards. A file replaced during the backup may no longer have its old content, which is reported, and the command exits with an error although everything else is saved.
 
-By default everything is backed up. Passing any of the selection flags backs up only the items selected:
+By default everything is backed up (`--all`, `-a`, which is on unless you select something). Passing any of the selection flags backs up only the items selected:
 
 | Flag | Backs up |
 |------|----------|
@@ -100,9 +104,21 @@ By default everything is backed up. Passing any of the selection flags backs up 
 knot admin backup users-backup --users --tokens --spaces
 ```
 
+The selection flags, `--limit-user`, `--limit-template` and `--encrypt-key` can also be set in a `[backup]` section of the configuration file, or as `KNOT_BACKUP_<FLAG>` environment variables (`KNOT_BACKUP_FILES`, `KNOT_BACKUP_LIMIT_USER` and so on). `--no-content` and `--prune` are flags or environment variables only (`KNOT_BACKUP_NO_CONTENT`, `KNOT_BACKUP_PRUNE`).
+
+```toml
+[backup]
+users = true
+tokens = true
+spaces = true
+# limit_user = "alice"
+# limit_template = "ubuntu-dev"
+# encrypt_key = "..."   # 32 bytes; prefer the environment
+```
+
 ### Encrypted Backups
 
-The records include password hashes and API tokens. Pass a 32-byte key with `--encrypt-key` (`-e`) or `KNOT_BACKUP_ENCRYPT_KEY` to encrypt them, in blocks so a large backup is still read a block at a time. Store the key securely: it is required to restore, and to list files.
+The records include password hashes and API tokens. Pass a 32-byte key with `--encrypt-key` (`-e`) or `KNOT_BACKUP_ENCRYPT_KEY` to encrypt them, in blocks so a large backup is still read a block at a time. Store the key securely: it is required to restore, and to list or restore files. `knot admin restore`, `knot admin file ls`, `knot admin file restore` and `knot admin file fsck --from-backup` take the same key with `--encrypt-key` (`-e`) or `KNOT_RESTORE_ENCRYPT_KEY`.
 
 ```shell
 knot admin backup --encrypt-key "$KNOT_BACKUP_KEY" /backups/knot-20261007
@@ -213,12 +229,14 @@ Alert on a non-zero exit status.
 |---------|-------|
 | `No permission to back up the server` | The token's user needs a role holding the Backup Server permission. Admins don't have it unless given the Backup User role. |
 | `token scopes do not permit this endpoint` | The token is scoped; it needs the **Backup** scope. |
-| `Encrypt key must be 32 bytes long` | The `--encrypt-key` value must be exactly 32 bytes. |
+| `the encryption key must be 32 bytes long` | The `--encrypt-key` value must be exactly 32 bytes. |
 | `the backup is encrypted: give the key` | The backup was made with `--encrypt-key`; give the same key to restore or list it. |
 | `cannot decrypt the backup: wrong key, or the file is damaged` | The key is wrong, or the record file was changed or truncated. |
-| `holds no complete backup: it has no manifest.json` | The backup didn't finish. Run it again into the same folder. |
+| `holds an unfinished backup` | The backup was stopped or failed part way. Run it again into the same folder to finish it. |
+| `holds no complete backup: it has no manifest.json` | The backup didn't finish, or the folder isn't a backup: a backup file from before v0.37.0 can't be restored. Run the backup again into the same folder. |
 | `is not empty and holds no backup` | `backup` needs a new or empty folder, or one that holds an earlier backup. |
 | `the backup is complete except for the content of N files` | Those files were replaced or deleted during the backup, or no server holds their content; run `knot admin file fsck` on the server, then back up again. |
 | `the backup lists N records, M were read` | A record file is damaged or was truncated. |
-| `No permission to restore the server` (401/403) | The server already has users: restore needs a token with the Backup Server permission. |
+| `No permission to restore the server` (403) | Restore always needs a token whose user holds the Backup Server permission, on a new server too. Use the first user's token, or give the user the Backup User role. |
+| `The server has no users: create the first user, then use its token` | Create the new server's first user in the web UI and restore with its token. |
 | `the bucket ... no longer exists on the server` | `file restore` needs the bucket; create it, or restore into another with `--to`. |

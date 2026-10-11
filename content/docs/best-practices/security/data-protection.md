@@ -76,14 +76,16 @@ key = "VF9hmdXZyzNF3rcP6M0P"
 
 ## Backup Security
 
-Encrypt backups with a 32-byte key to protect sensitive data (see [Backup and Restore](/docs/best-practices/backup-restore/)):
+Encrypt backups with a 32-byte key to protect sensitive data (see [Backup and Restore](/docs/best-practices/backup-restore/)). A backup is a folder:
 
 ```shell
-knot admin backup --encrypt-key "$KNOT_BACKUP_KEY" backup.enc
+knot admin backup --encrypt-key "$KNOT_BACKUP_KEY" /backups/knot-20261007
 ```
 
 **Backup best practices**:
 - Always encrypt backups
+- Encryption covers the records (users, password hashes, API tokens and the rest), not file storage content, which is kept as it is: protect the whole folder
+- Run backups as a dedicated user holding only the **Backup Server** permission, with an [API token](/docs/api-tokens/) scoped to **Backup**
 - Store backups in secure location
 - Restrict access to backup files
 - Test restore procedures regularly

@@ -18,6 +18,8 @@ The **knot agent** is a separate binary (`knot-agent`, built from `agent/`) that
 
 These commands act on the space the agent is running in. They are started automatically by the container entrypoint, but are documented here for scripting, debugging, and manual use.
 
+The main `knot` binary includes the same `knot agent …` subcommands (`start`, `wait-for-start`, `shutdown`, `restart`, `get-field`, `set-field`, `set-note`), so a space whose image ships the full `knot` binary can run them too.
+
 ## `knot agent start`
 
 Start the agent daemon and connect to the knot server.
@@ -54,8 +56,8 @@ Usually started automatically by the container entrypoint. Key options:
 | `--registration-key` | | The space's registration key, required to register with the server (shown in the web UI next to the space ID) |
 | `--server-cert-fingerprint` | | SHA-256 fingerprint of the server's agent certificate public key, used to verify the TLS connection |
 | `--service-password` | | Password for the agent service |
-| `--peer-port` | `12202` | Port for direct peer-to-peer connections; `0` disables |
-| `--peer-external-port` | | External port peers should dial for direct connections |
+| `--peer-port`  | `12202` | Port for direct peer-to-peer connections; `0` disables |
+| `--peer-external-port`  | | External port peers should dial for direct connections; `0` if `--peer-port` is `0` |
 | `--dns-resolver` | | Run a resident DNS resolver on `127.0.0.1:53` forwarding queries to the server's DNS |
 
 ### `knot agent wait-for-start`
@@ -259,6 +261,16 @@ knot file copy -r ./build artifacts:builds/$(date +%F)/
 
 ---
 
+## `knot mcp`
+
+Serve the knot MCP server over stdio for an MCP host running in the space. Inside a space it connects through the agent socket with no configuration; an explicit `--server`/`--token` pair targets another server instead. It takes the same options as [`knot mcp`](knot.md#knot-mcp) on your machine, including `--show-all` to also expose discoverable tools.
+
+```shell
+knot mcp
+```
+
+---
+
 ## `knot run-script`
 
 Execute a named script or a local `.py` file in this space (eval only).
@@ -271,7 +283,7 @@ Options:
 - `--no-fail`: exit successfully if the named script does not exist
 - `--plugin` / `--plugin-dir`: Scriptling plugins to load for this run (repeatable). By default `run-script` inherits the agent's configured plugins (`agent.plugins` / `agent.plugin_dirs`), so a space set up with a database driver has it here too; passing either flag overrides the configured value for that run. See [Loading Scriptling plugins](#loading-scriptling-plugins).
 
-Serving (JSON-RPC / HTTP / MCP) and the interactive REPL belong to the real Scriptling CLI in the space — use a template built from a Scriptling base image (for example `paularlott/knot-scriptling:0.21-alpine`). Load the `knot.*` libraries and your `lib` scripts via the agent's package endpoints (`--package http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip --package http://127.0.0.1:$KNOT_API_PORT/packages/libs.zip`, or a scriptling config file), and `knot.apiclient` configures itself from the agent's `/connect` endpoint.
+Serving (JSON-RPC / HTTP / MCP) and the interactive REPL belong to the real Scriptling CLI in the space — use a template built from the Scriptling [base image](../../knot-docs/templates/base-images.md) (for example `paularlott/knot-scriptling:0.30`). Load the `knot.*` libraries and your `lib` scripts via the agent's package endpoints (`--package http://127.0.0.1:$KNOT_API_PORT/packages/knot.zip --package http://127.0.0.1:$KNOT_API_PORT/packages/libs.zip`, or a scriptling config file), and `knot.apiclient` configures itself from the agent's `/connect` endpoint.
 
 ### Loading Scriptling plugins
 

@@ -138,6 +138,15 @@ host = ""
 password = ""
 user = ""
 
+# PostgreSQL server, uncomment to use in place of MySQL
+#[server.postgres]
+#enabled = true
+#host = ""
+#port = 5432
+#user = ""
+#password = ""
+#database = "knot"
+
 # BadgerDB storage
 [server.badgerdb]
 enabled = true

@@ -234,7 +234,7 @@ In both modes the server's `timeout` applies to each call.
 A Scriptling script can be the method server process itself, using the `scriptling.runtime.jsonrpc` library. The registration metadata (`name`, `local_name`, `description`, `params_schema`, scope, etc.) is declared in Knot exactly the same way as for any other method server — the only difference is that `[server].command` runs a Scriptling JSON-RPC server.
 
 {{< tip >}}
-Method servers run on the real Scriptling CLI in the space. Use a template built from a Scriptling base image (for example `paularlott/knot-scriptling:0.21-alpine`) so `/usr/local/bin/scriptling` is available, then register the server directly:
+Method servers run on the real Scriptling CLI in the space. Use a template built from the Scriptling [base image](../../templates/base-images/) (for example `paularlott/knot-scriptling:0.30`) so `/usr/local/bin/scriptling` is available, then register the server directly:
 
 `Server("/usr/local/bin/scriptling", args=["--json-rpc", "./setup.py"], mode="concurrent")`
 

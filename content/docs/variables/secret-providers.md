@@ -3,7 +3,7 @@ title: Secret Providers
 description: Secret providers fetch secrets from external managers like Vault and 1Password at template resolve time.
 type: Guide
 tags: [variables, security]
-weight: 30
+weight: 40
 ---
 
 {{< pro-badge >}} Secret providers let templates and server-side Scriptling runtimes fetch secrets from an external secret manager at resolve time instead of storing the value in the Knot database.

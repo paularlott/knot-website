@@ -25,6 +25,8 @@ If the server is running correctly, you'll see the setup form prompting you to c
 
 Complete the form with the required information and click `Create User`. This will create your admin account. Once the account is created, the login form will appear.
 
+The first user is given the Admin role and a Backup User role, which holds the Backup Server permission needed to [back up and restore](/docs/best-practices/backup-restore/) the server. Backup User is an ordinary role that can be edited or removed later.
+
 {{< zoom-picture src="/docs/quick-start/local-containers/images/sign-in.webp" caption="Login" >}}
 
 ---

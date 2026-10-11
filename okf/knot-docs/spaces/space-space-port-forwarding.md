@@ -61,11 +61,13 @@ Example output:
 Active port forwards:
   8080 -> backend-api:3000 (persistent, direct)
   5432 -> database:5432 (temporary, relay)
+  6379 -> cache:6379 (temporary, —)
 ```
 
 The mode shown after the state indicates how traffic is routed:
 - **direct** : traffic flows directly between agents without going through the server
 - **relay**: traffic is relayed through the knot server
+- **—**: the forward hasn't carried a connection yet, so its mode isn't known
 
 Direct mode requires Knot Pro and both spaces running on the same host or network. When direct isn't available or fails, the forward automatically falls back to relay.
 
@@ -307,7 +309,7 @@ In Knot Pro, port-forwarded traffic between spaces on the same host or network c
 2. The source agent dials the target agent directly over TCP, authenticating with a user-scoped shared secret (HMAC challenge-response).
 3. A single yamux session per peer multiplexes all forwarded connections — one TCP connection carries multiple streams.
 4. If the direct connection fails (target restarted, network issue), traffic automatically falls back to server relay.
-5. The mode (`direct` or `relay`) is shown in `knot port list` and the UI.
+5. The mode (`direct` or `relay`, or `—` before the forward's first connection) is shown in `knot port list` and the UI.
 
 ### Environment Variables
 

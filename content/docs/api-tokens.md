@@ -8,18 +8,20 @@ weight: 75
 
 API tokens are automatically created when logging in with the Knot client. Additionally, tokens can be manually created and used to access the API from external applications.
 
+Tokens start with a `tk_` prefix, which makes them easy to recognise in configuration files and secret scanners. Tokens created by earlier releases, without the prefix, keep working.
+
 ---
 
 ## Creating a Token
 
-1. From the menu, select **`API Tokens`**, then click **`New Token`**.
-   {{< zoom-picture src="images/token-form.webp" caption="Create API Token" >}}
+1. From the menu, select **`API Tokens`**, then click **`New API Token`**.
+   {{< zoom-picture src="/docs/api-tokens/images/token-form.webp" caption="Create API Token" >}}
 
-2. Complete the **`Name`** field to identify the token.
+2. Complete the **`Token Name`** field to identify the token, and optionally [scope it](#scoping-a-token).
 3. Click **`Create Token`** to generate a new token.
 4. The list of available tokens will be displayed.
 
-{{< zoom-picture src="images/token-list.webp" caption="List of Available Tokens" >}}
+{{< zoom-picture src="/docs/api-tokens/images/token-list.webp" caption="List of Available Tokens" >}}
 
    - **Tip**: Clicking on a token will copy it to the clipboard for easy use.
 
@@ -63,9 +65,21 @@ Scopes narrow but never widen: a scoped token still passes through every permiss
 
 ---
 
+## Editing a Token
+
+Click **`Edit`** next to a token in the **API Tokens** list to change its name or scopes, then click **`Save Changes`**. The token value itself doesn't change, so clients using it keep working.
+
+---
+
 ## Deleting a Token
 
 Deleting a token immediately prevents further API calls from being made using that token.
 
 1. From the **API Tokens** list, click **`Delete`** next to the token you want to remove.
 2. Confirm the operation when prompted.
+
+---
+
+## Hiding the API Tokens Page
+
+To remove the **API Tokens** item from the menu, set `hide_api_tokens = true` in the `[server.ui]` section (or `--hide-api-tokens` / `KNOT_HIDE_API_TOKENS`). See [User Interface](/docs/configuration/ui/).

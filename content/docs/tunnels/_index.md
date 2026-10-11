@@ -6,7 +6,7 @@ tags: [networking]
 weight: 50
 ---
 
-Knot tunnels allow HTTP and HTTPS services running on a local workstation or within a space to be exposed on the internet via a Knot server.
+Knot tunnels allow HTTP and HTTPS services running on a local workstation or within a space to be exposed on the internet via a Knot server. The protocol (`http` or `https`) names what the **local** service speaks; visitors reach the tunnel through the server's tunnel listener either way.
 
 ---
 
@@ -15,6 +15,12 @@ Knot tunnels allow HTTP and HTTPS services running on a local workstation or wit
 Tunnels require the server's tunnel listener to be configured — see [Tunnel Server Configuration](../configuration/tunnel-server/) for the `listen_tunnel` and `tunnel_domain` settings and their DNS requirements.
 
 Tunnel addresses are built as `<user>--<tunnel name>.<tunnel domain>`, for example `example--tunnel1.tunnel.knot.internal`.
+
+### Prerequisites
+
+- The server has `listen_tunnel` set. Without it the **Tunnels** menu item isn't shown and tunnels can't be created.
+- The user holds the **Use Tunnels** permission (see [Roles](../access-control/roles/)).
+- The user's tunnel quota isn't used up. **Maximum Tunnels** is set on the user and their groups and the values are added together; `0` everywhere means no limit.
 
 ---
 
@@ -50,6 +56,7 @@ Tunnels can be created either on a local machine (desktop) or within a space
    ```
 
    - This creates a tunnel to the local port `8080` with the address `example--test1.tunnel.knot.internal`.
+   - If the local service itself speaks HTTPS, use `knot tunnel https 8443 test1`. The local certificate isn't verified by default, so self-signed certificates work; use `--port-tls-name` to set the name presented to the local service (TLS SNI), and `--port-tls-skip-verify=false` to require a valid certificate.
    - Stopping the `knot tunnel` command will stop and remove the tunnel.
 
 ---

@@ -6,23 +6,23 @@ tags: [spaces, scripting]
 weight: 150
 ---
 
-The `knot agent` CLI runs inside a space and talks to the local agent. This page is an overview of every command group; each feature page linked below covers its commands in depth.
+Inside a space, the `knot` command is the knot agent binary, which talks to the local agent. Lifecycle commands live under `knot agent`; the other command groups are top-level. This page is an overview of every command; each feature page linked below covers its commands in depth, and the [knot agent CLI reference](/reference/cli/agent/) lists every option.
 
 | Command | Description |
 |---|---|
-| `knot agent space shutdown` | Request an immediate shutdown of the space. |
-| `knot agent space restart` | Request a stop and restart of the space. |
-| `knot agent space set-note --note "…"` | Set the space's short description — see [Notes](../notes/). |
-| `knot agent space get-field / set-field` | Read and write custom fields of the space. |
-| `knot agent wait-for-start [--timeout 300]` | Block until the space has fully started. |
-| `knot agent event --type … --name … --payload …` | Emit an event to configured event sinks — see [Event Sinks](../log-sinks/). |
-| `knot agent jobs list / run` | List and trigger scheduled jobs — see [Jobs](../jobs/). |
-| `knot agent methods register / unregister` | Register space methods — see [Methods](../methods/). |
-| `knot agent port forward / list / stop` | Space-to-space port forwarding — see [Space-to-Space Port Forwarding](../space-space-port-forwarding/). |
-| `knot agent run-script` | Run a script inside the space — see [Provisioning](../provisioning/). |
-| `knot agent skills list / show / update / delete` | Manage in-space skills — see [Skills](../../ai/skills/). |
-| `knot agent connect list / delete` | List and remove client connections to the space. |
-| `knot agent tunnel …` | Create and manage agent tunnels — see [Agent Tunnels](../../tunnels/agent-tunnels/). |
+| `knot agent shutdown` | Request an immediate shutdown of the space. |
+| `knot agent restart` | Request a stop and restart of the space. |
+| `knot agent set-note "<note>"` | Set the space's short description — see [Notes](../notes/). |
+| `knot agent get-field <name>` / `set-field <name> <value>` | Read and write custom fields of the space. |
+| `knot agent wait-for-start [--timeout 60]` | Block until the agent is running and accepting commands. |
+| `knot event <type> [payload]` | Emit a custom event to configured event sinks — see [Events](/reference/events/). |
+| `knot jobs list / run` | List and trigger the space's jobs — see [Jobs](../jobs/). |
+| `knot methods register / unregister` | Register space methods — see [Methods](../methods/). |
+| `knot port forward / list / stop / throttle` | Space-to-space port forwarding — see [Space-to-Space Port Forwarding](../space-space-port-forwarding/). |
+| `knot run-script` | Run a script inside the space — see [Provisioning](../provisioning/). |
+| `knot tunnel http / https / list / stop` | Create and manage agent tunnels — see [Agent Tunnels](../../tunnels/agent-tunnels/). |
+| `knot file …` | Work with file storage buckets as the space's owner — see [File Storage](/docs/file-storage/). |
+| `knot mcp` | Serve the knot MCP server over stdio through the agent — see [`knot mcp`](/reference/cli/agent/#knot-mcp). |
 
 ---
 
@@ -31,7 +31,7 @@ The `knot agent` CLI runs inside a space and talks to the local agent. This page
 The `shutdown` command allows the space to request an immediate shutdown. To execute this command, run:
 
 ```shell
-knot agent space shutdown
+knot agent shutdown
 ```
 
 ---
@@ -41,17 +41,17 @@ knot agent space shutdown
 The `restart` command allows the space to request a restart. To execute this command, run:
 
 ```shell
-knot agent space restart
+knot agent restart
 ```
 
 ---
 
 ### `wait-for-start` Command
 
-Scripts that run early in a space's lifecycle can wait until every service has started:
+Scripts that run early in a space's lifecycle can wait until the agent is ready:
 
 ```shell
 knot agent wait-for-start --timeout 120
 ```
 
-The command exits `0` once the space reports started, or non-zero if the timeout is reached.
+The command exits `0` once the agent is running and accepting commands, or non-zero if the timeout (default 60 seconds) is reached.

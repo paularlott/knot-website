@@ -6,6 +6,8 @@ tags: [storage]
 weight: 10
 ---
 
+{{< experimental-badge >}} File storage is experimental: its behaviour, commands and on-disk formats may change in later releases.
+
 ## The Files Page
 
 **Files** in the sidebar lists the buckets you own or that are shared with you, with your access, size and your usage against your quota. The page updates by itself when files or buckets change, whether the change was made by you, someone else, or on another server in the cluster: changes are gathered for a moment and the page then refreshes what it shows. Click the folder icon on a bucket, or its name, to browse its folders. The path above the file list shows where you are and takes you back up. Then:
@@ -49,15 +51,19 @@ knot file copy configs:app/settings.toml -     # to stdout; so does: knot file c
 knot file copy configs:app/settings.toml backups:app/   # between buckets, on the server
 knot file copy -r configs: backups:2026-10-05/
 
-knot file mv configs:app/old.toml configs:app/new.toml   # rename (alias: move)
+knot file move configs:app/old.toml configs:app/new.toml # rename (alias: mv)
 knot file mv configs:app/new.toml configs:archive/       # move into a folder, keeping the name
 knot file mv configs:app configs:app-2026                # a folder, with everything in it
+
+knot file cat configs:app/a.toml configs:app/b.toml   # several files to stdout, one after another
 
 knot file rm configs:app/debug.toml            # alias: delete
 knot file rm -r configs:old
 
 knot file usage                                # usage against your quota
 ```
+
+`--json` prints the result of `ls`, `usage`, `bucket list`, `bucket info` and `bucket permissions` as JSON, for scripts. File storage managers can add `--all` to `knot file ls` (with no path) or `knot file bucket list` to list every bucket. `bucket share` and `bucket unshare` take `-u` for `--user`, `-g` for `--group` and, on `share`, `-w` for `--write`.
 
 ### How `copy` works
 
@@ -68,7 +74,7 @@ knot file usage                                # usage against your quota
 - **Between buckets.** A copy from one bucket to another, or within one, happens on the server and moves no data, however large the files, and keeps their content type, metadata and modification time. You need read access to the source and write access to the destination, and the destination bucket's owner is charged for the new file against their quota.
 - **Standard input and output.** `copy - bucket:path/file` uploads stdin as one file, and `copy bucket:path/file -` writes one file to stdout.
 
-`mv` renames or moves files and folders, with the same `bucket:path` arguments. A destination ending in `/`, or naming an existing folder, takes the sources into it and keeps their names; otherwise it is the new name, which needs a single source. Several sources and quoted wildcards (`'configs:logs/*.log'`) work as with `copy`, and a folder moves with everything below it. Within a bucket the move happens on the server and transfers no content, however large the files. Between buckets the files are copied on the server and then removed from the source, and you need write access to both. A move that would replace an existing file is refused before anything changes, unless `--overwrite` (`-f`) is given.
+`move` (`mv`) renames or moves files and folders, with the same `bucket:path` arguments. A destination ending in `/`, or naming an existing folder, takes the sources into it and keeps their names; otherwise it is the new name, which needs a single source. Several sources and quoted wildcards (`'configs:logs/*.log'`) work as with `copy`, and a folder moves with everything below it. Within a bucket the move happens on the server and transfers no content, however large the files. Between buckets the files are copied on the server and then removed from the source, and you need write access to both. A move that would replace an existing file is refused before anything changes, unless `--overwrite` (`-f`) is given.
 
 `rm` takes several paths and wildcards the same way: `knot file rm 'configs:logs/*.tmp' configs:old.txt`. A folder, or `bucket:`, needs `-r`, which deletes every file below it (the bucket itself stays; see `knot file bucket delete`). A path that matches nothing deletes nothing.
 
@@ -92,7 +98,7 @@ Modification times are kept in every direction. `--delete` removes files at the 
 
 #### Keeping a directory in sync
 
-`--watch` keeps the sync running after the first pass and makes each change as it happens, until you stop it with Ctrl+C. Local changes are seen as they are made; the bucket's arrive through the server's live updates, so a file written from the web interface, another machine or S3 reaches the directory within a second or so. If the live updates are unavailable the bucket is checked every 15 seconds instead, and both sides are looked at in full every few minutes as a safety net. Each file uploaded, downloaded or deleted is logged as it happens; `knot --log-level debug file sync ...` also logs each pass and the state of the live updates, and `--log-level warn` only conflicts and problems.
+`--watch` (`-w`) and `--two-way` work between a local directory and a bucket folder only, not between two bucket folders. `--watch` keeps the sync running after the first pass and makes each change as it happens, until you stop it with Ctrl+C. Local changes are seen as they are made; the bucket's arrive through the server's live updates, so a file written from the web interface, another machine or S3 reaches the directory within a second or so. If the live updates are unavailable the bucket is checked every 15 seconds instead, and both sides are looked at in full every few minutes as a safety net. Each file uploaded, downloaded or deleted is logged as it happens; `knot --log-level debug file sync ...` also logs each pass and the state of the live updates, and `--log-level warn` only conflicts and problems.
 
 ```shell
 knot file sync ./site configs:site --watch --delete   # publish as you edit
@@ -108,9 +114,9 @@ knot file sync --two-way --watch ./notes notes:        # changes either side, ma
 knot file sync --two-way --watch --delete ./notes notes:  # deletions are passed across too
 ```
 
-- **Conflicts.** A file changed on both sides since they last matched is kept both ways: the bucket's version keeps the name and the local one is renamed beside it, on both sides, as `name.conflict-<host>-<time>.ext`. Nothing is ever silently overwritten or deleted: an upload or a deletion in the bucket is only made against the version of the file it was planned against, so a file changed there meanwhile is left for the next pass, where the change wins.
+- **Conflicts.** A file changed on both sides since they last matched is kept both ways: the bucket's version keeps the name and the local one is renamed beside it, on both sides, as `name.conflict-<host>-<time>.ext`: `report.txt` changed on both sides on the machine `laptop` leaves `report.txt` (the bucket's version) and `report.conflict-laptop-20261012-143005.txt` (yours). Nothing is ever silently overwritten or deleted: an upload or a deletion in the bucket is only made against the version of the file it was planned against, so a file changed there meanwhile is left for the next pass, where the change wins.
 - **Deletions.** Without `--delete` a file deleted on one side is put back from the other. With it the deletion is made on the other side, unless the file was changed there since, in which case the change wins and the file comes back.
-- **State.** The sync remembers what the two sides last agreed on, so it can tell a deletion from a new file. The state is kept in your configuration directory (`~/.config/knot/sync` on Linux, `~/Library/Application Support/knot/sync` on macOS), or where `--state-file` says. The first run of a pair, with no state, deletes nothing: files on one side only are copied to the other and files that differ are kept both ways.
+- **State.** The sync remembers what the two sides last agreed on, so it can tell a deletion from a new file. The state is kept in your configuration directory (`~/.config/knot/sync` on Linux, `~/Library/Application Support/knot/sync` on macOS), or where `--state-file` says (it applies to `--two-way` only; a one-way sync keeps no state). The first run of a pair, with no state, deletes nothing: files on one side only are copied to the other and files that differ are kept both ways.
 
 #### What is left out
 

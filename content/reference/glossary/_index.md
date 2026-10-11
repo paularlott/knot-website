@@ -27,11 +27,20 @@ Record of actions performed in knot, including user authentication, space creati
 
 ## B
 
+**Backup**
+Copy of a running server's data, taken through the API with `knot admin backup` into a folder: users and their tokens, templates, spaces, configuration, audit logs and, with file storage, every bucket and file. Running it again into the same folder refreshes it, copying only new file content. The records can be encrypted; file content is stored as it is. See [Backup and Restore](/docs/best-practices/backup-restore/).
+
+**Backup Server**
+Permission to back up the server and restore into it. It is not part of the Admin role, so administrators need it granted separately.
+
+**Backup User**
+Role created by a new server holding only the Backup Server permission, and given, with the Admin role, to its first user. An ordinary role that can be edited, assigned or deleted.
+
 **BadgerDB**
 Embedded database option for single-server deployments. No external dependencies required.
 
-**Backup**
-Export of knot data including users, templates, spaces, and configuration. Can be encrypted for security.
+**Bucket**
+Named container of files in file storage, owned by one user and private until shared. Its full name is `<username>--<name>`, and a file in it is written `bucket:path`.
 
 ---
 
@@ -72,6 +81,19 @@ Built-in DNS server for resolving knot domains and wildcard addresses.
 **Encryption Key**
 Secret key for encrypting sensitive data. Generated with `knot genkey`.
 
+**Event**
+Notification that something happened: a system event when a space changes state (`space.started`, `space.unhealthy` and so on) or a custom event (`custom.*`) raised from a space or through the API. Delivered to event sinks. See [Events](/reference/events/).
+
+**Event Sink**
+User-owned or global listener that receives the events matching its patterns, by calling a webhook, running a script or delivering to a JSON-RPC method.
+
+---
+
+## F
+
+**File Storage**
+Optional, experimental store of files in buckets, replicated to every server in the cluster and reached from the Files page, `knot file`, the `knot.files` library, the API or, on Knot Pro, the S3 endpoint. See [File Storage](/docs/file-storage/).
+
 ---
 
 ## G
@@ -100,11 +122,14 @@ A scheduled or manual task defined on a space and run by its agent. Managed from
 
 ## L
 
+**Leaderless Architecture**
+Cluster design where all servers are equal. No single point of failure.
+
 **Leaf Mode**
 Lightweight deployment that connects to a central cluster. Runs spaces locally while managing templates centrally.
 
-**Leaderless Architecture**
-Cluster design where all servers are equal. No single point of failure.
+**Lease**
+Exclusive checkout of one member of a lease-enabled pool: the caller acquires a warm, healthy space for its own use and releases it back to the pool when done.
 
 ---
 
@@ -115,6 +140,12 @@ Template for environments where the knot agent is started manually. Used for phy
 
 **MCP (Model Context Protocol)**
 Open protocol for exposing tools to AI assistants. Knot scripts can be exposed as MCP tools, and the server can proxy MCP tool calls to spaces.
+
+**Method**
+JSON-RPC method published by a running space. Knot handles discovery, access control and routing calls to the space, and can expose methods as MCP tools.
+
+**MySQL / MariaDB**
+External database option, including Galera clusters, for multi-server deployments.
 
 ---
 
@@ -130,6 +161,9 @@ Template that deploys spaces to a Nomad cluster using HCL job specifications.
 
 ## P
 
+**Peer Mesh** {{< pro-badge >}}
+Direct agent-to-agent connections for port forwarding between spaces on the same host or network, falling back to relaying through the server.
+
 **Permission**
 Specific action a user can perform. Granted through roles.
 
@@ -142,6 +176,9 @@ A pre-warmed set of spaces kept ready so that new spaces can be assigned instant
 **Port Forwarding**
 Tunneling connections from local machine to ports in a space.
 
+**PostgreSQL**
+External database option for multi-server deployments. Can also hold sessions itself, without Redis / Valkey.
+
 **Protected Variable**
 User-defined variable stored encrypted in the database.
 
@@ -150,21 +187,30 @@ User-defined variable stored encrypted in the database.
 ## Q
 
 **Quota**
-Limit on resources a user or group can consume. Includes space count, compute units, and storage units.
+Limit on resources a user or group can consume. Includes space count, compute units, storage units, file storage size (MB) and the maximum number of buckets.
 
 ---
 
 ## R
 
-**Role**
-Collection of permissions defining what actions users can perform.
+**Redis / Valkey**
+Database option, in single-server, Sentinel or cluster mode. Used alongside another database, it holds only session data.
+
+**Replication**
+How file storage reaches every server: bucket and file records are gossiped, the newest change winning by hybrid logical clock (HLC) timestamp, and file content, stored by its SHA-256, is pulled directly from peers that hold it.
 
 **Restore**
-Import knot data from a backup file.
+Loading a backup folder into a running server with `knot admin restore`, which is how a lost server is rebuilt: start a new server, create its first user and restore with that user's token. Single files or folders are restored with `knot admin file restore`. Backups made before v0.37.0 can't be restored.
+
+**Role**
+Collection of permissions defining what actions users can perform.
 
 ---
 
 ## S
+
+**S3 Endpoint** {{< pro-badge >}}
+The S3 API served at `<server>/s3` on servers with file storage, so S3 clients such as rclone and the AWS CLI can use buckets, signing in with a username and an API token.
 
 **Schedule**
 Time-based rules for when spaces can run. Spaces outside schedule are automatically stopped.
