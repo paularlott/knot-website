@@ -55,6 +55,7 @@ navSection: docs
 - Fix the OAuth provider `scopes` setting being ignored {{< pro-badge >}}
 - Fix listing sessions through the API failing when authenticated with an API token
 - Fix the chat `temperature` and `max_tokens` settings never reaching the model; with `temperature` unset, the provider's default now applies
+- Fix the AI assistant refusing on-demand tools: every approved `execute_tool` or `tool_search` call failed with "not callable from this context"
 - Fix a mistyped CLI subcommand running a different command, such as `knot file buket list` running `knot file list`
 {{< /changelog-item >}}
 
