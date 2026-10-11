@@ -24,7 +24,7 @@ The `knot.permission` library provides permission constants and a function to li
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -104,6 +104,75 @@ The library provides constants for all permissions:
 |----------|-----|-------------|
 | `MANAGE_GLOBAL_SKILLS` | 27 | Manage global skills |
 | `MANAGE_OWN_SKILLS` | 28 | Manage own skills |
+
+### Space Forms & Templates
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `SET_SPACE_DEPENDENCIES` | 29 | Configure dependencies between spaces |
+| `USE_SPACE_STARTUP_SCRIPT` | 30 | Set a user startup script that runs when a space starts |
+
+### Audit
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `DOWNLOAD_AUDIT_LOGS` | 31 | Download (export) audit logs |
+
+### Stack Definitions
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `MANAGE_STACK_DEFINITIONS` | 32 | Manage global (system) stack definitions |
+| `MANAGE_OWN_STACK_DEFINITIONS` | 33 | Manage own stack definitions |
+| `USE_STACK_DEFINITIONS` | 34 | Create spaces from stack definitions |
+
+### Methods & Pools
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `USE_METHODS` | 35 | Call space methods shared by other users |
+| `USE_POOLS` | 36 | Create and run space pools |
+
+### Events
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `MANAGE_EVENTS` | 37 | Manage own event sinks |
+| `MANAGE_GLOBAL_EVENTS` | 38 | Manage global event sinks |
+
+### Slash Commands
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `MANAGE_GLOBAL_SLASH_COMMANDS` | 39 | Manage global slash commands |
+| `MANAGE_OWN_SLASH_COMMANDS` | 40 | Manage own slash commands |
+
+### MCP Servers
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `MANAGE_MCP_SERVERS` | 41 | Register and configure MCP servers |
+
+### Log Sinks 
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `USE_LOG_SINKS` | 42 | Register a space as a log sink receiving the owner's other space logs (Knot Pro only; not defined in Core) |
+
+### Plugins
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `VIEW_PLUGINS` | 44 | View the loaded plugins inventory |
+
+### User Linking
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `LINK_USERS` | 45 | Link user accounts for fast user switching (impersonation-grade) |
+
+### File Storage
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `USE_FILES` | 46 | Use file storage: own buckets and buckets shared with you |
+| `MANAGE_FILES` | 47 | Full access to every bucket, including sharing and transferring any bucket |
+| `SHARE_BUCKETS` | 48 | Share own buckets with users, groups or everyone |
+| `TRANSFER_BUCKETS` | 49 | Transfer own buckets to another user |
+
+### System
+| Constant | ID | Description |
+|----------|-----|-------------|
+| `BACKUP_SERVER` | 50 | Back up and restore all server data; equivalent to full access and not part of the Admin role |
 
 ### Aliases
 | Alias | Equivalent |

@@ -150,13 +150,15 @@ knot space create <space> <template> [--shell SHELL] [--custom-field name=value]
 knot space start <space>
 knot space stop <space>
 knot space restart <space>
-knot space delete <space>
+knot space delete <space> [-f]
 knot space logs <space> [--follow]
 ```
 
 Options for `create`:
 - `--shell`: shell for the terminal (`sh`, `bash`, `zsh`, `fish`)
 - `--custom-field name=value`: set a custom field at creation (repeatable)
+
+`delete` asks for confirmation; `-f`/`--force` skips the prompt.
 
 ### Running commands and scripts
 
@@ -165,6 +167,8 @@ knot space run <space> <command> [args...]
 knot space run-script <space> <script> [args...]
 knot space eval <space> <code|-> [args...]
 ```
+
+`run` takes `-t`/`--timeout` (seconds, default 30) and `-w`/`--workdir` (working directory for the command).
 
 `eval` runs inline Scriptling source directly — no stored script needed. Pass the
 code as a quoted argument, or use `-` to read it from stdin. Trailing positionals
@@ -243,11 +247,11 @@ knot space mirror --watch --exclude node_modules ./src <space>:/var/www/html
 
 By default mirror decides whether a file needs uploading by comparing mtime and size (fast, uses stat only). To force content-based comparison, pass `--hash`: each file is crc64-hashed locally before upload and remotely during the walk — only truly different bytes are transferred. Pass `--verify` for a read-only check: every file is hashed on both sides and mismatches are reported without uploading.
 
-`--verbose` prints every file action (upload, skip, delete, hash, verify) to stderr as the mirror progresses.
+`--verbose` prints every file action (upload, skip, delete, hash, verify) to stderr as the mirror progresses. `--debug` logs why each file was uploaded (new, size differs, mtime drift), for diagnosing a mirror that keeps re-uploading.
 
 `--watch` keeps mirror running after the initial sync. It watches the local tree for file creations, modifications, and deletions, and syncs each change to the space in real time (one-way: local → space). Excludes are honoured — excluded paths are never watched or uploaded. New directories are picked up automatically, including their contents. Vim swap files (`.*.swp`) are excluded by default. Events are debounced (300ms) so editors that save atomically (write temp → rename) produce a single upload, not a burst. Press Ctrl+C to stop.
 
-Mirror is one-directional (local → space) and always performs deletes — that's what "mirror" means. For continuous two-way sync, mutagen against the space's SSH endpoint is the recommendation.
+Mirror is one-directional (local → space) and always performs deletes — that's what "mirror" means. For continuous two-way sync with a space, mutagen against the space's SSH endpoint is the recommendation. To keep a local directory and a [file storage](#knot-file) bucket folder in step both ways, use `knot file sync --two-way --watch`.
 
 ### Deleting files
 
@@ -340,20 +344,20 @@ knot stack delete <stack> [-y]
 
 ```shell
 knot template list
-knot template export <name>
-knot template import [file] [--name NAME]
 ```
 
-`export` writes a portable YAML representation of a template to stdout — pipe it to a file for version control. `import` creates a template from a YAML file (or stdin when no file is given), resolving referenced scripts by name.
+Lists the templates available to you, with name, platform and resource settings. Export and import moved to [`knot admin template`](#knot-admin).
 
 ### `knot script`
 
 ```shell
 knot script list [--global]
 knot script read <name> [--info]
-knot script write <name> <file> [--create] [--description TEXT] [--active]
+knot script write <name> [file] [-c|--create] [-d|--description TEXT] [--active]
 knot script delete <name>
 ```
+
+`write` reads the script from stdin when no file is given. `--active` defaults to true.
 
 ### `knot skill`
 
@@ -374,7 +378,7 @@ knot pool list
 knot pool start <pool>
 knot pool stop <pool>
 knot pool set-size <pool> <count>
-knot pool delete <pool>
+knot pool delete <pool> [-y]
 
 # Exclusive member leases (requires lease_max_time on the pool)
 knot pool acquire <pool> [--time 5m|none] [--wait 2m] [--json]
@@ -382,6 +386,8 @@ knot pool extend <member> [--time 5m|none] [--json]
 knot pool release <member> [--destroy] [--json]
 knot pool leases <pool> [--json]
 ```
+
+`delete` asks for confirmation; `-y`/`--yes` skips the prompt.
 
 `acquire` checks one member out for the caller's exclusive use until the
 lease ends — shared method routing and pool-name port routing skip it while
@@ -396,6 +402,52 @@ the name or id acquire returned — never a lease id; the space is what you
 ssh to, and a member holds at most one lease. The lease commands accept the lease
 id or the held member's name / space id, and `--json` emits the structured
 lease (or lease list) for piping into other tools.
+
+---
+
+## File storage
+
+### `knot file`
+
+Work with [file storage](../../knot-docs/file-storage.md) buckets. A bucket's files are written `bucket:path` (`bucket:` is the whole bucket); any other path is local. Buckets are named `<username>--<name>`: use the short name for your own buckets and the full name for buckets shared with you.
+
+```shell
+knot file ls [bucket:[path]] [-r] [--all] [--json]
+knot file copy [-r] <source>... <destination>
+knot file mv [-f|--overwrite] <source>... <destination>
+knot file cat <bucket:path>...
+knot file rm [-r] <bucket:path>...
+knot file sync <source> <destination> [--delete] [-n|--dry-run] [-w|--watch] [--two-way]
+               [-x|--exclude PATTERN] [--no-default-excludes] [--allow-mass-delete] [--state-file PATH]
+knot file usage [--json]
+
+knot file bucket list [--all] [--json]
+knot file bucket create <name>
+knot file bucket delete <name> [--force]
+knot file bucket info <name> [--json]
+knot file bucket permissions <name> [--json]
+knot file bucket share <name> (--user NAME | --group NAME | --all) [--write]
+knot file bucket unshare <name> (--user NAME | --group NAME | --all)
+knot file bucket transfer <name> <user> [--force]
+```
+
+`ls` is also `list`, `copy` is also `cp`, `mv` is also `move` and `rm` is also `delete`.
+
+- `copy` goes from the sources to the last argument, in the direction the paths imply: local to bucket, bucket to local, or bucket to bucket (on the server, moving no data). `-r` copies directories and bucket folders; their contents go into the destination folder. Several sources, a folder or a wildcard need a destination folder: a bucket path ending in `/` (or `bucket:`), or a local directory. A wildcard (`*`, `?`, `[...]`, and `**` for any number of folders) in a bucket path is quoted: `'bucket:logs/*.log'`. `-` is stdin as the source or stdout as the destination. Files at the destination are replaced. See [Working with Files](../../knot-docs/file-storage/using-files.md#working-with-files) for the full rules.
+- `mv` renames or moves files and folders: into a destination folder (ending in `/`) keeping the names, or to a new name for a single source. Within a bucket it happens on the server and moves no data; between buckets it copies on the server and then removes the source. It refuses to replace an existing file unless `-f`/`--overwrite` is given.
+- Modification times are recorded on upload and restored on download, and kept when copying between buckets.
+- `sync` makes the destination match the source, either side being a local directory or a bucket folder, so it uploads, downloads or copies between buckets as the paths imply. It transfers only files whose size or SHA-256 differ, keeping modification times; `--delete` removes destination files missing from the source, `-n`/`--dry-run` shows the changes without making them. `-x`/`--exclude` leaves out paths matching a pattern such as `node_modules/` or `*.log` (a trailing `/` matches folders only; repeatable).
+- `sync -w`/`--watch` keeps running and makes each change as it happens, until interrupted. `--two-way` syncs a local directory and a bucket folder both ways: a file changed on both sides since they last matched is kept both ways, the local copy renamed `name.conflict-<host>-<time>`, and deletions pass to the other side only with `--delete` (without it a deleted file is put back from the other side). The state the two sides last agreed on is kept between runs in the user's configuration directory, or in `--state-file` (two-way only). `--watch` and `--two-way` work between a local directory and a bucket folder, not two bucket folders, and `--dry-run` can't be combined with `--watch`.
+- Watched and two-way syncs leave out version control folders (`.git`, `.hg`, `.svn`) and editor and system scratch files unless `--no-default-excludes` is given. As a guard, a pass that would delete more than half of a side's files (and more than 10), or everything because the other side is empty, is refused unless `--allow-mass-delete` is given; while watching, those deletions are held back and the rest of the changes go ahead.
+- `ls` with no path lists your buckets; `--all` lists every bucket for file storage managers (users with the Manage File Storage permission). A path may be a folder (listed one level, or everything below with `-r`), a file or a wildcard.
+- `rm` takes several paths and wildcards; a folder or `bucket:` needs `-r`. It never deletes the bucket itself.
+- `bucket delete` refuses a bucket that still holds files unless `--force` is given.
+- `bucket create` takes the short name (3–30 lowercase letters, digits and hyphens, no `--`) and creates `<username>--<name>`.
+- `--json` prints the result as JSON for scripts: `ls` of a bucket path gives `{"bucket", "prefix", "prefixes", "objects"}`, `ls` and `bucket list` give an array of buckets, `bucket info` one bucket, `bucket permissions` `{"bucket", "owner", "access", "grants"}` and `usage` the usage and limits. Empty results are empty arrays.
+- `bucket share` and `unshare` need the Share Buckets permission. `bucket transfer` needs Transfer Buckets for your own buckets; file storage managers can transfer any bucket.
+- `bucket transfer` renames the bucket into the new owner's namespace (`paul--configs` becomes `bob--configs`). It refuses when the new owner already has that name. It also refuses when the bucket would take them over their limits, unless a file storage manager gives `--force`.
+- `bucket permissions` lists the owner and grants (the full list for the owner and file storage managers, your own access otherwise).
+- Inside a space the server and credentials are discovered through the agent; on the desktop `--alias` picks the saved connection. An explicit `--server`/`--token` pair overrides both.
 
 ---
 
@@ -437,8 +489,10 @@ knot forward port 127.0.0.1:8080 myspace 80
 Link a service running on your local machine into a space so the space can reach it. Active only while the command runs (Ctrl-C to stop).
 
 ```shell
-knot port <space> <space-port> <local-port> [--tls]
+knot port <space> <space-port> <local-port> [--tls] [--port-tls-name NAME] [--port-tls-skip-verify]
 ```
+
+`--tls` encrypts the tunnel. When the local service speaks HTTPS, `--port-tls-name` sets the name presented to it and `--port-tls-skip-verify` (default true) accepts a self-signed certificate.
 
 ### `knot space port`
 
@@ -496,16 +550,18 @@ knot tunnel <protocol> <port> <name>
 knot tunnel http 8080 myapp
 ```
 
-Protocols: `http`, `https`. Options: `--server`, `--token`, `--tls-skip-verify`. The `--tunnel-server` / `--tunnel-token` / `--tunnel-alias` spellings are accepted as synonyms, matching the target flags on `knot space tunnel`.
+Protocols: `http`, `https`. Options: `--server`, `--token`, `--tls-skip-verify`. The `--tunnel-server` / `--tunnel-token` / `--tunnel-alias` spellings are accepted as synonyms, matching the target flags on `knot space tunnel`. `--port-tls-name` and `--port-tls-skip-verify` (default true) control the connection to a local service that speaks HTTPS, as on `knot port`.
 
 ### `knot ssh-config`
 
 Manage `~/.ssh/config` entries for spaces (uses `knot forward ssh` as ProxyCommand).
 
 ```shell
-knot ssh-config update
+knot ssh-config update [--agent-forwarding=false] [--binary PATH]
 knot ssh-config remove
 ```
+
+`update` enables SSH agent forwarding by default (`--agent-forwarding`, `KNOT_SSH_AGENT_FORWARDING`); `--binary` sets the path to the `knot` binary used in the ProxyCommand (default `knot`).
 
 ---
 
@@ -516,15 +572,28 @@ knot ssh-config remove
 Server administration commands.
 
 ```shell
-knot admin backup [--encrypt-key KEY]
-knot admin restore <backup-file>
+knot admin backup [selection flags] [-e|--encrypt-key KEY] [--no-content] [--prune] [--limit-user USER] [--limit-template NAME] <folder>
+knot admin restore [-e|--encrypt-key KEY] [--no-content] <folder>
+knot admin file ls [-r] [--json] [-e|--encrypt-key KEY] <folder> [bucket:path]
+knot admin file restore [-r] [--overwrite] [-n] [--to bucket:path] [-e|--encrypt-key KEY] <folder> <bucket:path>
+knot admin file fsck [--repair] [--deep] [--from-backup FOLDER] [-e|--encrypt-key KEY] [--json]
 knot admin rename-zone <old> <new>
 knot admin reset-totp <email-address>
-knot admin set-password <email-address> <password>
+knot admin set-password <email-address>
 knot admin refresh-base-images [--local-only]
+knot admin template export <name>
+knot admin template import [--file path] [--name NAME]
 ```
 
-`refresh-base-images` forces every server in the cluster to fetch the base image manifest from its update URL immediately (`--local-only` limits the refresh to the local server).
+`backup` and `restore` stream a running server's data to and from a folder through its API, so they need a token with the Backup Server permission; to restore into a new server, create its first user and use that user's token. See [Backup and Restore](../../knot-docs/best-practices/backup-restore.md). The `admin` commands that talk to a server choose it with `--server` and `--token`, or `--alias` for one in the config file, like other `knot` commands. `file ls` and `file restore` list and restore files from a backup folder. `file fsck` checks [file storage](../../knot-docs/file-storage/operations.md#checking-and-repairing) for damage and, with `--repair`, fixes it; `--from-backup` restores content no server holds from a backup folder. The `-e`/`--encrypt-key` flag of `restore` and `file ls|restore|fsck` is the key the backup was encrypted with (`KNOT_RESTORE_ENCRYPT_KEY`).
+
+With no selection flags, `backup` saves everything the server holds (`-a`/`--all` is the default); giving any selection flag (`-t` templates, `-v` template variables, `-l` volumes, `-g` groups, `-r` roles, `-s` spaces, `-u` users, `-k` tokens, `-o` configuration values, `-c` scripts, `-i` skills, `--commands`, `-p` responses, `--audit-logs`, `--files`) backs up only those. `--files` covers file storage: buckets, files and their content; `--no-content` keeps the bucket and file records but not the content, and `--prune` removes content from the folder that no file refers to any more, so the folder mirrors the server. `--limit-user` and `--limit-template` limit the backup to one user (by username) or one template (by name). `-e`/`--encrypt-key` encrypts the records with a 32-byte key.
+
+`set-password` prompts for the new password.
+
+`refresh-base-images` forces every server in the cluster to fetch the base image manifest from its update URL immediately (`--local-only` limits the refresh to the local server). Each server must have both `server.base_image.update_enabled` and `server.base_image.update_url` configured.
+
+`template export` writes a portable YAML representation of a template to stdout — pipe it to a file for version control. `template import` creates (or updates) a template from a YAML file, or stdin when no file is given, resolving referenced scripts by name. Both need a token with the manage templates permission; see [Managing Templates](../../knot-docs/templates/managing.md#exporting-and-importing-templates).
 
 ---
 
@@ -534,6 +603,11 @@ Global flags available on most commands:
 
 - `--config`, `-c`: configuration file to use (searched in `.`, `$HOME`, `$HOME/.knot/`, `$HOME/.config/knot/`, and `/etc/knot/`)
 - `--log-level`: `trace`, `debug`, `info`, `warn`, `error`, `fatal`, `panic`
+- `--log-output-url`: HTTP URL to also send log output to (e.g. `http://localhost:9428/insert/jsonline`)
+- `--log-output-format`: `ndjson` (default), `loki`, `elasticsearch` or `gelf`
+- `--log-output-stream`: stream name sent with each log record (default `knot`)
+- `--log-output-username`, `--log-output-password`: optional HTTP basic auth for the log endpoint
+- `--log-output-token`: optional bearer token for the log endpoint, taking precedence over basic auth
 - `--nameservers`: DNS nameservers (repeatable)
 - `--help` / `--version`
 
@@ -565,6 +639,15 @@ Or override entirely with `--server` and `--token`.
 - `KNOT_LOGLEVEL`: override the log level
 - `KNOT_TLS_SKIP_VERIFY`: skip TLS verification
 - `KNOT_NAMESERVERS`: DNS nameservers
+- `KNOT_LOG_OUTPUT_URL`, `KNOT_LOG_OUTPUT_FORMAT`, `KNOT_LOG_OUTPUT_STREAM`, `KNOT_LOG_OUTPUT_USERNAME`, `KNOT_LOG_OUTPUT_PASSWORD`, `KNOT_LOG_OUTPUT_TOKEN`: the `--log-output-*` settings (also `log.output.*` in the config file)
+
+### Shell completion
+
+```shell
+knot completion <bash|zsh|fish|powershell>
+```
+
+Prints a completion script for the given shell.
 
 ### Exit codes
 

@@ -63,6 +63,13 @@ key = "VF9hmdXZyzNF3rcP6M0P"
 - Restrict database access to knot servers only
 - Enable encryption at rest
 
+**PostgreSQL**:
+- Use strong database passwords
+- Create dedicated database user for knot
+- Grant only necessary permissions
+- Set `sslmode` to `verify-full` so connections use TLS and check the server's certificate
+- Restrict database access to knot servers only
+
 **Redis/Valkey**:
 - Set strong Redis password
 - Use Redis ACLs for fine-grained access control
@@ -78,14 +85,16 @@ key = "VF9hmdXZyzNF3rcP6M0P"
 
 ## Backup Security
 
-Encrypt backups to protect sensitive data:
+Encrypt backups with a 32-byte key to protect sensitive data (see [Backup and Restore](../backup-restore.md)). A backup is a folder:
 
 ```shell
-knot backup --encrypt --output backup.enc
+knot admin backup --encrypt-key "$KNOT_BACKUP_KEY" /backups/knot-20261007
 ```
 
 **Backup best practices**:
 - Always encrypt backups
+- Encryption covers the records (users, password hashes, API tokens and the rest), not file storage content, which is kept as it is: protect the whole folder
+- Run backups as a dedicated user holding only the **Backup Server** permission, with an [API token](../../api-tokens.md) scoped to **Backup**
 - Store backups in secure location
 - Restrict access to backup files
 - Test restore procedures regularly

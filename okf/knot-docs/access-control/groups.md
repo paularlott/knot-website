@@ -24,7 +24,7 @@ Groups can also define limits for Compute and Storage Units, as well as other re
 
 To create a new group:
 
-1. From the `Administration` menu, select `Groups` and then click `New Group`.
+1. From the `Admin` menu, select `Groups` and then click `New Group`.
 
 
 2. Fill out the form presented:
@@ -41,6 +41,10 @@ To create a new group:
 - **`Storage Units Limit`**: Limits the number of storage units a user can use as a member of this group. Set to a number greater than 0 to enforce a limit.
 
 - **`Maximum Tunnels`**: Limits the number of tunnels a user can create as a member of this group. Set to a number greater than 0 to enforce a limit.
+
+- **`File Storage (MB)`**: The [file storage](../file-storage.md), in MB, each member of this group adds to their quota. A member whose own and groups' values are all `0` gets the server default (unlimited unless configured); once any is non-zero they have a limit. See [Quotas](../file-storage/operations.md#quotas).
+
+- **`Maximum Buckets`**: The number of [file storage](../file-storage.md) buckets each member of this group adds to their limit, with the same rules as File Storage (MB).
 
 ---
 

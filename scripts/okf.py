@@ -3,7 +3,7 @@
 #
 # Output is committed: the site is hosted on Cloudflare, which runs Hugo but
 # not scripts, so okf/ is mounted into the site (see hugo.toml module.mounts)
-# and published at /okf/. The zips for GitHub releases pack the bundle
+# and published at /okf/. The zip for GitHub releases packs the bundle
 # directories only — okf/index.md is a site-only catalog outside the bundles.
 import os
 import os.path
@@ -14,6 +14,8 @@ import re
 OUT = "okf"
 OKF_VERSION = "0.2"
 GENERATED_BY = "knot-website/okf.py"
+OKF_SERVER_URL = "https://github.com/paularlott/okf-server"
+BUNDLES_ZIP_URL = "https://github.com/paularlott/knot-website/releases/latest/download/knot-okf-bundles.zip"
 BASE_URL = "https://getknot.dev"
 
 # (name, source_dir, default_type, excluded_subdirs)
@@ -320,14 +322,20 @@ def emit_bundle(name, src, default_type, exclude):
 def emit_site_catalog():
     # Site-only catalog at okf/index.md. It sits beside the bundles, not
     # inside any of them, so it is outside OKF's index rules entirely; it is
-    # never packed into the release zips.
+    # never packed into the release zip.
     entries = []
     for name, _, _, _ in BUNDLES:
         entries.append("- [" + name + "](" + name + "/index.md) — " + BUNDLE_DESCRIPTIONS[name])
     body = ("# Knot OKF Bundles\n\n"
             "OKF " + OKF_VERSION + " knowledge bundles generated from the [Knot documentation]("
             + BASE_URL + "/docs/). Fetch these URLs directly; every document is plain markdown with "
-            "YAML frontmatter and relative links.\n\n## Bundles\n\n" + "\n".join(entries) + "\n")
+            "YAML frontmatter and relative links.\n\n## Bundles\n\n" + "\n".join(entries) + "\n"
+            "\n## Use with an MCP server\n\n"
+            "To give an AI agent browse and search tools over these bundles, serve them with "
+            "[OKF Server](" + OKF_SERVER_URL + "). Download [`knot-okf-bundles.zip`](" + BUNDLES_ZIP_URL + ") "
+            "from the latest release and unzip it into the server's bundle directory:\n\n"
+            "```sh\nunzip knot-okf-bundles.zip -d /path/to/bundles\n"
+            "scriptling --package /path/to/okf-server -- --bundles /path/to/bundles\n```\n")
     os.write_file(OUT + "/index.md", body)
 
     # HTML twin: static hosts serve /okf/ from index.html, not index.md
@@ -341,7 +349,14 @@ def emit_site_catalog():
             "</head>\n<body>\n<h1>Knot OKF Bundles</h1>\n"
             "<p>OKF " + OKF_VERSION + " knowledge bundles generated from the <a href=\"" + BASE_URL + "/docs/\">Knot documentation</a>. "
             "Every document is plain markdown with YAML frontmatter and relative links — fetch these URLs directly, or start from <a href=\"index.md\">index.md</a>.</p>\n"
-            "<ul>\n" + "\n".join(rows) + "\n</ul>\n</body>\n</html>\n")
+            "<ul>\n" + "\n".join(rows) + "\n</ul>\n"
+            "<h2>Use with an MCP server</h2>\n"
+            "<p>To give an AI agent browse and search tools over these bundles, serve them with "
+            "<a href=\"" + OKF_SERVER_URL + "\">OKF Server</a>. Download <a href=\"" + BUNDLES_ZIP_URL + "\"><code>knot-okf-bundles.zip</code></a> "
+            "from the latest release and unzip it into the server's bundle directory:</p>\n"
+            "<pre><code>unzip knot-okf-bundles.zip -d /path/to/bundles\n"
+            "scriptling --package /path/to/okf-server -- --bundles /path/to/bundles</code></pre>\n"
+            "</body>\n</html>\n")
     os.write_file(OUT + "/index.html", html)
 
 

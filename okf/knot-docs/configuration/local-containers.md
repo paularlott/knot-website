@@ -72,13 +72,7 @@ The detected runtimes are used for:
 
 ### Apple Containers Configuration
 
-Apple Containers use the native macOS container runtime and typically require no additional configuration. The runtime is automatically detected on Apple Silicon machines.
-
-```toml {filename="knot.toml"}
-[server.apple]
-  # Apple Containers use native macOS container runtime
-  # No additional configuration typically required
-```
+Apple Containers use the native macOS container runtime and have no configuration section. The runtime is automatically detected on Apple Silicon machines.
 
 ---
 
@@ -93,9 +87,6 @@ Below is an example of how to configure Knot to support multiple container runti
 
   [server.podman]
     host = "unix:///var/folders/4x/840000gn/T/podman/podman-machine-default-api.sock"
-
-  [server.apple]
-    # Apple Containers detected automatically on macOS
 ```
 
 - Replace the paths with the appropriate socket paths for your environment
@@ -114,7 +105,7 @@ When a template doesn't specify a container runtime, Knot uses the following pre
 
 This preference is applied when automatically selecting a server for deployment. See [Node Selection](node-selection.md) for more details on how spaces are assigned to servers.
 
-The system setting `server.local_containers.runtime_pref` can be used to adjust the preference order.
+Container backends are probed in the order listed in `server.enabled_backends` (`--enabled-backends`, `KNOT_ENABLED_BACKENDS`); with an empty list (the default) the order is Docker, Podman, Apple Containers. The list is also a platform allowlist, so a non-empty list must name every backend templates may use, `manual` included — see [Available Platforms](../templates.md#available-platforms).
 
 ---
 
@@ -131,5 +122,5 @@ If a container runtime is not detected:
 
 When multiple runtimes are available:
 - Templates can specify which runtime to use
-- If not specified, the preference order (Docker > Podman > Apple) is used unless set with `server.local_containers.runtime_pref`
+- If not specified, the preference order (Docker > Podman > Apple) is used unless reordered with `server.enabled_backends`
 - Only servers with the required runtime will be considered for space deployment

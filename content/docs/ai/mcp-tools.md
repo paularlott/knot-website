@@ -23,6 +23,15 @@ Each tool is either **native** or **on-demand**. This controls how it appears to
 
 See [Tool Modes](../mcp/#tool-modes) for configuration details.
 
+To remove built-in tools, list their names in `disable_builtin_tools` under `[server.mcp]` (flag `--mcp-disable-builtin-tools`, environment variable `KNOT_MCP_DISABLE_BUILTIN_TOOLS`):
+
+```toml
+[server.mcp]
+disable_builtin_tools = ["run_command", "delete_space"]
+```
+
+To replace the built-in set entirely, point `server.mcp_tools_path` at a directory of tool definitions; knot then loads tools from that directory instead of its own.
+
 ---
 
 ## Spaces
@@ -47,6 +56,7 @@ See [Tool Modes](../mcp/#tool-modes) for configuration details.
 | Tool | Description | Visibility |
 |------|-------------|------------|
 | `list_templates` | List active space templates, including their custom field definitions. | On-demand |
+| `get_template` | Get one template's full custom field definitions (names, types, required flags, defaults and valid option values), to see exactly what to send when creating a space. | On-demand |
 | `create_template` | Create a space template from a container image using a simplified spec (image, env vars, ports, memory, CPU, features); knot builds the native spec. | On-demand |
 
 ---
@@ -72,18 +82,24 @@ A stack is a deployed instance — a group of spaces that share a stack name, ty
 | `start_stack` | Start all spaces in a stack in dependency order. | On-demand |
 | `stop_stack` | Stop all spaces in a stack in reverse dependency order. | On-demand |
 | `restart_stack` | Restart all spaces in a stack. | On-demand |
-| `delete_stack` | Delete all spaces in a stack. The server validates that every space is stoppable before mutating anything, so the call is all-or-nothing. | On-demand |
+| `delete_stack` | Delete all spaces in a stack. Running spaces must be stopped first; the server checks every space before deleting any, so the call is all-or-nothing. | On-demand |
 
 ---
 
 ## Files
 
-Operations on files inside a running space.
+Operations on files inside a running space. Searches run in the space's agent, so file contents don't leave the space.
 
 | Tool | Description | Visibility |
 |------|-------------|------------|
-| `read_file` | Read the contents of a file from a running space. | Native |
-| `write_file` | Write content to a file in a running space. | Native |
+| `read_file` | Read a file from a running space, optionally a 1-based line range. | Native |
+| `write_file` | Write content to a file in a running space: overwrite (the default), append or prepend. | Native |
+| `edit_file` | Replace one occurrence of a string in a file; fails unless the search text appears exactly once. | On-demand |
+| `find` | Find files and directories by name, type or size; recursive by default. | On-demand |
+| `grep` | Search file contents with a regex or literal pattern, returning matching lines with paths and line numbers. | On-demand |
+| `sed_extract` | Extract regex capture groups from a file, or files under a directory. Read-only. | On-demand |
+| `sed_replace` | Replace every literal occurrence of a string in a file, or files under a directory. | On-demand |
+| `sed_replace_pattern` | Replace every regex match in a file, or files under a directory; the replacement can reference capture groups as `${1}` or `${name}`. | On-demand |
 
 ---
 
@@ -113,11 +129,11 @@ Pools keep a target number of identical spaces running from a template. See [Spa
 
 | Tool | Description | Visibility |
 |------|-------------|------------|
-| `create_pool` | Create a pool from a template with a desired space count, optional startup script, and optional start-on-create. | On-demand |
-| `delete_pool` | Delete a stopped pool and all its member spaces. | On-demand |
-| `start_pool` | Start a stopped pool: starts all member spaces and creates new ones if needed. | On-demand |
-| `stop_pool` | Stop a running pool: stops all member spaces without deleting them. | On-demand |
-| `set_pool_size` | Change the desired number of spaces in a pool. The sweep loop handles scaling. | On-demand |
+| `create_pool` | Create a pool from a template with a desired space count, optional startup script, and optional start-on-create. | Native |
+| `delete_pool` | Delete a stopped pool and all its member spaces. | Native |
+| `start_pool` | Start a stopped pool: starts all member spaces and creates new ones if needed. | Native |
+| `stop_pool` | Stop a running pool: stops all member spaces without deleting them. | Native |
+| `set_pool_size` | Change the desired number of spaces in a pool. The sweep loop handles scaling. | Native |
 
 ---
 

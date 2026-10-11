@@ -215,7 +215,7 @@ See [Using knot.\* Libraries](using-libraries/#the-knot-plugin-recommended) for 
 
 ### knot.\* Libraries
 
-In MCP and Remote contexts the Go runtime provides the transport automatically — no configuration needed. In External contexts `knot.apiclient` must be configured, except when using the knot plugin where it is automatic. Most `knot.*` libraries are available everywhere, but a few are context-restricted — the [library reference](../../../reference/libraries/) documents the exact Execution Environment for each.
+In MCP and Remote contexts the Go runtime provides the transport automatically — no configuration needed. In External contexts `knot.apiclient` must be configured, except when using the knot plugin where it is automatic. Most `knot.*` libraries are available everywhere, but a few are context-restricted — the [library reference](/reference/libraries/) documents the exact Execution Environment for each.
 
 | Library                 | MCP           | Remote        | External          |
 | ----------------------- | ------------- | ------------- | ----------------- |
@@ -233,7 +233,10 @@ In MCP and Remote contexts the Go runtime provides the transport automatically �
 | knot.skill              | ✓             | ✓             | ✓                 |
 | knot.slash_command      | ✓             | ✓             | ✓                 |
 | knot.server             | ✓             | ✓             | ✓                 |
-| knot.audit              | ✓ {{< pro-badge >}}\* | ✓ {{< pro-badge >}}\* | ✓ {{< pro-badge >}}\* |
+| knot.audit              | ✓             | ✓             | ✓                 |
+| knot.files              | ✓             | ✓             | ✓                 |
+| knot.jobs               | ✓             | ✓             | ✓                 |
+| knot.token              | ✓             | ✓             | ✓                 |
 | knot.ai                 | ✓             | ✓             | ✓                 |
 | knot.mcp                | ✓             | ✓             | ✓                 |
 | knot.apiclient          | ✓ (automatic) | ✓ (automatic) | ✓ (configure first) |
@@ -241,12 +244,12 @@ In MCP and Remote contexts the Go runtime provides the transport automatically �
 | knot.methods            | ✗             | ✓             | ✗                 |
 | knot.methods.schema     | ✗             | ✓             | ✗                 |
 | knot.healthcheck        | ✗             | ✓             | ✗                 |
+| knot.identity           | ✓             | ✗             | ✗                 |
+| knot.plugin             | ✓             | ✗             | ✗                 |
 
-\* `knot.audit` requires a Pro license.
+† `knot.event` is context-sensitive: `emit()` is available in space scripts, MCP tool scripts, and external scripts. The payload/metadata accessors (`get_string()`, `type()`, `space()`, …) are only available in event sink scripts — see [Events](/reference/events/).
 
-† `knot.event` is context-sensitive: `emit()` is available in space scripts, MCP tool scripts, and external scripts. The payload/metadata accessors (`get_string()`, `type()`, `space()`, …) are only available in event sink scripts — see [Events](../../../reference/events/).
-
-Event sink scripts follow the MCP column, except `knot.event` exposes the sink accessors instead of `emit()` and `knot.methods` is not registered. Health check scripts run agent-side in the space and share the full Space environment, including `knot.healthcheck`.
+Event sink scripts follow the MCP column, except `knot.event` exposes the sink accessors instead of `emit()`. Plugin handlers also have the MCP column's `knot.*` libraries (with `emit()`, `knot.identity` and `knot.plugin`), plus system access libraries — see [Writing Plugins](/docs/plugins/writing-plugins/). Health check scripts run agent-side in the space and share the full Space environment, including `knot.healthcheck`.
 
 ---
 

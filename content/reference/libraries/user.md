@@ -14,7 +14,7 @@ The `knot.user` library provides user management functions.
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -24,14 +24,14 @@ The `knot.user` library provides user management functions.
 
 | Function | Description |
 |----------|-------------|
-| `list(state='', zone='')` | List all users with optional filters |
-| `get(user_id)` | Get user by ID, username, or email |
+| `list(state='', zone='')` | List users; `state` is `all` (default), `active` or `inactive`, and `zone` defaults to the server's zone. Each entry has `id`, `username`, `email`, `active` and `number_spaces` |
+| `get(user_id)` | Get user by ID or username |
 | `get_me()` | Get the current user |
-| `create(username, email, password, ..., ssh_public_key='')` | Create a new user |
-| `update(user_id, ..., ssh_public_key=None)` | Update user properties |
+| `create(username, email, password, active=True, max_spaces=0, compute_units=0, storage_units=0, max_tunnels=0, ssh_public_key='', github_username='')` | Create a new user and return its ID |
+| `update(user_id, username=None, email=None, password=None, active=None, max_spaces=None, ssh_public_key=None, github_username=None)` | Update user properties; omitted arguments (and roles, groups and other quotas) keep their current values. Returns `True` |
 | `set_ssh_public_key(ssh_public_key, github_username=None)` | Set the current user's SSH public keys |
 | `set_ssh_private_key(ssh_private_key)` | Set the current user's SSH private key |
-| `delete(user_id)` | Delete a user |
+| `delete(user_id)` | Delete a user; returns `True` |
 | `link_user(user_id, linked_user_id)` | Grant `user_id` the ability to become `linked_user_id` — one way (requires the `link_users` permission) |
 | `unlink_user(user_id, linked_user_id)` | Remove `linked_user_id` from `user_id`'s become-list (requires the `link_users` permission) |
 | `get_quota(user_id)` | Get user quota and usage |
@@ -82,7 +82,7 @@ user.set_ssh_private_key("-----BEGIN OPENSSH PRIVATE KEY-----\n...")
 
 ## User Properties
 
-Users contain:
+`get()` and `get_me()` return:
 - `id` - User ID
 - `username` - Username
 - `email` - Email address
@@ -102,8 +102,8 @@ Users contain:
 - `used_storage_units` - Used storage units
 - `used_tunnels` - Used tunnels
 - `current` - Whether this is the current user
-- `roles` - List of role names
-- `groups` - List of group names
+- `roles` - List of role IDs
+- `groups` - List of group IDs
 - `linked_users` - The accounts this user may become, each with `user_id` and `username`
 
 ---

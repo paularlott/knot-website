@@ -33,8 +33,8 @@ The `knot.plugin` library calls a plugin's **declared** handlers — the `[[tool
 
 | Function | Description |
 |----------|-------------|
-| `call(plugin, handler, params?)` | Call a plugin's declared handler as the requesting user. `params` become the query string (GET, the default). Returns the handler's JSON answer as a dict. |
-| `call(plugin, handler, params, method="POST")` | POST variant: `params` travel as a JSON body, for handlers that branch on `request.method`. |
+| `call(plugin, handler, params=None, method="GET")` | Call a plugin's declared handler as the requesting user. `params` (a dict) become the query string for `GET`, the default. Returns the handler's JSON answer converted to Scriptling values (normally a dict). |
+| `call(plugin, handler, params, method="POST")` | POST variant: `params` travel as a JSON body, for handlers that branch on `request.method`. `method` must be `GET` or `POST`. |
 
 Errors raise: `permission denied` when the requesting user fails the declaration's gate, `not addressable` for a handler without a `[[tool.knot.handlers]]` declaration (or an unknown plugin), and the handler's own failure otherwise. The called handler runs with the full dispatch context — `params`, `request` and the `user` global — so it can self-check exactly as a page handler does.
 

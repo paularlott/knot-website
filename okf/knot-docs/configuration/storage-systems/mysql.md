@@ -16,6 +16,10 @@ type: Guide
 
 The Knot server can be configured to use either a standalone MySQL / MariaDB server or a Galera cluster for its database. To enable this, you need to update the configuration file and provide the necessary connection details.
 
+
+Knot releases before 0.37.0 could fail to create their tables on a new MySQL 8 (or later) database. Use 0.37.0 or later for new MySQL 8 installations.
+
+
 ---
 
 ### Configuration
@@ -50,3 +54,13 @@ To use MySQL / MariaDB, set `mysql.enabled` to `true` in the configuration file 
 - **`user`**: The username to connect with.
 
 - **`password`**: The password for the specified user.
+
+- **`connection_max_idle`**, **`connection_max_open`** and **`connection_max_lifetime`**: The size of the connection pool, by default 10 idle and 100 open connections, each reused for at most 5 minutes.
+
+Each option can also be set with a command line flag, such as `--mysql-host`, or an environment variable, such as `KNOT_MYSQL_HOST`.
+
+---
+
+### Sessions
+
+MySQL / MariaDB isn't used for sessions. Without Redis / Valkey, sessions are held in memory on each server, so restarting the server signs users out. To keep users signed in across restarts, use [PostgreSQL](postgres.md) or enable [Redis / Valkey](redis.md) alongside MySQL / MariaDB for sessions.

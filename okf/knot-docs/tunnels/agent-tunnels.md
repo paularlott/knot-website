@@ -30,7 +30,7 @@ agent-owned registry, so a tunnel started one way is visible to the other.
 
 ## Prerequisites
 
-- The knot server must be [configured for tunnels](agent-tunnels.md#configuring-the-server).
+- The knot server must be [configured for tunnels](../tunnels.md#configuring-the-server), and the user needs the **Use Tunnels** permission and free **Maximum Tunnels** quota (see [Prerequisites](../tunnels.md#prerequisites)).
 - **Inside a space:** run `knot tunnel ...` in a terminal in the space. The
   `--daemon`, `stop`, and `list` subcommands require the knot agent.
 - **From the desktop:** run `knot space tunnel ...` (the space must be running).
@@ -54,7 +54,7 @@ By default the tunnel is created on the server that owns the space. A tunnel
 can instead be created on any other knot server — see
 [Targeting Another Knot Server](#targeting-another-knot-server).
 
-Use `https` instead of `http` for an HTTPS tunnel:
+Use `https` instead of `http` when the local service itself speaks HTTPS (see [Creating a Tunnel on a Local Machine](../tunnels.md#creating-a-tunnel-on-a-local-machine) for `--port-tls-name` and `--port-tls-skip-verify`):
 
 ```shell
 knot tunnel https 8443 secure1

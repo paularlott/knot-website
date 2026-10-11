@@ -26,7 +26,7 @@ The `knot.stack` library provides stack template (definition) management and sta
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -51,7 +51,7 @@ The `knot.stack` library provides stack template (definition) management and sta
 
 | Function | Description |
 |----------|-------------|
-| `create(template_name, prefix, stack_name=None)` | Create spaces from a template |
+| `create(definition_name, prefix, stack_name=None)` | Create spaces from a stack template (by name or ID) |
 | `delete(stack_name)` | Delete all spaces in a stack |
 | `start(stack_name)` | Start all spaces in a stack in dependency order |
 | `stop(stack_name)` | Stop all spaces in reverse dependency order |
@@ -84,9 +84,10 @@ for name, space_id in result['spaces'].items():
 # Start the stack
 stack.start("myproject")
 
-# List all stacks
+# List all stacks — each space dict has id, name and is_running
 for s in stack.list():
-    print(f"{s['name']}: {len(s['spaces'])} spaces")
+    running = sum(1 for sp in s['spaces'] if sp['is_running'])
+    print(f"{s['name']}: {running}/{len(s['spaces'])} running")
 
 # Stop and delete
 stack.stop("myproject")
@@ -97,8 +98,16 @@ stack.delete("myproject")
 
 ## Creating Templates
 
+Each entry in `spaces` references a space template by **ID** (`template_id`) and, optionally, a startup script by ID (`startup_script_id`). Look the IDs up by name with `knot.template.get()` and `knot.script.get_by_name()`:
+
 ```python
 import knot.stack as stack
+import knot.template as template
+import knot.script as script
+
+mysql_id = template.get("mysql-8")["id"]      # get() accepts a name or ID
+apache_id = template.get("apache-2.4")["id"]
+init_id = script.get_by_name("init-db")["id"]
 
 # Create a personal stack template
 stack.create_def(
@@ -109,8 +118,9 @@ stack.create_def(
     spaces=[
         {
             "name": "db",
-            "template": "mysql-8",
+            "template_id": mysql_id,
             "description": "MySQL database",
+            "startup_script_id": init_id,
             "custom_fields": [
                 {"name": "MYSQL_ROOT_PASSWORD", "value": "secret"},
                 {"name": "MYSQL_DATABASE", "value": "appdb"},
@@ -121,12 +131,27 @@ stack.create_def(
         },
         {
             "name": "web",
-            "template": "apache-2.4",
+            "template_id": apache_id,
             "depends_on": ["db"],
         },
     ],
 )
 ```
+
+Space entry keys:
+
+| Key | Description |
+|-----|-------------|
+| `name` | Component name — spaces are created as `{prefix}-{name}`; also used in `depends_on` and `to_space` references |
+| `template_id` | Space template ID (required) |
+| `description` | Space description |
+| `shell` | Shell override (`bash`, `zsh`, `fish`, `sh`) |
+| `startup_script_id` | Startup script ID |
+| `depends_on` | List of component names this space depends on |
+| `custom_fields` | List of `{"name": ..., "value": ...}` dicts |
+| `port_forwards` | List of `{"to_space": ..., "local_port": ..., "remote_port": ...}` dicts |
+
+Alternatively, `add_component(stack_definition, template, name, ...)` resolves a template name to its ID for you.
 
 ---
 
@@ -193,7 +218,7 @@ Templates returned by `get_def()` contain:
 - `active` - Whether the template is available for creating stacks
 - `groups` - List of group IDs allowed to create instances
 - `zones` - List of zone restrictions
-- `spaces` - List of space dicts (see below)
+- `spaces` - List of space dicts, using the keys described in [Creating Templates](#creating-templates)
 
 ---
 

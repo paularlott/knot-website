@@ -57,7 +57,7 @@ All options can be set in `knot.toml`, via CLI flags, or through environment var
 
   [log.output]
     url = "http://localhost:9428/insert/jsonline"
-    format = "ndjson"    # ndjson | loki | elasticsearch
+    format = "ndjson"    # ndjson | loki | elasticsearch | gelf
     stream = "knot"      # stream name / identifier
 
     # Optional authentication (see "Authentication" below)
@@ -246,9 +246,17 @@ file_operations = true
 space_sessions = true
 ```
 
-All audit settings live under `[server.audit]` (`routing`, `retention`, `stream`, `file_operations`, `space_sessions`). The older flat keys (`server.audit_routing` etc.) are still accepted; the section wins when both are present.
+All audit settings live under `[server.audit]`. The older flat keys (`server.audit_routing` etc.) are still accepted; the section wins when both are present.
 
-Or via flags / environment variables: `--audit-file-operations` / `KNOT_AUDIT_FILE_OPERATIONS` and `--audit-space-sessions` / `KNOT_AUDIT_SPACE_SESSIONS`. Both are fields in the config wizard's audit section.
+| Config | Flag | Environment | Default | Description |
+|---|---|---|---|---|
+| `server.audit.routing` | `--audit-routing` | `KNOT_AUDIT_ROUTING` | `internal` | Where audit events go: `internal`, `external` (the log output above), or `both` |
+| `server.audit.retention` | `--audit-retention` | `KNOT_AUDIT_RETENTION` | `90` | Days to keep audit events in the internal store |
+| `server.audit.stream` | `--audit-stream` | `KNOT_AUDIT_STREAM` | `knot_audit` | Stream label used when routing audit events to the external log output |
+| `server.audit.file_operations` | `--audit-file-operations` | `KNOT_AUDIT_FILE_OPERATIONS` | `false` | Audit space file operations |
+| `server.audit.space_sessions` | `--audit-space-sessions` | `KNOT_AUDIT_SPACE_SESSIONS` | `false` | Audit interactive session opens |
+
+File operations and space sessions are also fields in the config wizard's audit section.
 
 With file operations enabled, every file `read`, `write`, `grep`, `find`, `sed`, `edit`, `delete` against a space — and every `copy` in either direction via `knot copy` or the web file manager — emits a `Space File Op` audit event carrying the space (and its template), the operation, the path, a byte count where known, and the source IP. With sessions enabled, opening the web terminal or a VS Code tunnel emits a `Space Session Open` event with the method. SSH is recorded at authentication time by the agent-managed SSH server: every public-key attempt emits an event carrying the outcome (success or failed), the key fingerprint, the client address and the space's template — a client trying several keys produces one failure per key plus a success.
 
@@ -297,6 +305,8 @@ Knot Pro can spool undeliverable batches on disk while the external logging serv
   level = "info"
   forward_space_logs = true
 ```
+
+- **`--forward-space-logs`** / **`KNOT_FORWARD_SPACE_LOGS`** — enable space log forwarding (Pro)
 
 Forwarded records are tagged with `stream = "space"`, `type = "space_log"`, plus `space_id`, `service` and `log_level` fields, so they can be filtered downstream. Off by default — development spaces can produce a lot of log volume. Space logs are never written to knot's internal database; long-term retention is the job of the external logging service.
 

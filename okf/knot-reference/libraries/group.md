@@ -24,7 +24,7 @@ The `knot.group` library provides group management functions.
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -35,7 +35,7 @@ The `knot.group` library provides group management functions.
 | Function | Description |
 |----------|-------------|
 | `list()` | List all groups |
-| `get(group_id)` | Get group by ID or name |
+| `get(group_id)` | Get group by ID (UUID; use `list()` to find an ID by name) |
 | `create(name, ...)` | Create a new group |
 | `update(group_id, ...)` | Update group properties |
 | `delete(group_id)` | Delete a group |

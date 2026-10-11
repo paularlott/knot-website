@@ -6,7 +6,7 @@ tags: [api, events]
 weight: 50
 ---
 
-The events system lets you react to space lifecycle changes and custom events raised from inside spaces. Events are routed to **event sinks** — listeners that POST to a webhook URL, run a scriptling script, or deliver to a running JSON-RPC method.
+The events system lets you react to space lifecycle changes and custom events raised from inside spaces or through the API. Events are routed to **event sinks** — listeners that POST to a webhook URL, run a scriptling script, or deliver to a running JSON-RPC method.
 
 ---
 
@@ -56,7 +56,20 @@ import knot.event
 knot.event.emit("myapp.deployed", {"version": "1.0"})
 ```
 
-All three paths prepend `custom.` to the event type automatically. This means `knot event space.created` produces `custom.space.created`, not the system event.
+### Server API
+
+Outside a space, a custom event can be raised through the server's API with `POST /api/events/emit`, using an [API token](/docs/api-tokens/). This is also what `knot.event.emit()` uses in an MCP tool, which runs on the server rather than in a space:
+
+```bash
+curl -X POST https://knot.example.com/api/events/emit \
+  -H "Authorization: Bearer $KNOT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"type": "myapp.deployed", "payload": {"version": "1.0"}}'
+```
+
+The event has no space: its space id is the nil UUID (`00000000-0000-0000-0000-000000000000`) and it belongs to the calling user, so it reaches that user's own sinks and global sinks. The user needs the **Use Spaces** or **Manage Spaces** permission.
+
+Every path prepends `custom.` to the event type automatically. This means `knot event space.created` produces `custom.space.created`, not the system event.
 
 ---
 

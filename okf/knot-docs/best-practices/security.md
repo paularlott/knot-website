@@ -32,10 +32,7 @@ Knot is designed for trusted environments. Deploy on private networks with VPN a
 
 ## Topics
 
-- [Network Security](security/network.md) - Private networks, VPN, and firewall configuration
-- [Authentication](security/authentication.md) - Passwords, 2FA, and API tokens
-- [Data Protection](security/data-protection.md) - Encryption, backups, and database security
-- [Monitoring](security/monitoring.md) - Audit logs, security events, and compliance
+
 
 ---
 

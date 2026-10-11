@@ -17,14 +17,16 @@ type: Overview
 
 API tokens are automatically created when logging in with the Knot client. Additionally, tokens can be manually created and used to access the API from external applications.
 
+Tokens start with a `tk_` prefix, which makes them easy to recognise in configuration files and secret scanners. Tokens created by earlier releases, without the prefix, keep working.
+
 ---
 
 ## Creating a Token
 
-1. From the menu, select **`API Tokens`**, then click **`New Token`**.
+1. From the menu, select **`API Tokens`**, then click **`New API Token`**.
    
 
-2. Complete the **`Name`** field to identify the token.
+2. Complete the **`Token Name`** field to identify the token, and optionally [scope it](#scoping-a-token).
 3. Click **`Create Token`** to generate a new token.
 4. The list of available tokens will be displayed.
 
@@ -59,6 +61,8 @@ By default a token has **Full Access** — every endpoint your account can reach
 | **Methods** | Discover and call space methods (`/api/methods*`). |
 | **MCP** | The MCP server endpoint (`/mcp`). |
 | **Tunnels** | Web and port tunnels only (`/tunnel/*`) plus the tunnel management API (`/api/tunnels*`) — list, create and delete tunnels and nothing else. |
+| **Files** | [File storage](file-storage.md): the files API (`/api/files*`) used by `knot file`, and on Knot Pro the S3 endpoint when the token is used as the secret key. |
+| **Backup** | [Backup and restore](best-practices/backup-restore.md): the backup and restore endpoints (`/api/backup/*`, `/api/restore/*`) used by `knot admin backup` and `knot admin restore`, and nothing else. The user still needs the Backup Server permission, and the scope is only offered on the API Tokens page to users who hold it. |
 
 A **Tunnels**-only key is what a machine that should only ever expose a port wants:
 
@@ -70,9 +74,21 @@ Scopes narrow but never widen: a scoped token still passes through every permiss
 
 ---
 
+## Editing a Token
+
+Click **`Edit`** next to a token in the **API Tokens** list to change its name or scopes, then click **`Save Changes`**. The token value itself doesn't change, so clients using it keep working.
+
+---
+
 ## Deleting a Token
 
 Deleting a token immediately prevents further API calls from being made using that token.
 
 1. From the **API Tokens** list, click **`Delete`** next to the token you want to remove.
 2. Confirm the operation when prompted.
+
+---
+
+## Hiding the API Tokens Page
+
+To remove the **API Tokens** item from the menu, set `hide_api_tokens = true` in the `[server.ui]` section (or `--hide-api-tokens` / `KNOT_HIDE_API_TOKENS`). See [User Interface](configuration/ui.md).

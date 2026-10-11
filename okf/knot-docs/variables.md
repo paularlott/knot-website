@@ -117,8 +117,3 @@ Fetches a secret from an external provider when the template is resolved.
 ---
 
 ## What's Next
-
-- [System Variables](variables/system-variables.md)
-- [User-Defined Variables](variables/user-defined-variables.md)
-- [Custom Variables](variables/custom-variables.md)
-- [Secret Providers](variables/secret-providers.md)

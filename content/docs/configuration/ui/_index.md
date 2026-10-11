@@ -42,7 +42,7 @@ enable_builtin_icons = true
 | Key | Default | Description |
 | --- | ------- | ----------- |
 | `hide_support_links` | `false` | Hide the support and documentation links from the web UI |
-| `hide_api_tokens` | `false` | Hide the API Tokens page and navigation entry from regular users; tokens keep working through the CLI and API |
+| `hide_api_tokens` | `false` | Hide the API Tokens menu entry (and its search result) for all users; tokens keep working through the CLI and API |
 | `enable_builtin_icons` | `true` | Serve the built-in icon set used when picking icons for templates |
 | `icons` | | Extra icon definition files to load (repeatable list of file paths) |
 
@@ -136,16 +136,20 @@ Disable for:
 
 ## Static Files
 
-The `public_files_path` serves static files for customization.
+Knot can serve two directories of static files:
+
+- **`public_files_path`** (`--public-files-path` / `KNOT_PUBLIC_FILES_PATH`): served at `/public-files/` to anyone, without logging in. Use it for the logo and anything else the login page needs.
+- **`private_files_path`** (`--private-files-path` / `KNOT_PRIVATE_FILES_PATH`): served at `/private-files/` to logged-in users only. Use it for internal documents you want to link to from templates or descriptions.
+
+Both are unset by default, which disables the path.
 
 ### Configuration
 
 ```toml
 [server]
 public_files_path = "/var/knot/public"
+private_files_path = "/var/knot/private"
 ```
-
-Files in this directory are accessible at `/public-files/` URL path.
 
 ### Use Cases
 
@@ -154,24 +158,17 @@ Files in this directory are accessible at `/public-files/` URL path.
 /var/knot/public/logo.svg → /public-files/logo.svg
 ```
 
-**Favicon**
-```
-/var/knot/public/favicon.ico → /public-files/favicon.ico
-```
-
 **Documentation**
 ```
 /var/knot/public/docs/guide.pdf → /public-files/docs/guide.pdf
+/var/knot/private/runbook.pdf → /private-files/runbook.pdf
 ```
 
-**Custom CSS** (if supported)
-```
-/var/knot/public/custom.css → /public-files/custom.css
-```
+Files placed here are only served; Knot doesn't pick up a favicon or stylesheet from these directories.
 
 ### Security
 
-- Only serve public, non-sensitive files
+- Only serve public, non-sensitive files from `public_files_path`; anything for signed-in users belongs in `private_files_path`
 - Don't store configuration or credentials
 - Set appropriate file permissions
 - Regularly review served files
@@ -196,7 +193,6 @@ Directory structure:
 ```
 /opt/knot/branding/
 ├── company-logo.svg
-├── favicon.ico
 └── docs/
     └── user-guide.pdf
 ```

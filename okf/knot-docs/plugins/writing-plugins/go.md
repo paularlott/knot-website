@@ -10,10 +10,10 @@ tags:
     - plugins
     - go
     - scripting
-title: In Go
+title: Writing Plugins in Go
 type: Guide
 ---
-# In Go
+# Writing Plugins in Go
 
 A plugin folder carries **binary peers** - executables speaking scriptling's plugin protocol (JSON-RPC over stdio) - in its `bin/` folder. A peer is where you put what a script can't do: FFI, a proprietary SDK, a perf-critical loop. But a peer can also be the *whole plugin*: it serves both the plugin's declarations and its handlers from the handshake, and it can even serve the declared assets from its own fetcher (below) - so a folder with only `bin/` and **no `main.py` and no `assets/`** is a complete plugin: one binary, nothing else.
 

@@ -17,9 +17,7 @@ In this tutorial, we'll create a space that runs PHP and includes a web server p
 
 ## Step 1: Start a New Template
 
-Start by clicking `Admiinistration`, `Templates` and then `+ Template`.
-
-- Click on Templates in the navigation menu, then select New Template.
+- Click `Templates` under `Build` in the navigation menu, then select `New Template`.
   {{< zoom-picture src="/docs/quick-start/local-containers/images/template-general.webp" caption="Template General Section" >}}
 - Fill out the following fields:
   - **Name:** Enter phptest.

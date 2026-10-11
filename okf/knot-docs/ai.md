@@ -26,11 +26,3 @@ Starting with version 0.19.0, Knot introduces AI support through two key feature
 ---
 
 ## What's Next
-
-- [Model Context Protocol](ai/mcp.md)
-- [MCP Tools](ai/mcp-tools.md)
-- [Remote MCP Servers](ai/mcp-remote.md)
-- [Web Assistant](ai/ai-assistant.md)
-- [Skills](ai/skills.md)
-- [Slash Commands](ai/slash-commands.md)
-- [System Prompt](ai/system-prompt.md)

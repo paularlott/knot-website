@@ -6,7 +6,7 @@ tags: [configuration]
 weight: 80
 ---
 
-Knot Pro {{< pro-badge >}} features are unlocked by a license key configured on the server. Without a license the server runs as the open-source edition.
+Knot Pro {{< pro-badge >}} is licensed per user with a license key configured on the server. Without a valid license the Pro server keeps all features but runs under a built-in license limited to **2 users** — creating further users is blocked until a license is configured or users are removed.
 
 ```toml {filename=knot.toml}
 [server.license]
@@ -19,6 +19,8 @@ name = "<licensed organisation or individual>"
 
 The same values can be provided as server flags or through environment variables — `--license` / `--license-name`, and `KNOT_LICENSE` / `KNOT_LICENSE_NAME` — for container-based deployments where the config file is generated from the environment.
 
-To confirm a license is active, check the server log at startup — an invalid or missing key logs a warning and the server continues on the open-source edition — or the web UI footer, which shows the licensed name on a licensed server.
+To confirm a license is active, check the server log at startup — an invalid, missing, or expired key logs a warning and the server continues with the built-in 2-user license — or the web UI footer, which shows the licensed name on a licensed server. Clicking the footer link opens **License Details** with the license status, user limit, current user count, and expiry.
+
+When a license expires, a **14-day grace period** keeps the licensed user limit in effect while a banner warns administrators. After the grace period ends the built-in 2-user limit applies; existing users are kept, but no new users can be created while the user count is over the limit.
 
 See [Pro Installation](/docs/quick-start/pro-installation/) for obtaining a license key.

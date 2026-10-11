@@ -26,7 +26,7 @@ The events system: webhook sinks, script sinks, and JSON-RPC sinks for reacting 
 
 ## [API](api/)
 
-The HTTP API used by the CLI, the web interface, and third-party integrations — rendered from the same OpenAPI spec that powers the in-product `/api-docs` page.
+The HTTP API used by the CLI, the web interface, and third-party integrations — the reference is served by your knot server at `/api-docs`, so it always matches the version you are running.
 
 ## [Glossary](glossary/)
 

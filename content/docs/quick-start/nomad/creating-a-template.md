@@ -4,7 +4,7 @@ linkTitle: New Template
 description: Build a reusable Nomad template that defines how spaces are created.
 type: Guide
 tags: [installation, templates]
-weight: 40
+weight: 50
 ---
 
 Once logged in to the Knot web interface at `http://knot.internal` (or the domain you configured), you'll be presented with a list of available spaces. Initially, this list will be blank.
@@ -17,7 +17,7 @@ In this tutorial, we'll create a space that runs PHP and includes a web server p
 
 ## Step 1: Start a New Template
 
-1. Click on `Templates` in the navigation menu, then select `New Template`.
+1. Click `Templates` under `Build` in the navigation menu, then select `New Template`.
 
 {{< zoom-picture src="/docs/quick-start/local-containers/images/template-general.webp" caption="Template General Section" >}}
 

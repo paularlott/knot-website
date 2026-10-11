@@ -100,7 +100,7 @@ No host setup: the VM attaches to libvirt's `default` NAT network (or any libvir
 | `--kvm-cloud-image-path` | *follows images path* (`<images path>/cloud-images`) | Read-only library of cloud images; bare `image:` names resolve here |
 | `--kvm-resolvers` | `1.1.1.1, 1.0.0.1` | DNS servers handed to bridged VMs via cloud-init. The gateway is never injected implicitly — add your router's address here if it should answer DNS |
 
-All three are also settable via environment (`KNOT_KVM_IMAGES_PATH`, `KNOT_KVM_CLOUD_IMAGE_PATH`, `KNOT_KVM_RESOLVERS`) and config file (`server.kvm.*`). Relative paths are resolved against the directory the server starts in.
+All four are also settable via environment (`KNOT_KVM_IMAGES_PATH`, `KNOT_KVM_BASE_IMAGE_PATH`, `KNOT_KVM_CLOUD_IMAGE_PATH`, `KNOT_KVM_RESOLVERS`) and config file (`server.kvm.images_path`, `server.kvm.base_image_path`, `server.kvm.cloud_image_path`, `server.kvm.resolvers`). Relative paths are resolved against the directory the server starts in.
 
 ## Troubleshooting
 

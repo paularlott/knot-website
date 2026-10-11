@@ -23,7 +23,7 @@ The `knot.template` library provides template management functions. Templates de
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -39,8 +39,8 @@ The `knot.template` library provides template management functions. Templates de
 | `validate(platform, job='', volumes='')` | Validate template job and volume specs without saving |
 | `build_spec(platform, spec, original_job='', original_volumes='')` | Build native job/volume text from a unified spec (image, env, ports, storage, resources). The same conversion the [UI spec wizard](../../knot-docs/configuration/spec-wizard.md) uses. |
 | `nodes(template_id)` | List available nodes for a local-container template |
-| `create(name, ...)` | Create a new template |
-| `update(template_id, ...)` | Update template properties |
+| `create(name, job='', description='', platform='', ...)` | Create a new template; returns its ID |
+| `update(template_id, ...)` | Update template properties; omitted arguments keep their current values |
 | `delete(template_id)` | Delete a template |
 | `get_icons()` | Get list of available icons |
 
@@ -80,6 +80,23 @@ built = template.build_spec("nomad", {
 template.create("nginx", job=built["job"], volumes=built["volumes"], platform="nomad")
 ```
 
+### Custom fields
+
+`create()` and `update()` take `custom_fields`, a list of field definitions. The list order is the order the space forms show the fields in, so reordering is just passing the list in a new order (`update()` replaces the whole list).
+
+```python
+template.update("nginx", custom_fields=[
+    # Required: always shown, and a space can't be created with it blank.
+    {"name": "site", "description": "Site name", "required": True},
+    # Optional, but shown on the create form with the required fields.
+    {"name": "branch", "description": "Git branch", "default": "main", "show_on_create": True},
+    # Optional and seldom needed: behind the create form's optional fields toggle.
+    {"name": "seed", "description": "Database seed", "type": "textarea", "language": "yaml"},
+])
+```
+
+Each definition takes `name`, `description`, `type` (`text`, `masked`, `number`, `bool`, `select`, `autocomplete` or `textarea`), `handler` or `options` (select and autocomplete, exactly one), `language` (textarea), `default`, `required` and `show_on_create`. `show_on_create` only affects how the create form is laid out and is ignored on required fields; the edit form always shows every field.
+
 ---
 
 ## Template Properties
@@ -88,10 +105,11 @@ template.create("nginx", job=built["job"], volumes=built["volumes"], platform="n
 - `id` - Template ID
 - `name` - Template name
 - `description` - Description
-- `platform` - Platform (e.g., "linux/amd64")
+- `platform` - Platform: `docker`, `podman`, `apple`, `container` (local container, backend chosen automatically), `nomad`, `kvm`, or `manual`
 - `active` - Whether the template is active
 - `usage` - Current usage count
 - `deployed` - Number of deployed spaces
+- `custom_fields` - Custom field definitions (as described for `get()` below)
 
 `get()` returns the full template including all of the above plus:
 - `job` - Job definition
@@ -105,6 +123,7 @@ template.create("nginx", job=built["job"], volumes=built["volumes"], platform="n
 - `with_code_server` - Code Server enabled
 - `with_ssh` - SSH access enabled
 - `with_run_command` - Run command enabled
+- `with_vnc` - VNC (web desktop) enabled
 - `allow_node_migration` - Whether stopped spaces created from this local-container template can be reassigned to another node. Combined with `health_check_auto_restart`, automatic failed-node recovery is available in Knot Pro 
 - `kvm_network_mode` - KVM templates only: `bridged` (static IPs from the template's range) or `nat` (libvirt NAT, DHCP) — see the [VM specification](../../knot-docs/templates/kvm-templates/vm-spec.md)
 - `kvm_network_cidr`, `kvm_ip_range_start`, `kvm_ip_range_end`, `kvm_gateway`, `kvm_bridge` - KVM bridged network configuration derived from the template's `network:` block. The IP range is empty when the template uses the network's whole usable address space (the default when no range is set)
@@ -119,7 +138,7 @@ template.create("nginx", job=built["job"], volumes=built["volumes"], platform="n
 - `groups` - List of group IDs
 - `zones` - List of zone names
 - `schedule` - List of schedule day dicts (`enabled`, `from`, `to`)
-- `custom_fields` - List of custom field dicts: `name`, `description`, `type` (text, masked, number, bool, textarea, select or autocomplete), `required`, `default` (when set), and the option source — `options` (the manual list, also the resolved values when `get` ran with `resolve_options=True`) or `handler` (a plugin field handler id). These are the definitions to fill when creating a space: required fields must be set, and select/autocomplete values must be one of the field's options (see [space.create](space.md#create)).
+- `custom_fields` - List of custom field dicts: `name`, `description`, `type` (text, masked, number, bool, textarea, select or autocomplete), `required`, `show_on_create` (when set: an optional field shown on the create-space form without opening its optional fields toggle), `default` (when set), and the option source — `options` (the manual list, also the resolved values when `get` ran with `resolve_options=True`) or `handler` (a plugin field handler id). These are the definitions to fill when creating a space: required fields must be set, and select/autocomplete values must be one of the field's options (see [space.create](space.md#create)).
 - `health_check_type` - Health check type (`none`, `agent`, `tcp`, `http`, `program`, or `custom`)
 - `health_check_config` - Health check target, command, or custom script depending on type
 - `health_check_skip_ssl_verify` - Skip TLS verification for HTTP health checks
@@ -130,7 +149,40 @@ template.create("nginx", job=built["job"], volumes=built["volumes"], platform="n
 - `disable_user_activity` - Whether filesystem user activity collection is disabled for spaces created from this template 
 - `ports` - List of port dicts (`name`, `port`, `protocol`) defining the web ports exposed by spaces created from this template. These are injected as `KNOT_HTTP_PORT`, `KNOT_HTTPS_PORT`, and `KNOT_TCP_PORT` environment variables.
 
-`create()` and `update()` also accept `paths`, either as a string or list of strings. These are appended to the template volume definition as managed `paths` entries.
+## Create and Update Arguments
+
+`create()` and `update()` take the same keyword arguments. With `create()` unset arguments use the defaults below; with `update()` every argument defaults to `None`, meaning "keep the current value". Lists passed to `update()` replace the whole list.
+
+| Argument | `create()` default | Description |
+|----------|-------------------|-------------|
+| `name` | (required) | Template name (`update()` only: new name) |
+| `job` | `''` | Job definition (container YAML, Nomad HCL or VM spec) |
+| `description` | `''` | Description |
+| `platform` | `''` | `docker`, `podman`, `apple`, `container`, `nomad`, `kvm` or `manual` |
+| `volumes` | `''` | Volume definitions |
+| `paths` | `None` | String or list of strings appended to the volume definition as managed `paths` entries |
+| `active` | `True` | Whether the template can be used |
+| `compute_units` / `storage_units` | `0` | Quota units |
+| `with_terminal`, `with_vscode_tunnel`, `with_code_server`, `with_ssh`, `with_run_command`, `with_vnc` | `False` | Enable the corresponding space features |
+| `allow_node_migration` | `False` | Allow stopped local-container spaces to be reassigned to another node |
+| `schedule_enabled` | `False` | Enable the run schedule |
+| `icon_url` | `''` | Icon URL |
+| `groups` / `zones` | `None` | Group IDs allowed to use the template / zone restrictions |
+| `disable_user_activity` | `False` | Disable filesystem user activity collection  |
+| `health_check_type` | `'none'` | `none`, `agent`, `tcp`, `http`, `program` or `custom` |
+| `health_check_config` | `''` | Target, command or custom script (ignored for `none` and `agent`) |
+| `health_check_skip_ssl_verify` | `False` | Skip TLS verification for HTTP checks |
+| `health_check_timeout` / `health_check_interval` | `10` / `30` | Seconds |
+| `health_check_max_failures` | `3` | Consecutive failures before the space is unhealthy |
+| `health_check_auto_restart` | `False` | Restart the space when the health check fails |
+| `max_uptime` / `max_uptime_unit` | `0` / `'disabled'` | Maximum uptime before the space is stopped |
+| `idle_timeout` / `idle_timeout_unit` | `0` / `'disabled'` | Stop the space after this long without user activity |
+| `ports` | `None` | List of `{"name", "port", "protocol"}` dicts; `protocol` is `http`, `https`, `tcp` or `shared` (reachable by every user in the zone through a port forward as `user--space`) |
+| `jobs` | `None` | Scheduled jobs seeded into spaces created from the template: list of `{"name", "command", "schedule", "enabled"}` dicts — `schedule` is a 5-field cron expression (empty for manual-only), `enabled` gates automatic firing (see [knot.jobs](jobs.md)) |
+| `port_forwards` | `None` | List of `{"local_port", "space", "remote_port"}` dicts seeded into every space created from the template; `space` is a space or pool name you own, or `user--name` for another user's shared port |
+| `custom_fields` | `None` | Custom field definitions — see [Custom fields](#custom-fields) |
+
+`get()` does not return `jobs` or `port_forwards`; `update()` preserves them unless you pass new lists.
 
 For `health_check_type="agent"`, no `health_check_config` value is required.
 

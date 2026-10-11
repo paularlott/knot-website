@@ -73,7 +73,7 @@ flowchart TD
   SA <-.->|gossip| SC
 {{< /mermaid >}}
 
-Each server runs its own database backend — BadgerDB (embedded), MariaDB, or Redis — and replicates changes to peers over the gossip protocol (leaderless). See [High Availability](../cluster-architecture/#database-redundancy) for database redundancy options.
+Each server runs its own database backend — BadgerDB (embedded), MariaDB, PostgreSQL, or Redis — and replicates changes to peers over the gossip protocol (leaderless). See [High Availability](../cluster-architecture/#database-redundancy) for database redundancy options.
 
 **Characteristics**:
 - High availability

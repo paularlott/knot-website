@@ -14,7 +14,7 @@ The `knot.pool` library manages space pools. A pool keeps a desired count of ide
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -26,7 +26,7 @@ The `knot.pool` library manages space pools. A pool keeps a desired count of ide
 |----------|-------------|
 | `list()` | List visible pools with current utilization |
 | `get(name)` | Get pool details and utilization by name or ID |
-| `create(name, template_name, startup_script_id='', desired_count=1, active=True)` | Create a pool and return its ID. Bridged KVM templates are rejected — their spaces need an IP address chosen at creation, which a pool can't provide; NAT KVM templates work |
+| `create(name, template_name, startup_script_id='', desired_count=1, active=True)` | Create a pool from a template (name or ID) and return its ID. Bridged KVM templates are rejected — their spaces need an IP address chosen at creation, which a pool can't provide; NAT KVM templates work |
 | `update(name, desired_count=None, active=None)` | Update the pool's desired count or active state |
 | `delete(name)` | Delete a stopped pool and all its spaces |
 | `set_size(name, desired_count)` | Set the pool's desired space count |
@@ -68,8 +68,9 @@ pool.start("api-pool")
 pool.delete("api-pool")
 ```
 
-Exclusive member leases (requires a lease-enabled pool — `lease_max_time` set
-at creation or via the update API):
+Exclusive member leases (requires a lease-enabled pool — `lease_max_time` is set
+in the web UI or through the pools REST API; `create()` and `update()` here do
+not take it):
 
 ```python
 import knot.apiclient
@@ -153,13 +154,13 @@ returns a list of them:
 - `username` - The lease holder
 - `expires_at` - When the lease ends (`None` = never expires)
 - `extensions_used`, `max_extensions` - Extension counter and cap (`-1` = unlimited)
-- `state` - `"active"` or `"draining"` (ended, waiting for in-flight work)
+- `state` - `"active"`, `"draining"` (ended, waiting for in-flight work) or `"destroying"` (released with `destroy=True`)
 
 ---
 
 ## Lifecycle Notes
 
-- `create()` accepts a template **name** (resolved to an ID internally). The template, startup script, and pool name are immutable after creation; only `desired_count` and `active` are mutable via `update()`.
+- `create()` accepts a template **name** or ID (resolved to an ID internally). The template, startup script, and pool name are immutable after creation; only `desired_count` and `active` are mutable via `update()`.
 - `delete()` requires the pool to be stopped first.
 - `set_size()`, `start()`, and `stop()` are asynchronous: the server's sweep loop creates, drains, or deletes member spaces to reach the desired state.
 - Lease functions require the pool to be lease-enabled (`lease_max_time != 0`) and active. The simplest mode is a no-timeout pool (`lease_max_time = -1`): acquire, use, release — `time` can stay `None` everywhere. While a lease is held, shared method routing and pool-name port routing skip the member; on expiry or release the member returns to the pool after in-flight method work drains, normally within one 15-second sweep. `acquire()` raises when no member is free (after `wait`, if given); `extend()` raises once the pool's extension count is exhausted.

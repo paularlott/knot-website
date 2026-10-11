@@ -52,6 +52,18 @@ Knot uses a leaderless architecture where all servers are equal.
 4. Server connects to agent in space
 5. Connection established
 
+### File Storage
+
+With [file storage](/docs/file-storage/) enabled, each server keeps its own full copy of every bucket in its storage directory, separate from the database:
+
+1. A user writes a file through any server
+2. The server stores the content by its SHA-256 and records the file's details
+3. The change to the record is gossiped to the other servers (newest change wins)
+4. Each server that doesn't hold the content streams it from a peer over the cluster transport and checks the checksum
+5. A reconcile every 30 seconds repairs anything a lost message missed
+
+See [Quotas, Replication and Maintenance](/docs/file-storage/operations/#how-replication-works).
+
 ### Template Updates
 
 1. Admin updates template
@@ -75,8 +87,9 @@ Run multiple servers in cluster:
 ### Database Redundancy
 
 Use database HA features:
-- MySQL replication or clustering
-- Redis Sentinel or Cluster
+- MySQL / MariaDB replication or Galera clustering
+- PostgreSQL replication
+- Redis / Valkey Sentinel or Cluster
 - Regular backups
 - Automated failover
 
@@ -93,7 +106,7 @@ For Nomad deployments:
 
 ### Backup Strategy
 
-- Regular database backups
+- Regular backups with [`knot admin backup`](/docs/best-practices/backup-restore/), taken through the API from any server, including file storage
 - Encrypted backup storage
 - Offsite backup copies
 - Tested restore procedures
@@ -101,8 +114,8 @@ For Nomad deployments:
 ### Recovery Plan
 
 1. Identify failure scope
-2. Restore database from backup
-3. Restart servers
+2. Start a new server, create its first user and restore the backup into it with `knot admin restore` (see [Backup and Restore](/docs/best-practices/backup-restore/))
+3. Start the other servers and let them join: they take everything from the restored one
 4. Verify system functionality
 5. Notify users
 

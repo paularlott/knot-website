@@ -15,7 +15,7 @@ type: API Reference
 ---
 # knot.token
 
-The `knot.token` library manages the current user's API tokens: mint keys for machines and pipelines (optionally narrowed by [scopes](../../api-tokens/#scoping-a-token)), list existing tokens, and revoke them.
+The `knot.token` library manages the current user's API tokens: mint keys for machines and pipelines (optionally narrowed by [scopes](../../knot-docs/api-tokens.md#scoping-a-token)), list existing tokens, and revoke them.
 
 ---
 
@@ -23,7 +23,7 @@ The `knot.token` library manages the current user's API tokens: mint keys for ma
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -57,7 +57,7 @@ Create an API token for the current user.
 
 **Parameters:**
 - `name` (string): Name identifying the token
-- `scopes` (list, optional): Narrows the token to endpoint groups — `"methods"` (`/api/methods*`), `"mcp"` (`/mcp`) and `"tunnels"` (`/tunnel/*` and `/api/tunnels*`: create, list and delete tunnels only). Empty or omitted means full access.
+- `scopes` (list, optional): Narrows the token to endpoint groups — `"methods"` (`/api/methods*`), `"mcp"` (`/mcp`) and `"tunnels"` (`/tunnel/*` and `/api/tunnels*`: create, list and delete tunnels only), `"files"` (`/api/files*`, and on Knot Pro the S3 endpoint with the token as the secret key) and `"backup"` (`/api/backup*` and `/api/restore*` only, for a token left in a backup job). Every scoped token can also read its own identity at `/api/users/whoami`. Empty or omitted means full access.
 
 **Returns:** `string` - The new token's value (the bearer key) — pass it to clients, e.g. [`space.tunnel_start(..., token=...)`](space.md#tunnel_startspace-protocol-port-name-server-token) or a pipeline's `knot tunnel --token`.
 

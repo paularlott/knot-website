@@ -135,7 +135,7 @@ All environment variables:
 | `KNOT_AI_URL` | AI endpoint URL | `KNOT_URL + /v1` |
 | `KNOT_AI_TOKEN` | AI access token | `KNOT_TOKEN` |
 | `KNOT_AI_MODEL` | Default AI model name | `""` |
-| `KNOT_AI_PROVIDER` | AI provider (`openai`, `claude`, `gemini`, `ollama`, `mistral`) | `openai` |
+| `KNOT_AI_PROVIDER` | AI provider (`openai`, `claude`, `gemini`, `ollama`, `mistral`, `zai`, `grok`) | `openai` |
 
 ```python
 import knot.space as space

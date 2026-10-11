@@ -23,7 +23,7 @@ The `knot.space` library provides space management functions for scripts.
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
@@ -33,7 +33,7 @@ The `knot.space` library provides space management functions for scripts.
 
 | Function | Description |
 |----------|-------------|
-| `create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', start_on_create=False)` | Create a new space |
+| `create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', ip_address='', start_on_create=False)` | Create a new space |
 | `delete(name)` | Delete a space by name |
 | `get(name)` | Get detailed space information |
 | `update(name, new_name=None, ...)` | Update space properties |
@@ -48,6 +48,8 @@ The `knot.space` library provides space management functions for scripts.
 | `usage_history(name, range='1h')` | Get historical resource usage for a space |
 | `get_description(name)` | Get the description of a space |
 | `set_description(name, description)` | Set the description of a space |
+| `get_ip_address(name)` | Get a bridged KVM space's static IP address (empty for other platforms) |
+| `set_ip_address(name, ip_address)` | Set a bridged KVM space's static IP address (space must be stopped) |
 | `get_dependencies(name)` | Get the dependency space IDs for a space |
 | `set_dependencies(name, depends_on)` | Set the dependency spaces for a space |
 | `get_stack(name)` | Get the stack name for a space |
@@ -57,24 +59,24 @@ The `knot.space` library provides space management functions for scripts.
 | `transfer(name, user_id)` | Transfer space ownership |
 | `share(name, user_ids)` | Share space with one or more users |
 | `unshare(name, user_id=None)` | Remove space share, optionally for a specific user |
-| `run_script(space_name, script_name, args=None)` | Execute a script in a space |
-| `eval(space_name, code, args=None)` | Execute inline Scriptling code in a space |
-| `run(space_name, command, args=[], timeout=30, workdir='')` | Execute a command in a space |
-| `read_file(space_name, file_path, offset=0, limit=0)` | Read file contents (or a 1-based line range) from a space |
-| `write_file(space_name, file_path, content, mode='overwrite', ...)` | Write content to a file (overwrite/append/prepend; optional mtime + perm) |
-| `grep(space_name, pattern, path, ...)` | Search file contents (regex or literal) |
-| `find(space_name, path='.', ...)` | Find files/directories by name, type, mtime, size |
-| `find_entries(space_name, path='.', ...)` | Like `find()` but each entry includes size, mtime, is_dir; opt-in hash, link_target, file_perm |
-| `sed_replace(space_name, old, new, path, ...)` | Replace literal string in files (in-place) |
-| `sed_replace_pattern(space_name, pattern, new, path, ...)` | Replace regex matches in files (in-place) |
-| `sed_extract(space_name, pattern, path, ...)` | Extract regex capture groups from files |
-| `edit_file(space_name, file_path, search, replace, ...)` | Targeted search-and-replace edit (unique match required) |
-| `delete_file(space_name, file_path, recursive=False, ...)` | Delete a file or directory (idempotent on missing paths) |
+| `run_script(name, script_name, args=None)` | Execute a script in a space |
+| `eval(name, code, args=None)` | Execute inline Scriptling code in a space |
+| `run(name, command, args=None, timeout=30, workdir='')` | Execute a command in a space |
+| `read_file(name, file_path, offset=0, limit=0)` | Read file contents (or a 1-based line range) from a space |
+| `write_file(name, file_path, content, mode='overwrite', ...)` | Write content to a file (overwrite/append/prepend; optional mtime + perm) |
+| `grep(name, pattern, path, ...)` | Search file contents (regex or literal) |
+| `find(name, path='.', ...)` | Find files/directories by name, type, mtime, size |
+| `find_entries(name, path='.', ...)` | Like `find()` but each entry includes size, mtime, is_dir; opt-in hash, link_target, file_perm |
+| `sed_replace(name, old, new, path, ...)` | Replace literal string in files (in-place) |
+| `sed_replace_pattern(name, pattern, new, path, ...)` | Replace regex matches in files (in-place) |
+| `sed_extract(name, pattern, path, ...)` | Extract regex capture groups from files |
+| `edit_file(name, file_path, search, replace, ...)` | Targeted search-and-replace edit (unique match required) |
+| `delete_file(name, file_path, recursive=False, ...)` | Delete a file or directory (idempotent on missing paths) |
 | `port_forward(source_space, local_port, remote_space, remote_port, persistent=False, force=False)` | Forward a port between spaces |
 | `port_apply(source_space, forwards)` | Replace all port forwards with the given list |
-| `port_list(space)` | List active port forwards |
-| `port_stop(space, local_port)` | Stop a port forward |
-| `port_throttle(space, local_port, latency_ms=0, jitter_ms=0, bandwidth_kb=0, timeout_ms=0, down=False, reset=False)` | Apply latency, jitter, and/or bandwidth limits to a port forward |
+| `port_list(name)` | List active port forwards |
+| `port_stop(name, local_port)` | Stop a port forward |
+| `port_throttle(name, local_port, latency_ms=0, jitter_ms=0, bandwidth_kb=0, timeout_ms=0, down=False, reset=False)` | Apply latency, jitter, and/or bandwidth limits to a port forward |
 | `tunnel_start(space, protocol, port, name, server="", token="")` | Start an agent-owned web tunnel in a space, optionally on another knot server |
 | `tunnel_list(space)` | List agent-owned web tunnels in a space |
 | `tunnel_stop(space, name)` | Stop an agent-owned web tunnel in a space |
@@ -110,13 +112,13 @@ print(content)
 
 ## Function Details
 
-### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', ip_address='', start_on_create=False)
+### create(name, template_name, description='', shell='bash', depends_on=None, stack='', selected_node_id='', alt_names=None, icon_url='', custom_fields=None, startup_script_id='', ip_address='', start_on_create=False) {#create}
 
 Create a new space.
 
 **Parameters:**
 - `name` (string): Name for the new space
-- `template_name` (string): Name of the template to use
+- `template_name` (string): Name or ID of the template to use
 - `description` (string, optional): Description for the space
 - `shell` (string, optional): Shell to use (default: "bash")
 - `depends_on` (list, optional): List of dependency space names or IDs
@@ -243,14 +245,14 @@ Delete a space and its data.
 
 ---
 
-### run(space_name, command, args=[], timeout=30, workdir='')
+### run(name, command, args=None, timeout=30, workdir='')
 
 Execute a command in a running space.
 
 **Parameters:**
-- `space_name` (string): Name of the space
+- `name` (string): Name or ID of the space
 - `command` (string): Command to execute
-- `args` (list, optional): Arguments for the command
+- `args` (list, optional): Arguments for the command (default: `None`, no arguments)
 - `timeout` (int, optional): Timeout in seconds (default: 30)
 - `workdir` (string, optional): Working directory
 
@@ -281,12 +283,12 @@ Get historical resource usage points for a space.
 
 ---
 
-### run_script(space_name, script_name, args=None)
+### run_script(name, script_name, args=None)
 
 Execute a named script in a running space.
 
 **Parameters:**
-- `space_name` (string): Name or ID of the space
+- `name` (string): Name or ID of the space
 - `script_name` (string): Name of the script to execute
 - `args` (list, optional): Script arguments
 
@@ -294,7 +296,7 @@ Execute a named script in a running space.
 
 ---
 
-### eval(space_name, code, args=None)
+### eval(name, code, args=None)
 
 Execute inline Scriptling code in a running space. Unlike `run_script`, which
 looks up a stored script by name, `eval` sends the `code` directly so no script
@@ -303,7 +305,7 @@ the same permissions, libraries, and argument conventions as a named script
 (`argv[0]` is `"inline"`).
 
 **Parameters:**
-- `space_name` (string): Name or ID of the space
+- `name` (string): Name or ID of the space
 - `code` (string): Scriptling source to evaluate
 - `args` (list, optional): Script arguments
 
@@ -318,7 +320,7 @@ print(result["output"])
 
 ---
 
-### read_file(space_name, file_path, offset=0, limit=0)
+### read_file(name, file_path, offset=0, limit=0)
 
 Read file contents from a running space, optionally a 1-based line range. When
 both `offset` and `limit` are 0/omitted the whole file is returned (the default).
@@ -326,7 +328,7 @@ The full file is read by the agent, but the response is sliced server-side so
 the client only receives the requested lines.
 
 **Parameters:**
-- `space_name` (string): Name of the space
+- `name` (string): Name or ID of the space
 - `file_path` (string): Path to the file
 - `offset` (int, optional): 1-based line number to start at. `0` = from the beginning
 - `limit` (int, optional): Maximum number of lines to return. `0` = no limit (whole file)
@@ -341,14 +343,14 @@ chunk = space.read_file("web", "/var/log/app.log", offset=100, limit=20)
 
 ---
 
-### write_file(space_name, file_path, content, mode='overwrite', mtime_ns=None, file_perm=None)
+### write_file(name, file_path, content, mode='overwrite', mtime_ns=None, file_perm=None)
 
 Write content to a file in a running space. By default the file is overwritten;
 pass `mode='append'` to add to the end, or `mode='prepend'` to add to the
 beginning of an existing file.
 
 **Parameters:**
-- `space_name` (string): Name of the space
+- `name` (string): Name or ID of the space
 - `file_path` (string): Path to the file
 - `content` (string): Content to write
 - `mode` (string, optional): `"overwrite"` (default), `"append"`, or `"prepend"`
@@ -359,14 +361,14 @@ beginning of an existing file.
 
 ---
 
-### grep(space_name, pattern, path, literal=False, recursive=False, ignore_case=False, glob='', follow_links=False, max_size=0, workdir='')
+### grep(name, pattern, path, literal=False, recursive=False, ignore_case=False, glob='', follow_links=False, max_size=0, workdir='')
 
 Search file contents in a running space using a regex or literal pattern. Runs
 in the space's agent via a parallel worker pool — no file contents leave the
 space, only matching lines are returned.
 
 **Parameters:**
-- `space_name` (string): Name or ID of the space
+- `name` (string): Name or ID of the space
 - `pattern` (string): Regular expression (or literal string when `literal=True`)
 - `path` (string): File or directory to search (relative to `workdir` if given)
 - `literal` (bool, optional): Treat `pattern` as a literal string. Default `False`
@@ -387,13 +389,13 @@ for m in space.grep("web", "TODO", "src", recursive=True, glob="*.py"):
 
 ---
 
-### find(space_name, path='.', recursive=True, type='any', name_glob='', mtime_min=None, mtime_max=None, size_min=None, size_max=None, include_hidden=False, follow_links=False, max_depth=0, workdir='')
+### find(name, path='.', recursive=True, type='any', name_glob='', mtime_min=None, mtime_max=None, size_min=None, size_max=None, include_hidden=False, follow_links=False, max_depth=0, workdir='')
 
 Find files and directories in a running space by name, type, modification time,
 or size. Runs in the space's agent via a concurrent walker; recursive by default.
 
 **Parameters:**
-- `space_name` (string): Name or ID of the space
+- `name` (string): Name or ID of the space
 - `path` (string, optional): Directory (or file) to search under. Default `"."`
 - `recursive` (bool, optional): Descend into subdirectories. Default `True`
 - `type` (string, optional): `"file"`, `"dir"`, or `"any"`. Default `"any"`
@@ -409,7 +411,7 @@ or size. Runs in the space's agent via a concurrent walker; recursive by default
 
 ---
 
-### find_entries(space_name, path='.', recursive=True, type='any', name_glob='', mtime_min=None, mtime_max=None, size_min=None, size_max=None, include_hidden=False, follow_links=False, max_depth=0, include_hash=False, include_symlinks=False, workdir='')
+### find_entries(name, path='.', recursive=True, type='any', name_glob='', mtime_min=None, mtime_max=None, size_min=None, size_max=None, include_hidden=False, follow_links=False, max_depth=0, include_hash=False, include_symlinks=False, workdir='')
 
 Same search semantics as `find()`, but each entry is returned as a dict with
 `path`, `size`, `mtime`, and `is_dir` — enough to decide whether an entry has
@@ -431,14 +433,14 @@ need paths, prefer `find()`.
 
 ---
 
-### sed_replace(space_name, old, new, path, recursive=False, ignore_case=False, glob='', follow_links=False, max_size=0, workdir='')
+### sed_replace(name, old, new, path, recursive=False, ignore_case=False, glob='', follow_links=False, max_size=0, workdir='')
 
 Replace every literal occurrence of `old` with `new` in a file (or files under a
 directory). `old` is matched literally, not as a regular expression. Files are
 modified in place using an atomic temp-file + rename.
 
 **Parameters:**
-- `space_name` (string): Name or ID of the space
+- `name` (string): Name or ID of the space
 - `old` (string): Literal string to search for
 - `new` (string): Replacement string
 - `path` (string): File or directory to modify
@@ -453,7 +455,7 @@ modified in place using an atomic temp-file + rename.
 
 ---
 
-### sed_replace_pattern(space_name, pattern, new, path, recursive=False, ignore_case=False, glob='', follow_links=False, max_size=0, workdir='')
+### sed_replace_pattern(name, pattern, new, path, recursive=False, ignore_case=False, glob='', follow_links=False, max_size=0, workdir='')
 
 Replace every regex match of `pattern` with `new`. Capture groups may be
 referenced in `new` as `${1}`, `${2}`, or `${name}`. Files are modified in place
@@ -473,13 +475,13 @@ print(f"{n} file(s) modified")
 
 ---
 
-### sed_extract(space_name, pattern, path, recursive=False, ignore_case=False, glob='', follow_links=False, max_size=0, workdir='')
+### sed_extract(name, pattern, path, recursive=False, ignore_case=False, glob='', follow_links=False, max_size=0, workdir='')
 
 Extract regex capture groups from a file (or files under a directory). Read-only
 — does not modify files.
 
 **Parameters:**
-- `space_name` (string): Name or ID of the space
+- `name` (string): Name or ID of the space
 - `pattern` (string): Regular expression with capture groups
 - `path` (string): File or directory to search
 - `recursive` (bool, optional): Default `False`
@@ -493,7 +495,7 @@ Extract regex capture groups from a file (or files under a directory). Read-only
 
 ---
 
-### edit_file(space_name, file_path, search, replace, workdir='')
+### edit_file(name, file_path, search, replace, workdir='')
 
 Perform a targeted search-and-replace edit on a single file. The search text
 must appear **exactly once** in the file; the operation fails if it matches zero
@@ -505,7 +507,7 @@ coding-agent edits where "replace all" is dangerous. Provide enough surrounding
 context in `search` to make the match unique.
 
 **Parameters:**
-- `space_name` (string): Name or ID of the space
+- `name` (string): Name or ID of the space
 - `file_path` (string): Path to the file to edit
 - `search` (string): Exact text to find (may span multiple lines)
 - `replace` (string): Replacement text
@@ -525,19 +527,42 @@ n = space.edit_file("web", "src/app.py",
 
 ---
 
-### delete_file(space_name, file_path, recursive=False, workdir='')
+### delete_file(name, file_path, recursive=False, workdir='')
 
 Delete a file or directory in a running space. Missing paths return success
 (idempotent), which lets sync tools feed it a delete list computed against a
 slightly stale remote snapshot without race-condition errors.
 
 **Parameters:**
-- `space_name` (string): Name or ID of the space
+- `name` (string): Name or ID of the space
 - `file_path` (string): File or directory to delete (relative to `workdir` if given)
 - `recursive` (bool, optional): When `True` and `file_path` is a directory, remove it and its entire contents. When `False` (the default), a non-empty directory delete fails.
 - `workdir` (string, optional): Resolve relative `file_path` against this directory
 
 **Returns:** `int` — number of entries removed (`0` if path did not exist, `1` for a single file, `N` for a recursive directory delete).
+
+---
+
+### get_ip_address(name)
+
+Get the static IP address of a bridged KVM space.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+
+**Returns:** `string` - The VM's static IP address (empty string for other platforms or when none is set)
+
+---
+
+### set_ip_address(name, ip_address)
+
+Set or change the static IP address of a bridged KVM space. The space must be stopped; the address is validated against the template's network range and the addresses already in use, and applied to the VM by cloud-init at its next boot.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+- `ip_address` (string): New static IP address
+
+**Returns:** `bool` - True on success
 
 ---
 
@@ -571,12 +596,7 @@ List all spaces for the current user.
 **Parameters:**
 - `all_zones` (bool, optional): If True, include spaces from all zones. Default is False (only spaces in the current server's zone).
 
-**Returns:** `list` of dicts, each containing:
-- `id` (string): Space ID
-- `name` (string): Space name
-- `is_running` (bool): Whether the space is running
-- `has_state` (bool): Whether the space's agent is connected to the server
-- `description` (string): Space description
+**Returns:** `list` of dicts with the same keys as [`get()`](#getname).
 
 ---
 
@@ -591,6 +611,7 @@ Get detailed information about a space.
 - `id` (string): Space ID
 - `name` (string): Space name
 - `description` (string): Space description
+- `note` (string): Space note (set by the agent, e.g. `knot agent set-note`)
 - `template_id` (string): Template ID
 - `template_name` (string): Template name
 - `user_id` (string): Owner user ID
@@ -598,7 +619,7 @@ Get detailed information about a space.
 - `shares` (list): List of shared user IDs
 - `depends_on` (list): List of dependency space IDs
 - `shell` (string): Default shell
-- `platform` (string): Platform (e.g., "linux/amd64")
+- `platform` (string): The template's platform — `docker`, `podman`, `apple`, `container` (local container, backend chosen automatically), `nomad`, `kvm`, or `manual`
 - `zone` (string): Zone name
 - `is_running` (bool): Whether the space is running
 - `has_state` (bool): Whether the space's agent is connected to the server (see `is_ready`)
@@ -606,12 +627,19 @@ Get detailed information about a space.
 - `is_deleting` (bool): Whether the space is being deleted
 - `node_id` (string): ID of the node assigned to host the space
 - `node_hostname` (string): Hostname of the node assigned to host the space
+- `ip_address` (string): Static IP address (bridged KVM spaces only, otherwise empty)
+- `has_code_server` / `has_ssh` / `has_terminal` / `has_http_vnc` / `has_vscode_tunnel` (bool): Services the agent reports as available
+- `vscode_tunnel_name` (string): VS Code tunnel name, if any
+- `tcp_ports` / `http_ports` (dict): Ports the space exposes
 - `created_at` (string): Creation timestamp
+- `started_at` (string): When the space was last started
 - `alt_names` (list of objects): Additional space names, each with `name` (string) and `port` (string, the HTTP port number to route to)
 - `icon_url` (string): Icon URL
 - `custom_fields` (list): Custom field values
 - `startup_script_id` (string): Startup script ID
 - `stack` (string): Stack name (empty if unstacked)
+- `healthy` (bool): Health check status (`True` when no health check is failing)
+- `resource_usage` (dict or `None`): Latest resource usage sample, when available
 
 ---
 
@@ -674,6 +702,22 @@ Transfer space ownership to another user.
 
 ---
 
+### port_forward(source_space, local_port, remote_space, remote_port, persistent=False, force=False)
+
+Forward a local port in one space to a port in another space (or pool).
+
+**Parameters:**
+- `source_space` (string): Source space name or ID
+- `local_port` (int): Local port number in the source space
+- `remote_space` (string): Target — a space or pool name you own, another user's space or pool as `user--space` (only ports its template declares shared), or a space ID
+- `remote_port` (int): Port number on the target
+- `persistent` (bool, optional): Persist the forward across agent restarts (default: False)
+- `force` (bool, optional): Skip the up-front target checks — that the target space is running with its agent connected, is in the same zone, and that you may reach the port — so a forward can be created before its target is started (default: False). Access is still enforced when connections are made.
+
+**Returns:** `bool` - True on success
+
+---
+
 ### port_apply(source_space, forwards)
 
 Replace all port forwards for a space with the given list. Any existing forwards not in the list are stopped, and any new forwards in the list are started. Forwards that already exist with the same local port, space, and remote port are left unchanged.
@@ -685,7 +729,7 @@ Replace all port forwards for a space with the given list. Any existing forwards
   - `space` (string): Remote space name or ID
   - `remote_port` (int): Remote port number
   - `persistent` (bool, optional): Persist the forward across restarts (default: False)
-  - `force` (bool, optional): Skip validation checks (default: False)
+  - `force` (bool, optional): Skip the up-front target checks, as for `port_forward` (default: False)
 
 **Returns:** `dict` containing:
 - `applied` (list): List of forwards that were started
@@ -694,12 +738,12 @@ Replace all port forwards for a space with the given list. Any existing forwards
 
 ---
 
-### port_throttle(space, local_port, latency_ms=0, jitter_ms=0, bandwidth_kb=0, timeout_ms=0, down=False, reset=False)
+### port_throttle(name, local_port, latency_ms=0, jitter_ms=0, bandwidth_kb=0, timeout_ms=0, down=False, reset=False)
 
 Apply network simulation to an existing port forward in a space. All values are optional; pass `reset=True` to clear all limits.
 
 **Parameters:**
-- `space` (string): Space name or ID
+- `name` (string): Space name or ID
 - `local_port` (int): Local port of the forward to throttle
 - `latency_ms` (int): Latency in milliseconds (default: 0)
 - `jitter_ms` (int): Jitter in milliseconds (default: 0)

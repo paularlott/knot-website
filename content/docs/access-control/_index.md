@@ -26,7 +26,7 @@ This three-tier system provides flexible, fine-grained access control.
 
 Users are created and managed through the web interface. Each user has:
 
-- Username and password
+- Username (at most 30 characters, ending in a letter or digit; it can't be changed later) and password
 - Email address
 - SSH public key (optional)
 - SSH private key in their own profile (optional)
@@ -52,48 +52,48 @@ Roles grant permissions for specific actions. Users can have multiple roles, and
 
 ### Common Role Examples
 
+The roles below are examples of how permissions can be combined — Knot only ships the built-in **Admin** and **Backup User** roles. Permission names match the [role form](roles/#available-permissions).
+
 **Developer Role**
-- Create and manage own spaces
-- Access SSH and terminal
-- Use port forwarding
-- View own audit logs
+- Use Spaces
+- Use Web Terminal, Use SSH, Use Code Server, Use VSCode Tunnel
+- View Logs, Copy Files
+- Use Tunnels
 
 **QA Tester Role**
-- Create test spaces
-- View space logs
-- Access terminal
-- Limited to test templates
+- Use Spaces
+- Use Web Terminal, View Logs
+- Combine with a group that only holds the test templates
 
 **Template Admin Role**
-- Create and edit templates
-- Manage template groups
-- View all spaces using templates
+- Manage Templates
+- Manage Volumes
+- Manage Variables
 
 **User Admin Role**
-- Create and manage users
-- Assign roles and groups
-- Set user quotas
-- View user activity
+- Manage Users
+- Manage Groups
+- Manage Roles
 
-**System Admin Role**
-- Full system access
-- Manage all resources
-- Configure server settings
-- Access all audit logs
+**Admin Role** (built in)
+- Every permission except Backup Server
 
-### Permission Matrix
+### Example Permission Matrix
 
-| Permission | Developer | QA | Template Admin | User Admin | System Admin |
+| Permission | Developer | QA | Template Admin | User Admin | Admin |
 |------------|-----------|-----|----------------|------------|-------------|
-| Create own spaces | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Delete own spaces | ✓ | ✓ | ✓ | ✓ | ✓ |
-| SSH access | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Create templates | | | ✓ | | ✓ |
-| Edit templates | | | ✓ | | ✓ |
-| Create users | | | | ✓ | ✓ |
-| Manage roles | | | | ✓ | ✓ |
-| View all spaces | | | | | ✓ |
-| Server config | | | | | ✓ |
+| Use Spaces | ✓ | ✓ | | | ✓ |
+| Use Web Terminal | ✓ | ✓ | | | ✓ |
+| Use SSH | ✓ | | | | ✓ |
+| Use Tunnels | ✓ | | | | ✓ |
+| Manage Templates | | | ✓ | | ✓ |
+| Manage Volumes | | | ✓ | | ✓ |
+| Manage Users | | | | ✓ | ✓ |
+| Manage Roles | | | | ✓ | ✓ |
+| Manage Spaces (any user's) | | | | | ✓ |
+| Backup Server | | | | | |
+
+**Backup Server** is root-equivalent and is held only by the **Backup User** role (or any role you add it to). See [Backup and Restore](/docs/best-practices/backup-restore/).
 
 ---
 
@@ -124,8 +124,9 @@ Groups can define quotas that apply to all members:
 
 When a user belongs to multiple groups:
 - They see templates from all groups
-- Quotas are additive
-- Highest privilege applies
+- Quotas are additive, and add to the user's own limits
+
+Groups don't grant permissions — those come only from roles.
 
 Example:
 - User in `developers` (5 spaces) and `qa-team` (3 spaces)
@@ -152,8 +153,8 @@ Example:
 - Create `contractors` group with limited quotas
 - Assign only necessary templates
 - Create `contractor` role with restricted permissions
-- Set short token expiration
 - Issue scoped API tokens where possible — e.g. a [tunnels-only](../api-tokens/#scoping-a-token) key for machines that just expose a port
+- Delete their API tokens when the engagement ends — token lifetime isn't configurable; unused tokens expire after two weeks
 
 **Result**: Contractors have limited, controlled access.
 
@@ -167,19 +168,18 @@ Example:
 
 **Result**: Each team sees their templates, roles define what they can do.
 
-
-
 ---
 
 ## Admin Capabilities
 
-System administrators can:
+Users with the built-in Admin role can:
 - Create spaces for other users
 - View and manage all spaces
 - Access all templates
 - Modify any resource
 - View complete audit logs
-- Manage system configuration
+
+Admin doesn't include **Backup Server**: backing up and restoring the server needs the **Backup User** role (or another role with that permission). Server settings live in `knot.toml`, not in roles.
 
 Use admin access carefully and audit admin actions.
 

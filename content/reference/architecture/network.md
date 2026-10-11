@@ -21,6 +21,10 @@ Network configuration and communication patterns.
 
 **3053**: DNS server (optional, configurable)
 
+**Cluster port**: Gossip between servers over TCP / UDP, set with `server.cluster.bind_addr` and `server.cluster.advertise_addr` (`--cluster-bind-addr`, `--cluster-advertise-addr`), for example `3100`. In `https` mode the cluster uses the web port instead. See [Cluster Mode](/docs/configuration/cluster-mode/).
+
+**S3** {{< pro-badge >}}: With file storage enabled, the S3 endpoint is served at `/s3` on the web port, so it needs no port of its own.
+
 ---
 
 ## Communication
@@ -32,6 +36,8 @@ Network configuration and communication patterns.
 **Server to Database**: Database-specific protocol
 
 **Server to Server**: Gossip protocol for data synchronization
+
+**File content between servers**: With file storage, servers stream file content they are missing directly from a peer over the cluster transport, secured like the rest of the cluster traffic (the cluster key on the gossip port, or TLS when `advertise_addr` is an `https://` URL); no extra port is needed
 
 ---
 

@@ -26,7 +26,10 @@ The knot server provides the web interface, API, and manages all resources. It s
 The agent runs inside containers and communicates with the server. It handles SSH, terminal access, and space lifecycle commands.
 
 **Database**
-Stores users, templates, spaces, and configuration. Options: BadgerDB, MySQL/MariaDB, or Redis/Valkey.
+Stores users, templates, spaces, and configuration. Options: BadgerDB, MySQL/MariaDB, PostgreSQL, or Redis/Valkey.
+
+**File Storage** 
+Optional [buckets of files](../knot-docs/file-storage.md), kept in a storage directory on each server rather than in the database and replicated to every server in the cluster. Reached from the web interface, `knot file`, the `knot.files` library, the API and, on Knot Pro, an S3 endpoint.
 
 **Container Runtime**
 Executes spaces. Options include: Docker, Podman, Nomad, or Apple Container.
@@ -34,8 +37,3 @@ Executes spaces. Options include: Docker, Podman, Nomad, or Apple Container.
 ---
 
 ## Topics
-
-- [Deployment Modes](architecture/deployment-modes.md) - Standalone, cluster, and leaf configurations
-- [Cluster Architecture](architecture/cluster-architecture.md) - Leaderless design and data flow
-- [Network Architecture](architecture/network.md) - Ports, communication, and security
-- [Scalability](architecture/scalability.md) - Scaling strategies and performance

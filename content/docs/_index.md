@@ -47,7 +47,7 @@ Choose your path: [Local Containers](quick-start/local-containers/) | [Nomad](qu
 
 Environments are defined using templates that specify everything needed: container images, storage, resources, and features. Users create spaces from templates with a single click. Each space is isolated, persistent, and accessible via web terminal, SSH, or IDE integrations.
 
-knot runs on Docker, Podman, or Apple Containers—either as a single server or scaling across multiple servers with a leaderless architecture for high availability. For enterprise deployments, integrate with Nomad clusters.
+knot runs spaces on Docker, Podman, or Apple Containers, or as KVM virtual machines—either as a single server or scaling across multiple servers with a leaderless architecture for high availability. For enterprise deployments, integrate with Nomad clusters.
 
 ## Key Benefits
 
@@ -75,8 +75,11 @@ knot runs on Docker, Podman, or Apple Containers—either as a single server or 
 - Self-hosted for full control over data and infrastructure
 - Role-based access control (RBAC) with permissions and groups
 - Web-based terminal for easy access
-- Scalability through Nomad and Consul
-- Compatibility with single-machine setups using Docker or Podman
+- Spaces as containers on Docker, Podman, Apple Containers or Nomad, or as KVM virtual machines
+- Runs on a single machine or scales across multiple servers, with no orchestrator needed for local containers
+- Replicated [file storage](file-storage/) with sharing and sync {{< experimental-badge >}}
+- Data stored in BadgerDB, MySQL / MariaDB, PostgreSQL or Redis / Valkey
+- [Scripting](scripting/), an [MCP server](ai/mcp/) and an [AI assistant](ai/ai-assistant/) for automating the platform
 - Open-source under the Apache 2.0 License
 
 ## What's Next

@@ -24,8 +24,9 @@ knot server 2>&1 | tail -5
 |---|---|---|
 | `address already in use` | Port 3000 (or your `listen`) is taken | `lsof -i :3000` and stop the other process, or change `--listen` |
 | `an encryption key is required` | No `server.encrypt` set | `knot genkey` and set it in the config |
-| `connection refused` to MySQL/Redis | Database down or wrong credentials | See [Database Connection Errors](#database-connection-errors) |
-| `invalid license key` | Pro license missing/expired | Server continues on the OSS edition — update `server.license.key` if Pro is expected |
+| `connection refused` to MySQL/PostgreSQL/Redis | Database down or wrong credentials | See [Database Connection Errors](#database-connection-errors) |
+| `license is invalid, missing, or expired` | Pro license missing, invalid, or past its 14-day grace period | Not fatal — the server keeps all Pro features with a built-in 2-user limit. Update `server.license.key` (see [Licensing](/docs/configuration/licensing/)) |
+| `failed to initialize MySQL database` on a new MySQL 8+ database | Table creation failed on releases before 0.37.0 | Fixed in 0.37.0 — upgrade, then start the server against an empty database |
 
 ### Database Connection Errors
 
@@ -33,6 +34,7 @@ Test reachability before blaming Knot:
 
 ```shell
 mysql -h <host> -u <user> -p -e "SELECT 1"        # MySQL / MariaDB
+psql -h <host> -U <user> -d <database> -c "SELECT 1"  # PostgreSQL
 redis-cli -h <host> -p 6379 ping                  # Redis / Valkey
 ```
 
@@ -68,7 +70,7 @@ Check the template's **Maximum Uptime** and **Schedule** settings first — they
 1. Confirm the space shows **Running** with service icons.
 2. Try the web terminal first — if it works, the space is fine and the problem is the client side.
 3. For SSH: ensure your public key is in your [profile](/docs/spaces/ssh/).
-4. For port forwarding: run `knot connect` and check the local port is free.
+4. For port forwarding: run `knot connect <server>` and check the local port is free.
 
 ---
 
@@ -79,6 +81,14 @@ Check the template's **Maximum Uptime** and **Schedule** settings first — they
 - After 10 failed attempts within a minute, authentication blocks for 5 minutes by default (`server.auth_rate_limit_*`) — wait or adjust as admin.
 - With 2FA enabled, a wrong clock on either side breaks TOTP codes — check the server's time synchronisation.
 - Check the server log for the specific rejection (bad password vs blocked).
+
+### Users Signed Out After a Server Restart
+
+With BadgerDB or MySQL / MariaDB and no Redis / Valkey, sessions are held in memory, so a restart signs everyone out. Use [PostgreSQL](/docs/configuration/storage-systems/postgres/), or enable [Redis / Valkey](/docs/configuration/storage-systems/redis/) alongside the database for sessions. Turning Redis / Valkey on or off also signs everyone out once.
+
+### Backup or Restore Returns 403
+
+`knot admin backup` and `knot admin restore` need a user with the **Backup Server** permission — it isn't part of the Admin role; a new server gives its first user the **Backup User** role, which carries it. A server with no users refuses both, so on a new server create the first user and use its token. A scoped API token must also include the `backup` scope. See [Backup and Restore](/docs/best-practices/backup-restore/).
 
 ### Token Expired
 
@@ -101,7 +111,7 @@ dig +short username--spacename--80.knot.internal   # should return the server IP
 ### Port Forwarding Not Working
 
 ```shell
-knot connect                          # client still authenticated?
+knot connect https://knot.internal:3000   # re-authenticate the client
 knot forward port 127.0.0.1:9010 spacename 80
 lsof -i :9010                         # local port actually free?
 ```
@@ -145,7 +155,7 @@ Terminal and port-forward traffic relays through the server — deploy servers n
 
 ### Nodes Not Connecting
 
-All nodes must share the same `server.encrypt` key and cluster key, and each node's `advertise_addr` must be reachable from the others. Verify with the Cluster Info page (Pro) or by checking gossip join errors in each server's log. Firewalls must allow the gossip port between all members.
+All nodes must share the same cluster key (`server.cluster.key`), all nodes in a zone must share the same `server.encrypt` key, and each node's `advertise_addr` must be reachable from the others. Verify with the **Cluster Info** page (under **Admin**, needs the View Cluster Info permission) or by checking gossip join errors in each server's log. Firewalls must allow the gossip port between all members.
 
 ### Data Not Synchronising
 

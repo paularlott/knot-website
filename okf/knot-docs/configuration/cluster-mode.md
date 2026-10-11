@@ -85,12 +85,15 @@ compression = true
 - **`advertise_addr`**: The address this server advertises to the cluster. Other servers will use this address to connect.
 - **`bind_addr`**: The address and port this server binds to for cluster communication.
 - **`key`**: A key used to encrypt data between cluster members. Generate it using `knot genkey`.
-
-Every member of a zone must also be configured with the **same `encrypt` key** (`server.encrypt`, generated with `knot genkey`): it derives agent registration keys, agent tokens and the zone's agent TLS certificate. knot refuses to start without it.
 - **`peers`**: A list of known servers. These should be the most stable servers, as they are used by nodes during startup to find existing cluster members. Once a server joins the cluster, it discovers other members dynamically. If all connections are lost, the server will retry the peers listed here.
 - **`compression`**: Enables or disables data compression for communication between cluster members. Compression is enabled by default and should work in most cases.
 - **`tcp_only`**: Use `TCP` only for cluster communication — for environments where `UDP` is unavailable.
 - **`min_cluster_size`**: Leader-election quorum floor: the fewest nodes that must be visible before a zone leader can be elected or kept. Set it to the majority of the smallest zone you will run — `2` for two- or three-server production zones. The default of `1` suits single-machine testing, where a lone server must elect itself.
+- **`allow_leaf_nodes`**: Whether [leaf nodes](leaf-mode.md) may connect to this server, `true` by default.
+
+Every member of a zone must also be configured with the **same `encrypt` key** (`server.encrypt`, generated with `knot genkey`): it derives agent registration keys, agent tokens and the zone's agent TLS certificate. knot refuses to start without it. Servers in different zones can use different keys.
+
+Each option can also be set with a command line flag or environment variable, such as `--cluster-key` / `KNOT_CLUSTER_KEY`, `--allow-leaf-nodes` / `KNOT_ALLOW_LEAF_NODES` and `--min-cluster-size` / `KNOT_CLUSTER_MIN_CLUSTER_SIZE`.
 
 ---
 

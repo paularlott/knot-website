@@ -17,7 +17,7 @@ type: Guide
 The Knot server can be configured to use Redis / Valkey as the database storage. It supports both single-server mode and high-availability cluster setups.
 
 
-Redis / Valkey can be enabled alongside another storage system (e.g., MySQL). In such cases, Redis / Valkey is used exclusively for session data.
+Redis / Valkey can be enabled alongside another storage system (e.g., MySQL or PostgreSQL). In such cases, Redis / Valkey is used exclusively for session data. PostgreSQL can store sessions itself, so it doesn't need Redis / Valkey; enabling it moves the sessions to Redis / Valkey.
 
 
 ---
@@ -42,6 +42,7 @@ To configure the Knot server with a single Redis / Valkey server, set `redis.ena
 - **`hosts`**: The hostname or IP address of the Redis / Valkey server. If the hostname has a `srv+` prefix, the SRV record will be looked up to resolve the hostname and port number.
 - **`password`**: The optional password to connect to the server.
 - **`db`**: The Redis / Valkey database number to use.
+- **`key_prefix`**: An optional prefix added to every key Knot writes, empty by default. Use it to share one Redis / Valkey database between several Knot instances or other applications without key collisions.
 
 ---
 

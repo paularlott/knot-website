@@ -71,7 +71,7 @@ hideSidebar: true
       </tr>
       <tr>
         <td><strong>Runtime support</strong></td>
-        <td>Docker, Podman, Apple Containers</td>
+        <td>Docker, Podman, Apple Containers, KVM virtual machines</td>
         <td>Everything in Core</td>
       </tr>
       <tr>
@@ -80,9 +80,19 @@ hideSidebar: true
         <td>Everything in Core</td>
       </tr>
       <tr>
-        <td><strong>File storage</strong></td>
+        <td><strong>Database</strong></td>
+        <td>BadgerDB, MySQL / MariaDB, PostgreSQL, Redis / Valkey</td>
+        <td>Everything in Core</td>
+      </tr>
+      <tr>
+        <td><strong>Backup and restore</strong></td>
+        <td>Back up a running server through the API into a folder, including file storage, and restore into a new server or recover single files</td>
+        <td>Everything in Core</td>
+      </tr>
+      <tr>
+        <td><strong>File storage</strong> {{< experimental-badge >}}</td>
         <td>Replicated buckets with sharing, quotas, the Files page and the <code>knot file</code> commands including sync</td>
-        <td>Everything in Core, plus an S3-compatible endpoint for rclone, backup tools and SDKs</td>
+        <td>Everything in Core, plus an S3-compatible endpoint for rclone, backup tools and SDKs {{< experimental-badge >}}</td>
       </tr>
       <tr>
         <td><strong>Access control</strong></td>
@@ -91,7 +101,7 @@ hideSidebar: true
       </tr>
       <tr>
         <td><strong>AI and MCP</strong></td>
-        <td>AI assistant, skills, MCP server, MCP tools, Scriptling</td>
+        <td>AI assistant with OpenAI, Claude, Gemini, Ollama, Mistral, Z.ai and Grok providers or any OpenAI-compatible server, skills, MCP server, MCP tools, Scriptling</td>
         <td>Everything in Core</td>
       </tr>
       <tr>
@@ -115,7 +125,7 @@ hideSidebar: true
         <td><span class="compare-yes">Included</span> UI-driven forwarded port management</td>
       </tr>
       <tr>
-        <td><strong>Visual port Throttling</strong></td>
+        <td><strong>Visual port throttling</strong></td>
         <td><span class="compare-no">Not included</span></td>
         <td><span class="compare-yes">Included</span> UI editing of port throttling</td>
       </tr>

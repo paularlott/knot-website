@@ -22,7 +22,7 @@ Slash commands are reusable prompt templates that users can invoke from the AI a
 
 ## Creating Commands
 
-Commands are created from the **Slash Commands** page under **More** in the sidebar. Click **Create Command** to open the editor.
+Commands are created from the **Slash Commands** page under **Build** in the sidebar. Click **Create Command** to open the editor.
 
 The editor uses a single markdown document with YAML frontmatter at the top:
 

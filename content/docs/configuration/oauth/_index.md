@@ -240,7 +240,7 @@ Each provider is defined as a `[[server.auth_providers]]` entry with the followi
 | `client_secret` | string | Yes | OAuth client secret from the provider |
 | `base_url` | string | No | Custom base URL (required for Auth0 tenant domain; defaults to `https://gitlab.com` for GitLab) |
 | `discovery_url` | string | Yes for `oidc` | OIDC discovery document URL (e.g., `/.well-known/openid-configuration`) |
-| `scopes` | string[] | No | Override the scopes requested during login. Useful for OIDC providers that require `offline_access` for refresh tokens |
+| `scopes` | string[] | No | Replace the scopes requested during login (the list is used as given, not merged with the defaults). Defaults: GitHub `user:email`; GitLab `read_user`; Google `openid email profile`; Auth0 `openid profile email offline_access`; OIDC `openid profile email`. Useful for OIDC providers that require `offline_access` for refresh tokens |
 | `allowed_domains` | string[] | No | Restrict login to users with email addresses in these domains |
 | `auto_create_users` | bool | No | Automatically create a Knot user account on first login |
 | `default_roles` | string[] | No | Role names assigned to auto-created users |

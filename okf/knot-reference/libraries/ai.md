@@ -23,7 +23,7 @@ The `knot.ai` library provides access to an AI client for scripts. In embedded c
 
 | Environment | Behaviour |
 |-------------|-----------|
-| Embedded (MCP tool execution, event sinks, remote/space scripts, `knot run-script`) | Go library returns a pre-configured client connected to the server's AI provider. `get_default_model()` returns `""`; passing `""` to any method makes the server use its configured default model. |
+| Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Go library returns a pre-configured client connected to the server's AI provider. `get_default_model()` returns `""`; passing `""` to any method makes the server use its configured default model. |
 | Health check scripts | Not available. |
 | External (standalone scripts) | Python implementation wrapping `scriptling.ai`. Configure AI details via `knot.apiclient` (`ai_url`, `ai_token`, `ai_model`, `ai_provider`) or the `KNOT_AI_*` environment variables. |
 
@@ -73,6 +73,16 @@ model = ai.get_default_model()  # returns "gpt-4o"
 
 answer = client.ask(model, "What is the capital of France?")
 print(answer)
+```
+
+`ai_provider` takes the provider name as a string — `openai`, `claude`, `gemini`, `ollama`, `mistral`, `zai` or `grok`. The matching constants (`ai.OPENAI`, `ai.GROK`, …) are defined by `scriptling.ai`, not `knot.ai`:
+
+```python
+import scriptling.ai
+
+knot.apiclient.configure("https://knot.example.com", "your-token",
+    ai_url="https://api.x.ai/v1", ai_token="xai-key",
+    ai_provider=scriptling.ai.GROK, ai_model="grok-4")
 ```
 
 Or via environment variables (read on first use):
@@ -225,13 +235,15 @@ except Exception as e:
 
 ## Server Configuration
 
-The AI provider is configured server-side in `.knot.toml`:
+In embedded contexts the client uses the AI provider configured server-side in the `[server.chat]` section of `knot.toml`:
 
 ```toml
 [server.chat]
 enabled = true
-openai_api_key = "your-api-key"
-openai_base_url = "https://api.openai.com/v1"
+provider = "openai"        # openai, claude, gemini, ollama, mistral, zai or grok
+api_key = "your-api-key"
 model = "gpt-4o"
-system_prompt = "You are a helpful assistant."
+system_prompt_file = "/etc/knot/system-prompt.md"   # optional
 ```
+
+`base_url` defaults to the provider's API; set `type` and `base_url` instead of `provider` for other OpenAI-, Anthropic-, Google-, Ollama- or xAI-compatible servers. See [AI Assistant](../../knot-docs/ai/ai-assistant.md) for every option.

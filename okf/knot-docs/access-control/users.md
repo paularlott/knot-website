@@ -22,7 +22,7 @@ This guide covers how to create, edit, and delete users in Knot, as well as mana
 
 To create a new user:
 
-1. From the `Administration` menu, select `Users` and then click `New User`.
+1. From the `Admin` menu, select `Users` and then click `New User`.
 
 
 2. Fill out the form presented:
@@ -30,7 +30,7 @@ To create a new user:
 ### User Details
 
 - **`Username`**:
-  The username to assign to the user.
+  The username to assign to the user: letters, digits, `-` and `.`, starting with a letter and ending with a letter or digit, at most 30 characters, without `--` or `..`. It can't be changed later. File storage buckets are named after it.
 
 - **`Email`**:
   The user's email address, which they will use to log in.
@@ -73,6 +73,12 @@ To create a new user:
 - **`Maximum Tunnels`**:
   The maximum number of tunnels the user can have at any one time. Set to `0` for no limit.
 
+- **`File Storage (MB)`**:
+  The maximum size, in MB, of the files in [file storage](../file-storage.md) buckets the user owns. The limit is this plus the values of the user's groups. When all are `0` the server default applies (unlimited unless configured); a non-zero value here or in a group means the user always has a limit. See [Quotas](../file-storage/operations.md#quotas).
+
+- **`Maximum Buckets`**:
+  The maximum number of [file storage](../file-storage.md) buckets the user can own. The limit is this plus the values of the user's groups. When all are `0` the server default applies (unlimited unless configured); a non-zero value here or in a group means the user always has a limit. See [Quotas](../file-storage/operations.md#quotas).
+
 ---
 
 ### Assigning Roles and Groups
@@ -111,13 +117,24 @@ Editing a user is similar to creating one:
 
 ---
 
+## Viewing a User's Access 
+
+On Knot Pro, the `Access` action in the users list opens an overview of everything one user can reach, gathered in one place:
+
+- **Roles**, **Groups** and the resulting **Permissions** (or *Administrator* for the Admin role).
+- **Effective Quota**: the compute, storage, spaces, tunnels, buckets and file storage limits that apply to the user.
+- **Owned Spaces** and spaces **Shared With User**.
+- The **Templates**, **Volumes** and **Variables** available to the user.
+- **Buckets**: the file storage buckets the user owns or can reach through a share, with the access level (owner, read & write, or read only) and how it was granted. A user with **Manage File Storage** is shown as having full access to every bucket.
+
+---
+
 ## Linked Users (Fast User Switching)
 
 Linked users are the accounts a user may **become** — think fast user switching. The link is one way: link B on A's account and A can switch into B (B's spaces included) from the profile menu (`Switch User`), but B cannot become A. Switching back needs no link: the session always offers `Back to <your account>` to return to whoever authenticated.
 
 - **Linking** is done in the user manager: edit a user and use the `Linked Users` section — the listed accounts are the ones the edited user will be able to become. Requires the `Link Users` permission, which is **impersonation-grade**: whoever holds it can link to any account — administrators included — and act as it fully. Grant it as sparingly as admin itself.
-- **Unlinking** removes one account from that list. A session the linking user already has switched into that account keeps running until it switches back or expires — it simply cannot switch in again.
-- **Unlinking** removes one account from that list; the other account is unaffected.
+- **Unlinking** removes one account from that list; the other account is unaffected. A session the linking user already has switched into that account keeps running until it switches back or expires — it simply cannot switch in again.
 - **Switching** requires nothing beyond the link (the target must be active). Every switch — including switching back — is written to the audit log (`User Switch`), and refused attempts are recorded as `User Switch Denied`.
 - The users list marks accounts that have linked users with a `Linked` badge.
 - The API exposes the same operations: `PUT /api/users/{user_id}/linked-users/{linked_user_id}` to link and `DELETE` on the same path to unlink, both gated by the `link_users` permission.
