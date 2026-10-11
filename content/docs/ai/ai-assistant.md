@@ -46,8 +46,8 @@ model = "Qwen3-4B-Thinking-2507-GGUF:Q4_0"
 - **`base_url`**: The address of the server hosting the LLM; overrides the provider's default. (`openai_base_url` is a deprecated alias.)
 - **`api_key`**: The API key required to authenticate with the LLM server. (`openai_api_key` is a deprecated alias.)
 - **`model`**: The model to be used (default `qwen2.5-coder:14b`). The assistant's performance depends on the selected model.
-- **`max_tokens`**: The maximum number of tokens the model may generate per response (default `0`, no limit set).
-- **`temperature`**: Sampling temperature (0–1, default `0.1`).
+- **`max_tokens`**: The maximum number of tokens the model may generate per response. `0` (the default) sends no limit, so the provider's own applies.
+- **`temperature`**: Sampling temperature. Left unset (the default), none is sent and the provider's default applies; leave it unset for reasoning models, which reject a temperature.
 - **`system_prompt_file`**: Path to a file whose contents are used as the system prompt (see [System Prompt](../system-prompt/)).
 - **`reasoning_effort`**: Controls the level of effort applied by the model for reasoning, there's no default. Options are:
   - `none`

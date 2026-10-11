@@ -120,7 +120,7 @@ To create a new template:
   - **Autocomplete**: a searchable box whose suggestions come from a [plugin field handler](../../plugins/writing-plugins/fields/) (offered only when a plugin provides one); the value must be one of the suggested options.
   - **Select**: a dropdown whose options come from a plugin field handler or a manual list on the field; the value must be one of the options.
 
-  All values are stored as strings. On the space form, text typed into an autocomplete box matches an option's value or label case-insensitively; if nothing matches, it is tried again with leading and trailing decoration (such as `#` or `[]`) removed, so a pasted `#wr1234` or `[wr1234]` finds the `wr1234` option. The API itself only accepts the exact option values.
+  All values are stored as strings. On the space form, text typed into an autocomplete box matches an option's value or label case-insensitively; if nothing matches, it is tried again with leading and trailing decoration (such as `#` or `[]`) removed, so a pasted `#1234` or `[1234]` finds the `1234` option. The API itself only accepts the exact option values.
 
   Every field can also carry a **Default value** (set in the same wrench-icon dialog). The default is pre-filled when a space is created and applied when an API/CLI request omits the field. Clearing the pre-filled value keeps the field empty — a deliberately blank field never falls back to the default.
 

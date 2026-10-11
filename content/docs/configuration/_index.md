@@ -215,7 +215,7 @@ When the server runs in desktop mode with the default `http://127.0.0.1:3000` UR
 | `server.disable_user_activity` {{< pro-badge >}} | `--disable-user-activity` | `KNOT_DISABLE_USER_ACTIVITY` | `false` | Turn off filesystem write tracking in every space, so file changes no longer count as user activity (for example towards a template's idle timeout) |
 | `server.mcp_tool_timeout` | `--mcp-tool-timeout` | `KNOT_MCP_TOOL_TIMEOUT` | `180` | Maximum time in seconds an MCP tool call may run |
 | `server.mcp_tools_path` | `--mcp-tools-path` | `KNOT_MCP_TOOLS_PATH` | | Directory of MCP tools to use instead of the tools built into the server |
-| `server.mcp.disable_builtin_tools` | `--mcp-disable-builtin-tools` | `KNOT_MCP_DISABLE_BUILTIN_TOOLS` | | List of built-in MCP tool names to disable |
+| `server.mcp.disable_builtin_tools` | `--mcp-disable-builtin-tools` | `KNOT_MCP_DISABLE_BUILTIN_TOOLS` | | Built-in MCP tool names to disable; see [MCP Tools](/docs/ai/mcp-tools/) for the list |
 
 ---
 

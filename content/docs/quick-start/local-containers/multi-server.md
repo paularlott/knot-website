@@ -314,7 +314,7 @@ The load balancer can use any strategy (round-robin, least connections, etc.).
 
 ### Option 2: Direct Server Access
 
-Users can access any server directly. If the space is on a different server, they'll be redirected automatically.
+Users can access any server directly. If a space runs on a different server, the server they are using forwards the request to it, so there is no redirect and nothing extra to configure.
 
 ---
 
