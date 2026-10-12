@@ -32,7 +32,29 @@ The Knot MCP server operates over HTTP transport and is accessible at the URL: `
 For example, if your Knot installation is hosted at `knot.getknot.dev`, the MCP server URL would be: `https://knot.getknot.dev/mcp`
 
 ### OAuth2-Supported Clients
-If your client supports OAuth2, it will connect to the MCP server and allow you to log in using your standard credentials. During this process, an [API token](../api-tokens.md) will be generated for use.
+If your client supports OAuth2, it will connect to the MCP server and allow you to log in using your standard credentials. During this process, an [API token](../api-tokens.md) scoped to the MCP endpoint will be generated for use.
+
+Clients discover how to sign in from the server itself: an unauthenticated request to `/mcp` is answered with a `WWW-Authenticate` header pointing to `/.well-known/oauth-protected-resource`, and clients without a client ID register themselves at `/register`. A registered client can only receive authorization codes at the redirect URIs it registered.
+
+### Claude
+Knot can be added to Claude as a custom connector, making its tools available in the Claude desktop app, on claude.ai and on mobile:
+
+1. In Claude, open **Settings → Connectors** and choose **Add custom connector**.
+2. Enter a name, such as `knot`, and the URL `https://<your-knot-domain.com>/mcp`.
+3. Choose **Connect**, sign in to knot if asked, and select **Authorize**.
+
+Claude connects to custom connectors from Anthropic's cloud, so the knot server must be reachable from the internet over HTTPS, with `server.url` set to its public URL. For a server on a private network, run [`knot mcp`](../../knot-reference/cli/knot.md#knot-mcp) locally instead and add it to Claude Desktop's configuration:
+
+```json
+{
+  "mcpServers": {
+    "knot": {
+      "command": "knot",
+      "args": ["mcp", "--alias", "default"]
+    }
+  }
+}
+```
 
 ### Non-OAuth2 Clients
 For clients that do not support OAuth2, you will need to manually generate a new [API token](../api-tokens.md) via the web interface and provide it to the MCP client. Use the following format:

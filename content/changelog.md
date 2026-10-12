@@ -11,6 +11,14 @@ navSection: docs
 
 ## October 2026
 
+{{< version "v0.38.1" >}}
+
+{{< changelog-item "added" >}}
+- Add knot to Claude as a custom connector, signing in with OAuth2 ([docs](../docs/ai/mcp/#claude))
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.38.0" >}}
 
 {{< changelog-item "changed" >}}
@@ -37,6 +45,8 @@ navSection: docs
 - Fix `knot space mirror` succeeding when files failed to upload
 - Fix importing a template YAML without a maximum uptime
 {{< /changelog-item >}}
+
+---
 
 {{< version "v0.37.0" >}}
 
