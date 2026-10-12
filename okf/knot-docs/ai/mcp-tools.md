@@ -27,9 +27,9 @@ Each tool is either **native** or **on-demand**. This controls how it appears to
 | Visibility | Behaviour |
 |------------|-----------|
 | **Native** | Always present in `tools/list` and can be called directly by name. |
-| **On-demand** | Hidden from the default `tools/list` to keep context usage low. Discover with `tool_search(query=...)` and run with `execute_tool(name=..., arguments=...)`. To pre-load all on-demand tools into `tools/list` instead, set `native_tools = true` under `[server.mcp]` in `knot.toml`. |
+| **On-demand** | Hidden from the default `tools/list` to keep context usage low. Discover with `tool_search(query=...)` and run with `execute_tool(name=..., arguments=...)`. To list every tool directly instead, send the `X-MCP-Show-All: true` header or use `knot mcp --show-all`. |
 
-See [Tool Modes](mcp.md#tool-modes) for configuration details.
+See [Finding Tools](mcp.md#finding-tools) for how clients use on-demand tools.
 
 To remove built-in tools, list their names in `disable_builtin_tools` under `[server.mcp]` (flag `--mcp-disable-builtin-tools`, environment variable `KNOT_MCP_DISABLE_BUILTIN_TOOLS`):
 

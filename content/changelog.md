@@ -11,6 +11,18 @@ navSection: docs
 
 ## October 2026
 
+{{< version "v0.38.2" >}}
+
+{{< changelog-item "changed" >}}
+- Tell MCP clients what knot is and how to find its on-demand tools, including through `knot mcp`
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- Fix `knot mcp` not connecting when the server address ends in `/mcp`
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.38.1" >}}
 
 {{< changelog-item "added" >}}
