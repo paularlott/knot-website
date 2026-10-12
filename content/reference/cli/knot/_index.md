@@ -126,6 +126,8 @@ Options:
 - `--tls-skip-verify`: skip TLS verification (default `true`)
 - `--show-all`: also expose discoverable tools, not just native ones
 
+Without `--show-all`, the host can still find and run the discoverable tools with `tool_search` and `execute_tool`, which go through to the server. The server's skills are served too. The server must have MCP enabled (`[server.mcp]` `enabled = true`) and the user the **Use MCP Server** permission; otherwise `knot mcp` exits with the reason.
+
 Also built into the agent binary — inside a space, `knot mcp` connects through the agent socket with no configuration.
 
 ---
@@ -160,7 +162,7 @@ knot space run-script <space> <script> [args...]
 knot space eval <space> <code|-> [args...]
 ```
 
-`run` takes `-t`/`--timeout` (seconds, default 30) and `-w`/`--workdir` (working directory for the command).
+`run` takes `-t`/`--timeout` (seconds, default 30) and `-w`/`--workdir` (working directory for the command; a relative path is relative to the space user's home directory). Give these before the space name: everything after the command is passed to it unchanged, flags included, so `knot space run -t 600 dev claude -p "fix the tests"` hands `-p` to `claude`. Each argument reaches the command as it is, without shell expansion; to use pipes or redirection, pass one quoted string, as in `knot space run dev 'npm test | tail -20'` or `knot space run dev sh -c '...'`. The command's stdout and stderr go to knot's stdout and stderr, and knot exits with the command's exit code (124 when it timed out), so `run` works in scripts with `set -e` and redirection.
 
 `eval` runs inline Scriptling source directly — no stored script needed. Pass the
 code as a quoted argument, or use `-` to read it from stdin. Trailing positionals
@@ -233,7 +235,7 @@ knot space mirror --verbose ./src <space>:/var/www/html
 knot space mirror --watch --exclude node_modules ./src <space>:/var/www/html
 ```
 
-`knot space mirror` uploads a local directory tree to a space in parallel (default 8 workers, configurable via `--parallel N`). Each file's mtime and permission bits are preserved on the destination. After the uploads complete, any file on the space that doesn't exist locally is removed (subject to `--exclude`) — the destination ends up as a one-way mirror of the source.
+`knot space mirror` uploads a local directory tree to a space in parallel (default 8 workers, configurable via `--parallel N`). Each file's mtime and permission bits are preserved on the destination. A destination path without a leading `/` is relative to the space user's home directory. If any file can't be uploaded, mirror exits with an error once it has done the rest. After the uploads complete, any file on the space that doesn't exist locally is removed (subject to `--exclude`) — the destination ends up as a one-way mirror of the source.
 
 `--dry-run` lists every intended upload and delete without performing any I/O against the space.
 
@@ -367,9 +369,11 @@ Manage space pools (pre-warmed sets of spaces), including exclusive member lease
 
 ```shell
 knot pool list
+knot pool create <pool> <template> [--count 3] [--start] [--lease-time 2h|none] [--lease-extensions N|unlimited] [--custom-field name=value]
 knot pool start <pool>
 knot pool stop <pool>
 knot pool set-size <pool> <count>
+knot pool update <pool> [--custom-field name=value] [--unset-custom-field name] [--clear-custom-fields]
 knot pool delete <pool> [-y]
 
 # Exclusive member leases (requires lease_max_time on the pool)
@@ -378,6 +382,10 @@ knot pool extend <member> [--time 5m|none] [--json]
 knot pool release <member> [--destroy] [--json]
 knot pool leases <pool> [--json]
 ```
+
+`create` makes a pool from a template name or ID, stopped unless `--start` is given. `--lease-time` enables exclusive member leases with that maximum lease length (`none` = leases last until released); leases are off without it. `--lease-extensions` sets how many times a lease may be extended (default 0, `unlimited` for no cap). `--custom-field` (repeatable) sets a template custom field on every member.
+
+`update` sets (`--custom-field`) or removes (`--unset-custom-field`) the custom field values members get; `--clear-custom-fields` removes them all first. With no flags it shows the current values. Members pick up a change when they are next created or started, so restart the pool (stop, then start) to apply it to all of them.
 
 `delete` asks for confirmation; `-y`/`--yes` skips the prompt.
 
