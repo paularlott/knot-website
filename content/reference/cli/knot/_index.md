@@ -367,10 +367,11 @@ Manage space pools (pre-warmed sets of spaces), including exclusive member lease
 
 ```shell
 knot pool list
-knot pool create <pool> <template> [--count 3] [--start] [--lease-time 2h|none] [--lease-extensions N|unlimited]
+knot pool create <pool> <template> [--count 3] [--start] [--lease-time 2h|none] [--lease-extensions N|unlimited] [--custom-field name=value]
 knot pool start <pool>
 knot pool stop <pool>
 knot pool set-size <pool> <count>
+knot pool update <pool> [--custom-field name=value] [--unset-custom-field name] [--clear-custom-fields]
 knot pool delete <pool> [-y]
 
 # Exclusive member leases (requires lease_max_time on the pool)
@@ -380,7 +381,9 @@ knot pool release <member> [--destroy] [--json]
 knot pool leases <pool> [--json]
 ```
 
-`create` makes a pool from a template name or ID, stopped unless `--start` is given. `--lease-time` enables exclusive member leases with that maximum lease length (`none` = leases last until released); leases are off without it. `--lease-extensions` sets how many times a lease may be extended (default 0, `unlimited` for no cap).
+`create` makes a pool from a template name or ID, stopped unless `--start` is given. `--lease-time` enables exclusive member leases with that maximum lease length (`none` = leases last until released); leases are off without it. `--lease-extensions` sets how many times a lease may be extended (default 0, `unlimited` for no cap). `--custom-field` (repeatable) sets a template custom field on every member.
+
+`update` sets (`--custom-field`) or removes (`--unset-custom-field`) the custom field values members get; `--clear-custom-fields` removes them all first. With no flags it shows the current values. Members pick up a change when they are next created or started, so restart the pool (stop, then start) to apply it to all of them.
 
 `delete` asks for confirmation; `-y`/`--yes` skips the prompt.
 

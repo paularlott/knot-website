@@ -35,8 +35,8 @@ The `knot.pool` library manages space pools. A pool keeps a desired count of ide
 |----------|-------------|
 | `list()` | List visible pools with current utilization |
 | `get(name)` | Get pool details and utilization by name or ID |
-| `create(name, template_name, startup_script_id='', desired_count=1, active=True, lease_max_time=0, lease_max_extensions=0)` | Create a pool from a template (name or ID) and return its ID. Set `lease_max_time` to enable member leases (`-1` = no timeout, seconds = maximum lease length) and `lease_max_extensions` to allow extending them (`-1` = unlimited). Bridged KVM templates are rejected — their spaces need an IP address chosen at creation, which a pool can't provide; NAT KVM templates work |
-| `update(name, desired_count=None, active=None, lease_max_time=None, lease_max_extensions=None)` | Update the pool's desired count, active state or lease settings; omitted values are kept |
+| `create(name, template_name, startup_script_id='', desired_count=1, active=True, lease_max_time=0, lease_max_extensions=0, custom_fields=None)` | Create a pool from a template (name or ID) and return its ID. Set `lease_max_time` to enable member leases (`-1` = no timeout, seconds = maximum lease length) and `lease_max_extensions` to allow extending them (`-1` = unlimited). `custom_fields` (a list of `{"name": ..., "value": ...}`) is given to every member; fields left out get the template default. Bridged KVM templates are rejected — their spaces need an IP address chosen at creation, which a pool can't provide; NAT KVM templates work |
+| `update(name, desired_count=None, active=None, lease_max_time=None, lease_max_extensions=None, custom_fields=None)` | Update the pool's desired count, active state, lease settings or custom fields; omitted values are kept. `custom_fields` replaces the members' values (`[]` clears them); members pick them up when next created or started |
 | `delete(name)` | Delete a stopped pool and all its spaces |
 | `set_size(name, desired_count)` | Set the pool's desired space count |
 | `start(name)` | Start a stopped pool (starts all members, creates any missing) |
@@ -119,6 +119,7 @@ with pool.leased("build-workers", "5m") as member:
 - `active` - Whether the pool is active (members are started as they are created)
 - `lease_max_time` - Lease time budget in seconds: `0` = leases disabled, `-1` = no timeout
 - `lease_max_extensions` - Max extensions per lease: `0` = extending forbidden, `-1` = unlimited
+- `custom_fields` - Custom field values given to every member, as `{"name": ..., "value": ...}` (template defaults not included)
 - `utilization` - Aggregate utilization across members:
   - `combined_rps` - Total requests per second (method + HTTP + TCP)
   - `method_rps` - Method requests per second
@@ -168,7 +169,7 @@ returns a list of them:
 
 ## Lifecycle Notes
 
-- `create()` accepts a template **name** or ID (resolved to an ID internally). The template, startup script, and pool name are immutable after creation; only `desired_count`, `active`, `lease_max_time` and `lease_max_extensions` are mutable via `update()`.
+- `create()` accepts a template **name** or ID (resolved to an ID internally). The template, startup script, and pool name are immutable after creation; only `desired_count`, `active`, `lease_max_time`, `lease_max_extensions` and `custom_fields` are mutable via `update()`.
 - `delete()` requires the pool to be stopped first.
 - `set_size()`, `start()`, and `stop()` are asynchronous: the server's sweep loop creates, drains, or deletes member spaces to reach the desired state.
 - Lease functions require the pool to be lease-enabled (`lease_max_time != 0`) and active. The simplest mode is a no-timeout pool (`lease_max_time = -1`): acquire, use, release — `time` can stay `None` everywhere. While a lease is held, shared method routing and pool-name port routing skip the member; on expiry or release the member returns to the pool after in-flight method work drains, normally within one 15-second sweep. `acquire()` raises when no member is free (after `wait`, if given); `extend()` raises once the pool's extension count is exhausted.

@@ -11,16 +11,19 @@ navSection: docs
 
 ## October 2026
 
-{{< version "v0.37.1" >}}
+{{< version "v0.38.0" >}}
 
 {{< changelog-item "changed" >}}
+- **Breaking:** creating a pool fails when a required template custom field has no value or default, or a select field's value isn't one of its options; unknown custom field names are rejected too ([docs](../docs/spaces/pools/#custom-fields))
 - Note in the `run_command` MCP tool that long jobs should pass a `timeout`, as the default is 30 seconds
+- Return from creating or starting a pool as soon as its members are saved, and start their containers in the background, so the pool form no longer waits for every member to boot
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
 - Add `knot pool create`, with `--lease-time` and `--lease-extensions` to enable member leases ([docs](../docs/spaces/pools/#creating-a-pool))
 - Add the MCP tools `list_pools`, `acquire_pool_member`, `extend_pool_lease`, `release_pool_member` and `list_pool_leases`, so agents can find a pool, check out a member and hand it back ([docs](../docs/ai/mcp-tools/))
 - Add `lease_max_time` and `lease_max_extensions` to the `create_pool` MCP tool and to `knot.pool.create()` and `knot.pool.update()`, to make lease-enabled pools without the web UI ([docs](../reference/libraries/pool/))
+- Add custom field values to pools, given to every member when it is created or started; set them in the pool form, with `knot pool create --custom-field`, the new `knot pool update`, the API, `knot.pool` and the `create_pool` MCP tool ([docs](../docs/spaces/pools/#custom-fields))
 {{< /changelog-item >}}
 
 {{< version "v0.37.0" >}}

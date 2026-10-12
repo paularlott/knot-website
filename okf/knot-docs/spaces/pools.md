@@ -64,6 +64,29 @@ Stopping a pool sets `active = false` and stops all member spaces without
 deleting them. Starting a stopped pool starts all members and creates new ones
 if needed.
 
+## Custom Fields
+
+A pool can set values for the template's custom fields, and every member gets
+them. Fields the pool leaves out get the template default. Required fields
+need a value, either from the pool or a template default, and select fields
+take one of their options.
+
+A member takes the pool's values when it is created or started. Changing them
+leaves running members as they are: new members get the new values, and
+restarting the pool (stop, then start) applies them to every member. Set them
+in the pool form on the Spaces page, or from the CLI:
+
+```shell
+# Create a pool whose members get region=eu
+knot pool create build-workers my-template --custom-field region=eu
+
+# Change a value, and drop one so members get the template default
+knot pool update build-workers --custom-field region=us --unset-custom-field size
+
+# Show the pool's values
+knot pool update build-workers
+```
+
 Deleting a pool requires it to be stopped first. Member space deletion is
 initiated (marked as deleting), then the pool definition is tombstoned. The
 container service completes volume cleanup and finalises space deletion
@@ -212,7 +235,7 @@ draining, stopping, and deleting excess spaces within 1-2 cycles.
 
 ## Creating a Pool
 
-Pools are created with the CLI, the API or a stack definition. A pool needs a name and a template; it starts stopped unless started on creation:
+Pools are created from the Spaces page, the CLI or the API. A pool needs a name and a template; it starts stopped unless started on creation:
 
 ```shell
 # Three members, started now, with leases of up to 2h and unlimited extensions
@@ -243,6 +266,9 @@ curl -X POST -H "Authorization: Bearer <token>" \
 - **`active`**: Start the pool immediately when `true` (default `false`).
 - **`lease_max_time`**: Enable exclusive member leases — `-1` for allocate/use/release with no timeout (the web form's default when leases are enabled), a positive number of seconds for an optional expiry safety net, `0` (default) to disable leases.
 - **`lease_max_extensions`**: Max extensions per lease — `-1` for unlimited (the default pairing with no-limit), `0` to forbid extending.
+- **`custom_fields`**: Custom field values given to every member, as `[{"name": "region", "value": "eu"}]`. Fields left out get the template default.
+
+`PUT /api/pools/{id_or_name}` takes the same `custom_fields` list to replace the pool's values (`[]` clears them); leave it out to keep them.
 
 ---
 
@@ -269,10 +295,11 @@ Pool operations require **Use Space Pools** permission.
 
 ```bash
 knot pool list                          # List your pools
-knot pool create <name> <template> [--count N] [--start] [--lease-time 2h|none] [--lease-extensions N|unlimited]  # Create a pool
+knot pool create <name> <template> [--count N] [--start] [--lease-time 2h|none] [--lease-extensions N|unlimited] [--custom-field name=value]  # Create a pool
 knot pool start <name>                  # Start a stopped pool
 knot pool stop <name>                   # Stop a running pool
 knot pool set-size <name> <count>       # Change the desired space count
+knot pool update <name> [--custom-field name=value] [--unset-custom-field name] [--clear-custom-fields]  # Set the custom fields members get
 knot pool delete <name> [-y]            # Delete a stopped pool (prompts unless -y)
 knot pool acquire <name> [--time 5m|none] [--wait 2m]   # Check a member out exclusively
 knot pool extend <member> [--time 5m|none]              # Renew the lease on a held member

@@ -138,7 +138,7 @@ Pools keep a target number of identical spaces running from a template. See [Spa
 | Tool | Description | Visibility |
 |------|-------------|------------|
 | `list_pools` | List pools with utilization, lease settings and members, or get one pool by name. | Discovery |
-| `create_pool` | Create a pool from a template with a desired space count, optional startup script, optional start-on-create, and optional member leases (`lease_max_time`, `lease_max_extensions`). | Discovery |
+| `create_pool` | Create a pool from a template with a desired space count, optional startup script, optional start-on-create, optional member leases (`lease_max_time`, `lease_max_extensions`), and custom field values for every member. | Discovery |
 | `delete_pool` | Delete a stopped pool and all its member spaces. | Discovery |
 | `start_pool` | Start a stopped pool: starts all member spaces and creates new ones if needed. | Discovery |
 | `stop_pool` | Stop a running pool: stops all member spaces without deleting them. | Discovery |
