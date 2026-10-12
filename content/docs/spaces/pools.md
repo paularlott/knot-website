@@ -204,7 +204,17 @@ draining, stopping, and deleting excess spaces within 1-2 cycles.
 
 ## Creating a Pool
 
-Pools are created through the API (or a stack definition). A pool needs a name and a template; it starts stopped unless `active` is set:
+Pools are created with the CLI, the API or a stack definition. A pool needs a name and a template; it starts stopped unless started on creation:
+
+```shell
+# Three members, started now, with leases of up to 2h and unlimited extensions
+knot pool create build-workers my-template --count 3 --start \
+  --lease-time 2h --lease-extensions unlimited
+```
+
+Leave out `--lease-time` for a pool without leases, or use `--lease-time none` for leases that last until released.
+
+Through the API:
 
 ```shell
 curl -X POST -H "Authorization: Bearer <token>" \
@@ -251,6 +261,7 @@ Pool operations require **Use Space Pools** permission.
 
 ```bash
 knot pool list                          # List your pools
+knot pool create <name> <template> [--count N] [--start] [--lease-time 2h|none] [--lease-extensions N|unlimited]  # Create a pool
 knot pool start <name>                  # Start a stopped pool
 knot pool stop <name>                   # Stop a running pool
 knot pool set-size <name> <count>       # Change the desired space count

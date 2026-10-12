@@ -375,6 +375,7 @@ Manage space pools (pre-warmed sets of spaces), including exclusive member lease
 
 ```shell
 knot pool list
+knot pool create <pool> <template> [--count 3] [--start] [--lease-time 2h|none] [--lease-extensions N|unlimited]
 knot pool start <pool>
 knot pool stop <pool>
 knot pool set-size <pool> <count>
@@ -386,6 +387,8 @@ knot pool extend <member> [--time 5m|none] [--json]
 knot pool release <member> [--destroy] [--json]
 knot pool leases <pool> [--json]
 ```
+
+`create` makes a pool from a template name or ID, stopped unless `--start` is given. `--lease-time` enables exclusive member leases with that maximum lease length (`none` = leases last until released); leases are off without it. `--lease-extensions` sets how many times a lease may be extended (default 0, `unlimited` for no cap).
 
 `delete` asks for confirmation; `-y`/`--yes` skips the prompt.
 

@@ -137,11 +137,16 @@ Pools keep a target number of identical spaces running from a template. See [Spa
 
 | Tool | Description | Visibility |
 |------|-------------|------------|
-| `create_pool` | Create a pool from a template with a desired space count, optional startup script, and optional start-on-create. | Native |
-| `delete_pool` | Delete a stopped pool and all its member spaces. | Native |
-| `start_pool` | Start a stopped pool: starts all member spaces and creates new ones if needed. | Native |
-| `stop_pool` | Stop a running pool: stops all member spaces without deleting them. | Native |
-| `set_pool_size` | Change the desired number of spaces in a pool. The sweep loop handles scaling. | Native |
+| `list_pools` | List pools with utilization, lease settings and members, or get one pool by name. | Discovery |
+| `create_pool` | Create a pool from a template with a desired space count, optional startup script, optional start-on-create, and optional member leases (`lease_max_time`, `lease_max_extensions`). | Discovery |
+| `delete_pool` | Delete a stopped pool and all its member spaces. | Discovery |
+| `start_pool` | Start a stopped pool: starts all member spaces and creates new ones if needed. | Discovery |
+| `stop_pool` | Stop a running pool: stops all member spaces without deleting them. | Discovery |
+| `set_pool_size` | Change the desired number of spaces in a pool. The sweep loop handles scaling. | Discovery |
+| `acquire_pool_member` | Check out a member of a lease-enabled pool for exclusive use, optionally for a set `time` and waiting up to `wait` for a free member. Returns the lease with the held space's name and ID. | Discovery |
+| `extend_pool_lease` | Extend the lease held on a pool member; limited by the pool's maximum number of extensions. | Discovery |
+| `release_pool_member` | Release a held pool member back to the pool, or with `destroy` delete it so a fresh replacement is created. | Discovery |
+| `list_pool_leases` | List the leases held on a pool's members, active and draining. | Discoverymak  |
 
 ---
 

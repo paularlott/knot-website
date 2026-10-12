@@ -11,6 +11,18 @@ navSection: docs
 
 ## October 2026
 
+{{< version "v0.37.1" >}}
+
+{{< changelog-item "changed" >}}
+- Note in the `run_command` MCP tool that long jobs should pass a `timeout`, as the default is 30 seconds
+{{< /changelog-item >}}
+
+{{< changelog-item "added" >}}
+- Add `knot pool create`, with `--lease-time` and `--lease-extensions` to enable member leases ([docs](../docs/spaces/pools/#creating-a-pool))
+- Add the MCP tools `list_pools`, `acquire_pool_member`, `extend_pool_lease`, `release_pool_member` and `list_pool_leases`, so agents can find a pool, check out a member and hand it back ([docs](../docs/ai/mcp-tools/))
+- Add `lease_max_time` and `lease_max_extensions` to the `create_pool` MCP tool and to `knot.pool.create()` and `knot.pool.update()`, to make lease-enabled pools without the web UI ([docs](../reference/libraries/pool/))
+{{< /changelog-item >}}
+
 {{< version "v0.37.0" >}}
 
 {{< changelog-item "changed" >}}
