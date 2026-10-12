@@ -126,6 +126,8 @@ Options:
 - `--tls-skip-verify`: skip TLS verification (default `true`)
 - `--show-all`: also expose discoverable tools, not just native ones
 
+Without `--show-all`, the host can still find and run the discoverable tools with `tool_search` and `execute_tool`, which go through to the server. The server's skills are served too. The server must have MCP enabled (`[server.mcp]` `enabled = true`) and the user the **Use MCP Server** permission; otherwise `knot mcp` exits with the reason.
+
 Also built into the agent binary — inside a space, `knot mcp` connects through the agent socket with no configuration.
 
 ---
@@ -160,7 +162,7 @@ knot space run-script <space> <script> [args...]
 knot space eval <space> <code|-> [args...]
 ```
 
-`run` takes `-t`/`--timeout` (seconds, default 30) and `-w`/`--workdir` (working directory for the command).
+`run` takes `-t`/`--timeout` (seconds, default 30) and `-w`/`--workdir` (working directory for the command; a relative path is relative to the space user's home directory). Give these before the space name: everything after the command is passed to it unchanged, flags included, so `knot space run -t 600 dev claude -p "fix the tests"` hands `-p` to `claude`. Each argument reaches the command as it is, without shell expansion; to use pipes or redirection, pass one quoted string, as in `knot space run dev 'npm test | tail -20'` or `knot space run dev sh -c '...'`. The command's stdout and stderr go to knot's stdout and stderr, and knot exits with the command's exit code (124 when it timed out), so `run` works in scripts with `set -e` and redirection.
 
 `eval` runs inline Scriptling source directly — no stored script needed. Pass the
 code as a quoted argument, or use `-` to read it from stdin. Trailing positionals
@@ -233,7 +235,7 @@ knot space mirror --verbose ./src <space>:/var/www/html
 knot space mirror --watch --exclude node_modules ./src <space>:/var/www/html
 ```
 
-`knot space mirror` uploads a local directory tree to a space in parallel (default 8 workers, configurable via `--parallel N`). Each file's mtime and permission bits are preserved on the destination. After the uploads complete, any file on the space that doesn't exist locally is removed (subject to `--exclude`) — the destination ends up as a one-way mirror of the source.
+`knot space mirror` uploads a local directory tree to a space in parallel (default 8 workers, configurable via `--parallel N`). Each file's mtime and permission bits are preserved on the destination. A destination path without a leading `/` is relative to the space user's home directory. If any file can't be uploaded, mirror exits with an error once it has done the rest. After the uploads complete, any file on the space that doesn't exist locally is removed (subject to `--exclude`) — the destination ends up as a one-way mirror of the source.
 
 `--dry-run` lists every intended upload and delete without performing any I/O against the space.
 

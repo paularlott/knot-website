@@ -118,7 +118,7 @@ Operations that execute inside a running space. `list_scripts` is the discovery 
 | Tool | Description | Visibility |
 |------|-------------|------------|
 | `list_scripts` | List active scripts available to run via `run_script`. Filters to the current zone and the caller's groups. | On-demand |
-| `run_command` | Execute a command in a running space and return the results. | Native |
+| `run_command` | Execute a command in a running space. Returns its `output`, `success` and `exit_code`, plus `error` when it fails; a failed command's output is returned too. Each of `arguments` reaches the command unchanged. | Native |
 | `run_script` | Execute a named script in a running space. | Native |
 
 ---
@@ -146,7 +146,7 @@ Pools keep a target number of identical spaces running from a template. See [Spa
 | `acquire_pool_member` | Check out a member of a lease-enabled pool for exclusive use, optionally for a set `time` and waiting up to `wait` for a free member. Returns the lease with the held space's name and ID. | Discovery |
 | `extend_pool_lease` | Extend the lease held on a pool member; limited by the pool's maximum number of extensions. | Discovery |
 | `release_pool_member` | Release a held pool member back to the pool, or with `destroy` delete it so a fresh replacement is created. | Discovery |
-| `list_pool_leases` | List the leases held on a pool's members, active and draining. | Discoverymak  |
+| `list_pool_leases` | List the leases held on a pool's members, active and draining. | Discovery |
 
 ---
 

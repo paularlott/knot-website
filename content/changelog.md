@@ -14,16 +14,28 @@ navSection: docs
 {{< version "v0.38.0" >}}
 
 {{< changelog-item "changed" >}}
-- **Breaking:** creating a pool fails when a required template custom field has no value or default, or a select field's value isn't one of its options; unknown custom field names are rejected too ([docs](../docs/spaces/pools/#custom-fields))
-- Note in the `run_command` MCP tool that long jobs should pass a `timeout`, as the default is 30 seconds
-- Return from creating or starting a pool as soon as its members are saved, and start their containers in the background, so the pool form no longer waits for every member to boot
+- **Breaking:** reject pool custom fields that are unknown, leave a required field without a value or template default, or give a select field a value outside its options ([docs](../docs/spaces/pools/#custom-fields))
+- **Breaking:** pass each argument of `knot space run`, the `run_command` MCP tool and `knot.space.run()` to the command unchanged, without shell splitting or expansion; give pipes and redirection as one quoted command ([docs](../reference/cli/knot/#running-commands-and-scripts))
+- **Breaking:** pass everything after the command in `knot space run` to it, flags included; give knot's own flags before the space name ([docs](../reference/cli/knot/#running-commands-and-scripts))
+- Report a failed command: `knot space run` exits with its exit code (124 on timeout) and writes its stderr to stderr, and `run_command` returns `success`, `exit_code`, `error` and the output
+- Start new pool members in the background, so creating or starting a pool returns straight away
+- Make the pool MCP tools discoverable; `knot mcp --show-all` lists them ([docs](../docs/ai/mcp-tools/))
+- Show template names in `knot pool list` and hide Masked values in `knot pool update`
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
-- Add `knot pool create`, with `--lease-time` and `--lease-extensions` to enable member leases ([docs](../docs/spaces/pools/#creating-a-pool))
-- Add the MCP tools `list_pools`, `acquire_pool_member`, `extend_pool_lease`, `release_pool_member` and `list_pool_leases`, so agents can find a pool, check out a member and hand it back ([docs](../docs/ai/mcp-tools/))
-- Add `lease_max_time` and `lease_max_extensions` to the `create_pool` MCP tool and to `knot.pool.create()` and `knot.pool.update()`, to make lease-enabled pools without the web UI ([docs](../reference/libraries/pool/))
-- Add custom field values to pools, given to every member when it is created or started; set them in the pool form, with `knot pool create --custom-field`, the new `knot pool update`, the API, `knot.pool` and the `create_pool` MCP tool ([docs](../docs/spaces/pools/#custom-fields))
+- Add `knot pool create`, with `--lease-time` and `--lease-extensions` for member leases ([docs](../docs/spaces/pools/#creating-a-pool))
+- Add pool custom fields, given to each member when it is created or started; set them in the pool form, `knot pool create --custom-field`, `knot pool update`, the API, `knot.pool` and the `create_pool` MCP tool ([docs](../docs/spaces/pools/#custom-fields))
+- Add the MCP tools `list_pools`, `acquire_pool_member`, `extend_pool_lease`, `release_pool_member` and `list_pool_leases` ([docs](../docs/ai/mcp-tools/))
+- Add lease settings to the `create_pool` MCP tool and to `knot.pool.create()` and `update()` ([docs](../reference/libraries/pool/))
+- Serve the server's skills through `knot mcp` ([docs](../reference/cli/knot/#knot-mcp))
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- Fix `knot mcp` not finding or running discoverable tools, and showing no tools instead of an error when the server's MCP endpoint is off
+- Fix a command's own short flag being read as a global one, such as `-t` on `knot space run` as `--token`
+- Fix `knot space mirror` succeeding when files failed to upload
+- Fix importing a template YAML without a maximum uptime
 {{< /changelog-item >}}
 
 {{< version "v0.37.0" >}}
