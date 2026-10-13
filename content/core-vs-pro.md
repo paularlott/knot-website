@@ -120,6 +120,11 @@ hideSidebar: true
         <td><span class="compare-yes">Included</span> external secret resolution for Vault and 1Password Connect</td>
       </tr>
       <tr>
+        <td><strong>Personal secrets</strong></td>
+        <td><span class="compare-no">Not included</span></td>
+        <td><span class="compare-yes">Included</span> users read their own 1Password secrets at runtime</td>
+      </tr>
+      <tr>
         <td><strong>Visual port forwarding</strong></td>
         <td><span class="compare-no">Not included</span></td>
         <td><span class="compare-yes">Included</span> UI-driven forwarded port management</td>

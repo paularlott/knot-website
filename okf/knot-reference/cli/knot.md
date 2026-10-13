@@ -565,11 +565,11 @@ Protocols: `http`, `https`. Options: `--server`, `--token`, `--tls-skip-verify`.
 Manage `~/.ssh/config` entries for spaces (uses `knot forward ssh` as ProxyCommand).
 
 ```shell
-knot ssh-config update [--agent-forwarding=false] [--binary PATH]
+knot ssh-config update [--agent-forwarding=false] [--reset] [--binary PATH]
 knot ssh-config remove
 ```
 
-`update` enables SSH agent forwarding by default (`--agent-forwarding`, `KNOT_SSH_AGENT_FORWARDING`); `--binary` sets the path to the `knot` binary used in the ProxyCommand (default `knot`).
+`update` adds every space that exposes SSH and removes spaces that have gone. Spaces already in `~/.ssh/config` keep their agent forwarding setting, so you can turn `ForwardAgent` on or off for a space by editing its entry and `update` won't undo it. New spaces you own get agent forwarding by default (`--agent-forwarding`, `ssh.agent_forwarding`, `KNOT_SSH_AGENT_FORWARDING`); spaces shared with you don't get it, as forwarding lets anyone with root in the space use your SSH keys while you're connected. `--reset` applies these defaults to every space again. `--binary` sets the path to the `knot` binary used in the ProxyCommand (default `knot`).
 
 ---
 

@@ -34,12 +34,13 @@ The current implementation supports the following providers:
 | ----------------- | ---------------- | ----------------------- | ------------------ | ------------- | --------------------------------------------------------------- |
 | HashiCorp Vault   | `vault`          | `vault` or `prod_vault` | `secret/data/path` | `value`       | `${{ secret "vault" "secret/data/prod/database" "password" }}`  |
 | 1Password Connect | `onepassword`    | `op`                    | `vault/item`       | `password`    | `${{ secret "op" "Engineering/API Service Key" "credential" }}` |
+| 1Password service account | `onepassword` | `op`               | `vault/item`       | `password`    | `${{ secret "op" "Engineering/API Service Key" "credential" }}` |
 
 Notes:
 
 - The first argument to `secret` is the registered provider alias.
 - Vault supports token authentication and AppRole authentication.
-- 1Password Connect accepts either vault and item names or UUIDs.
+- 1Password accepts either vault and item names or IDs, through Connect or a service account.
 - For 1Password paths, the first path segment is the vault and the remainder is the item reference.
 
 ---
@@ -87,6 +88,23 @@ token = "your-connect-token"
 # cache_ttl = "5m"
 # default_field = "password"
 ```
+
+### 1Password Service Account
+
+A [1Password service account](https://developer.1password.com/docs/service-accounts/) reads secrets without running a Connect server. Give `service_account_token` instead of `address` and `token`:
+
+```toml {filename=knot.toml}
+[[server.secret_providers]]
+provider = "onepassword"
+alias = "op"
+service_account_token = "ops_your-service-account-token"
+# cache_ttl = "5m"
+# default_field = "password"
+```
+
+Templates and scripts use the same paths and fields with either mode, so you can move a provider from Connect to a service account without changing them. A provider uses one mode: giving both `service_account_token` and `address` or `token` is an error.
+
+The service account can only read the vaults it was given when it was created. It can't be given your built-in Personal, Private or Employee vault, or the default Shared vault. 1Password also limits how many requests a service account makes; Knot's cache keeps repeated reads from counting against it.
 
 Restart Knot after updating the configuration.
 
@@ -185,5 +203,7 @@ Secret values are cached per provider alias, path, and field.
 - Secret providers are a **knot Pro** feature.
 - Vault addresses support both `http://` (e.g. a local dev Vault) and `https://` — use `insecure_skip_tls = true` to skip certificate verification for self-signed certificates.
 - 1Password Connect supports both `http://` and `https://` addresses.
+- A 1Password service account needs no address; Knot connects to 1Password directly.
 - Resolved secret values are not written to the database.
 - Secret values are never logged.
+- To let users read their own 1Password secrets at runtime with their own token, see [Personal Secrets](personal-secrets.md).

@@ -147,6 +147,8 @@ Each definition takes `name`, `description`, `type` (`text`, `masked`, `number`,
 - `health_check_max_failures` - Number of consecutive failures before the space is considered unhealthy
 - `health_check_auto_restart` - Automatically restart when the health check fails. For `agent`, this restarts local-container and Nomad spaces when the agent stops transmitting. Combined with `allow_node_migration`, automatic failed-node recovery is available in Knot Pro 
 - `disable_user_activity` - Whether filesystem user activity collection is disabled for spaces created from this template 
+- `disable_file_storage` - Whether file storage is refused from spaces created from this template
+- `disable_user_secrets` - Whether personal secrets are refused from spaces created from this template 
 - `ports` - List of port dicts (`name`, `port`, `protocol`) defining the web ports exposed by spaces created from this template. These are injected as `KNOT_HTTP_PORT`, `KNOT_HTTPS_PORT`, and `KNOT_TCP_PORT` environment variables.
 
 ## Create and Update Arguments
@@ -169,6 +171,8 @@ Each definition takes `name`, `description`, `type` (`text`, `masked`, `number`,
 | `icon_url` | `''` | Icon URL |
 | `groups` / `zones` | `None` | Group IDs allowed to use the template / zone restrictions |
 | `disable_user_activity` | `False` | Disable filesystem user activity collection  |
+| `disable_file_storage` | `False` | Refuse file storage from the template's spaces |
+| `disable_user_secrets` | `False` | Refuse personal secrets from the template's spaces  |
 | `health_check_type` | `'none'` | `none`, `agent`, `tcp`, `http`, `program` or `custom` |
 | `health_check_config` | `''` | Target, command or custom script (ignored for `none` and `agent`) |
 | `health_check_skip_ssl_verify` | `False` | Skip TLS verification for HTTP checks |

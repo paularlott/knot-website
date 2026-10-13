@@ -34,6 +34,9 @@ Defined in templates. Users provide values when creating spaces for per-space cu
 **Secret Providers**
 Resolve secrets from an external manager such as Vault at template render time. 
 
+**Personal Secrets**
+Users read their own 1Password secrets at runtime from the CLI and Scriptling, with a token on their profile. 
+
 ---
 
 ## Variable Syntax

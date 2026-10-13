@@ -139,7 +139,7 @@ The library provides constants for all permissions:
 ### Log Sinks {{< pro-badge >}}
 | Constant | ID | Description |
 |----------|-----|-------------|
-| `USE_LOG_SINKS` | 42 | Register a space as a log sink receiving the owner's other space logs (Knot Pro only; not defined in Core) |
+| `USE_LOG_SINKS` | 42 | Register a space as a log sink receiving the owner's other space logs (enforced by Knot Pro only) |
 
 ### Plugins
 | Constant | ID | Description |
@@ -163,6 +163,7 @@ The library provides constants for all permissions:
 | Constant | ID | Description |
 |----------|-----|-------------|
 | `BACKUP_SERVER` | 50 | Back up and restore all server data; equivalent to full access and not part of the Admin role |
+| `USE_USER_SECRETS` | 51 | Store a 1Password service account token and read your own secrets from your spaces (enforced by Knot Pro only) |
 
 ### Aliases
 | Alias | Equivalent |

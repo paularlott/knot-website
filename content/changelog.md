@@ -11,6 +11,25 @@ navSection: docs
 
 ## October 2026
 
+{{< version "v0.39.0" >}}
+
+{{< changelog-item "changed" >}}
+- Keep each space's agent forwarding setting in `knot ssh-config update`, including changes made by hand; add `--reset` to apply the defaults again ([docs](../reference/cli/knot/#knot-ssh-config))
+- Turn off agent forwarding for spaces shared with you in `knot ssh-config update`
+{{< /changelog-item >}}
+
+{{< changelog-item "added" >}}
+- Add personal secrets: users store their own 1Password token and read their secrets in their spaces {{< pro-badge >}} ([docs](../docs/variables/personal-secrets/))
+- Add 1Password service account support to secret providers {{< pro-badge >}} ([docs](../docs/variables/secret-providers/#1password-service-account))
+- Add a template option to disable file storage in its spaces ([docs](../docs/templates/managing/#custom-fields-and-features))
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- Fix scripts that check `knot.permission.USE_LOG_SINKS` failing on Knot Core
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.38.2" >}}
 
 {{< changelog-item "changed" >}}

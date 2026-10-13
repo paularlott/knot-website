@@ -140,6 +140,10 @@ To create a new template:
 - **`Features`**:
   Define the features available to the space (e.g., Visual Studio Code Tunnels). Users require the appropriate role permissions to access these features.
 
+  Two switches turn features off for the template's spaces. Each takes effect straight away for running spaces, and only covers requests made with the space's own credentials, such as `knot` inside the space; a user who copies their own API token into a space isn't blocked, and they keep access from the web interface and their own machine:
+  - **Disable File Storage**: refuses [file storage](/docs/file-storage/) from the spaces, including `knot file` and the files API.
+  - **Disable Personal Secrets** {{< pro-badge >}}: refuses reading the owner's [personal secrets](/docs/variables/personal-secrets/), so `knot secret get` and `knot.secret.get()` fail in the spaces. It covers only the token on the user's profile, not 1Password tools the user runs in the space themselves.
+
 - **`Restrict to Groups`**:
   Specify the groups that can access the template. Only users in these groups can see the template and create spaces from it.
 
