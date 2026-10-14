@@ -24,6 +24,8 @@ navSection: docs
 {{< changelog-item "fixed" >}}
 - Fix a space's logs going missing when written before its agent connects to the server, or while it reconnects
 - Fix space CPU, memory and disk usage, and CPU history, showing the host's figures rather than the space's own
+- Fix `knot secret get` failing with an i/o timeout when 1Password takes more than a few seconds to answer, as it does for a mistyped reference {{< pro-badge >}}
+- Fix the usage history chart showing disk at 0% for spaces without a disk limit: it now shows the space used, on its own axis
 {{< /changelog-item >}}
 
 ---

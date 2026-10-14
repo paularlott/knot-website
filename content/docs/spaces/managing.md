@@ -68,6 +68,20 @@ Admins may see the `Create Space For` option, allowing them to create spaces on 
 
 ---
 
+## Resource Usage
+
+A running space shows small CPU and memory bars on the `Spaces` page. Click either one to open its usage, with current figures and a history.
+
+- **CPU** is the share of the CPU the space may use: its CPU limit, or every CPU it can run on when it has none. The cores it's using are shown alongside, such as `13.3% · 2.0 cores`, and hovering over the bar in the list shows them too.
+- **Memory** is the space's own memory use against its memory limit, or against the machine's memory when it has none.
+- **Disk** is the disk the space uses. When the space has a disk of its own, such as a VM or a dedicated volume, it's shown against that disk's size. When its home is on the host's disk, as in most containers, it's the size of the home directory, with no limit.
+
+The history shows the last hour per minute, or the last 7 days. CPU and memory are drawn as a percentage of their limits. Disk is drawn the same way when it has a limit; without one, it's drawn as the space used, on its own axis on the right.
+
+{{< zoom-picture src="/docs/spaces/images/space-usage.webp" caption="Space Usage and History" >}}
+
+---
+
 ## Stopping a Space
 
 1. Click the menu icon next to the running space.
