@@ -15,6 +15,7 @@ Inside a space, the `knot` command is the knot agent binary, which talks to the 
 | `knot agent set-note "<note>"` | Set the space's short description — see [Notes](../notes/). |
 | `knot agent get-field <name>` / `set-field <name> <value>` | Read and write custom fields of the space. |
 | `knot agent wait-for-start [--timeout 60]` | Block until the agent is running and accepting commands. |
+| `knot restrict` / `restrictions` | Restrict what the space can reach — see [Restrictions](../restrictions/). |
 | `knot event <type> [payload]` | Emit a custom event to configured event sinks — see [Events](/reference/events/). |
 | `knot jobs list / run` | List and trigger the space's jobs — see [Jobs](../jobs/). |
 | `knot methods register / unregister` | Register space methods — see [Methods](../methods/). |

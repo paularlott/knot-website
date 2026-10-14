@@ -541,6 +541,18 @@ knot space jobs disable <space>
 
 `run` triggers a job immediately — it works for disabled and manual-only jobs too, but needs the space running. `enable`/`disable` start and stop the space's job runner (scheduled firing); the state is persisted on the space. `--schedule` takes a 5-field cron expression; omit it for a manual-only job.
 
+### `knot space restrict`
+
+Restrict what a space's own credential can reach, until the restrictions are lifted (see [Space Restrictions](/docs/spaces/restrictions/)). Run inside a space without a space name, it restricts that space.
+
+```shell
+knot space restrict <space> [--bucket <name>[:ro]]... [--files ro|none] [--no-files] [--no-secrets] [--lock] [--json]
+knot space restrict <space> --clear
+knot space restrictions <space> [--json]
+```
+
+`--bucket` keeps only the buckets listed, `:ro` making one read-only. `--lock` locks the space's processes out of everything but their files and secrets, apart from restarting or shutting it down. Restrictions only tighten; `--clear` lifts them all and works only from outside the space.
+
 ### `knot tunnel`
 
 Expose a local port on your machine publicly via the knot server.

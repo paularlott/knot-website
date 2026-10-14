@@ -11,6 +11,23 @@ navSection: docs
 
 ## October 2026
 
+{{< version "v0.40.0" >}}
+
+{{< changelog-item "changed" >}}
+- Show a space's CPU in cores as well as its share of what the space may use, and treat a space as busy for idle shutdown from a quarter of a core
+{{< /changelog-item >}}
+
+{{< changelog-item "added" >}}
+- Add space restrictions: a space can keep only chosen buckets, make file storage read-only, switch off personal secrets or lock its processes out of everything else, until lifted from outside, with `knot restrict` ([docs](../docs/spaces/restrictions/))
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- Fix a space's logs going missing when written before its agent connects to the server, or while it reconnects
+- Fix space CPU, memory and disk usage, and CPU history, showing the host's figures rather than the space's own
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.39.0" >}}
 
 {{< changelog-item "changed" >}}

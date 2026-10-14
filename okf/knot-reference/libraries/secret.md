@@ -44,8 +44,8 @@ A space whose template has **Disable Personal Secrets** turned on refuses every 
 get(path, field="")
 ```
 
-- `path` (`str`): `vault/item`, with the vault and item given by name or ID, or a complete 1Password secret reference such as `op://vault/item/field`.
-- `field` (`str`): The field to read; defaults to `password`. A field inside a section is written `section/field`. Leave it empty when `path` is an `op://` reference.
+- `path` (`str`): A 1Password secret reference, `op://vault/item/field`, with the vault and item given by name or ID; a field inside a section is `op://vault/item/section/field`. As a shorthand, `path` can be `vault/item` with the field given separately. `vault/item/field` without `op://` isn't accepted.
+- `field` (`str`): With the `vault/item` shorthand only: the field to read, defaulting to `password`; a field inside a section is `section/field`. Leave it empty for an `op://` reference.
 
 Raises an exception when no token is set on the owner's profile, the owner lacks the Use Personal Secrets permission, the template switches personal secrets off, or 1Password can't return the secret.
 
@@ -56,9 +56,12 @@ Raises an exception when no token is set on the owner's profile, the owner lacks
 ```python
 import knot.secret
 
-password = knot.secret.get("Knot/Database")
-username = knot.secret.get("Knot/Database", "username")
+username = knot.secret.get("op://Knot/Database/username")
+password = knot.secret.get("op://Knot/Database/password")
 api_key = knot.secret.get("op://Knot/Stripe/API Keys/secret key")
+
+# shorthand: vault/item, with the field separate (default password)
+password = knot.secret.get("Knot/Database")
 ```
 
 Handle a missing secret:

@@ -125,6 +125,24 @@ knot agent set-field <field-name> <value>
 
 ---
 
+## `knot restrict`
+
+Restrict what this space can reach, until the restrictions are lifted from outside the space: keep only the buckets listed (`:ro` for read-only), make file storage read-only or switch it off, switch off personal secrets, and with `--lock` lock the space's processes out of everything else, apart from restart and shut down. Restrictions only tighten and confine the space; see [Space Restrictions](/docs/spaces/restrictions/).
+
+```shell
+knot restrict [--bucket <name>[:ro]]... [--files ro|none] [--no-files] [--no-secrets] [--lock] [--json]
+```
+
+## `knot restrictions`
+
+Show this space's restrictions, including what its template switches off.
+
+```shell
+knot restrictions [--json]
+```
+
+---
+
 ## `knot event`
 
 Emit a custom event from this space. The event type is prefixed with `custom.` automatically. The payload is a JSON string, or read from stdin if omitted.
