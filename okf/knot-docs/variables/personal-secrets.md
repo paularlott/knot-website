@@ -50,7 +50,7 @@ The token can only be set or cleared in the web interface: not with an API token
 
 ## Reading Secrets
 
-A secret is addressed by its 1Password secret reference, `op://vault/item/field`, with a field inside a section written `op://vault/item/section/field`. As a shorthand you can give `vault/item` and the field separately, the field defaulting to `password`. Don't drop the `op://` from a full reference: `vault/item/field` on its own isn't accepted.
+A secret is addressed by its 1Password secret reference, `op://vault/item/field`, with a field inside a section written `op://vault/item/section/field`.
 
 ### CLI
 
@@ -59,7 +59,6 @@ A secret is addressed by its 1Password secret reference, `op://vault/item/field`
 ```sh
 knot secret get op://Knot/Database/username
 knot secret get "op://Knot/Stripe/API Keys/secret key"
-knot secret get Knot/Database            # shorthand: the password field
 ```
 
 The value is printed to stdout. Use `--no-newline` to leave out the trailing newline:

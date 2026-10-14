@@ -36,16 +36,15 @@ A space whose template has **Disable Personal Secrets** turned on refuses every 
 
 | Function | Description |
 |----------|-------------|
-| `get(path, field="")` | Read a secret and return its value as a string |
+| `get(path)` | Read a secret and return its value as a string |
 
 ### get
 
 ```python
-get(path, field="")
+get(path)
 ```
 
-- `path` (`str`): A 1Password secret reference, `op://vault/item/field`, with the vault and item given by name or ID; a field inside a section is `op://vault/item/section/field`. As a shorthand, `path` can be `vault/item` with the field given separately. `vault/item/field` without `op://` isn't accepted.
-- `field` (`str`): With the `vault/item` shorthand only: the field to read, defaulting to `password`; a field inside a section is `section/field`. Leave it empty for an `op://` reference.
+- `path` (`str`): The secret's 1Password reference, `op://vault/item/field`, with the vault and item given by name or ID; a field inside a section is `op://vault/item/section/field`.
 
 Raises an exception when no token is set on the owner's profile, the owner lacks the Use Personal Secrets permission, the template switches personal secrets off, or 1Password can't return the secret.
 
@@ -59,9 +58,6 @@ import knot.secret
 username = knot.secret.get("op://Knot/Database/username")
 password = knot.secret.get("op://Knot/Database/password")
 api_key = knot.secret.get("op://Knot/Stripe/API Keys/secret key")
-
-# shorthand: vault/item, with the field separate (default password)
-password = knot.secret.get("Knot/Database")
 ```
 
 Handle a missing secret:
@@ -70,7 +66,7 @@ Handle a missing secret:
 import knot.secret
 
 try:
-    token = knot.secret.get("Knot/Deploy", "token")
+    token = knot.secret.get("op://Knot/Deploy/token")
 except Exception as e:
     print("no deploy token:", e)
 ```
