@@ -47,7 +47,7 @@ The `knot.space` library provides space management functions for scripts.
 | `set_stack(name, stack)` | Set the stack name for a space |
 | `get_field(name, field)` | Get a custom field value |
 | `set_field(name, field, value)` | Set a custom field value |
-| `restrict(name=None, buckets=None, files='', no_secrets=False, lock=False)` | Restrict what a space can reach |
+| `restrict(name=None, buckets=None, files='', no_secrets=False, lock=False, secrets_allow=None, secrets_deny=None)` | Restrict what a space can reach |
 | `restrictions(name=None)` | Get a space's restrictions |
 | `clear_restrictions(name)` | Lift a space's restrictions (not from inside a space) |
 | `transfer(name, user_id)` | Transfer space ownership |
@@ -684,7 +684,7 @@ Remove a space share.
 
 ---
 
-### restrict(name=None, buckets=None, files='', no_secrets=False, lock=False)
+### restrict(name=None, buckets=None, files='', no_secrets=False, lock=False, secrets_allow=None, secrets_deny=None)
 
 Restrict what a space's own credential can reach, until lifted from outside the space, and confine it (see [Space Restrictions](/docs/spaces/restrictions/)). From inside a space restrictions only tighten, so a startup script can lock the space down.
 
@@ -694,6 +694,8 @@ Restrict what a space's own credential can reach, until lifted from outside the 
 - `files` (string): `"ro"` to make every bucket read-only, `"none"` to switch file storage off
 - `no_secrets` (bool): Switch personal secrets off
 - `lock` (bool): Lock the space's processes out of everything but file storage and personal secrets, which their own restrictions govern, apart from restarting or shutting it down; scripts started from outside the space, such as startup scripts, keep working
+- `secrets_allow` (list): Prefixes, such as `"op://Dev/"`, under which alone personal secrets can be read {{< pro-badge >}}
+- `secrets_deny` (list): Prefixes under which personal secrets are refused {{< pro-badge >}}
 
 **Returns:** `dict` - the space's restrictions, as `restrictions()` returns them
 
@@ -710,7 +712,7 @@ Get a space's restrictions, including what its template switches off.
 **Parameters:**
 - `name` (string): Name or ID of the space; default the space the script runs in
 
-**Returns:** `dict` - `restricted`, `no_secrets`, `locked`, `files` (`""`, `"ro"` or `"none"`), `limit_buckets`, `buckets` (list of `{name, read_only}`), `template_no_files`, `template_no_secrets` and `secrets_available` (true where there are personal secrets: Knot Pro)
+**Returns:** `dict` - `restricted`, `no_secrets`, `locked`, `files` (`""`, `"ro"` or `"none"`), `limit_buckets`, `buckets` (list of `{name, read_only}`), `limit_secrets`, `secrets_allow` and `secrets_deny` (lists of prefixes), `template_no_files` and `template_no_secrets`
 
 ---
 

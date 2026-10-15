@@ -127,10 +127,10 @@ knot agent set-field <field-name> <value>
 
 ## `knot restrict`
 
-Restrict what this space can reach, until the restrictions are lifted from outside the space: keep only the buckets listed (`:ro` for read-only), make file storage read-only or switch it off, switch off personal secrets, and with `--lock` lock the space's processes out of everything else, apart from restart and shut down. Restrictions only tighten and confine the space; see [Space Restrictions](/docs/spaces/restrictions/).
+Restrict what this space can reach, until the restrictions are lifted from outside the space: keep only the buckets listed (`:ro` for read-only), make file storage read-only or switch it off, switch off personal secrets or keep only those under chosen prefixes, and with `--lock` lock the space's processes out of everything else, apart from restart and shut down. Restrictions only tighten and confine the space; see [Space Restrictions](/docs/spaces/restrictions/).
 
 ```shell
-knot restrict [--bucket <name>[:ro]]... [--files ro|none] [--no-files] [--no-secrets] [--lock] [--json]
+knot restrict [--bucket <name>[:ro]]... [--files ro|none] [--no-files] [--no-secrets] [--secret-allow <prefix>]... [--secret-deny <prefix>]... [--lock] [--json]
 ```
 
 ## `knot restrictions`

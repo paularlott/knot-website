@@ -77,6 +77,8 @@ api_key = knot.secret.get("op://Knot/Stripe/API Keys/secret key")
 
 An administrator can turn on **Disable Personal Secrets** in a template's features to refuse personal secrets in every space created from it. This covers only the token on your profile; 1Password tools you run in the space yourself aren't affected.
 
+A space can also switch them off for itself, or keep only those under chosen vaults or items, with its [restrictions](/docs/spaces/restrictions/#limit-personal-secrets-by-path).
+
 ---
 
 ## Shared Spaces

@@ -11,6 +11,12 @@ navSection: docs
 
 ## October 2026
 
+{{< version "v0.41.0" >}}
+
+{{< changelog-item "added" >}}
+- Add secret path restrictions: `knot restrict --secret-allow op://Dev/` keeps a space to personal secrets under the prefixes given, and `--secret-deny` refuses those under them ([docs](../docs/spaces/restrictions/#limit-personal-secrets-by-path)) {{< pro-badge >}}
+{{< /changelog-item >}}
+
 {{< version "v0.40.0" >}}
 
 {{< changelog-item "changed" >}}

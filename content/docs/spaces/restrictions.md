@@ -33,6 +33,8 @@ Other options:
 | `--files ro` | Every bucket the space can reach becomes read-only |
 | `--no-files` | Switch file storage off |
 | `--no-secrets` | Switch personal secrets off |
+| `--secret-allow <prefix>` | Allow only personal secrets under this prefix; see below |
+| `--secret-deny <prefix>` | Refuse personal secrets under this prefix; see below |
 | `--lock` | Lock the space's processes out of everything but files and secrets; see below |
 
 From inside a space restrictions only ever tighten. A bucket that has been dropped can't be added back, read-only stays read-only, and nothing in the space can lift them, not even restarting it. That makes it safe to restrict a space from its [startup script](../startup-scripts/): the first start applies them, and every start after that is restricted from the moment it begins:
@@ -43,13 +45,28 @@ import knot.space
 knot.space.restrict(buckets=["notes:ro", "scratch"], no_secrets=True)
 ```
 
+### Limit personal secrets by path
+
+{{< pro-badge >}} Rather than switch [personal secrets](/docs/variables/personal-secrets/) off, a space can keep only some of them:
+
+```sh
+knot restrict --secret-allow op://Dev/ --secret-deny op://Dev/Root/
+```
+
+Each prefix starts with its source's scheme, such as `op://`, and matches the start of the secret's reference without regard to case. End a prefix with `/` to cover a whole vault or item: `op://Dev/` covers `op://dev/Database/password` but not `op://DevOps/...`.
+
+- With only `--secret-deny`, every secret is allowed except those under a denied prefix.
+- With `--secret-allow`, only secrets under an allowed prefix can be read. A denied prefix still refuses those under it.
+
+Repeat either option for more prefixes. Added later, they still only tighten: denied prefixes add to the ones already denied, and allowed prefixes narrow the ones already allowed, so allowing a prefix outside them leaves the space with no secrets.
+
 To see what a space is restricted to:
 
 ```sh
 knot restrictions
 ```
 
-It shows, as do `knot space restrictions <space>` and the space's **Restricted** badge in the web interface, three areas: **secrets**, allowed or off; **files**, every bucket or only the ones kept, each read & write or read-only, or off; and **other access**, confined to the space, or locked.
+It shows, as do `knot space restrictions <space>` and the space's **Restricted** badge in the web interface, three areas: **secrets**, allowed, off, or limited to the prefixes listed; **files**, every bucket or only the ones kept, each read & write or read-only, or off; and **other access**, confined to the space, or locked.
 
 ## Lock the space
 
@@ -57,7 +74,7 @@ It shows, as do `knot space restrictions <space>` and the space's **Restricted**
 knot restrict --lock
 ```
 
-Each restriction covers one area: `--bucket`, `--files` and `--no-files` govern file storage, `--no-secrets` governs personal secrets {{< pro-badge >}}, and `--lock` covers everything else. With `--lock`, the knot command, scripts and tools in the space keep the files and secrets their other restrictions allow, and can restart or shut the space down (`knot agent restart`, `knot agent shutdown`), show its restrictions and add more, such as `--no-files`; everything else, from port forwards and tunnels to fields, events and methods, is refused. Logs the space's services send to the agent still reach the space's log stream.
+Each restriction covers one area: `--bucket`, `--files` and `--no-files` govern file storage, `--no-secrets`, `--secret-allow` and `--secret-deny` govern personal secrets {{< pro-badge >}}, and `--lock` covers everything else. With `--lock`, the knot command, scripts and tools in the space keep the files and secrets their other restrictions allow, and can restart or shut the space down (`knot agent restart`, `knot agent shutdown`), show its restrictions and add more, such as `--no-files`; everything else, from port forwards and tunnels to fields, events and methods, is refused. Logs the space's services send to the agent still reach the space's log stream.
 
 To lock a space down completely, combine them: `knot restrict --lock --no-files --no-secrets`.
 

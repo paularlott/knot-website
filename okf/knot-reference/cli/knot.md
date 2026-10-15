@@ -554,12 +554,12 @@ knot space jobs disable <space>
 Restrict what a space's own credential can reach, until the restrictions are lifted (see [Space Restrictions](../../knot-docs/spaces/restrictions.md)). Run inside a space without a space name, it restricts that space.
 
 ```shell
-knot space restrict <space> [--bucket <name>[:ro]]... [--files ro|none] [--no-files] [--no-secrets] [--lock] [--json]
+knot space restrict <space> [--bucket <name>[:ro]]... [--files ro|none] [--no-files] [--no-secrets] [--secret-allow <prefix>]... [--secret-deny <prefix>]... [--lock] [--json]
 knot space restrict <space> --clear
 knot space restrictions <space> [--json]
 ```
 
-`--bucket` keeps only the buckets listed, `:ro` making one read-only. `--lock` locks the space's processes out of everything but their files and secrets, apart from restarting or shutting it down. Restrictions only tighten; `--clear` lifts them all and works only from outside the space.
+`--bucket` keeps only the buckets listed, `:ro` making one read-only. `--secret-allow` keeps only the personal secrets under the prefixes given, such as `op://Dev/`, and `--secret-deny` refuses those under them . `--lock` locks the space's processes out of everything but their files and secrets, apart from restarting or shutting it down. Restrictions only tighten; `--clear` lifts them all and works only from outside the space.
 
 ### `knot tunnel`
 
