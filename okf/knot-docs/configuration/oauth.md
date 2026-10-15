@@ -1,5 +1,5 @@
 ---
-description: Sign in with GitHub, GitLab, Google, Auth0, or any OIDC identity provider.
+description: Sign in with GitHub, GitLab, Google, Microsoft, Auth0, or any OIDC identity provider.
 generated:
     by: knot-website/okf.py
 resource: https://getknot.dev/docs/configuration/oauth/
@@ -15,7 +15,7 @@ type: Overview
 ---
 # OAuth Authentication
 
- Knot supports OAuth authentication through external identity providers, allowing users to sign in with their existing GitHub, GitLab, Google, or Auth0 accounts — or any OpenID Connect compatible provider.
+ Knot supports OAuth authentication through external identity providers, allowing users to sign in with their existing GitHub, GitLab, Google, Microsoft, or Auth0 accounts — or any OpenID Connect compatible provider.
 
 OAuth providers are configured in `knot.toml` using the `[[server.auth_providers]]` TOML array-of-tables. Multiple providers can be enabled simultaneously.
 
@@ -28,6 +28,7 @@ OAuth providers are configured in `knot.toml` using the `[[server.auth_providers
 | GitHub | `github` | GitHub OAuth App with `user:email` scope |
 | GitLab | `gitlab` | GitLab application with `read_user` scope |
 | Google | `google` | Google Cloud project with OAuth 2.0 Web client |
+| Microsoft | `microsoft` | Microsoft Entra ID app registration |
 | Auth0 | `auth0` | Auth0 application with `openid profile email offline_access` scopes |
 | Generic OIDC | `oidc` | Any OpenID Connect compatible provider with a discovery endpoint |
 
@@ -142,6 +143,46 @@ Knot requests offline access for Google automatically so refresh tokens can be i
 
 ---
 
+## Microsoft Setup
+
+The Microsoft provider signs users in with Microsoft Entra ID (formerly Azure AD). Knot knows each user by their tenant ID and object ID, never by email, and only the tenants you allow can sign in. Use it rather than the generic OIDC provider for Entra.
+
+### 1. Register an application
+
+1. In the [Microsoft Entra admin center](https://entra.microsoft.com/), go to **Identity** > **Applications** > **App registrations** > **New registration**.
+2. Choose who can use it: **Single tenant** for your own organization, or **Multitenant** if users from other organizations will sign in.
+3. Under **Redirect URI**, choose **Web** and enter `{your-knot-url}/auth/microsoft/callback` (e.g., `https://knot.example.com/auth/microsoft/callback`).
+4. Click **Register**, and note the **Application (client) ID** and **Directory (tenant) ID**.
+5. Under **Certificates & secrets**, create a **New client secret** and note its value.
+
+### 2. Configure knot
+
+For your own organization, set `tenant` to its directory (tenant) ID:
+
+```toml {filename=knot.toml}
+[[server.auth_providers]]
+provider = "microsoft"
+tenant = "11111111-2222-3333-4444-555555555555"
+client_id = "your-application-client-id"
+client_secret = "your-client-secret"
+```
+
+For a multitenant application, leave `tenant` unset (it defaults to `organizations`) and list the tenant IDs allowed to sign in. `allowed_tenants` is required unless `tenant` is a tenant ID:
+
+```toml {filename=knot.toml}
+[[server.auth_providers]]
+provider = "microsoft"
+client_id = "your-application-client-id"
+client_secret = "your-client-secret"
+allowed_tenants = ["11111111-2222-3333-4444-555555555555", "99999999-8888-7777-6666-555555555555"]
+```
+
+Restart Knot to apply the configuration.
+
+Entra's `email` claim is set by each tenant's administrators, so Knot doesn't trust it to match existing accounts or to pass `allowed_domains` unless Entra marks the domain verified with the optional `xms_edov` claim. To have it sent, add the `email` and `xms_edov` optional claims to the ID token under **Token configuration**. Without it, existing users link Microsoft from their profile, and new users can still be created with `auto_create_users`.
+
+---
+
 ## Auth0 Setup
 
 ### 1. Create an Auth0 Application
@@ -177,7 +218,7 @@ Knot requests the `offline_access` scope for Auth0 automatically so refresh toke
 
 ## Generic OIDC Setup
 
-The generic OIDC provider supports any OpenID Connect compatible identity provider (Okta, Keycloak, Azure AD, Dex, and others). It uses OIDC discovery to automatically configure endpoints.
+The generic OIDC provider supports any OpenID Connect compatible identity provider (Okta, Keycloak, Dex, and others). For Microsoft Entra ID, use the [Microsoft provider](#microsoft-setup). It uses OIDC discovery to automatically configure endpoints.
 
 Multiple OIDC providers can be configured by adding separate `[[server.auth_providers]]` entries with different `name` values.
 
@@ -242,15 +283,17 @@ Each provider is defined as a `[[server.auth_providers]]` entry with the followi
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `provider` | string | Yes | The provider type: `github`, `gitlab`, `google`, `auth0`, or `oidc` |
+| `provider` | string | Yes | The provider type: `github`, `gitlab`, `google`, `microsoft`, `auth0`, or `oidc` |
 | `name` | string | Yes for `oidc` | Unique slug for OIDC providers (used in URLs and display) |
-| `display_name` | string | No | Display name in the UI (OIDC only; defaults to capitalized `name`) |
+| `display_name` | string | No | Display name in the UI (OIDC and Microsoft only; defaults to capitalized `name`, or Microsoft) |
 | `client_id` | string | Yes | OAuth client ID from the provider |
 | `client_secret` | string | Yes | OAuth client secret from the provider |
 | `base_url` | string | No | Custom base URL (required for Auth0 tenant domain; defaults to `https://gitlab.com` for GitLab) |
 | `discovery_url` | string | Yes for `oidc` | OIDC discovery document URL (e.g., `/.well-known/openid-configuration`) |
-| `scopes` | string[] | No | Replace the scopes requested during login (the list is used as given, not merged with the defaults). Defaults: GitHub `user:email`; GitLab `read_user`; Google `openid email profile`; Auth0 `openid profile email offline_access`; OIDC `openid profile email`. Useful for OIDC providers that require `offline_access` for refresh tokens |
-| `allowed_domains` | string[] | No | Restrict login to users with email addresses in these domains |
+| `scopes` | string[] | No | Replace the scopes requested during login (the list is used as given, not merged with the defaults). Defaults: GitHub `user:email`; GitLab `read_user`; Google `openid email profile`; Microsoft `openid profile email offline_access`; Auth0 `openid profile email offline_access`; OIDC `openid profile email`. Useful for OIDC providers that require `offline_access` for refresh tokens |
+| `tenant` | string | No | Microsoft only: the directory (tenant) ID, a tenant domain, or `organizations` (the default) |
+| `allowed_tenants` | string[] | Microsoft only, unless `tenant` is a tenant ID | Tenant IDs whose users can sign in |
+| `allowed_domains` | string[] | No | Restrict login to users with verified email addresses in these domains |
 | `auto_create_users` | bool | No | Automatically create a Knot user account on first login |
 | `default_roles` | string[] | No | Role names assigned to auto-created users |
 | `default_groups` | string[] | No | Group names assigned to auto-created users |
@@ -313,7 +356,7 @@ default_groups = ["Developers"]
 When OAuth providers are configured:
 
 - **Sign-in buttons** for each enabled provider appear on the Knot login page alongside the standard email/password form.
-- On first login via OAuth, Knot either matches the user by email address or creates a new account (if `auto_create_users` is enabled).
+- On first login via OAuth, Knot either matches the user by email address or creates a new account (if `auto_create_users` is enabled). It matches by email only when the provider says the email is verified, and never to an account already linked to a different identity at the same provider. Otherwise the user signs in with their password and links the provider from their profile.
 - Users can **link** and **unlink** OAuth providers from their profile settings.
 - Users created via OAuth are prompted to set a password for CLI access.
 - When a provider returns a refresh token, Knot stores it encrypted alongside the linked provider so future token refresh flows can be supported cleanly.
@@ -321,7 +364,7 @@ When OAuth providers are configured:
 
 ### Domain Restrictions
 
-When `allowed_domains` is set, only users with an email address matching one of the listed domains can authenticate. For GitHub, this checks the user's primary verified email. For GitLab, it checks the email returned by the user API. For Google, Auth0, and OIDC providers, it checks the email returned by the userinfo endpoint.
+When `allowed_domains` is set, only users with a verified email address in one of the listed domains can authenticate. For GitHub, this checks the user's public or primary verified email. For GitLab, it checks the account's email, once confirmed. For Google, Auth0, and OIDC providers, it checks the email returned by the userinfo endpoint, which must have `email_verified` set. For Microsoft, it needs the `xms_edov` claim; use `allowed_tenants` to restrict Microsoft sign-in instead.
 
 ---
 
@@ -334,6 +377,7 @@ The OAuth callback URLs follow a consistent pattern based on your configured `se
 | GitHub | `{server.url}/auth/github/callback` |
 | GitLab | `{server.url}/auth/gitlab/callback` |
 | Google | `{server.url}/auth/google/callback` |
+| Microsoft | `{server.url}/auth/microsoft/callback` |
 | Auth0 | `{server.url}/auth/auth0/callback` |
 | Generic OIDC | `{server.url}/auth/{name}/callback` |
 
