@@ -8,6 +8,8 @@ weight: 10
 
 The **`knot`** command-line interface runs on your machine to manage remote spaces, templates, stacks, and scripts, and on a host to run the knot server. It connects to a server using credentials stored by [`knot connect`](#knot-connect).
 
+The knot command works only with a server of the same major and minor version: knot 0.41.x with a 0.41 server, for example. Against any other server it stops with a message naming the version to use, and the server turns away knot commands from other versions in the same way. Upgrade the knot command when you upgrade the server.
+
 For commands that run *inside* a space, see the [knot agent](/reference/cli/agent/) reference.
 
 ---
@@ -210,11 +212,14 @@ knot space copy <source-space>:/app/build <dest-space>:/var/www/html
 
 `--workdir`, `-w`: working directory for relative paths in a space.
 
-### Uploading a directory tree
+### Mirroring a directory tree
 
 ```shell
 # Mirror a local directory to a space: upload the tree AND delete remote files not present locally
 knot space mirror ./src <space>:/var/www/html
+
+# Mirror a space's directory here: download the tree AND delete local files not in the space
+knot space mirror <space>:/var/www/html ./src
 
 # Preview what would be uploaded/deleted without doing it
 knot space mirror --dry-run ./src <space>:/var/www/html
@@ -235,17 +240,21 @@ knot space mirror --verbose ./src <space>:/var/www/html
 knot space mirror --watch --exclude node_modules ./src <space>:/var/www/html
 ```
 
-`knot space mirror` uploads a local directory tree to a space in parallel (default 8 workers, configurable via `--parallel N`). Each file's mtime and permission bits are preserved on the destination. A destination path without a leading `/` is relative to the space user's home directory. If any file can't be uploaded, mirror exits with an error once it has done the rest. After the uploads complete, any file on the space that doesn't exist locally is removed (subject to `--exclude`) — the destination ends up as a one-way mirror of the source.
+`knot space mirror` copies a directory tree between this machine and a space in parallel (default 8 workers, configurable via `--parallel N`). The side written `<space>:<path>` is the space, so the order of the arguments sets the direction: local first uploads, the space first downloads. Each file's mtime and permission bits are preserved on the destination. A space path without a leading `/` is relative to the space user's home directory. If any file can't be copied, mirror exits with an error once it has done the rest. After the copies complete, any file at the destination that the source doesn't have is removed (subject to `--exclude`) — the destination ends up as a one-way mirror of the source.
 
-`--dry-run` lists every intended upload and delete without performing any I/O against the space.
+Downloads come down in 4 MB pieces into a temporary file beside the destination, which is renamed into place once complete, so an interrupted run never leaves a partial file under its real name. The local folder is created if it doesn't exist.
+
+As a guard against a mistyped path or swapped arguments, mirror refuses to run when the source is empty or missing but the destination has files, since it would delete them all.
+
+`--dry-run` lists every intended copy and delete without changing anything.
 
 By default mirror decides whether a file needs uploading by comparing mtime and size (fast, uses stat only). To force content-based comparison, pass `--hash`: each file is crc64-hashed locally before upload and remotely during the walk — only truly different bytes are transferred. Pass `--verify` for a read-only check: every file is hashed on both sides and mismatches are reported without uploading.
 
 `--verbose` prints every file action (upload, skip, delete, hash, verify) to stderr as the mirror progresses. `--debug` logs why each file was uploaded (new, size differs, mtime drift), for diagnosing a mirror that keeps re-uploading.
 
-`--watch` keeps mirror running after the initial sync. It watches the local tree for file creations, modifications, and deletions, and syncs each change to the space in real time (one-way: local → space). Excludes are honoured — excluded paths are never watched or uploaded. New directories are picked up automatically, including their contents. Vim swap files (`.*.swp`) are excluded by default. Events are debounced (300ms) so editors that save atomically (write temp → rename) produce a single upload, not a burst. Press Ctrl+C to stop.
+`--watch` works when uploading, and keeps mirror running after the initial sync. It watches the local tree for file creations, modifications, and deletions, and syncs each change to the space in real time (one-way: local → space). Excludes are honoured — excluded paths are never watched or uploaded. New directories are picked up automatically, including their contents. Vim swap files (`.*.swp`) are excluded by default. Events are debounced (300ms) so editors that save atomically (write temp → rename) produce a single upload, not a burst. Press Ctrl+C to stop.
 
-Mirror is one-directional (local → space) and always performs deletes — that's what "mirror" means. For continuous two-way sync with a space, mutagen against the space's SSH endpoint is the recommendation. To keep a local directory and a [file storage](#knot-file) bucket folder in step both ways, use `knot file sync --two-way --watch`.
+Each run is one-directional and always performs deletes — that's what "mirror" means. For continuous two-way sync with a space, mutagen against the space's SSH endpoint is the recommendation. To keep a local directory and a [file storage](#knot-file) bucket folder in step both ways, use `knot file sync --two-way --watch`.
 
 ### Deleting files
 

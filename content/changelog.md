@@ -13,8 +13,14 @@ navSection: docs
 
 {{< version "v0.41.0" >}}
 
+{{< changelog-item "changed" >}}
+- **Breaking:** require the knot command and the server to share major and minor version; the command and the server each refuse the other otherwise
+- Receive API replies as msgpack in the knot command
+{{< /changelog-item >}}
+
 {{< changelog-item "added" >}}
 - Add secret path restrictions with `knot restrict --secret-allow` and `--secret-deny` ([docs](../docs/spaces/restrictions/#limit-personal-secrets-by-path)) {{< pro-badge >}}
+- Add downloading to `knot space mirror`: `knot space mirror <space>:<path> ./local` mirrors a space's folder here
 - Add a Microsoft Entra ID sign-in provider, limited to allowed tenants ([docs](../docs/configuration/oauth/#microsoft-setup)) {{< pro-badge >}}
 {{< /changelog-item >}}
 
@@ -22,6 +28,9 @@ navSection: docs
 - **Breaking:** require a verified email to match an OAuth sign-in to an existing account or to pass `allowed_domains` {{< pro-badge >}}
 - Refuse to sign in or link an OAuth identity to an account already linked to another identity at that provider {{< pro-badge >}}
 - Show why an OAuth sign-in or account link failed on the login and profile pages {{< pro-badge >}}
+- Refuse to run `knot space mirror` from an empty or missing source, which would delete everything at the destination
+- Fix `knot space read-file` failing with "path is required"
+- Fix binary files coming back corrupted when read from a space
 {{< /changelog-item >}}
 
 {{< version "v0.40.0" >}}
