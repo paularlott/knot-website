@@ -14,12 +14,14 @@ navSection: docs
 {{< version "v0.41.0" >}}
 
 {{< changelog-item "added" >}}
-- Add a Microsoft sign-in provider for Entra ID that knows users by tenant and object ID and lets only the tenants listed sign in ([docs](../docs/configuration/oauth/#microsoft-setup)) {{< pro-badge >}}
-- Add secret path restrictions: `knot restrict --secret-allow op://Dev/` keeps a space to personal secrets under the prefixes given, and `--secret-deny` refuses those under them ([docs](../docs/spaces/restrictions/#limit-personal-secrets-by-path)) {{< pro-badge >}}
+- Add secret path restrictions with `knot restrict --secret-allow` and `--secret-deny` ([docs](../docs/spaces/restrictions/#limit-personal-secrets-by-path)) {{< pro-badge >}}
+- Add a Microsoft Entra ID sign-in provider, limited to allowed tenants ([docs](../docs/configuration/oauth/#microsoft-setup)) {{< pro-badge >}}
 {{< /changelog-item >}}
 
-{{< changelog-item "security" >}}
-- Match an OAuth sign-in to an existing account by email only when the provider says the email is verified, and never to an account linked to another identity at that provider; `allowed_domains` likewise needs a verified email. This stops someone who can set an unverified email at the provider, such as through a generic OIDC provider pointed at Microsoft Entra, from signing in as another user {{< pro-badge >}}
+{{< changelog-item "fixed" >}}
+- **Breaking:** require a verified email to match an OAuth sign-in to an existing account or to pass `allowed_domains` {{< pro-badge >}}
+- Refuse to sign in or link an OAuth identity to an account already linked to another identity at that provider {{< pro-badge >}}
+- Show why an OAuth sign-in or account link failed on the login and profile pages {{< pro-badge >}}
 {{< /changelog-item >}}
 
 {{< version "v0.40.0" >}}
