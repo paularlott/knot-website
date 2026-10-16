@@ -221,7 +221,8 @@ When the server runs in desktop mode with the default `http://127.0.0.1:3000` UR
 
 ## Security Considerations
 
-- Always use HTTPS in production
+- Always use HTTPS in production. With an `https://` `server.url`, knot's cookies take the `__Host-` prefix and are marked Secure, so a web server running in a space can't plant one for knot to read. This follows `server.url`, not the request, so it holds behind a load balancer that ends TLS, and every server in a zone agrees as long as they share the URL
+- Where you can, serve the wildcard domain from a separate domain to knot's own (for example `url = "https://knot.example.com"` with `wildcard_domain = "*.knot-spaces.example.net"`), so web servers in spaces can't set cookies for knot at all
 - Generate strong encryption keys
 - Enable 2FA for all users
 - Run on private networks or behind VPN

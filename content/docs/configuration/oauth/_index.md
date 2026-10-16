@@ -31,6 +31,8 @@ OAuth providers are configured in `knot.toml` using the `[[server.auth_providers
 - OAuth application credentials from your chosen provider(s)
 - Your Knot server must be accessible at a public or internal URL (configured via `server.url`)
 
+Knot signs in with the authorization code flow and PKCE (S256) for every provider, as OAuth 2.1 and current best practice require, so providers that insist on PKCE work without extra setup. Register knot as a confidential (web) client with a client secret; knot sends the secret in the token request body (`client_secret_post`).
+
 ---
 
 ## GitHub Setup
@@ -221,6 +223,9 @@ Create an OAuth 2.0 / OpenID Connect client in your identity provider with:
 - **Scopes** — `openid`, `profile`, `email`
 - **Refresh tokens** — add `offline_access` if your identity provider requires it for refresh token issuance
 - **Response type** — `code` (Authorization Code flow)
+- **Client authentication** — client secret sent in the request body (`client_secret_post`)
+- **PKCE** — knot always sends an S256 code challenge, so this can be required
+- **Back-channel logout URI** (optional) — `{your-knot-url}/auth/{name}/backchannel-logout`, so logging a user out or removing them at the provider ends their knot sessions straight away; see [Back-channel logout](#back-channel-logout)
 
 Note the **Client ID**, **Client Secret**, and the **discovery URL** (typically `https://your-idp.example.com/.well-known/openid-configuration`).
 
@@ -239,11 +244,40 @@ client_secret = "your-oidc-client-secret"
 scopes = ["openid", "profile", "email", "offline_access"]
 ```
 
-The `name` field is a unique slug used in URLs (e.g., `/auth/okta/callback`). The `display_name` is shown in the UI and is optional — it defaults to the capitalized `name`.
+The `name` field is a unique slug used in URLs (e.g., `/auth/okta/callback`): letters, digits, `-` and `_`, and not the name of a built-in provider such as `github`. The `display_name` is shown in the UI and is optional — it defaults to the capitalized `name`.
 
-On startup, Knot fetches the discovery document to configure the authorization, token, and userinfo endpoints automatically.
+On startup, Knot fetches the discovery document to configure the authorization, token, and userinfo endpoints automatically. The document must include `issuer` and `jwks_uri`: knot verifies the ID token returned at sign-in against them.
+
+### How knot verifies a sign-in
+
+Each sign-in sends a `nonce` and a PKCE code challenge with the authorization request. When the provider redirects back, knot redeems the code with the PKCE verifier and checks the ID token it gets back:
+
+- the signature, against the provider's published keys (`jwks_uri`); RSA (`RS256`/`384`/`512`, `PS256`/`384`/`512`), ECDSA (`ES256`/`384`/`512`) and `EdDSA` are accepted, and unsigned or HMAC-signed tokens are refused
+- `iss` matches the discovery document's `issuer`
+- `aud` contains the client ID, and `azp`, if present or if there are several audiences, is the client ID
+- the token hasn't expired
+- `nonce` matches the one knot sent
+
+The user is identified by the ID token's `sub`. If the provider has a userinfo endpoint, knot reads the email and profile from it too, and refuses the sign-in if its `sub` differs from the ID token's. The PKCE verifier and nonce stay in an encrypted, HttpOnly cookie in the browser that started the sign-in; they never pass through the provider.
 
 Restart Knot to apply the configuration.
+
+### Back-channel logout
+
+Without back-channel logout, a user logged out or removed at the identity provider stays signed in to knot until their knot session ends. Knot supports [OpenID Connect Back-Channel Logout 1.0](https://openid.net/specs/openid-connect-backchannel-1_0.html) for generic OIDC providers: register `{your-knot-url}/auth/{name}/backchannel-logout` as the client's back-channel logout URI (e.g., `https://knot.example.com/auth/okta/backchannel-logout`). Nothing needs setting in `knot.toml`.
+
+When the provider logs the user out, it POSTs a signed logout token to that URI. Knot checks the token as it does an ID token (signature against `jwks_uri`, `iss`, `aud`), and also that:
+
+- `iat` is less than five minutes old, and `exp` is present and hasn't passed
+- `events` contains `http://schemas.openid.net/event/backchannel-logout`
+- there is no `nonce`, so an ID token can't be passed off as a logout token
+- `jti` hasn't been used before
+
+It then ends every knot web session of the user linked to that provider identity (`sub`), on every server in the cluster, including sessions since switched to another user, and answers `200`. A token that fails a check gets `400`. A token for an identity no knot user is linked to gets `200` and changes nothing.
+
+Knot matches the user by `sub`, so the logout token must include it; a token with only a `sid` is refused with `400`. Every session of the user ends, not just the one the provider's `sid` names. API tokens are not affected.
+
+Each server remembers the `jti`s it has accepted for as long as their tokens would pass the `iat` check. The memory isn't shared between servers, so a captured token replayed to another server within those few minutes would end the same user's sessions again, and do nothing more.
 
 ### Example: Multiple OIDC Providers
 
@@ -286,6 +320,7 @@ Each provider is defined as a `[[server.auth_providers]]` entry with the followi
 | `allowed_tenants` | string[] | Microsoft only, unless `tenant` is a tenant ID | Tenant IDs whose users can sign in |
 | `allowed_domains` | string[] | No | Restrict login to users with verified email addresses in these domains |
 | `auto_create_users` | bool | No | Automatically create a Knot user account on first login |
+| `insecure_skip_tls` | bool | No | Accept any TLS certificate from this provider, for a self-hosted one with a self-signed certificate. Anyone on the network path between knot and the provider could then impersonate it, including its signing keys, so use it only for test and lab setups |
 | `default_roles` | string[] | No | Role names assigned to auto-created users |
 | `default_groups` | string[] | No | Group names assigned to auto-created users |
 
@@ -355,7 +390,7 @@ When OAuth providers are configured:
 
 ### Domain Restrictions
 
-When `allowed_domains` is set, only users with a verified email address in one of the listed domains can authenticate. For GitHub, this checks the user's public or primary verified email. For GitLab, it checks the account's email, once confirmed. For Google, Auth0, and OIDC providers, it checks the email returned by the userinfo endpoint, which must have `email_verified` set. For Microsoft, it needs the `xms_edov` claim; use `allowed_tenants` to restrict Microsoft sign-in instead.
+When `allowed_domains` is set, only users with a verified email address in one of the listed domains can authenticate. For GitHub, this checks the user's public or primary verified email. For GitLab, it checks the account's email, once confirmed. For Google and Auth0, it checks the email returned by the userinfo endpoint, which must have `email_verified` set. For OIDC providers, it checks the email from the userinfo endpoint, or from the ID token when the provider has no userinfo endpoint, which must have `email_verified` set. For Microsoft, it needs the `xms_edov` claim; use `allowed_tenants` to restrict Microsoft sign-in instead.
 
 ---
 
@@ -373,3 +408,5 @@ The OAuth callback URLs follow a consistent pattern based on your configured `se
 | Generic OIDC | `{server.url}/auth/{name}/callback` |
 
 Ensure these URLs are registered as authorized redirect URIs in your provider's application settings.
+
+Generic OIDC providers can also register `{server.url}/auth/{name}/backchannel-logout` as the back-channel logout URI ([details](#back-channel-logout)).
