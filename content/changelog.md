@@ -36,7 +36,11 @@ navSection: docs
 - Fix logouts being undone by in-flight requests or cluster gossip
 - Fix an open redirect after signing in
 - Never match an OAuth sign-in by email to an admin, a TOTP account or one linked to another identity {{< pro-badge >}}
+- Start linking a sign-in provider with a POST, so another site can't link an identity to your account {{< pro-badge >}}
 - Refuse to link a sign-in provider while switched to another user {{< pro-badge >}}
+- Only remove an unused, auto-created account when its identity is linked to another account {{< pro-badge >}}
+- Clean usernames from sign-in providers to knot's rules, numbering them when taken {{< pro-badge >}}
+- Only trust Microsoft's `xms_edov` for the `email` claim {{< pro-badge >}}
 - Time out and size-limit requests to OAuth providers {{< pro-badge >}}
 - Show why an OAuth sign-in or account link failed {{< pro-badge >}}
 - Refuse to run `knot space mirror` from an empty or missing source
