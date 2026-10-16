@@ -320,6 +320,7 @@ Each provider is defined as a `[[server.auth_providers]]` entry with the followi
 | `allowed_tenants` | string[] | Microsoft only, unless `tenant` is a tenant ID | Tenant IDs whose users can sign in |
 | `allowed_domains` | string[] | No | Restrict login to users with verified email addresses in these domains |
 | `auto_create_users` | bool | No | Automatically create a Knot user account on first login |
+| `link_by_email` | bool | No | Whether a first sign-in through this provider may join an existing Knot account with the same verified email (default `true`). Set `false` for a provider whose `email_verified` you don't trust, such as a self-managed GitLab or an Auth0 tenant with open sign-up; users then link it from their profile |
 | `insecure_skip_tls` | bool | No | Accept any TLS certificate from this provider, for a self-hosted one with a self-signed certificate. Anyone on the network path between knot and the provider could then impersonate it, including its signing keys, so use it only for test and lab setups |
 | `default_roles` | string[] | No | Role names assigned to auto-created users |
 | `default_groups` | string[] | No | Group names assigned to auto-created users |
@@ -382,7 +383,8 @@ default_groups = ["Developers"]
 When OAuth providers are configured:
 
 - **Sign-in buttons** for each enabled provider appear on the Knot login page alongside the standard email/password form.
-- On first login via OAuth, Knot either matches the user by email address or creates a new account (if `auto_create_users` is enabled). It matches by email only when the provider says the email is verified, and never to an account already linked to a different identity at the same provider. Otherwise the user signs in with their password and links the provider from their profile.
+- On first login via OAuth, Knot either matches the user by email address or creates a new account (if `auto_create_users` is enabled). It matches by email only when the provider says the email is verified, the provider's `link_by_email` isn't off, and the account isn't already linked to a different identity at the same provider. Otherwise the user signs in with their password and links the provider from their profile.
+- Signing in through a provider trusts the provider's own sign-in, including its multi-factor authentication, and skips Knot's password and TOTP. So Knot never matches by email an account that has TOTP set up or is an administrator: the owner signs in with their password and TOTP and links the provider from their profile, after which the provider signs them in.
 - Users can **link** and **unlink** OAuth providers from their profile settings.
 - Users created via OAuth are prompted to set a password for CLI access.
 - When a provider returns a refresh token, Knot stores it encrypted alongside the linked provider so future token refresh flows can be supported cleanly.

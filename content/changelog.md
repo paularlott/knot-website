@@ -14,31 +14,32 @@ navSection: docs
 {{< version "v0.41.0" >}}
 
 {{< changelog-item "changed" >}}
-- **Breaking:** require the knot command and the server to share major and minor version; the command and the server each refuse the other otherwise
+- **Breaking:** require the knot command and the server to share major and minor version
+- **Breaking:** prefix knot's cookies with `__Host-` when `server.url` is `https://`, so everyone signs in again after upgrading ([docs](../docs/configuration/#security-considerations))
+- Keep the session cookie on knot's own host; web VNC signs in through a one-time handoff instead
 - Receive API replies as msgpack in the knot command
-- Keep the web session cookie on knot's own host instead of sharing it with every wildcard host; web VNC now signs in with its own cookie for its host, through a single-use handoff the first time it opens, and signing out ends it
-- **Breaking:** prefix knot's cookies with `__Host-` and mark them Secure when `server.url` is `https://`, even behind a load balancer that ends TLS, so a web server in a space can't plant a session or sign-in cookie for knot to read; everyone signs in once more after upgrading, and during a rolling upgrade of a zone a user may need to sign in again until every server runs this version ([docs](../docs/configuration/#security-considerations))
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
-- Add secret path restrictions with `knot restrict --secret-allow` and `--secret-deny` ([docs](../docs/spaces/restrictions/#limit-personal-secrets-by-path)) {{< pro-badge >}}
-- Add downloading to `knot space mirror`: `knot space mirror <space>:<path> ./local` mirrors a space's folder here
-- Add a Microsoft Entra ID sign-in provider, limited to allowed tenants ([docs](../docs/configuration/oauth/#microsoft-setup)) {{< pro-badge >}}
-- Add PKCE (S256) to OAuth sign-in for every provider, so identity providers that require it, as OAuth 2.1 does, work ([docs](../docs/configuration/oauth/#prerequisites)) {{< pro-badge >}}
-- Add `insecure_skip_tls` to an auth provider, to sign in through a self-hosted provider with a self-signed certificate ([docs](../docs/configuration/oauth/#full-configuration-reference)) {{< pro-badge >}}
-- Add OpenID Connect back-channel logout for generic OIDC providers at `/auth/{name}/backchannel-logout`, so logging out or removing a user at the provider ends their knot sessions straight away ([docs](../docs/configuration/oauth/#back-channel-logout)) {{< pro-badge >}}
+- Add a Microsoft Entra ID sign-in provider ([docs](../docs/configuration/oauth/#microsoft-setup)) {{< pro-badge >}}
+- Add PKCE to OAuth sign-in for every provider ([docs](../docs/configuration/oauth/#prerequisites)) {{< pro-badge >}}
+- Add OpenID Connect back-channel logout ([docs](../docs/configuration/oauth/#back-channel-logout)) {{< pro-badge >}}
+- Add `link_by_email` and `insecure_skip_tls` auth provider options ([docs](../docs/configuration/oauth/#full-configuration-reference)) {{< pro-badge >}}
+- Add secret path restrictions to `knot restrict` ([docs](../docs/spaces/restrictions/#limit-personal-secrets-by-path)) {{< pro-badge >}}
+- Add downloading to `knot space mirror`
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
-- **Breaking:** require a verified email to match an OAuth sign-in to an existing account or to pass `allowed_domains` {{< pro-badge >}}
-- **Breaking:** verify the ID token's signature, issuer, audience, expiry and nonce when signing in with a generic OIDC provider, and identify the user by its `sub`; the provider's discovery document must include `issuer` and `jwks_uri`, and its `name` may only use letters, digits, `-` and `_` ([docs](../docs/configuration/oauth/#how-knot-verifies-a-sign-in)) {{< pro-badge >}}
-- Refuse to sign in or link an OAuth identity to an account already linked to another identity at that provider {{< pro-badge >}}
-- Stop knot's session and sign-in cookies reaching a space's web servers, code-server and tunnels, where a user's web server could read the session of whoever opened it, such as an admin
-- Fix an open redirect after signing in, where a doubly encoded `redirect` target could send the browser to another site
-- Refuse to link a sign-in provider while switched to another user, which would let your own identity sign in as that user {{< pro-badge >}}
-- Time out and size-limit requests to OAuth providers, and refuse a token response without an access token or a sign-in without a user ID {{< pro-badge >}}
-- Show why an OAuth sign-in or account link failed on the login and profile pages {{< pro-badge >}}
-- Refuse to run `knot space mirror` from an empty or missing source, which would delete everything at the destination
+- **Breaking:** verify generic OIDC ID tokens and require `issuer` and `jwks_uri` in discovery ([docs](../docs/configuration/oauth/#how-knot-verifies-a-sign-in)) {{< pro-badge >}}
+- **Breaking:** require a verified email to match an OAuth sign-in to an account or pass `allowed_domains` {{< pro-badge >}}
+- Stop knot's cookies reaching space web servers, code-server and tunnels
+- Fix logouts being undone by in-flight requests or cluster gossip
+- Fix an open redirect after signing in
+- Never match an OAuth sign-in by email to an admin, a TOTP account or one linked to another identity {{< pro-badge >}}
+- Refuse to link a sign-in provider while switched to another user {{< pro-badge >}}
+- Time out and size-limit requests to OAuth providers {{< pro-badge >}}
+- Show why an OAuth sign-in or account link failed {{< pro-badge >}}
+- Refuse to run `knot space mirror` from an empty or missing source
 - Fix `knot space read-file` failing with "path is required"
 - Fix binary files coming back corrupted when read from a space
 {{< /changelog-item >}}
