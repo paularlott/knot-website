@@ -29,7 +29,7 @@ OAuth providers are configured in `knot.toml` using the `[[server.auth_providers
 | GitLab | `gitlab` | GitLab application with `read_user` scope |
 | Google | `google` | Google Cloud project with OAuth 2.0 Web client |
 | Microsoft | `microsoft` | Microsoft Entra ID app registration |
-| Auth0 | `auth0` | Auth0 application with `openid profile email offline_access` scopes |
+| Auth0 | `auth0` | Auth0 application with `openid profile email` scopes |
 | Generic OIDC | `oidc` | Any OpenID Connect compatible provider with a discovery endpoint |
 
 ---
@@ -69,9 +69,6 @@ client_secret = "your-github-client-secret"
 ```
 
 Restart Knot to apply the configuration.
-
-GitHub is currently integrated using a GitHub OAuth App. GitHub OAuth Apps return an access token, but do not provide refresh tokens in this flow. GitHub refresh tokens are available with GitHub Apps using expiring user-to-server tokens, which is a different integration model.
-
 ---
 
 ## GitLab Setup
@@ -141,7 +138,6 @@ client_secret = "your-google-client-secret"
 
 Restart Knot to apply the configuration.
 
-Knot requests offline access for Google automatically so refresh tokens can be issued. Google may only return a refresh token the first time the user consents, or after the app has been revoked and consent is granted again.
 
 ---
 
@@ -196,7 +192,6 @@ Entra's `email` claim is set by each tenant's administrators, so Knot doesn't tr
 5. In **Allowed Callback URLs**, add: `{your-knot-url}/auth/auth0/callback` (e.g., `https://knot.example.com/auth/auth0/callback`)
 6. In **Allowed Logout URLs**, add: `{your-knot-url}` (e.g., `https://knot.example.com`)
 7. Click **Save Changes**.
-8. Enable refresh token issuance for the application if your tenant requires it.
 
 ### 2. Configure knot
 
@@ -214,7 +209,6 @@ The `base_url` is your Auth0 tenant domain. It can be the Auth0 domain (e.g., `y
 
 Restart Knot to apply the configuration.
 
-Knot requests the `offline_access` scope for Auth0 automatically so refresh tokens can be issued.
 
 ---
 
@@ -230,7 +224,6 @@ Create an OAuth 2.0 / OpenID Connect client in your identity provider with:
 
 - **Redirect URI** — `{your-knot-url}/auth/{name}/callback` where `{name}` is the `name` you configure below (e.g., `https://knot.example.com/auth/okta/callback`)
 - **Scopes** — `openid`, `profile`, `email`
-- **Refresh tokens** — add `offline_access` if your identity provider requires it for refresh token issuance
 - **Response type** — `code` (Authorization Code flow)
 - **Client authentication** — client secret sent in the request body (`client_secret_post`)
 - **PKCE** — knot always sends an S256 code challenge, so this can be required
@@ -250,7 +243,7 @@ display_name = "Okta"
 discovery_url = "https://your-idp.example.com/.well-known/openid-configuration"
 client_id = "your-oidc-client-id"
 client_secret = "your-oidc-client-secret"
-scopes = ["openid", "profile", "email", "offline_access"]
+scopes = ["openid", "profile", "email"]
 ```
 
 The `name` field is a unique slug used in URLs (e.g., `/auth/okta/callback`): letters, digits, `-` and `_`, and not the name of a built-in provider such as `github`. The `display_name` is shown in the UI and is optional — it defaults to the capitalized `name`.
@@ -324,7 +317,7 @@ Each provider is defined as a `[[server.auth_providers]]` entry with the followi
 | `client_secret` | string | Yes | OAuth client secret from the provider |
 | `base_url` | string | No | Custom base URL (required for Auth0 tenant domain; defaults to `https://gitlab.com` for GitLab) |
 | `discovery_url` | string | Yes for `oidc` | OIDC discovery document URL (e.g., `/.well-known/openid-configuration`) |
-| `scopes` | string[] | No | Replace the scopes requested during login (the list is used as given, not merged with the defaults). Defaults: GitHub `user:email`; GitLab `read_user`; Google `openid email profile`; Microsoft `openid profile email offline_access`; Auth0 `openid profile email offline_access`; OIDC `openid profile email`. Useful for OIDC providers that require `offline_access` for refresh tokens |
+| `scopes` | string[] | No | Replace the scopes requested during login (the list is used as given, not merged with the defaults). Defaults: GitHub `user:email`; GitLab `read_user`; Google `openid email profile`; Microsoft `openid profile email`; Auth0 `openid profile email`; OIDC `openid profile email` |
 | `tenant` | string | No | Microsoft only: the directory (tenant) ID, a tenant domain, or `organizations` (the default) |
 | `allowed_tenants` | string[] | Microsoft only, unless `tenant` is a tenant ID | Tenant IDs whose users can sign in |
 | `allowed_domains` | string[] | No | Restrict login to users with verified email addresses in these domains |
@@ -379,7 +372,7 @@ display_name = "Keycloak"
 discovery_url = "https://keycloak.example.com/realms/myrealm/.well-known/openid-configuration"
 client_id = "knot-client"
 client_secret = "your-keycloak-secret"
-scopes = ["openid", "profile", "email", "offline_access"]
+scopes = ["openid", "profile", "email"]
 auto_create_users = true
 default_roles = ["User"]
 default_groups = ["Developers"]
@@ -396,8 +389,7 @@ When OAuth providers are configured:
 - Signing in through a provider trusts the provider's own sign-in, including its multi-factor authentication, and skips Knot's password and TOTP. So Knot never matches by email an account that has TOTP set up or is an administrator: the owner signs in with their password and TOTP and links the provider from their profile, after which the provider signs them in.
 - Users can **link** and **unlink** OAuth providers from their profile settings.
 - Users created via OAuth are prompted to set a password for CLI access.
-- When a provider returns a refresh token, Knot stores it encrypted alongside the linked provider so future token refresh flows can be supported cleanly.
-- GitHub is the exception in the current implementation because the built-in GitHub provider uses a GitHub OAuth App flow rather than a GitHub App user-token flow.
+- Knot keeps only the provider identity it signs a user in as, never the provider's access or refresh tokens, and doesn't ask for offline access. A sign-in on one server of a zone signs the user in on all of them, through Knot's own session.
 
 ### Domain Restrictions
 

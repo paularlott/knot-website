@@ -41,6 +41,7 @@ navSection: docs
 - Only remove an unused, auto-created account when its identity is linked to another account {{< pro-badge >}}
 - Clean usernames from sign-in providers to knot's rules, numbering them when taken {{< pro-badge >}}
 - Only trust Microsoft's `xms_edov` for the `email` claim {{< pro-badge >}}
+- Stop requesting offline access and storing providers' access and refresh tokens, and clear ones already stored {{< pro-badge >}}
 - Time out and size-limit requests to OAuth providers {{< pro-badge >}}
 - Show why an OAuth sign-in or account link failed {{< pro-badge >}}
 - Refuse to run `knot space mirror` from an empty or missing source
