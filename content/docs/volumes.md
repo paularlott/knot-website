@@ -98,6 +98,20 @@ volumes:
   test_home:
 ```
 
+A Docker or Podman volume can also be made with a volume driver and options, such as an NFS mount of a [file storage bucket](/docs/file-storage/nfs/):
+
+```yaml
+volumes:
+  shared_configs:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=host.docker.internal,port=2049,vers=4.0
+      device: ":/configs"
+```
+
+See [NFS volumes](/docs/templates/local-containers/volume-spec/#nfs-volumes) for the options.
+
 ---
 
 ### Apple Containers Volume

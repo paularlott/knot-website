@@ -21,6 +21,7 @@ File storage keeps files in **buckets** that are replicated to every knot server
 - the **`knot file`** commands, from your desktop or from inside a space with no configuration;
 - the [**`knot.files`**](../knot-reference/libraries/files.md) scripting library, for scripts and MCP tools;
 - the files **API** (`/api/files/*`, see the [API reference](../knot-reference/api.md)), with an [API token](api-tokens.md) that can be limited to the **Files** scope;
+- an **NFS mount**, on macOS, Linux or as a Docker or Podman volume, served by [`knot nfs-server`](file-storage/nfs.md);
 - any **S3 client** (rclone, the AWS CLI, SDKs) at `<server>/s3` .
 
 Every server holds a full copy of every file, so reads are served locally and a server that is offline catches up when it returns. Because each file is stored on every server, file storage suits configuration, dotfiles, scripts and modest artifacts rather than bulk data; set [quotas](file-storage/operations.md#quotas) to keep it that way.

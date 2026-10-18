@@ -21,6 +21,7 @@ navSection: docs
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
+- Add `knot nfs-server` to mount file storage buckets over NFSv4 and NFSv3 on macOS, Linux and as Docker, Podman or template volumes ([docs](../docs/file-storage/nfs/)) {{< experimental-badge >}}
 - Add a Microsoft Entra ID sign-in provider ([docs](../docs/configuration/oauth/#microsoft-setup)) {{< pro-badge >}}
 - Add PKCE to OAuth sign-in for every provider ([docs](../docs/configuration/oauth/#prerequisites)) {{< pro-badge >}}
 - Add OpenID Connect back-channel logout ([docs](../docs/configuration/oauth/#back-channel-logout)) {{< pro-badge >}}
