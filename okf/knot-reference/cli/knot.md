@@ -91,16 +91,28 @@ knot legal
 
 ### `knot connect`
 
-Connect to a knot server and authenticate. Credentials are saved under `[client.connection.<alias>]` in `~/.config/knot/knot.toml`.
+Connect to a knot server and authenticate. The API token is saved under `[client.connection.<alias>]` in `~/.config/knot/knot.toml`.
 
 ```shell
 knot connect https://knot.example.com:3000
 ```
 
+`knot connect` shows a code and opens the server's `/device` page in your browser. Sign in there as you normally would (password, two-factor authentication or a sign-in provider), check the page shows the same code, and approve it. The command then saves an API token named `knot client <hostname>`, which you can see and revoke under [API Tokens](../../knot-docs/api-tokens.md).
+
+You can approve from any computer or phone, so this also works over SSH or on a machine with no browser: open the address shown and enter the code. Over SSH, or on Linux without a graphical session, `knot connect` doesn't try to open a browser and only shows the address and code. The code expires after 10 minutes.
+
+```text
+To sign in, visit: https://knot.example.com:3000/device
+and enter the code: WDJB-MJHT
+
+Waiting for approval...
+```
+
+Only approve a code that you started with `knot connect` yourself. If someone sends you a code or link, deny it: approving would give them access to your account.
+
 Options:
 - `--alias`: name for this connection (default `default`; alphanumeric and `-`, starting with a letter, max 20 chars)
-- `--use-web-auth`: authenticate via the web interface
-- `--username`: username for authentication
+- `--no-browser`: never open a browser; just show the address and code
 - `--tls-skip-verify`: skip TLS verification (default `true`)
 
 Manage stored connections:

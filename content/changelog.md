@@ -18,6 +18,7 @@ navSection: docs
 - **Breaking:** prefix knot's cookies with `__Host-` when `server.url` is `https://`, so everyone signs in again after upgrading ([docs](../docs/configuration/#security-considerations))
 - Keep the session cookie on knot's own host; web VNC signs in through a one-time handoff instead
 - Receive API replies as msgpack in the knot command
+- **Breaking:** sign in `knot connect` by approving a code in the web interface (OAuth device authorization grant), so it works with two-factor authentication, sign-in providers and over SSH; remove its `--username` and `--use-web-auth` options ([docs](../reference/cli/knot/#knot-connect))
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}

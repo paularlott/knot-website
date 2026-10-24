@@ -32,8 +32,8 @@ Port forwarding allows you to securely access ports within a remote space from y
    knot connect https://knot.internal:3000
    ```
 
-3. Enter your username and password when prompted.
-4. The generated access key will be stored in `~/.config/knot/knot.yml` for future use.
+3. Approve the code in the browser window that opens, signing in if asked. On a machine without a browser, open the address shown on any device and enter the code.
+4. The generated API token is stored in `~/.config/knot/knot.toml` for future use.
 
 ---
 
