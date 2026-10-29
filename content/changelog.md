@@ -25,6 +25,9 @@ navSection: docs
 - Add PKCE to OAuth sign-in for every provider ([docs](../docs/configuration/oauth/#prerequisites)) {{< pro-badge >}}
 - Add OpenID Connect back-channel logout ([docs](../docs/configuration/oauth/#back-channel-logout)) {{< pro-badge >}}
 - Add `link_by_email` and `insecure_skip_tls` auth provider options ([docs](../docs/configuration/oauth/#full-configuration-reference)) {{< pro-badge >}}
+- Assign roles and groups from an OIDC provider's claims with `sync_roles`, matching each role's and group's new Identity Provider Name ([docs](../docs/configuration/oauth/#roles-and-groups-from-the-provider)) {{< pro-badge >}}
+- Add `require_sso`, so users linked to a provider must sign in through it ([docs](../docs/configuration/oauth/#requiring-single-sign-on)) {{< pro-badge >}}
+- Add `oauth_server`, so MCP clients sign in through an OIDC provider instead of knot ([docs](../docs/configuration/oauth/#mcp-clients-signing-in-through-the-provider)) {{< pro-badge >}}
 - Add secret path restrictions to `knot restrict` ([docs](../docs/spaces/restrictions/#limit-personal-secrets-by-path)) {{< pro-badge >}}
 - Add downloading to `knot space mirror`
 {{< /changelog-item >}}

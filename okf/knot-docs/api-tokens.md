@@ -15,7 +15,9 @@ type: Overview
 ---
 # API Tokens
 
-API tokens are automatically created when logging in with the Knot client. Additionally, tokens can be manually created and used to access the API from external applications.
+API tokens are automatically created when logging in with the Knot client (`knot connect`) and when an MCP client signs in with OAuth. Additionally, tokens can be manually created and used to access the API from external applications.
+
+In Knot Pro , an OpenID Connect provider's [back-channel logout](configuration/oauth.md#back-channel-logout) revokes the tokens created by signing in, but not the ones you created yourself.
 
 Tokens start with a `tk_` prefix, which makes them easy to recognise in configuration files and secret scanners. Tokens created by earlier releases, without the prefix, keep working.
 
