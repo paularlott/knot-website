@@ -268,9 +268,9 @@ When the provider logs the user out, it POSTs a signed logout token to that URI.
 
 It then ends every knot web session of the user linked to that provider identity (`sub`), on every server in the cluster, including sessions since switched to another user, and answers `200`. A token that fails a check gets `400`. A token for an identity no knot user is linked to gets `200` and changes nothing.
 
-It also revokes the [API tokens](/docs/api-tokens/) knot issued the user through a sign-in: those of MCP clients that signed in with OAuth, and those `knot connect` created. Otherwise they would keep working, and renewing themselves, after the provider let the user go. Tokens the user created on the **API Tokens** page are kept.
-
 Knot matches the user by `sub`, so the logout token must include it; a token with only a `sid` is refused with `400`. Every session of the user ends, not just the one the provider's `sid` names.
+
+[API tokens](/docs/api-tokens/) are not affected, including those `knot connect` and MCP clients got by signing in, so a computer connected to knot stays connected when the user signs out of the web interface. To end a user's access everywhere, deactivate them in knot.
 
 Each server remembers the `jti`s it has accepted for as long as their tokens would pass the `iat` check. The memory isn't shared between servers, so a captured token replayed to another server within those few minutes would end the same user's sessions again, and do nothing more.
 
@@ -316,7 +316,7 @@ For example, with the configuration above, a user whose `tags` claim is `["knot:
 
 A missing claim counts as no names, so it removes every role and group the provider assigns. Check the provider sends the claims, and that knot asks for any scope they need in `scopes`. Run knot with `--log-level debug` to log claims missing from a sign-in.
 
-Changes take effect at the user's next sign-in through the provider, and their existing sessions keep the roles they had until then. Every change is recorded in the audit log, including Admin being granted or removed. To end a removed user's access straight away, use [back-channel logout](#back-channel-logout).
+Changes take effect at the user's next sign-in through the provider, and their existing sessions keep the roles they had until then. Every change is recorded in the audit log, including Admin being granted or removed. [Back-channel logout](#back-channel-logout) ends the user's sessions, so they sign in again and pick up the change.
 
 `sync_roles` works with `provider = "oidc"` only. On other providers knot logs a warning at startup and turns it off.
 
@@ -485,7 +485,7 @@ For every user linked to the provider:
 
 Unlike `disable_password_auth`, which turns password sign-in off for everyone, `require_sso` only affects users linked to that provider. Other accounts, such as a local administrator kept for emergencies, still sign in with a password.
 
-API tokens a user already has keep working. To also revoke the tokens knot issued at sign-in when the provider lets a user go, set up [back-channel logout](#back-channel-logout).
+API tokens a user already has keep working, so deactivate the user in knot to end their access everywhere.
 
 ---
 
