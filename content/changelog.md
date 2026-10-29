@@ -28,6 +28,7 @@ navSection: docs
 - Assign roles and groups from an OIDC provider's claims with `sync_roles`, matching each role's and group's new Identity Provider Name ([docs](../docs/configuration/oauth/#roles-and-groups-from-the-provider)) {{< pro-badge >}}
 - Add `require_sso`, so users linked to a provider must sign in through it ([docs](../docs/configuration/oauth/#requiring-single-sign-on)) {{< pro-badge >}}
 - Add `oauth_server`, so MCP clients sign in through an OIDC provider instead of knot ([docs](../docs/configuration/oauth/#mcp-clients-signing-in-through-the-provider)) {{< pro-badge >}}
+- Add `check_interval`, so knot checks sign-ins with their provider, ending the sessions of users it refuses and keeping roles and groups up to date ([docs](../docs/configuration/oauth/#checking-sign-ins-with-the-provider)) {{< pro-badge >}}
 - Add secret path restrictions to `knot restrict` ([docs](../docs/spaces/restrictions/#limit-personal-secrets-by-path)) {{< pro-badge >}}
 - Add downloading to `knot space mirror`
 {{< /changelog-item >}}
