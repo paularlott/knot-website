@@ -470,6 +470,21 @@ knot file bucket transfer <name> <user> [--force]
 - `bucket permissions` lists the owner and grants (the full list for the owner and file storage managers, your own access otherwise).
 - Inside a space the server and credentials are discovered through the agent; on the desktop `--alias` picks the saved connection. An explicit `--server`/`--token` pair overrides both.
 
+### `knot nfs-server`
+
+Serve file storage over NFS (NFSv4.0 and NFSv3 on one port), acting as the user of the API token it connects with, so buckets can be mounted as folders on macOS and Linux and as Docker or Podman volumes. See [NFS Mounts](/docs/file-storage/nfs/). {{< experimental-badge >}}
+
+```shell
+knot nfs-server [--nfs-listen ADDR|PORT] [--nfs-allow CIDR,...] [--uid N] [--gid N]
+                [--cache-dir PATH] [--cache-size SIZE] [--alias NAME | --server URL --token TOKEN]
+```
+
+- `--nfs-listen` defaults to `127.0.0.1:2049`; just a port listens on loopback.
+- Only loopback clients are accepted unless `--nfs-allow` lists other addresses or CIDRs: NFS has no authentication.
+- `--uid` and `--gid` show every file as owned by that user and group, e.g. `--uid 0 --gid 0` for containers that run as root.
+- `--cache-dir` keeps files read and written on local disk, up to `--cache-size` (default `1GB`).
+- `KNOT_NFS_LISTEN`, `KNOT_NFS_ALLOW`, `KNOT_NFS_CACHE_DIR` and `KNOT_NFS_CACHE_SIZE` set the same options.
+
 ---
 
 ## Methods
