@@ -15,42 +15,31 @@ navSection: docs
 
 {{< changelog-item "changed" >}}
 - **Breaking:** require the knot command and the server to share major and minor version
-- **Breaking:** prefix knot's cookies with `__Host-` when `server.url` is `https://`, so everyone signs in again after upgrading ([docs](../docs/configuration/#security-considerations))
-- Keep the session cookie on knot's own host; web VNC signs in through a one-time handoff instead
+- **Breaking:** tighten knot's cookies — `__Host-` prefix on HTTPS, kept off space web servers, code-server and tunnels — so everyone signs in again after upgrading; web VNC signs in through a one-time handoff instead ([docs](../docs/configuration/#security-considerations))
+- **Breaking:** sign in `knot connect` by approving a code in the web interface, so it works with two-factor authentication, sign-in providers and over SSH; `--username` and `--use-web-auth` are removed ([docs](../reference/cli/knot/#knot-connect))
 - Receive API replies as msgpack in the knot command
-- **Breaking:** sign in `knot connect` by approving a code in the web interface (OAuth device authorization grant), so it works with two-factor authentication, sign-in providers and over SSH; remove its `--username` and `--use-web-auth` options ([docs](../reference/cli/knot/#knot-connect))
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
-- Add passkey sign-in, with passkeys added from your profile and removed from your profile or user management
+- Add passkey sign-in, with passkeys added and removed from your profile
 - Add `knot nfs-server` to mount file storage buckets over NFSv4 and NFSv3 on macOS, Linux and as Docker, Podman or template volumes ([docs](../docs/file-storage/nfs/)) {{< experimental-badge >}}
-- Add a Microsoft Entra ID sign-in provider ([docs](../docs/configuration/oauth/#microsoft-setup)) {{< pro-badge >}}
-- Add PKCE to OAuth sign-in for every provider ([docs](../docs/configuration/oauth/#prerequisites)) {{< pro-badge >}}
-- Add OpenID Connect back-channel logout ([docs](../docs/configuration/oauth/#back-channel-logout)) {{< pro-badge >}}
-- Add `link_by_email` and `insecure_skip_tls` auth provider options ([docs](../docs/configuration/oauth/#full-configuration-reference)) {{< pro-badge >}}
+- Add a Microsoft Entra ID sign-in provider, PKCE for OAuth sign-in with every provider, and OpenID Connect back-channel logout ([docs](../docs/configuration/oauth/)) {{< pro-badge >}}
 - Add secret path restrictions to `knot restrict` ([docs](../docs/spaces/restrictions/#limit-personal-secrets-by-path)) {{< pro-badge >}}
 - Add downloading to `knot space mirror`
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
 - **Breaking:** verify generic OIDC ID tokens and require `issuer` and `jwks_uri` in discovery ([docs](../docs/configuration/oauth/#how-knot-verifies-a-sign-in)) {{< pro-badge >}}
-- **Breaking:** require a verified email to match an OAuth sign-in to an account or pass `allowed_domains` {{< pro-badge >}}
-- Stop knot's cookies reaching space web servers, code-server and tunnels
+- **Breaking:** require a verified email to match an OAuth sign-in to an account or `allowed_domains`, and never match one by email to an admin, a TOTP account or one linked to another identity ([docs](../docs/configuration/oauth/#how-knot-verifies-a-sign-in)) {{< pro-badge >}}
+- Start linking a sign-in provider with a POST, so another site can't link an identity to your account; refuse to link while switched to another user; show why a sign-in or account link failed {{< pro-badge >}}
+- Stop requesting offline access or storing providers' access and refresh tokens, clear ones already stored, and time out and size-limit requests to OAuth providers {{< pro-badge >}}
+- Only remove an unused, auto-created account when its identity is linked to another account, and clean usernames from sign-in providers to knot's rules, numbering them when taken {{< pro-badge >}}
 - Fix logouts being undone by in-flight requests or cluster gossip
 - Fix an open redirect after signing in
-- Never match an OAuth sign-in by email to an admin, a TOTP account or one linked to another identity {{< pro-badge >}}
-- Start linking a sign-in provider with a POST, so another site can't link an identity to your account {{< pro-badge >}}
-- Refuse to link a sign-in provider while switched to another user {{< pro-badge >}}
-- Only remove an unused, auto-created account when its identity is linked to another account {{< pro-badge >}}
-- Clean usernames from sign-in providers to knot's rules, numbering them when taken {{< pro-badge >}}
-- Only trust Microsoft's `xms_edov` for the `email` claim {{< pro-badge >}}
-- Stop requesting offline access and storing providers' access and refresh tokens, and clear ones already stored {{< pro-badge >}}
-- Time out and size-limit requests to OAuth providers {{< pro-badge >}}
-- Show why an OAuth sign-in or account link failed {{< pro-badge >}}
-- Refuse to run `knot space mirror` from an empty or missing source
-- Fix `knot space read-file` failing with "path is required"
-- Fix binary files coming back corrupted when read from a space
+- Fix `knot space read-file` failing with "path is required", binary files coming back corrupted, and `knot space mirror` running from an empty or missing source
 {{< /changelog-item >}}
+
+---
 
 {{< version "v0.40.0" >}}
 
