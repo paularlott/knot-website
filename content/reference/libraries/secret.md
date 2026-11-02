@@ -37,7 +37,7 @@ get(path)
 
 - `path` (`str`): The secret's 1Password reference, `op://vault/item/field`, with the vault and item given by name or ID; a field inside a section is `op://vault/item/section/field`.
 
-Raises an exception when no token is set on the owner's profile, the owner lacks the Use Personal Secrets permission, the template switches personal secrets off, or 1Password can't return the secret.
+Raises an exception when no token is set on the owner's profile, the owner lacks the Use Personal Secrets permission, the template or the space's [restrictions](/docs/spaces/restrictions/) switch personal secrets off or don't allow that reference, the reference isn't a complete `op://vault/item/field`, or 1Password can't return the secret.
 
 ---
 

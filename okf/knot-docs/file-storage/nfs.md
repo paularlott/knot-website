@@ -15,9 +15,9 @@ type: Guide
 
  NFS access is experimental: its behaviour and options may change in later releases.
 
-`knot nfs-server` serves file storage over NFS, so buckets can be mounted as ordinary folders: in the macOS Finder and Terminal, on Linux, and as Docker and Podman volumes, without installing FUSE or anything else on the machine mounting them. It serves **NFSv4.0** and **NFSv3** on one port.
+`knot nfs-server` serves file storage over NFS, so buckets can be mounted as ordinary folders: in the macOS Finder and Terminal, on Linux, and as Docker and Podman volumes, without FUSE. It serves **NFSv4.0** and **NFSv3** on one port.
 
-`knot nfs-server` is a client of a knot server, acting as the user of the API token it connects with, exactly as the `knot file` commands do. It runs wherever the `knot` command runs, as many times as wanted: one per user, one for your Mac and another for containers, each on its own port. The knot server itself runs no NFS server.
+`knot nfs-server` is a client of a knot server, acting as the user of the API token it connects with, exactly as the `knot file` commands do. It runs from the knot release binaries for macOS, Linux and Windows, though not from the knot container image or the `knot` command inside a space, as many times as wanted: one per user, one for your Mac and another for containers, each on its own port. The knot server itself runs no NFS server.
 
 
 NFS has no authentication of its own: anyone who can connect to `knot nfs-server` can reach every file its user can. It only accepts connections from the machine it runs on unless `--nfs-allow` says otherwise; widen that only to networks you trust.
@@ -45,13 +45,14 @@ Create a token with the **Files** scope for `knot nfs-server`, so it can reach f
 | Option | Default | Description |
 |---|---|---|
 | `--nfs-listen` | `127.0.0.1:2049` | The address to serve on, or just a port, e.g. `4000`, for `127.0.0.1:4000`. |
-| `--nfs-allow` | loopback | Addresses or CIDRs allowed to connect, e.g. `192.168.1.0/24`. |
-| `--uid`, `--gid` | the user running it | Show every file as owned by this user and group. See [ownership](#ownership-and-permissions). |
+| `--nfs-allow` | loopback | An address or CIDR allowed to connect, e.g. `192.168.1.0/24`. Repeat the flag for more than one. |
+| `--uid`, `--gid` | the stored owner, else the user running it | Show every file as owned by this user and group. See [ownership](#ownership-and-permissions). |
 | `--cache-dir` | none | Keep files read and written in this directory, so they need not be fetched again. |
 | `--cache-size` | `1GB` | The most the cache may hold, e.g. `512MB` or `10GB`. |
-| `--server`, `--token`, `--alias` | the `default` alias | The knot server and token to act as, as for other `knot` commands. |
+| `--server`, `--token`, `--alias` | the `default` alias | The knot server and token to act as, as for other `knot` commands; also `KNOT_SERVER` and `KNOT_TOKEN`. |
+| `--tls-skip-verify` | `true` | Skip verifying the knot server's TLS certificate. |
 
-The listen address, allowed addresses and cache can also be set with `KNOT_NFS_LISTEN`, `KNOT_NFS_ALLOW`, `KNOT_NFS_CACHE_DIR` and `KNOT_NFS_CACHE_SIZE`.
+The listen address, allowed addresses and cache can also be set with `KNOT_NFS_LISTEN`, `KNOT_NFS_ALLOW` (a comma-separated list), `KNOT_NFS_CACHE_DIR` and `KNOT_NFS_CACHE_SIZE`.
 
 Several servers can run side by side on different ports, for example one for your Mac and one for containers that shows files as owned by root:
 
@@ -112,7 +113,7 @@ Mounting needs the NFS client tools (`nfs-common` on Debian and Ubuntu, `nfs-uti
 
 Docker and Podman mount NFS themselves through the `local` volume driver, so a bucket can be a volume with nothing installed in the container and no extra privileges.
 
-With Docker Desktop or OrbStack, containers run in a virtual machine: use `host.docker.internal` as the address, which reaches `knot nfs-server` listening on your Mac's loopback address. On Linux, use the address of the machine running `knot nfs-server`, and allow it with `--nfs-allow`.
+With Docker Desktop or OrbStack, containers run in a virtual machine: use `host.docker.internal` as the address, which reaches `knot nfs-server` listening on your Mac's loopback address. On Linux, Docker and rootful Podman mount from the host itself, so with `knot nfs-server` on the same machine use `addr=127.0.0.1`, which is allowed by default. Only for a `knot nfs-server` on another machine, use its address and allow the Docker host with `--nfs-allow`.
 
 An NFSv4 volume of the whole export:
 
@@ -171,7 +172,7 @@ The volume is mounted when a container using it starts. Removing the volume unmo
 
 ### In knot templates
 
-A Docker or Podman template can mount a bucket into each space by defining an NFS volume in its **Volumes**. See [NFS volumes](../templates/local-containers/volume-spec.md#nfs-volumes) in the volume specification.
+A Docker or Podman template can mount a bucket into each space by defining an NFS volume in its **Volumes**. See [NFS volumes](../templates/local-containers/volume-spec.md#nfs-volumes) in the volume specification. Every space mounting it reaches the files of the one user `knot nfs-server` acts as, not those of the space's owner, and space restrictions don't apply to it.
 
 ---
 

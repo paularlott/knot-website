@@ -197,6 +197,7 @@ See [Using knot.\* Libraries](using-libraries/#the-knot-plugin-recommended) for 
 | scriptling.mcp / scriptling.mcp.tool | ✓ ¹                 | ✓                   | ✓        |
 | scriptling.toon                      | ✓                   | ✓                   | ✓        |
 | scriptling.messaging (telegram / discord / slack) | ✓       | ✓                   | ✓        |
+| scriptling.oauth                     | ✗                   | ✓                   | ✓        |
 | scriptling.grep                      | ✗                   | ✓                   | ✓        |
 | scriptling.find                      | ✗                   | ✓                   | ✓        |
 | scriptling.csv                       | ✓                   | ✓                   | ✓        |

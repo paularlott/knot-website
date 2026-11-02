@@ -190,8 +190,7 @@ Entra's `email` claim is set by each tenant's administrators, so Knot doesn't tr
 3. Choose **Regular Web Application** and click **Create**.
 4. Go to the **Settings** tab and note the **Domain** (e.g., `your-tenant.us.auth0.com`), **Client ID**, and **Client Secret**.
 5. In **Allowed Callback URLs**, add: `{your-knot-url}/auth/auth0/callback` (e.g., `https://knot.example.com/auth/auth0/callback`)
-6. In **Allowed Logout URLs**, add: `{your-knot-url}` (e.g., `https://knot.example.com`)
-7. Click **Save Changes**.
+6. Click **Save Changes**.
 
 ### 2. Configure knot
 
@@ -246,9 +245,9 @@ client_secret = "your-oidc-client-secret"
 scopes = ["openid", "profile", "email"]
 ```
 
-The `name` field is a unique slug used in URLs (e.g., `/auth/okta/callback`): letters, digits, `-` and `_`, and not the name of a built-in provider such as `github`. The `display_name` is shown in the UI and is optional — it defaults to the capitalized `name`.
+The `name` field is a unique slug used in URLs (e.g., `/auth/okta/callback`): up to 63 letters, digits, `-` and `_`, starting with a letter or digit, and not `oidc` or the name of a built-in provider such as `github`. The `display_name` is shown in the UI and is optional — it defaults to the capitalized `name`.
 
-On startup, Knot fetches the discovery document to configure the authorization, token, and userinfo endpoints automatically. The document must include `issuer` and `jwks_uri`: knot verifies the ID token returned at sign-in against them.
+Knot fetches the discovery document in the background to configure the authorization, token, and userinfo endpoints automatically, retrying until it succeeds, so an unreachable provider doesn't hold up startup. Until then, sign-ins through the provider fail. The document must include `issuer` and `jwks_uri`: knot verifies the ID token returned at sign-in against them, and a document without them is never accepted.
 
 ### How knot verifies a sign-in
 
@@ -275,7 +274,7 @@ When the provider logs the user out, it POSTs a signed logout token to that URI.
 - there is no `nonce`, so an ID token can't be passed off as a logout token
 - `jti` hasn't been used before
 
-It then ends every knot web session of the user linked to that provider identity (`sub`), on every server in the cluster, including sessions since switched to another user, and answers `200`. A token that fails a check gets `400`. A token for an identity no knot user is linked to gets `200` and changes nothing.
+It then ends every knot web session of the user linked to that provider identity (`sub`), on every server in the zone that receives the logout, including sessions since switched to another user, and answers `200`. Sessions belong to one zone, so in a multi-zone cluster, sessions in other zones aren't ended. A token that fails a check gets `400`. A token for an identity no knot user is linked to gets `200` and changes nothing.
 
 Knot matches the user by `sub`, so the logout token must include it; a token with only a `sid` is refused with `400`. Every session of the user ends, not just the one the provider's `sid` names.
 
@@ -346,7 +345,7 @@ With `oauth_server` set, knot is only the MCP clients' resource server:
 - `/mcp` accepts the provider's access tokens for knot. A token must be a JWT of type `at+jwt` ([RFC 9068](https://www.rfc-editor.org/rfc/rfc9068)), signed with one of the provider's keys (`jwks_uri`), from its issuer, unexpired, and with `{server.url}/mcp` in `aud`. The provider must support resource indicators ([RFC 8707](https://www.rfc-editor.org/rfc/rfc8707)) to issue it for that audience.
 - The token's `sub` must be linked to an active knot user, so each user signs in to knot through the provider once before their MCP clients can connect. They then act as that user, with that user's permissions, including **Use MCP Server**.
 - The provider's tokens reach `/mcp` only. The rest of the API refuses them.
-- Knot's own authorization endpoints are turned off: `/authorize`, `/register` and `/.well-known/oauth-authorization-server` answer `404`, and `/token` accepts only the device code grant that [`knot connect`](../../knot-reference/cli/knot.md#knot-connect) uses.
+- Knot's own authorization endpoints are turned off: `/authorize`, `/oauth/grant`, `/register` and `/.well-known/oauth-authorization-server` answer `404`, and `/token` accepts only the device code grant that [`knot connect`](../../knot-reference/cli/knot.md#knot-connect) uses.
 - Tokens knot's own OAuth server issued to MCP clients earlier no longer work at `/mcp`, so those clients sign in again through the provider. API tokens a user created, and those from `knot connect`, still work.
 
 MCP access then follows the provider: once it stops issuing a user tokens for knot, their MCP clients lose access when their current token expires.
@@ -467,7 +466,7 @@ When OAuth providers are configured:
 - Signing in through a provider trusts the provider's own sign-in, including its multi-factor authentication, and skips Knot's password and TOTP. So Knot never matches by email an account that has TOTP set up or is an administrator: the owner signs in with their password and TOTP and links the provider from their profile, after which the provider signs them in.
 - Users can **link** and **unlink** OAuth providers from their profile settings.
 - Users created via OAuth are prompted to set a password, unless the provider has [`require_sso`](#requiring-single-sign-on) on.
-- Knot keeps only the provider identity it signs a user in as, never the provider's access or refresh tokens, and doesn't ask for offline access. A sign-in on one server of a zone signs the user in on all of them, through Knot's own session.
+- Knot keeps only the provider identity it signs a user in as, never the provider's access or refresh tokens, and doesn't ask for offline access, unless the provider has [`check_interval`](#checking-sign-ins-with-the-provider) set. A sign-in on one server of a zone signs the user in on all of them, through Knot's own session.
 
 ### Domain Restrictions
 
@@ -489,6 +488,7 @@ For every user linked to the provider:
 
 - Signing in with a password is refused, and the refusal is recorded in the audit log. Knot checks the password first, so the refusal only reveals the account to someone who knows it.
 - Knot doesn't ask them to set a password after their first sign-in.
+- They can't sign in with, or add, a passkey.
 - They can't unlink the provider from their profile. An administrator with **Manage Users** still can.
 
 [`knot connect`](../../knot-reference/cli/knot.md#knot-connect) signs in through the browser, so it works for these users too.
@@ -528,7 +528,7 @@ What happens next depends on the answer:
 
 - **The sign-in stands.** Knot keeps the grant, replacing it if the provider sent a new one. For a generic OIDC provider with [`sync_roles`](#roles-and-groups-from-the-provider), it also updates the roles and groups the provider manages from the fresh claims.
 - **The provider refuses the grant**, with `invalid_grant` from its token endpoint or, for GitHub, `401`. The user, or their access to knot, is gone:
-  - A user with another way in, such as another linked provider or a password that can still sign them in, loses the web sessions the provider signed in. Their other sessions and their API tokens are kept.
+  - A user with another way in, such as another linked provider, or a password or passkey that can still sign them in, loses the web sessions the provider signed in. Their other sessions and their API tokens are kept.
   - A user the provider was the only way in for is deactivated, which ends their sessions and stops their API tokens, including those of `knot connect` and MCP clients. An administrator reactivates them.
   - The last active administrator is never deactivated: their sessions end and the audit log says why, so a provider can't lock everyone out.
 - **No answer**, such as a timeout, a `5xx` or a provider that's down. Nothing changes, and knot tries again five minutes later.

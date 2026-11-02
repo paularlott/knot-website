@@ -91,7 +91,7 @@ knot legal
 
 ### `knot connect`
 
-Connect to a knot server and authenticate. The API token is saved under `[client.connection.<alias>]` in `~/.config/knot/knot.toml`.
+Connect to a knot server and authenticate. The API token is saved under `[client.connection.<alias>]` in `~/.config/knot/knot.toml`, or in the config file in use if there is one.
 
 ```shell
 knot connect https://knot.example.com:3000
@@ -483,15 +483,15 @@ knot file bucket transfer <name> <user> [--force]
 Serve file storage over NFS (NFSv4.0 and NFSv3 on one port), acting as the user of the API token it connects with, so buckets can be mounted as folders on macOS and Linux and as Docker or Podman volumes. See [NFS Mounts](../../knot-docs/file-storage/nfs.md). 
 
 ```shell
-knot nfs-server [--nfs-listen ADDR|PORT] [--nfs-allow CIDR,...] [--uid N] [--gid N]
+knot nfs-server [--nfs-listen ADDR|PORT] [--nfs-allow CIDR]... [--uid N] [--gid N]
                 [--cache-dir PATH] [--cache-size SIZE] [--alias NAME | --server URL --token TOKEN]
 ```
 
 - `--nfs-listen` defaults to `127.0.0.1:2049`; just a port listens on loopback.
-- Only loopback clients are accepted unless `--nfs-allow` lists other addresses or CIDRs: NFS has no authentication.
+- Only loopback clients are accepted unless `--nfs-allow` allows other addresses or CIDRs, one per flag: NFS has no authentication.
 - `--uid` and `--gid` show every file as owned by that user and group, e.g. `--uid 0 --gid 0` for containers that run as root.
 - `--cache-dir` keeps files read and written on local disk, up to `--cache-size` (default `1GB`).
-- `KNOT_NFS_LISTEN`, `KNOT_NFS_ALLOW`, `KNOT_NFS_CACHE_DIR` and `KNOT_NFS_CACHE_SIZE` set the same options.
+- `KNOT_NFS_LISTEN`, `KNOT_NFS_ALLOW`, `KNOT_NFS_CACHE_DIR` and `KNOT_NFS_CACHE_SIZE` set the same options; `KNOT_NFS_ALLOW` takes a comma-separated list.
 
 ---
 
@@ -595,7 +595,7 @@ knot space restrict <space> --clear
 knot space restrictions <space> [--json]
 ```
 
-`--bucket` keeps only the buckets listed, `:ro` making one read-only. `--secret-allow` keeps only the personal secrets under the prefixes given, such as `op://Dev/`, and `--secret-deny` refuses those under them . `--lock` locks the space's processes out of everything but their files and secrets, apart from restarting or shutting it down. Restrictions only tighten; `--clear` lifts them all and works only from outside the space.
+`--bucket` keeps only the buckets listed, `:ro` making one read-only. `--no-secrets` switches personal secrets off, `--secret-allow` keeps only the personal secrets under the prefixes given, such as `op://Dev/`, and `--secret-deny` refuses those under them . `--lock` locks the space's processes out of everything but their files and secrets, apart from restarting or shutting it down. Restrictions only tighten; `--clear` lifts them all and works only from outside the space.
 
 ### `knot tunnel`
 
@@ -606,7 +606,7 @@ knot tunnel <protocol> <port> <name>
 knot tunnel http 8080 myapp
 ```
 
-Protocols: `http`, `https`. Options: `--server`, `--token`, `--tls-skip-verify`. The `--tunnel-server` / `--tunnel-token` / `--tunnel-alias` spellings are accepted as synonyms, matching the target flags on `knot space tunnel`. `--port-tls-name` and `--port-tls-skip-verify` (default true) control the connection to a local service that speaks HTTPS, as on `knot port`.
+Protocols: `http`, `https`. Options: `--server`, `--token`, `--alias` / `-a`, `--tls-skip-verify`. The `--tunnel-server` / `--tunnel-token` / `--tunnel-alias` / `--tunnel-tls-skip-verify` spellings are accepted as synonyms, matching the target flags on `knot space tunnel`. `--port-tls-name` and `--port-tls-skip-verify` (default true) control the connection to a local service that speaks HTTPS, as on `knot port`.
 
 ### `knot ssh-config`
 
@@ -669,7 +669,7 @@ Global flags available on most commands:
 
 ### Configuration file
 
-Client connections are stored in `~/.config/knot/knot.toml`:
+Client connections are stored in `~/.config/knot/knot.toml`, or in the config file in use if there is one:
 
 ```toml
 [client.connection.default]
@@ -692,6 +692,7 @@ Or override entirely with `--server` and `--token`.
 ### Environment variables
 
 - `KNOT_CONFIG`: override the config file path
+- `KNOT_SERVER`, `KNOT_TOKEN`: the server and API token, instead of a stored connection
 - `KNOT_LOGLEVEL`: override the log level
 - `KNOT_TLS_SKIP_VERIFY`: skip TLS verification
 - `KNOT_NAMESERVERS`: DNS nameservers

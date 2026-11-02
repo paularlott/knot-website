@@ -33,7 +33,7 @@ Port forwarding allows you to securely access ports within a remote space from y
    ```
 
 3. Approve the code in the browser window that opens, signing in if asked. On a machine without a browser, open the address shown on any device and enter the code.
-4. The generated API token is stored in `~/.config/knot/knot.toml` for future use.
+4. The generated API token is stored in `~/.config/knot/knot.toml`, or in the config file in use if there is one, for future use.
 
 ---
 

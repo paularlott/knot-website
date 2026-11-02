@@ -75,7 +75,7 @@ volumes:
 
 The `local` driver's `nfs` type mounts an NFS export as a volume, so each space can have a [file storage bucket](/docs/file-storage/) mounted, served by [`knot nfs-server`](/docs/file-storage/nfs/). Docker or Podman mounts it when the space starts; nothing is needed in the image.
 
-This template mounts the bucket `configs` at `/configs` in every space, over NFSv4, from a `knot nfs-server` running on the same machine as Docker:
+This template mounts the bucket `configs` at `/configs` in every space, over NFSv4, from a `knot nfs-server` running on the same Mac as Docker Desktop or OrbStack (on Linux, use `addr=127.0.0.1`):
 
 **Volumes:**
 
@@ -99,9 +99,9 @@ volumes:
 ```
 
 - `type` is `nfs`.
-- `o` is the mount options: `addr`, the address of `knot nfs-server` (`host.docker.internal` reaches the host from Docker Desktop and OrbStack; on Linux, use the host's address and allow it with `--nfs-allow`), its `port`, and the NFS version, `vers=4.0`, or for NFSv3, `mountport=<port>,nfsvers=3,tcp,nolock`.
+- `o` is the mount options: `addr`, the address of `knot nfs-server` (`host.docker.internal` reaches the host from Docker Desktop and OrbStack; on Linux, Docker mounts from the host itself, so use `127.0.0.1` for a `knot nfs-server` on the same machine, or another machine's address, allowing the Docker host there with `--nfs-allow`), its `port`, and the NFS version, `vers=4.0`, or for NFSv3, `mountport=<port>,nfsvers=3,tcp,nolock`.
 - `device` is the export to mount, `:/` followed by the path: `":/"` for every bucket, `":/configs"` for one bucket, `":/configs/app"` for a folder in it. An `nfs` volume without a `device` is refused when the template is saved.
 
-The volume belongs to the space: it is unmounted and removed when the space is deleted, and the files stay in their bucket. A volume the space already has is not made again when the template changes, so to change an NFS volume's options for an existing space, give the volume a new name.
+The volume belongs to the space: it is unmounted and removed when the space is deleted, and the files stay in their bucket. Every space mounting the volume reaches the files of the one user `knot nfs-server` acts as, not those of the space's owner, and [space restrictions](/docs/spaces/restrictions/) don't apply to it. A volume the space already has is not made again when the template changes, so to change an NFS volume's options for an existing space, give the volume a new name.
 
 The files' owner seen in the space is set by `knot nfs-server` (see [ownership](/docs/file-storage/nfs/#ownership-and-permissions)): for spaces that run as root, start it with `--uid 0 --gid 0`.

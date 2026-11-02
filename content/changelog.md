@@ -14,14 +14,15 @@ navSection: docs
 {{< version "v0.41.0" >}}
 
 {{< changelog-item "changed" >}}
-- **Breaking:** require the knot command and the server to share major and minor version
-- **Breaking:** tighten knot's cookies — `__Host-` prefix on HTTPS, kept off space web servers, code-server and tunnels — so everyone signs in again after upgrading; web VNC signs in through a one-time handoff instead ([docs](../docs/configuration/#security-considerations))
+- **Breaking:** require the knot command and the server to share major and minor version ([docs](../reference/cli/knot/))
+- **Breaking:** tighten knot's cookies — `__Host-` prefix on HTTPS, kept off space web servers, code-server and tunnels — so everyone signs in again after upgrading an HTTPS server; web VNC signs in through a one-time handoff instead ([docs](../docs/configuration/#security-considerations))
 - **Breaking:** sign in `knot connect` by approving a code in the web interface, so it works with two-factor authentication, sign-in providers and over SSH; `--username` and `--use-web-auth` are removed ([docs](../reference/cli/knot/#knot-connect))
 - Receive API replies as msgpack in the knot command
+- **Breaking:** `knot.secret.get()` takes only a complete `op://vault/item/field` reference; the `field` argument and `vault/item` shorthand are removed, and `knot.space.restrictions()` no longer returns `secrets_available` ([docs](../reference/libraries/secret/)) {{< pro-badge >}}
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
-- Add passkey sign-in, with passkeys added and removed from your profile
+- Add passkey sign-in, with passkeys added and removed from your profile ([docs](../docs/configuration/passkeys/))
 - Add `knot nfs-server` to mount file storage buckets over NFSv4 and NFSv3 on macOS, Linux and as Docker, Podman or template volumes ([docs](../docs/file-storage/nfs/)) {{< experimental-badge >}}
 - Add a Microsoft Entra ID sign-in provider ([docs](../docs/configuration/oauth/#microsoft-setup)) {{< pro-badge >}}
 - Add PKCE to OAuth sign-in for every provider ([docs](../docs/configuration/oauth/#prerequisites)) {{< pro-badge >}}
@@ -32,14 +33,15 @@ navSection: docs
 - Add `oauth_server`, so MCP clients sign in through an OIDC provider instead of knot ([docs](../docs/configuration/oauth/#mcp-clients-signing-in-through-the-provider)) {{< pro-badge >}}
 - Add `check_interval`, so knot checks sign-ins with their provider, ending the sessions of users it refuses and keeping roles and groups up to date ([docs](../docs/configuration/oauth/#checking-sign-ins-with-the-provider)) {{< pro-badge >}}
 - Add secret path restrictions to `knot restrict` ([docs](../docs/spaces/restrictions/#limit-personal-secrets-by-path)) {{< pro-badge >}}
-- Add downloading to `knot space mirror`
+- Add downloading to `knot space mirror` ([docs](../reference/cli/knot/#mirroring-a-directory-tree))
+- Add the `scriptling.oauth` library to space scripts, to sign in to an identity provider and verify access tokens
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
 - **Breaking:** verify generic OIDC ID tokens and require `issuer` and `jwks_uri` in discovery ([docs](../docs/configuration/oauth/#how-knot-verifies-a-sign-in)) {{< pro-badge >}}
-- **Breaking:** require a verified email to match an OAuth sign-in to an account or `allowed_domains`, and never match one by email to an admin, a TOTP account or one linked to another identity ([docs](../docs/configuration/oauth/#how-knot-verifies-a-sign-in)) {{< pro-badge >}}
+- **Breaking:** require a verified email to match an OAuth sign-in to an account or `allowed_domains`, and never match one by email to an admin, a TOTP account or one linked to another identity ([docs](../docs/configuration/oauth/#user-experience)) {{< pro-badge >}}
 - Start linking a sign-in provider with a POST, so another site can't link an identity to your account; refuse to link while switched to another user; show why a sign-in or account link failed {{< pro-badge >}}
-- Stop requesting offline access or storing providers' access and refresh tokens, clear ones already stored, and time out and size-limit requests to OAuth providers {{< pro-badge >}}
+- Stop requesting offline access or storing providers' access and refresh tokens unless `check_interval` is set, clear ones already stored, and time out and size-limit requests to OAuth providers {{< pro-badge >}}
 - Only remove an unused, auto-created account when its identity is linked to another account, and clean usernames from sign-in providers to knot's rules, numbering them when taken {{< pro-badge >}}
 - Fix logouts being undone by in-flight requests or cluster gossip
 - Fix an open redirect after signing in
