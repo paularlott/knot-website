@@ -9,7 +9,15 @@ weight: 100
 navSection: docs
 ---
 
-## October 2026
+## November 2026
+
+{{< version "v0.41.1" >}}
+
+{{< changelog-item "fixed" >}}
+- Fixed URL validation
+{{< /changelog-item >}}
+
+---
 
 {{< version "v0.41.0" >}}
 
@@ -49,6 +57,8 @@ navSection: docs
 {{< /changelog-item >}}
 
 ---
+
+## October 2026
 
 {{< version "v0.40.0" >}}
 
