@@ -223,7 +223,7 @@ Multiple OIDC providers can be configured by adding separate `[[server.auth_prov
 Create an OAuth 2.0 / OpenID Connect client in your identity provider with:
 
 - **Redirect URI** — `{your-knot-url}/auth/{name}/callback` where `{name}` is the `name` you configure below (e.g., `https://knot.example.com/auth/okta/callback`)
-- **Scopes** — `openid`, `profile`, `email`
+- **Scopes** — `openid`, `profile`, `email`, and `offline_access` with [`check_interval`](#checking-sign-ins-with-the-provider)
 - **Response type** — `code` (Authorization Code flow)
 - **Client authentication** — client secret sent in the request body (`client_secret_post`)
 - **PKCE** — knot always sends an S256 code challenge, so this can be required
@@ -277,9 +277,79 @@ When the provider logs the user out, it POSTs a signed logout token to that URI.
 
 It then ends every knot web session of the user linked to that provider identity (`sub`), on every server in the cluster, including sessions since switched to another user, and answers `200`. A token that fails a check gets `400`. A token for an identity no knot user is linked to gets `200` and changes nothing.
 
-Knot matches the user by `sub`, so the logout token must include it; a token with only a `sid` is refused with `400`. Every session of the user ends, not just the one the provider's `sid` names. API tokens are not affected.
+Knot matches the user by `sub`, so the logout token must include it; a token with only a `sid` is refused with `400`. Every session of the user ends, not just the one the provider's `sid` names.
+
+[API tokens](../api-tokens.md) are not affected, including those `knot connect` and MCP clients got by signing in, so a computer connected to knot stays connected when the user signs out of the web interface. To end a user's access everywhere, deactivate them in knot, or have knot [check sign-ins with the provider](#checking-sign-ins-with-the-provider).
 
 Each server remembers the `jti`s it has accepted for as long as their tokens would pass the `iat` check. The memory isn't shared between servers, so a captured token replayed to another server within those few minutes would end the same user's sessions again, and do nothing more.
+
+### Roles and groups from the provider
+
+A generic OIDC provider can assign knot roles and groups from the claims it sends. Turn it on with `sync_roles`:
+
+```toml {filename=knot.toml}
+[[server.auth_providers]]
+provider = "oidc"
+name = "corp"
+discovery_url = "https://id.example.com/.well-known/openid-configuration"
+client_id = "knot"
+client_secret = "your-oidc-client-secret"
+sync_roles = true
+claims = ["tags"]
+claim_prefix = "knot:"
+admin_name = "admin"
+```
+
+Then, in knot, give each role and group the provider should assign an **Identity Provider Name**. The field is on the [role](../access-control/roles.md#role-configuration-options) and [group](../access-control/groups.md#group-configuration-options) forms once a provider has `sync_roles` on. The built-in Admin role can't be edited, so its name comes from `admin_name` instead.
+
+Each time a user signs in through the provider, knot:
+
+1. Reads the claims listed in `claims` (default `roles` and `groups`) from the ID token and the userinfo response. A claim can be a string or an array of strings. A dotted name reaches into a nested object, such as Keycloak's `realm_access.roles`.
+2. With `claim_prefix` set, keeps only the values that start with it and removes it, so `knot:developer` becomes `developer`. Values without the prefix are ignored, so the provider can carry claims for other applications too.
+3. Matches the names, ignoring case, against the Identity Provider Names of every role and group. The user gets each role and group whose name is there, and loses each one that has an Identity Provider Name but isn't there.
+
+Roles and groups without an Identity Provider Name are left to knot: assign them in the web UI as usual. Those with one belong to the provider: a change made to them in knot's user form is undone at the user's next sign-in.
+
+Names from all the claims go into one list, checked against roles and groups alike. A role and a group with the same Identity Provider Name are both assigned by the same value, so give them different names.
+
+For example, with the configuration above, a user whose `tags` claim is `["knot:developer", "knot:developer2", "billing"]` signs in to:
+
+| Knot role or group | Identity Provider Name | Result |
+| --- | --- | --- |
+| Group *Developer* | `developer` | Assigned |
+| Role *developer2* | `developer2` | Assigned |
+| Built-in role *Admin* | `admin` (from `admin_name`) | Removed, if the user had it |
+| Role *Support* | *(none)* | Unchanged |
+
+`billing` has no `knot:` prefix, so knot ignores it.
+
+A missing claim counts as no names, so it removes every role and group the provider assigns. Check the provider sends the claims, and that knot asks for any scope they need in `scopes`. Run knot with `--log-level debug` to log claims missing from a sign-in.
+
+Changes take effect at the user's next sign-in through the provider, and their existing sessions keep the roles they had until then. With [`check_interval`](#checking-sign-ins-with-the-provider) set, each check also brings them up to date, so a change reaches signed-in users within the interval. Every change is recorded in the audit log, including Admin being granted or removed. [Back-channel logout](#back-channel-logout) ends the user's sessions, so they sign in again and pick up the change.
+
+`sync_roles` works with `provider = "oidc"` only. On other providers knot logs a warning at startup and turns it off.
+
+### MCP clients signing in through the provider
+
+[MCP clients](../ai/mcp.md#oauth2-supported-clients) normally sign in with knot's own OAuth server. To have them sign in through a generic OIDC provider instead, set `oauth_server` to the provider's `name`:
+
+```toml {filename=knot.toml}
+[server]
+oauth_server = "corp"
+```
+
+It can also be set with `--oauth-server` or `KNOT_OAUTH_SERVER`. The default, `builtin`, keeps knot's own server. Knot doesn't start if `oauth_server` names anything other than an `oidc` provider.
+
+With `oauth_server` set, knot is only the MCP clients' resource server:
+
+- The protected resource metadata at `/.well-known/oauth-protected-resource` names the provider's issuer as the authorization server, so MCP clients sign in there. It lists no scopes, since the provider doesn't know knot's.
+- `/mcp` accepts the provider's access tokens for knot. A token must be a JWT of type `at+jwt` ([RFC 9068](https://www.rfc-editor.org/rfc/rfc9068)), signed with one of the provider's keys (`jwks_uri`), from its issuer, unexpired, and with `{server.url}/mcp` in `aud`. The provider must support resource indicators ([RFC 8707](https://www.rfc-editor.org/rfc/rfc8707)) to issue it for that audience.
+- The token's `sub` must be linked to an active knot user, so each user signs in to knot through the provider once before their MCP clients can connect. They then act as that user, with that user's permissions, including **Use MCP Server**.
+- The provider's tokens reach `/mcp` only. The rest of the API refuses them.
+- Knot's own authorization endpoints are turned off: `/authorize`, `/register` and `/.well-known/oauth-authorization-server` answer `404`, and `/token` accepts only the device code grant that [`knot connect`](../../knot-reference/cli/knot.md#knot-connect) uses.
+- Tokens knot's own OAuth server issued to MCP clients earlier no longer work at `/mcp`, so those clients sign in again through the provider. API tokens a user created, and those from `knot connect`, still work.
+
+MCP access then follows the provider: once it stops issuing a user tokens for knot, their MCP clients lose access when their current token expires.
 
 ### Example: Multiple OIDC Providers
 
@@ -326,6 +396,14 @@ Each provider is defined as a `[[server.auth_providers]]` entry with the followi
 | `insecure_skip_tls` | bool | No | Accept any TLS certificate from this provider, for a self-hosted one with a self-signed certificate. Anyone on the network path between knot and the provider could then impersonate it, including its signing keys, so use it only for test and lab setups |
 | `default_roles` | string[] | No | Role names assigned to auto-created users |
 | `default_groups` | string[] | No | Group names assigned to auto-created users |
+| `require_sso` | bool | No | Users linked to this provider must sign in through it; their password no longer signs them in. See [Requiring single sign-on](#requiring-single-sign-on) |
+| `sync_roles` | bool | No | OIDC only: assign the roles and groups that have an Identity Provider Name from the provider's claims on every sign-in. See [Roles and groups from the provider](#roles-and-groups-from-the-provider) |
+| `claims` | string[] | No | With `sync_roles`: the claims holding role and group names (default `["roles", "groups"]`). A dotted name reaches into a nested object |
+| `claim_prefix` | string | No | With `sync_roles`: only claim values starting with this are used, with it removed (e.g. `knot:`) |
+| `admin_name` | string | No | With `sync_roles`: the name that assigns the built-in Admin role. Empty leaves Admin to knot |
+| `check_interval` | duration | No | How often knot checks with the provider that a web session's sign-in still stands, such as `1h`; at least `5m`. Unset, sign-ins aren't checked. See [Checking sign-ins with the provider](#checking-sign-ins-with-the-provider) |
+
+The `[server]` setting `oauth_server` (default `builtin`) can name a generic OIDC provider for MCP clients to sign in through. See [MCP clients signing in through the provider](#mcp-clients-signing-in-through-the-provider).
 
 ### Example: Multiple Providers with Auto-Provisioning
 
@@ -388,12 +466,86 @@ When OAuth providers are configured:
 - On first login via OAuth, Knot either matches the user by email address or creates a new account (if `auto_create_users` is enabled). It matches by email only when the provider says the email is verified, the provider's `link_by_email` isn't off, and the account isn't already linked to a different identity at the same provider. Otherwise the user signs in with their password and links the provider from their profile.
 - Signing in through a provider trusts the provider's own sign-in, including its multi-factor authentication, and skips Knot's password and TOTP. So Knot never matches by email an account that has TOTP set up or is an administrator: the owner signs in with their password and TOTP and links the provider from their profile, after which the provider signs them in.
 - Users can **link** and **unlink** OAuth providers from their profile settings.
-- Users created via OAuth are prompted to set a password for CLI access.
+- Users created via OAuth are prompted to set a password, unless the provider has [`require_sso`](#requiring-single-sign-on) on.
 - Knot keeps only the provider identity it signs a user in as, never the provider's access or refresh tokens, and doesn't ask for offline access. A sign-in on one server of a zone signs the user in on all of them, through Knot's own session.
 
 ### Domain Restrictions
 
 When `allowed_domains` is set, only users with a verified email address in one of the listed domains can authenticate. For GitHub, this checks the user's public or primary verified email. For GitLab, it checks the account's email, once confirmed. For Google and Auth0, it checks the email returned by the userinfo endpoint, which must have `email_verified` set. For OIDC providers, it checks the email from the userinfo endpoint, or from the ID token when the provider has no userinfo endpoint, which must have `email_verified` set. For Microsoft, it needs the `xms_edov` claim; use `allowed_tenants` to restrict Microsoft sign-in instead.
+
+### Requiring single sign-on
+
+A user linked to a provider can normally still sign in with their knot password, so turning them away at the provider doesn't keep them out of knot. Set `require_sso` on the provider to close that gap:
+
+```toml {filename=knot.toml}
+[[server.auth_providers]]
+provider = "oidc"
+name = "corp"
+# ...
+require_sso = true
+```
+
+For every user linked to the provider:
+
+- Signing in with a password is refused, and the refusal is recorded in the audit log. Knot checks the password first, so the refusal only reveals the account to someone who knows it.
+- Knot doesn't ask them to set a password after their first sign-in.
+- They can't unlink the provider from their profile. An administrator with **Manage Users** still can.
+
+[`knot connect`](../../knot-reference/cli/knot.md#knot-connect) signs in through the browser, so it works for these users too.
+
+Unlike `disable_password_auth`, which turns password sign-in off for everyone, `require_sso` only affects users linked to that provider. Other accounts, such as a local administrator kept for emergencies, still sign in with a password.
+
+API tokens a user already has keep working, so deactivate the user in knot to end their access everywhere. With [`check_interval`](#checking-sign-ins-with-the-provider) set, knot does this itself once the provider refuses the user.
+
+---
+
+## Checking sign-ins with the provider
+
+A knot session doesn't depend on the provider once it's signed in: a user suspended or removed at the provider stays signed in to knot until their session ends, and keeps their API tokens. Set `check_interval` on a provider to have knot check:
+
+```toml {filename=knot.toml}
+[[server.auth_providers]]
+provider = "google"
+client_id = "your-google-client-id.apps.googleusercontent.com"
+client_secret = "your-google-client-secret"
+check_interval = "1h"
+```
+
+At sign-in, knot keeps the provider's grant with the web session, encrypted with `server.encrypt`. Once per `check_interval`, for every live session the provider signed in, knot uses the grant to ask the provider whether the sign-in still stands:
+
+| Provider | What knot keeps | What the check does |
+| --- | --- | --- |
+| Google | Refresh token | Refreshes it |
+| GitLab | Refresh token | Refreshes it |
+| Microsoft | Refresh token | Refreshes it |
+| Auth0 | Refresh token | Refreshes it |
+| Generic OIDC | Refresh token | Refreshes it, and reads the user's claims again |
+| GitHub | Access token, or the refresh token of a GitHub App with expiring tokens | Reads the user's GitHub profile |
+
+To get a grant that lasts while the user is away, knot asks Microsoft, Auth0 and generic OIDC providers for the `offline_access` scope, adding it to `scopes` if it isn't there, and asks Google for offline access. Google only gives a refresh token with consent, so with `check_interval` set it shows its consent screen at every sign-in. Allow refresh tokens, or offline access, for knot's client at the provider.
+
+What happens next depends on the answer:
+
+- **The sign-in stands.** Knot keeps the grant, replacing it if the provider sent a new one. For a generic OIDC provider with [`sync_roles`](#roles-and-groups-from-the-provider), it also updates the roles and groups the provider manages from the fresh claims.
+- **The provider refuses the grant**, with `invalid_grant` from its token endpoint or, for GitHub, `401`. The user, or their access to knot, is gone:
+  - A user with another way in, such as another linked provider or a password that can still sign them in, loses the web sessions the provider signed in. Their other sessions and their API tokens are kept.
+  - A user the provider was the only way in for is deactivated, which ends their sessions and stops their API tokens, including those of `knot connect` and MCP clients. An administrator reactivates them.
+  - The last active administrator is never deactivated: their sessions end and the audit log says why, so a provider can't lock everyone out.
+- **No answer**, such as a timeout, a `5xx` or a provider that's down. Nothing changes, and knot tries again five minutes later.
+
+Every refusal is recorded in the audit log with the provider's error.
+
+A refusal doesn't always mean the user lost access. Knot also treats these as refusals:
+
+- The user taking knot's access away in their own account at the provider, such as in their Google account's settings.
+- Google apps in testing mode, whose refresh tokens expire after seven days. Publish the app.
+- Providers that end refresh tokens when the user changes or resets their password, or when an administrator signs all their sessions out.
+
+Knot keeps only a refresh token that the provider says was granted `offline_access`, when it says, so a user signing out at a generic OIDC provider isn't taken for a refusal.
+
+In a [cluster](cluster-mode.md), the leader of each zone checks its zone's sessions. A session, and its grant, belong to one zone, so no two servers use the same grant.
+
+Only web sessions are checked. A user who only uses `knot connect` or MCP isn't checked until they next sign in to the web interface. Sessions signed in before `check_interval` was set have no grant, so they aren't checked either.
 
 ---
 

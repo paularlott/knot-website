@@ -16,7 +16,7 @@ type: Guide
 
 In Knot, roles are used to control access to features. Each role is assigned one or more permissions, which define what a user can do within the system. When a user is assigned multiple roles, the permissions from all roles are combined, granting the user access to all associated features.
 
-The built-in **Admin** role holds every permission except **Backup Server**; it can't be edited or deleted. A new server also creates a **Backup User** role holding **Backup Server** and gives it to the first user. Backup User is an ordinary role — it can be edited, assigned, or deleted like any role you create.
+The built-in **Admin** role holds every permission except **Backup Server**; it can't be edited or deleted. An OIDC provider can assign it through the provider's `admin_name` setting instead of an Identity Provider Name. A new server also creates a **Backup User** role holding **Backup Server** and gives it to the first user. Backup User is an ordinary role — it can be edited, assigned, or deleted like any role you create.
 
 ---
 
@@ -33,6 +33,8 @@ To create a new role:
 #### Role Configuration Options
 
 - **`Name`**: The name of the role, used to identify it within the system.
+
+- **`Identity Provider Name`**  *(optional)*: The name single sign-on gives this role. Users get the role while their sign-in claims hold this name and lose it when they don't. Leave it empty to assign the role in knot. The field only appears when an OIDC provider has `sync_roles` on. See [Roles and groups from the provider](../configuration/oauth.md#roles-and-groups-from-the-provider).
 
 - **`Permissions for Role`**: A list of available permissions that can be assigned to the role. Select the permissions that define the role's access.
 

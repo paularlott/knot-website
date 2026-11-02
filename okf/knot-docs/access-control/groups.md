@@ -34,6 +34,8 @@ To create a new group:
 
 - **`Name`**: The name of the group, used to identify it within the system.
 
+- **`Identity Provider Name`**  *(optional)*: The name single sign-on gives this group. Users join the group while their sign-in claims hold this name and leave it when they don't. Leave it empty to assign the group in knot. The field only appears when an OIDC provider has `sync_roles` on. See [Roles and groups from the provider](../configuration/oauth.md#roles-and-groups-from-the-provider).
+
 - **`Maximum Spaces`**: Limits the number of spaces a user can create as a member of this group. Set to a number greater than 0 to enforce a limit.
 
 - **`Compute Units Limit`**: Limits the number of compute units a user can use as a member of this group. Set to a number greater than 0 to enforce a limit.

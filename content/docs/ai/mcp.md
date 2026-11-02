@@ -28,6 +28,8 @@ If your client supports OAuth2, it will connect to the MCP server and allow you 
 
 Clients discover how to sign in from the server itself: an unauthenticated request to `/mcp` is answered with a `WWW-Authenticate` header pointing to `/.well-known/oauth-protected-resource`, and clients without a client ID register themselves at `/register`. A registered client can only receive authorization codes at the redirect URIs it registered.
 
+In Knot Pro {{< pro-badge >}}, MCP clients can sign in through your OpenID Connect identity provider instead of knot, by setting `oauth_server` to the provider's name. Knot then accepts the provider's access tokens at `/mcp`, and access follows the provider. See [MCP clients signing in through the provider](/docs/configuration/oauth/#mcp-clients-signing-in-through-the-provider).
+
 ### Claude
 How you connect Claude depends on whether Anthropic's cloud can reach your knot server.
 
