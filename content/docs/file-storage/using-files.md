@@ -69,7 +69,7 @@ knot file usage                                # usage against your quota
 
 - **Direction.** A path of the form `bucket:path` is in a bucket, anything else is local, and `-` is stdin or stdout. A copy goes from the sources to the destination, the last argument; at least one side must be a bucket. A local path with a colon in its name is written with a leading `./` (`./notes:v2.txt`) so it isn't read as a bucket, and a bucket name is at least three characters, so a Windows drive such as `C:\` is always local.
 - **Into a folder.** Several sources, a directory or folder source, or a wildcard need a destination that is a folder: an existing local directory (or one ending in `/`, which is created), or a bucket path ending in `/`, or just `bucket:`. A single file goes to the name you give it, so write the `/` to copy into a folder. Files already at the destination are replaced, and two sources that would land on the same destination are refused before anything is copied.
-- **Folders.** `-r` copies a directory or bucket folder with everything below it. Its *contents* go into the destination folder, as with `rsync` and `rclone copy`, rather than the directory itself, so `copy -r ./site configs:site/` puts `./site/index.html` at `site/index.html`. Without `-r` a directory or folder is refused. Empty folders in a bucket become empty directories on download.
+- **Folders.** `-r` copies a directory or bucket folder with everything below it. Its *contents* go into the destination folder, as with `rsync` and `rclone copy`, rather than the directory itself, so `copy -r ./site configs:site/` puts `./site/index.html` at `site/index.html`. Without `-r` a directory or folder is refused. The folders below it are copied too, empty ones included, with their modes (see [Folders](#folders)).
 - **Wildcards.** `*` and `?` match within one name and `[abc]` a set of characters, as in a shell; `**` matches any number of folders. Quote a pattern for a bucket path, `'configs:logs/*.log'`, so the shell leaves it alone (an unquoted pattern with no match is an error in zsh). Unquoted local patterns are expanded by the shell as usual, and `copy` expands a quoted one itself. A pattern takes only files, unless `-r` is given, when a folder it matches is taken with everything below it. Files keep their path below the part of the pattern before the first wildcard: `'logs/**/*.log'` copies `logs/2026/10/a.log` as `2026/10/a.log`. To match a character that is a wildcard, put it in brackets: `a[*]b`.
 - **Between buckets.** A copy from one bucket to another, or within one, happens on the server and moves no data, however large the files, and keeps their content type, metadata and modification time. You need read access to the source and write access to the destination, and the destination bucket's owner is charged for the new file against their quota.
 - **Standard input and output.** `copy - bucket:path/file` uploads stdin as one file, and `copy bucket:path/file -` writes one file to stdout.
@@ -78,7 +78,11 @@ knot file usage                                # usage against your quota
 
 `rm` takes several paths and wildcards the same way: `knot file rm 'configs:logs/*.tmp' configs:old.txt`. A folder, or `bucket:`, needs `-r`, which deletes every file below it (the bucket itself stays; see `knot file bucket delete`). A path that matches nothing deletes nothing.
 
-Uploads record the file's modification time and downloads restore it. Downloaded files are created readable by others (0644), or keep the mode of the file they replace.
+Uploads record the file's modification time and mode (its permission bits) and downloads restore them, so a script copied up and back stays executable. A file stored before modes were kept has none, and is downloaded readable by others (0644), or keeps the mode of the file it replaces. Modes are stored as rclone stores them with `--metadata`, so a file shows the same mode through the knot command, the [NFS server](../nfs/) and [S3](../s3/) {{< pro-badge >}}. On Windows, which has no such modes, none are recorded or restored.
+
+Replacing a file without giving a mode, from the web interface, a script or `knot file cp -` (stdin), keeps the mode the file had. A new file written without one gets 0644, and a folder 0755, so a file uploaded from the web interface is readable by others and shows the same mode over NFS and S3 as from the knot command.
+
+Symbolic links found inside a folder copied with `-r`, or synced, are copied as links, not followed, as `cp -R` and `rsync -a` copy them, so composer's `vendor/bin` keeps working and a link to a folder outside isn't copied in. A link is stored as the [NFS server](../nfs/) stores one, so it is a link over NFS too. A file or folder named on the command line is followed. Downloads never write through a link: a file whose path passes through a local link is refused, so a bucket can't place files outside the destination. On Windows links are not copied.
 
 Files fetched through the API are sent as attachments with a sandboxing `Content-Security-Policy`, so opening another user's HTML or SVG file in a browser downloads it rather than running it on the knot server.
 
@@ -94,7 +98,7 @@ knot file sync ./site configs:site --delete        # also remove files at the de
 knot file sync configs:site ./site -n              # dry run: show what would change
 ```
 
-Modification times are kept in every direction. `--delete` removes files at the destination that aren't in the source. Between buckets only the files whose content differs are copied, with no data transferred, and folders in the same bucket that overlap are refused. `sync` takes folders, not wildcards. A file renamed or copied locally isn't uploaded again when the bucket already has its content: it is copied on the server, or, if the old file was deleted within the last hour, its content is reused.
+Modification times and modes are kept in every direction, and a file whose mode alone changed, after a `chmod`, has just its mode updated, without its content being sent again. Folders are synced too, empty ones included, with their modes (see [Folders](#folders)). `--delete` removes files and folders at the destination that aren't in the source; a local folder is only removed once it is empty. Between buckets only the files whose content differs are copied, with no data transferred, and folders in the same bucket that overlap are refused. `sync` takes folders, not wildcards. A file renamed or copied locally isn't uploaded again when the bucket already has its content: it is copied on the server, or, if the old file was deleted within the last hour, its content is reused.
 
 #### Keeping a directory in sync
 
@@ -116,7 +120,33 @@ knot file sync --two-way --watch --delete ./notes notes:  # deletions are passed
 
 - **Conflicts.** A file changed on both sides since they last matched is kept both ways: the bucket's version keeps the name and the local one is renamed beside it, on both sides, as `name.conflict-<host>-<time>.ext`: `report.txt` changed on both sides on the machine `laptop` leaves `report.txt` (the bucket's version) and `report.conflict-laptop-20261012-143005.txt` (yours). Nothing is ever silently overwritten or deleted: an upload or a deletion in the bucket is only made against the version of the file it was planned against, so a file changed there meanwhile is left for the next pass, where the change wins.
 - **Deletions.** Without `--delete` a file deleted on one side is put back from the other. With it the deletion is made on the other side, unless the file was changed there since, in which case the change wins and the file comes back.
+- **Links.** Symbolic links are synced as links in both directions; a link and a file of the same name are different files.
+- **Modes.** A mode changed on one side is set on the other. Changed on both sides since they last matched, this side's wins; with no earlier sync to go by, the bucket's.
 - **State.** The sync remembers what the two sides last agreed on, so it can tell a deletion from a new file. The state is kept in your configuration directory (`~/.config/knot/sync` on Linux, `~/Library/Application Support/knot/sync` on macOS), or where `--state-file` says (it applies to `--two-way` only; a one-way sync keeps no state). The first run of a pair, with no state, deletes nothing: files on one side only are copied to the other and files that differ are kept both ways.
+
+#### Folders
+
+A folder is kept in a bucket as the [NFS server](../nfs/) keeps one: a marker, an empty object named for the folder with a trailing `/` (`site/assets/`), which holds the folder's mode. `sync` and `copy -r` give every folder they upload a marker, as `mkdir` over NFS does, so a tree looks the same in the bucket whichever way it arrived, and an empty folder is kept. Downloads make each folder with its marker's mode; a folder made read-only is made so once everything in it is written. A `chmod` of a folder on either side reaches the other, as a file's does, and `--watch` picks up folders made, removed and changed as it does files.
+
+A folder with no marker, from an S3 client or a sync by knot before 0.42, is there because files are below it, and has no mode of its own: downloads make it 0755. The next sync up gives it a marker. On Windows folders are synced without modes.
+
+#### Large directories
+
+A sync reads a file for its checksum only when its size or modification time has changed: the checksums are kept between runs in your configuration directory, so a second sync of a large tree that has not changed takes seconds, without reading the files again.
+
+While watching, local changes are seen as they are made, however large the tree:
+
+- **macOS** watches the whole directory with FSEvents, in one stream, so there is no limit on the number of files or folders.
+- **Linux** watches each folder with inotify, up to `fs.inotify.max_user_watches` for all of a user's processes (and, in a container, for every container on the host). When the limit is reached, the sync says so once, with how many folders could not be watched and the setting to raise; changes in those folders are found by the full scan every five minutes until it is raised:
+
+  ```shell
+  sudo sysctl fs.inotify.max_user_watches=524288
+  echo fs.inotify.max_user_watches=524288 | sudo tee /etc/sysctl.d/90-knot.conf
+  ```
+
+- **Windows** watches each folder, with no low limit.
+
+A folder that appears, from a move, an unpack or a package install, is looked at on its own, not by walking the whole tree.
 
 #### What is left out
 

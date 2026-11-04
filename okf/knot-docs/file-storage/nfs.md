@@ -180,7 +180,7 @@ A Docker or Podman template can mount a bucket into each space by defining an NF
 
 Files show the owner and group stored on them by a `chown` (for example by `rsync -a` run as root), and otherwise the user and group running `knot nfs-server`, so on your own machine your files are yours. `--uid` and `--gid` make every file show as owned by the user and group given, whatever is stored: use `--uid 0 --gid 0` for containers that run as root, where tools such as git refuse folders owned by another user.
 
-Modes and modification times are stored on the files and kept when they move; folders keep theirs on the marker object that holds an empty folder. What a client may do is decided by the user `knot nfs-server` acts as, not by the modes: a bucket shared read-only is read-only over NFS whatever its files' modes say.
+Symbolic links are stored as links that `knot file copy` and `sync` copy as links too. Modes and modification times are stored on the files and kept when they move, and `knot file copy`, `sync` and rclone with `--metadata` record and restore the same ones, so a script copied into a bucket from your machine is executable over NFS and the other way round; folders keep theirs on the marker object that holds an empty folder. What a client may do is decided by the user `knot nfs-server` acts as, not by the modes: a bucket shared read-only is read-only over NFS whatever its files' modes say.
 
 ---
 
@@ -212,7 +212,7 @@ Use NFSv4 unless a client only speaks NFSv3.
 ## Limits
 
 - **The last save wins.** Two clients of the same `knot nfs-server` share what is being written; through two different `knot nfs-server`s, or with another writer such as the web interface, a file changed in both places keeps whichever was saved last.
-- **Locks are kept by each `knot nfs-server`**, so they don't hold against clients of another, or against other ways of changing files.
+- **Locks are kept by each `knot nfs-server`**, so they don't hold against clients of another, or against other ways of changing files. When a `knot nfs-server` restarts, NFSv4 clients take back the files they had open and their locks, unless another client locked the same range first.
 - **No hard links**, device files or sockets; symbolic links are supported.
 - **Renaming a folder copies each file** to its new name and then removes the old, so it is not atomic, and takes time for a folder with many files.
 - **Storage suits the same files as file storage does**: configuration, scripts, documents and artifacts, not databases or busy git working trees shared between machines.

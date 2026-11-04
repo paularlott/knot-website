@@ -29,12 +29,14 @@ For standalone use outside knot, configure it explicitly or set environment vari
 |----------|-------------|
 | `configure(url, token, ...)` | Configure the client (no-op in embedded contexts) |
 | `is_configured()` | Returns True if configured |
-| `get(path, params=None)` | Make a GET request |
-| `post(path, body=None)` | Make a POST request |
-| `put(path, body=None)` | Make a PUT request |
-| `delete(path, headers=None)` | Make a DELETE request, with any extra request headers (such as `If-Match`) |
-| `get_bytes(path)` | Make a GET request, returning the response body as bytes (file content) |
-| `put_bytes(path, data, content_type="")` | Make a PUT request with a string or bytes body (file content) |
+| `get(path, params=None, timeout=None)` | Make a GET request |
+| `post(path, body=None, timeout=None)` | Make a POST request |
+| `put(path, body=None, timeout=None)` | Make a PUT request |
+| `delete(path, headers=None, timeout=None)` | Make a DELETE request, with any extra request headers (such as `If-Match`) |
+| `get_bytes(path, timeout=None)` | Make a GET request, returning the response body as bytes (file content) |
+| `put_bytes(path, data, content_type="", timeout=None)` | Make a PUT request with a string or bytes body (file content) |
+
+`timeout` is how many seconds a request waits for the server's answer. Without one, embedded scripts keep the limit of the client they run with, and standalone scripts wait 30 seconds, or 600 for `get_bytes` and `put_bytes`. The `knot.*` libraries give their own timeouts to calls that wait on a space: `knot.space.run` waits for the command's timeout plus a minute, running a script in a space waits up to 7 minutes, and reading, writing and searching files in a space up to 11 minutes. Pass a `timeout` to your own calls that do the same.
 
 ---
 

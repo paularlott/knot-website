@@ -141,6 +141,10 @@ server.method(
 
 When an event matches `events`, the server checks each referenced sink's patterns in declaration order. The first matching sink's body template formats the payload. If no sink matches, the default format is used.
 
+### Custom events from other users
+
+A method receives its owner's events. A `shared` method also receives **custom** events raised by any user who could call it: one with the **Use Space Methods Shared by Others** permission and, when the method lists `groups`, a member of one of them. This lets one sender reach many spaces, such as CI telling every QA space to redeploy once a build is out. System events (`space.*`) never reach another user's methods.
+
 See [JSON-RPC Sinks](/reference/events/json-rpc-sinks/) for sink configuration details, scope rules, and delivery semantics.
 
 ---
@@ -334,12 +338,19 @@ Each request runs on a fresh, isolated evaluator, so the server is concurrent by
 
 ## Visibility
 
-`scope` defaults to `private`.
+`scope` defaults to `shared` when the method lists `groups`, and to `private` otherwise.
 
-- `private` methods are visible only to the owning user.
-- `shared` methods are visible to users with the shared-method permission.
+| Who can call the method | Set |
+|---|---|
+| Only the owner | nothing, or `scope = "private"` |
+| The owner and users in one of the listed groups | `groups = ["CI", "QA"]` |
+| The owner and every user with the shared-method permission | `scope = "shared"` |
+
+- `private` methods are visible only to the owning user. A private method can't list `groups`: registration fails, rather than ignoring them.
+- `shared` methods are visible to users with the **Use Space Methods Shared by Others** permission.
 - `groups` restricts a shared method to users in at least one listed group. Entries may be group **names** (e.g. `"Group 3b"`) or group **IDs** (UUIDs); both are accepted. Unknown names fail registration so a typo doesn't silently exclude every caller.
 - An empty `groups` list means all authenticated users in the zone with permission to use shared methods.
+- The users who can call a shared method can also reach it with custom events, when the method subscribes to them with `events` (see [Custom events from other users](#custom-events-from-other-users)).
 
 The owner always sees and calls their own methods under the bare canonical name — never under `user.<self>.<name>`. Other users always see and call a shared method under `user.<owner>.<canonical>`, regardless of whether the canonical name contains a dot. So a method registered as `notes.search` by `paul` is shown as `notes.search` to paul and as `user.paul.notes.search` to everyone else.
 

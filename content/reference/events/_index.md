@@ -67,7 +67,7 @@ curl -X POST https://knot.example.com/api/events/emit \
   -d '{"type": "myapp.deployed", "payload": {"version": "1.0"}}'
 ```
 
-The event has no space: its space id is the nil UUID (`00000000-0000-0000-0000-000000000000`) and it belongs to the calling user, so it reaches that user's own sinks and global sinks. The user needs the **Use Spaces** or **Manage Spaces** permission.
+The event has no space: its space id is the nil UUID (`00000000-0000-0000-0000-000000000000`) and it belongs to the calling user, so it reaches that user's own sinks and global sinks, and other users' shared methods that subscribe to it and that the caller may call ([details](json-rpc-sinks/#scope)). The user needs the **Use Spaces** or **Manage Spaces** permission.
 
 Every path prepends `custom.` to the event type automatically. This means `knot event space.created` produces `custom.space.created`, not the system event.
 

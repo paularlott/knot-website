@@ -40,12 +40,24 @@ The Users page shows each user's file storage and bucket use in the **Files** co
 - Deletes are remembered for 3 days, the same as deleted records elsewhere in knot, so a server returning from an outage cannot bring deleted files back. A server offline for longer than that should have its storage directory cleared before rejoining, as it should for the rest of its data.
 - Each server numbers the changes it applies to a bucket, its own and those gossiped from others, so a client can follow a bucket by asking for what changed since it last looked (`/api/files/changes/{bucket}`, used by `knot file sync --watch` and the VS Code extension) instead of listing it again. The numbering belongs to that server: a client that moves to another server, or follows one that stopped uncleanly (it renumbers on start-up), is told to read the bucket again in full.
 
+## Writing From Several Places at Once
+
+Any number of clients may write to a bucket at once, on any number of servers: from spaces on different hosts, the web interface, the knot command, S3 and NFS.
+
+- **Different files** never get in each other's way. Every write reaches every server, with its content.
+- **The same file written at once** from different places, on one server or several, ends the same on every server: the version written last, never a mix of two. Each writer is told its write succeeded, since it did happen before being replaced, as when two programs save one local file in turn. "Last" is decided by the cluster's clock, so it holds across servers.
+- **Conditional writes** (`If-Match`, `If-None-Match`, which `knot file sync --two-way` uses so it never overwrites a change it hasn't seen) are checked by the server receiving them, against what it holds at that moment. They don't lock a file across servers: a write on another server a moment earlier may not have arrived yet.
+- **Over NFS**, a file is saved whole when a client closes or flushes it, and [locks](../nfs/#nfsv4-or-nfsv3) hold only between clients of the same `knot nfs-server`. Two clients editing one file through different NFS servers, or through NFS and another route, can each overwrite the other's edit. Keep a file that several writers change in place, such as an SQLite database, to one writer, or to clients of one `knot nfs-server`.
+
+This is tested with two clustered servers, each with its own database and storage, taking writes at once: 48 writers making about 90,000 writes to the same 8 files in 40 seconds, while others write files of their own, share content, delete and write over NFS. Every write succeeded, the servers agreed on every file within about 2 seconds of the last write (files of their own within a third of a second), and `fsck` found nothing wrong on either.
+
 ## Backups
 
 `knot admin backup` copies buckets, sharing, file details and every file's content, from the running server, into a folder; `knot admin restore` rebuilds a lost server from it, and `knot admin file ls` and `knot admin file restore` list the files in a backup and put one file or folder back without a full restore.
 
 - `backup` and `restore` need the **Backup Server** permission, which administrators don't have unless they are given it, and a token scoped to **Backup** is enough for them.
 - `file ls` reads the backup folder alone and needs no server or permission.
+- `file restore` puts files back with the modification times and modes they had when backed up.
 - `file restore` writes through the files API, as the user the token belongs to: that user needs **Manage File Storage** to restore into other users' buckets, and a scoped token needs the **Files** scope.
 - `file fsck --from-backup` needs both **Manage File Storage** and **Backup Server**, and a scoped token needs both the **Files** and **Backup** scopes.
 
@@ -66,11 +78,12 @@ The token belongs to a user with the **Manage File Storage** permission, and `--
 
 - file content that is missing from the server, or the wrong size or (with `--deep`) checksum, such as after a disk failure or a restore of part of the storage directory;
 - reference counts, the queue of content to fetch, the index of deleted files and bucket statistics that disagree with the file records;
-- content files and records that nothing uses, and buckets whose owner was deleted.
+- content files and records that nothing uses, and buckets whose owner was deleted;
+- file modes in the decimal form knot wrote before 0.42, which are no longer read.
 
-With `--repair`, missing or damaged content is fetched from the other servers in the cluster, counts, indexes and statistics are rebuilt from the file records, and buckets of deleted users are removed. If no server holds some content, `--from-backup` restores it from a [backup](/docs/best-practices/backup-restore/) folder, checked against its checksum. A check never removes a file record, so a file whose content nothing holds is reported and stays listed, with reads failing, until you restore its content or delete it. Deleting such a file, or its bucket, always works. The command exits with an error while problems remain, so it can run from cron.
+With `--repair`, missing or damaged content is fetched from the other servers in the cluster, counts, indexes and statistics are rebuilt from the file records, buckets of deleted users are removed, and modes are rewritten in the octal form knot and rclone read, changing nothing else about the files. If no server holds some content, `--from-backup` restores it from a [backup](/docs/best-practices/backup-restore/) folder, checked against its checksum. A check never removes a file record, so a file whose content nothing holds is reported and stays listed, with reads failing, until you restore its content or delete it. Deleting such a file, or its bucket, always works. The command exits with an error while problems remain, so it can run from cron.
 
-A server notices lost content only when a file is read or when fsck runs, so run it on each server after a disk problem. Writes pause briefly while counts are rebuilt, and only if they were wrong.
+A server notices lost content only when a file is read or when fsck runs, so run it on each server after a disk problem. After upgrading to 0.42, and after restoring a backup made before 0.42, run `fsck --repair` once, on one server, to rewrite file modes: the rewritten records reach the rest of the cluster. Until then a file with an old mode shows no mode (0666 over NFS), and a link set up over NFS shows as a folder. A leaf server keeps its own storage, so run it there too. Writes pause briefly while counts are rebuilt, and only if they were wrong.
 
 ## Disk Cleanup
 

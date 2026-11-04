@@ -42,8 +42,8 @@ Creates a new method server configuration. `command` is the executable to run as
 
 | Method | Description |
 |--------|-------------|
-| `method(name, *, local_name="", description="", scope="private", keywords=[], groups=[], mcp_tool=False, params=None, result=None, events=[], event_sinks=[])` | Add a method definition |
-| `register()` | Validate and publish the current registration. Replaces any previous registration from this space |
+| `method(name, *, local_name="", description="", scope="", keywords=[], groups=[], mcp_tool=False, params=None, result=None, events=[], event_sinks=[])` | Add a method definition. `scope` defaults to `"shared"` when `groups` is given and to `"private"` otherwise; `scope="private"` with `groups` fails registration ([visibility](/docs/spaces/methods/#visibility)) |
+| `register()` | Validate and publish the current registration. Replaces any previous registration from this space once accepted; a refused registration leaves the previous one serving |
 | `unregister(name=None)` | Remove all methods (no argument) or one method by name. Stops the method server if all methods are removed |
 
 ### Example

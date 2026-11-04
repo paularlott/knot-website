@@ -96,7 +96,7 @@ Each entry in `.space.urls` is built from the template's port definitions: `http
 
 ### `.actor`
 
-Who or what triggered the event.
+Who or what triggered the event. For a custom event raised through the API, that is the caller, even when the space belongs to someone else.
 
 | Variable | Description |
 |----------|-------------|
