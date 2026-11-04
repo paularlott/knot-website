@@ -15,45 +15,24 @@ navSection: docs
 
 {{< changelog-item "changed" >}}
 - **Breaking:** refuse to register a `private` method that lists `groups`, which were ignored; a method that lists `groups` without a `scope` is now `shared` ([docs](../docs/spaces/methods/#visibility))
+- **Breaking:** store file modes in the octal form rclone uses. After upgrading, run `knot admin file fsck --repair` once, on one server, to rewrite the modes stored before ([docs](../docs/file-storage/operations/))
 - Make the user who calls `POST /api/spaces/{id}/emit-event` the event's actor, rather than the space owner ([docs](../reference/events/webhook-sinks/#actor))
-- Download a bucket file with the mode it was stored with, rather than keeping the mode of the local file it replaces ([docs](../docs/file-storage/using-files/))
-- **Breaking:** store file modes in the octal form rclone uses. After upgrading, run `knot admin file fsck --repair` once, on one server, to rewrite the modes stored before, which are no longer read: until then those files show no mode, 0666 over NFS ([docs](../docs/file-storage/operations/))
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
-- Deliver custom events to other users' shared methods that subscribe to them, when the sender may call the method, so one event, such as a CI deploy, reaches every user's spaces ([docs](../reference/events/json-rpc-sinks/#scope))
-- Keep file modes in file storage: `knot file copy` and `sync` record and restore them in every direction, a `chmod` alone is synced, and they match the modes the NFS server shows and rclone `--metadata` reads and writes ([docs](../docs/file-storage/using-files/))
-- Keep the mode of a file replaced over S3 by a client that gives none, such as rclone without `--metadata` ([docs](../docs/file-storage/s3/)) {{< pro-badge >}}
-- Add a check for file modes in the old decimal form to `knot admin file fsck`, which `--repair` rewrites ([docs](../docs/file-storage/operations/))
-- Copy and sync symbolic links as links with `knot file copy -r` and `sync`, never following them, in the form the NFS server uses ([docs](../docs/file-storage/using-files/))
-- Sync folders, empty ones included, with their modes, in every direction of `knot file sync` and with `knot file copy -r`, as folder markers in the form the NFS server uses; a `chmod` of a folder is synced, and `--delete` removes folders as well as files ([docs](../docs/file-storage/using-files/#folders))
-- Give a new file written without a mode, from the web interface, a script or an S3 client, mode 0644, and a folder 0755, so it shows the same mode however it is reached ([docs](../docs/file-storage/using-files/))
-- Watch large directories on macOS with FSEvents in `knot file sync --watch`: one stream for the whole tree, with no limit on files or folders ([docs](../docs/file-storage/using-files/#large-directories))
-- Document how writes from several places at once behave, and test two clustered servers under sustained writes from many writers, over the API and NFS ([docs](../docs/file-storage/operations/#writing-from-several-places-at-once))
-- Add an optional `timeout`, in seconds, to the `knot.apiclient` requests, for calls that wait on a space ([docs](../reference/libraries/apiclient/#functions))
-- Keep the checksums of local files between runs of `knot file sync`, so a sync of a large tree that has not changed reads no files ([docs](../docs/file-storage/using-files/#large-directories))
+- Deliver custom events to other users' shared methods that subscribe to them, when the sender may call the method ([docs](../reference/events/json-rpc-sinks/#scope))
+- Keep file modes, symbolic links and folders, empty ones included, through `knot file copy -r` and `sync`, matching what the NFS server and rclone `--metadata` show ([docs](../docs/file-storage/using-files/))
+- Make `knot file sync` fast on large trees: 180,000 files sync in under a minute, an unchanged tree reads no files, and `--watch` on macOS has no limit on folders ([docs](../docs/file-storage/using-files/#large-directories))
+- Add an optional `timeout` to the `knot.apiclient` requests ([docs](../reference/libraries/apiclient/#functions))
+- Document how writes from several places at once behave ([docs](../docs/file-storage/operations/#writing-from-several-places-at-once))
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
-- Fix a refused `knot methods register` removing the methods a space was already serving: the running method server now keeps serving until the new registration is accepted
-- Fix re-registering methods sometimes dropping the new registration as the replaced method server exited
-- Fix replacing a file from the web interface, a script or `knot file copy` wiping the mode set on it over NFS
-- Fix `knot file sync` and `copy -r` leaving out symbolic links without a word, and downloading a link made over NFS as a file holding its target
-- Fix `knot file sync --watch` walking the whole directory each time a folder appeared or was removed, and warning for each folder it could not watch: it now says once how many, why, and what to raise
-- Fix `knot admin file restore` restoring files with the time they were last written rather than their own modification time, and without their mode
-- Fix `rclone copy --metadata` failing to download files whose mode was set over NFS {{< pro-badge >}}
-- Fix commands run in a space through the API (`POST /api/spaces/{id}/run-command`) failing with "Failed to read response from agent" after 5 seconds, and the API client giving up after its own timeout, whatever timeout the command was given
-- Fix copying a file between spaces, reading, writing, searching and editing files in a space, and running a script in a space through the API failing after 5 seconds when the space took longer to answer, and the API client and `knot.*` libraries giving up after their own short timeouts: they now wait as long as the work may take
-- Fix starting, listing and stopping port forwards and tunnels failing when a busy space took more than 5 seconds to answer
-- Fix a space failing to register, or to register its methods, when a busy server database took more than 5 seconds to answer
-- Fix a folder made over NFSv4 with a mode, such as `mkdir -m 0700`, getting the default mode
-- Fix writes to a bucket failing with "Transaction Conflict" when many files with the same content, such as empty files or folders, were written at once
-- Fix file storage on a server stopping altogether when a file larger than 64 KB was written while content no longer used was waiting to be removed, as overwriting files from several places at once soon brings about
-- Fix NFS clients getting "stale file handle" for a folder made at the same moment by another client or on another server
-- Fix every process using an NFS mount on macOS hanging, until the mount was forced off, after a locked file was removed while open, as the `._` files macOS keeps beside new folders soon are when many processes make folders at once
-- Fix NFSv4 mounts on macOS hanging after `knot nfs-server` restarted while files were open: clients now take back their open files and locks ([docs](../docs/file-storage/nfs/#limits))
-- Fix a file being written over NFS failing with "stale NFS file handle" when another server's version of it arrived meanwhile: the write goes on, the last write winning
-- Fix a first `knot file sync` of a large tree slowing down with every file it sent: 180,000 files now take under a minute rather than several
+- Fix NFS mounts, especially on macOS, hanging or reporting "stale file handle" when many processes or servers wrote at once, or after `knot nfs-server` restarted
+- Fix file storage failing or stopping under many writes at once
+- Fix file modes being lost or wrong when files were replaced, restored or downloaded, from the web interface, scripts, S3 or `knot admin file restore`
+- Fix commands, file operations, scripts, port forwards and tunnels in a busy space failing after 5 seconds
+- Fix re-registering methods sometimes dropping the methods a space was serving
 {{< /changelog-item >}}
 
 ---
