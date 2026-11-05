@@ -17,6 +17,7 @@ navSection: docs
 - **Breaking:** refuse to register a `private` method that lists `groups`, which were ignored; a method that lists `groups` without a `scope` is now `shared` ([docs](../docs/spaces/methods/#visibility))
 - **Breaking:** store file modes in the octal form rclone uses. After upgrading, run `knot admin file fsck --repair` once, on one server, to rewrite the modes stored before ([docs](../docs/file-storage/operations/))
 - Make the caller of `POST /api/spaces/{id}/emit-event` the event's actor, not the space owner ([docs](../reference/events/webhook-sinks/#actor))
+- Speed up authenticated API requests, and document parallel checkout for faster git over NFS ([docs](../docs/file-storage/nfs/#speed))
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
@@ -24,6 +25,7 @@ navSection: docs
 - Keep file modes, symbolic links and empty folders through `knot file copy -r` and `sync` ([docs](../docs/file-storage/using-files/))
 - Make `knot file sync` much faster on large trees, resume interrupted uploads, and add `--hash-file` to choose where checksums are kept ([docs](../docs/file-storage/using-files/#large-directories))
 - Encrypt file content in backups made with `--encrypt-key`, not only the records ([docs](../docs/best-practices/backup-restore/#encrypted-backups))
+- Add `server.files.no_sync` to report file storage writes done without forcing them to disk, for drives without power-loss protection ([docs](../docs/file-storage/#enabling-file-storage))
 - Add an optional `timeout` to `knot.apiclient` requests ([docs](../reference/libraries/apiclient/#functions))
 {{< /changelog-item >}}
 

@@ -202,6 +202,20 @@ Use NFSv4 unless a client only speaks NFSv3. On Linux, an `flock` on an NFS moun
 
 ---
 
+## Speed
+
+Each file written over NFS is saved to the knot server, which makes it durable on disk before answering, so a file costs a few milliseconds where a local disk takes microseconds. Writing files one after another, as `git clone` and `git checkout` do by default, adds that up: a clone of a repository of 1,600 files takes about 9 seconds onto a mount against under half a second onto a local disk. Writing several at once overlaps the waits. For git, let checkout use a worker per CPU:
+
+```shell
+git config --global checkout.workers 0
+```
+
+which brings the same clone to under 4 seconds. Set it in a space's image, or in your own configuration, for repositories worked on over NFS.
+
+On a server whose drive has no power-loss protection, most of each file's cost is the flush to disk; [`no_sync`](/docs/file-storage/#enabling-file-storage) skips it, taking about a fifth off, at the cost of the last writes if the machine loses power.
+
+---
+
 ## Limits
 
 - **The last save wins.** Two clients of the same `knot nfs-server` share what is being written; through two different `knot nfs-server`s, or with another writer such as the web interface, a file changed in both places keeps whichever was saved last.

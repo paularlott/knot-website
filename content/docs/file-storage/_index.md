@@ -159,6 +159,7 @@ File storage is off until a storage directory is set. Set it on each server that
 path = "/var/lib/knot/files"
 # default_quota_mb = 0    # quota only for users with no user or group limit, 0 = unlimited
 # default_max_buckets = 0 # bucket limit only for users with no user or group limit, 0 = unlimited
+# no_sync = false         # don't force writes to disk before reporting them done; see below
 ```
 
 | Setting | Flag / environment | Meaning |
@@ -166,8 +167,11 @@ path = "/var/lib/knot/files"
 | `path` | `--files-path` / `KNOT_FILES_PATH` | Storage directory. File storage, and on Knot Pro the S3 endpoint, are off when it is not set; remove it to turn them off. |
 | `default_quota_mb` | `--files-default-quota-mb` / `KNOT_FILES_DEFAULT_QUOTA_MB` | Quota, in MB, used only for users whose own and group limits are all 0; any non-zero user or group value replaces it. Default `0` (unlimited). |
 | `default_max_buckets` | `--files-default-max-buckets` / `KNOT_FILES_DEFAULT_MAX_BUCKETS` | How many buckets a user may own, used only when their own and group limits are all 0; any non-zero user or group value replaces it. Default `0` (unlimited). |
+| `no_sync` | `--files-no-sync` / `KNOT_FILES_NO_SYNC` | Report writes done without forcing them to disk first. Default `false`. |
 
-Every write is forced to disk before it is reported done, so a write that was reported successful survives a crash or power loss. Writes arriving together share one flush, so on fast drives such as NVMe the cost is small.
+Every write is forced to disk before it is reported done, so a write that was reported successful survives a crash or power loss. Writes arriving together share one flush. On drives with power-loss protection, as server and datacenter SSDs have, a flush costs tens of microseconds and there is nothing to gain by skipping it. On drives without it, as most desktop and laptop drives are, a flush takes around a millisecond, which adds up when files are written one after another: a `git clone` of 1,600 files over [NFS](/docs/file-storage/nfs/#speed) takes about a fifth less time with `no_sync`.
+
+With `no_sync`, a crash or restart of the knot server still loses nothing, as the system holds what was written; a crash of the machine itself or a power cut can lose the last writes that were reported done, and can leave a file's record without its content, which [`knot admin file fsck`](/docs/file-storage/operations/#checking-and-repairing) reports. In a cluster, another server that already had those writes gives them back. The server logs a warning at start when it is set. Use it where the speed matters more than the last moments of writes, such as a development server on a desktop machine.
 
 The directory holds an embedded database with the bucket and file metadata and the content of files up to 64 KB, a folder of files for larger content, and in-progress multipart uploads; give it room for every user's files. Keeping small files beside their metadata makes millions of small files cheap: the server starts within moments however many there are, and its memory use doesn't grow with their number. Servers without file storage answer file requests with `503 file storage is not enabled on this server` and don't serve `/s3`.
 
