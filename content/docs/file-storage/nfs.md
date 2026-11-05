@@ -173,21 +173,17 @@ A Docker or Podman template can mount a bucket into each space by defining an NF
 
 Files show the owner and group stored on them by a `chown` (for example by `rsync -a` run as root), and otherwise the user and group running `knot nfs-server`, so on your own machine your files are yours. `--uid` and `--gid` make every file show as owned by the user and group given, whatever is stored: use `--uid 0 --gid 0` for containers that run as root, where tools such as git refuse folders owned by another user.
 
-Symbolic links are stored as links that `knot file copy` and `sync` copy as links too. Modes and modification times are stored on the files and kept when they move, and `knot file copy`, `sync` and rclone with `--metadata` record and restore the same ones, so a script copied into a bucket from your machine is executable over NFS and the other way round; folders keep theirs on the marker object that holds an empty folder. A symbolic link has no mode of its own and shows as `0777`, as on Linux; on macOS, where links do have one, `rsync -a` sets it again on each run, which changes nothing. What a client may do is decided by the user `knot nfs-server` acts as, not by the modes: a bucket shared read-only is read-only over NFS whatever its files' modes say.
+Modes, modification times and symbolic links are stored with the files and kept by `knot file copy`, `sync` and rclone with `--metadata`, so a script copied into a bucket stays executable over NFS. Access is still decided by the user `knot nfs-server` acts as, not by the modes: a bucket shared read-only is read-only over NFS.
 
 ---
 
 ## How files are saved
 
-NFS writes a file a piece at a time; file storage keeps whole files. `knot nfs-server` holds what is written and saves the file when the client closes or syncs it, as clients do at `close()` and `fsync()`. A file written without either is saved once writes to it stop for a moment. A save that fails for a reason that may pass, such as the knot server being unreachable, is retried until it succeeds; one the server refuses, such as over quota, is reported to the client on its next write or sync.
+NFS writes a file a piece at a time, but file storage keeps whole files. So `knot nfs-server` holds what is written and saves the file when the client closes or syncs it (`close()` or `fsync()`), or shortly after writes stop. As on a local disk, what is saved survives a crash, and what is still being written may not. If the knot server is unreachable, saves are retried until it is back. If the server refuses a save, for example because you are over quota, the client sees an error.
 
-What a client has saved, at `fsync()` or `close()`, is kept if `knot nfs-server` or the knot server then crashes. What it has written and not yet saved can be lost with `knot nfs-server`, as a local file's can in a crash before `fsync()`, and the client's `fsync()` or `close()` then reports an error. A file emptied and not written to, such as with `: > file`, is saved once synced or after 30 seconds, not as soon as writes stop: clients empty a file as they open it to write it afresh, and others would read it empty until the new content arrived. A `knot nfs-server` started while the knot server is unreachable waits for it.
+Large files (over 8 MiB) send only the parts that changed, so appending to a log is cheap. With `--cache-dir`, files are kept on local disk so reading them again doesn't fetch them again.
 
-A change to a large file (over 8 MiB) is sent as just the bytes that changed, not the whole file, so appending to a log or editing part of a large file costs what the change does.
-
-With `--cache-dir`, files read or written are kept on local disk by their content's checksum, so reading a file again, or changing it again, needs nothing from the knot server but its description. A kept file is never stale: a file that changes elsewhere has another checksum.
-
-Changes made elsewhere, through the web interface, the `knot file` commands, S3 or another `knot nfs-server`, reach the server at once through the knot server's change events, and show on the mount within a moment.
+Changes made elsewhere, through the web interface, `knot file`, S3 or another `knot nfs-server`, show on the mount within a moment.
 
 ---
 
@@ -220,9 +216,9 @@ On a server whose drive has no power-loss protection, most of each file's cost i
 
 ## Limits
 
-- **The last save wins.** Two clients of the same `knot nfs-server` share what is being written; through two different `knot nfs-server`s, or with another writer such as the web interface, a file changed in both places keeps whichever was saved last. A large file (over 8 MiB) changed in place is the exception within one knot server: changes to different parts of it, through any of its `knot nfs-server`s, are all kept, and the file then gets a new modification time, so every client sees it changed. Through two servers of a cluster at once, the version saved last wins whole, and while the file keeps changing on both a client's `close()` can report an I/O error: the save is waiting for the other server's version to arrive. `knot nfs-server` keeps the change and saves it once the file is still.
-- **A file replaced as it is read can read as part of each version.** A client takes a file's size when it opens it and reads a large file in several requests; if a new version is saved meanwhile, it can get the new bytes cut to the old size, or followed by zeros, or the start of one version and the rest of the next; renamed over by another client as it is read, it can fail with "stale file handle", as with any NFS server. Otherwise a reader sees one whole saved version, unless it is a client of the same `knot nfs-server` as the writer, which sees the file as it is being written, as on a local disk. This is no more than NFS promises for a file rewritten in place, but here replacing a file by renaming another over it does not shield a reader either. Where readers must only see whole files that others replace, write each version under a new name, or read with `knot file` or the API, which always return a whole version.
-- **Locks are kept by each `knot nfs-server`**, so they don't hold against clients of another, or against other ways of changing files. When a `knot nfs-server` restarts, NFSv4 clients take back the files they had open and their locks, unless another client locked the same range first.
+- **The last save wins.** A file changed through two different `knot nfs-server`s, or through NFS and the web interface, keeps whichever version was saved last.
+- **Readers may see a file mid-replacement.** A file replaced while it is being read can read as a mix of the old and new versions. Where readers must see only whole files, write each version under a new name, or read with `knot file` or the API.
+- **Locks are kept by each `knot nfs-server`**, so they don't hold against clients of another one, or against other ways of changing files.
 - **No hard links**, device files or sockets; symbolic links are supported.
-- **Renaming a folder copies each file** to its new name and then removes the old, so it is not atomic, and takes time for a folder with many files.
-- **Storage suits the same files as file storage does**: configuration, scripts, documents and artifacts, not databases or busy git working trees shared between machines.
+- **Renaming a folder copies each file**, so it is not atomic and takes time for large folders.
+- **Best for** configuration, scripts, documents and build artifacts, not databases or busy git working trees shared between machines.
