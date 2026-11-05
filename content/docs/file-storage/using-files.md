@@ -122,7 +122,7 @@ knot file sync --two-way --watch --delete ./notes notes:  # deletions are passed
 - **Deletions.** Without `--delete` a file deleted on one side is put back from the other. With it the deletion is made on the other side, unless the file was changed there since, in which case the change wins and the file comes back.
 - **Links.** Symbolic links are synced as links in both directions; a link and a file of the same name are different files.
 - **Modes.** A mode changed on one side is set on the other. Changed on both sides since they last matched, this side's wins; with no earlier sync to go by, the bucket's.
-- **State.** The sync remembers what the two sides last agreed on, so it can tell a deletion from a new file. The state is kept in your configuration directory (`~/.config/knot/sync` on Linux, `~/Library/Application Support/knot/sync` on macOS), or where `--state-file` says (it applies to `--two-way` only; a one-way sync keeps no state). The first run of a pair, with no state, deletes nothing: files on one side only are copied to the other and files that differ are kept both ways.
+- **State.** The sync remembers what the two sides last agreed on, so it can tell a deletion from a new file. The state is kept in the [sync folder](#where-the-sync-keeps-its-files), or where `--state-file` says (it applies to `--two-way` only; a one-way sync keeps no state). The first run of a pair, with no state, deletes nothing: files on one side only are copied to the other and files that differ are kept both ways.
 
 #### Folders
 
@@ -132,7 +132,11 @@ A folder with no marker, from an S3 client or a sync by knot before 0.42, is the
 
 #### Large directories
 
-A sync reads a file for its checksum only when its size or modification time has changed: the checksums are kept between runs in your configuration directory, so a second sync of a large tree that has not changed takes seconds, without reading the files again.
+A sync reads a file for its checksum only when it has changed since it was last read: the checksums are kept between runs in the [sync folder](#where-the-sync-keeps-its-files), so a second sync of a large tree that has not changed takes seconds, without reading the files again. A file counts as changed when its size, its modification time, or, on macOS and Linux, its inode number or change time differs, so an edit made by a tool that puts the modification time back (`cp -p`, `tar x`, `rsync -t`, `touch -r`) is still noticed. On Windows only size and modification time are compared, as `rsync` does by default. Give `--hash-file` to keep the checksums somewhere else, such as beside the directory: `knot file sync ~/notes notes: --hash-file ~/.notes-hashes`. A checksum file inside the directory being synced is never synced itself.
+
+**Large files** of 256 MiB or more are sent in parts of 64 MiB, by `copy` and `sync` alike. An upload stopped part way, by a lost connection or an interrupted command, carries on from the parts already sent the next time it is run, as long as the file hasn't changed meanwhile; each part the server holds is checked against the local file before it is used. The server keeps the parts of an unfinished upload for a week. Parts are held by the server that received them, so an upload carries on only through the same server.
+
+**Stalled transfers.** A transfer of file content, either way, is given up after two minutes without any data moving, rather than waiting on the network to notice a dead connection; there is no limit on how long a transfer takes in all, so a large file is never cut off part way. A `--watch` sync carries on and tries again on its next pass.
 
 While watching, local changes are seen as they are made, however large the tree:
 
@@ -147,6 +151,26 @@ While watching, local changes are seen as they are made, however large the tree:
 - **Windows** watches each folder, with no low limit.
 
 A folder that appears, from a move, an unpack or a package install, is looked at on its own, not by walking the whole tree.
+
+#### Where the sync keeps its files
+
+The sync keeps a few files of its own in the **sync folder** of your configuration directory:
+
+| System | Sync folder |
+|---|---|
+| Linux | `~/.config/knot/sync` (or `$XDG_CONFIG_HOME/knot/sync`) |
+| macOS | `~/Library/Application Support/knot/sync` |
+| Windows | `%AppData%\knot\sync` |
+
+| File | Holds | Removed when |
+|---|---|---|
+| `hashes-<id>.bin` | the checksums of a local directory's files, one per directory (`--hash-file` moves it) | unused for 90 days |
+| `state-<id>.bin` | the state of a two-way sync, one per directory and bucket folder (`--state-file` moves it) | unused for 90 days |
+| `upload-<id>.json` | where an unfinished upload in parts got to | the upload completes, or after 7 days, when the server has let its parts go |
+
+The checksums and the two-way state hold an entry for every file synced, which for a large tree is tens of megabytes, so they aren't written out whole each time: a change appends a record of a few dozen bytes for each file it touched. Once the records replaced by later ones outweigh the rest, the file is written afresh, so it never grows much past twice what it holds. Each record carries its own checksum. A file damaged, or cut short by a crash, keeps the records before the damage: for the files after it, a lost checksum means the file is read once more, and a lost two-way state entry means that file is synced as on a first run. The sync says when a state was damaged, and writes it afresh. The sync doesn't force each change to disk, which would make every pass wait on the drive: a power cut can lose the last changes, which costs no more than damage does. A file named with `--hash-file` or `--state-file` that isn't one of these is left alone and the sync refused, rather than overwritten.
+
+Every sync marks the files it uses, and removes from the sync folder those unused for that long, so a directory you no longer sync doesn't leave its checksums behind for good. All of them can be deleted by hand at any time, for example to free the space or start afresh, as long as no sync is running: without the checksums the next sync reads each file once more, without a two-way state it is a first run, which deletes nothing, and without an upload record a large file is sent again from the start. Files kept elsewhere with `--hash-file` or `--state-file` are yours to remove; they are not swept.
 
 #### What is left out
 

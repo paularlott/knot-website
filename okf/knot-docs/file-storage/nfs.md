@@ -180,7 +180,7 @@ A Docker or Podman template can mount a bucket into each space by defining an NF
 
 Files show the owner and group stored on them by a `chown` (for example by `rsync -a` run as root), and otherwise the user and group running `knot nfs-server`, so on your own machine your files are yours. `--uid` and `--gid` make every file show as owned by the user and group given, whatever is stored: use `--uid 0 --gid 0` for containers that run as root, where tools such as git refuse folders owned by another user.
 
-Symbolic links are stored as links that `knot file copy` and `sync` copy as links too. Modes and modification times are stored on the files and kept when they move, and `knot file copy`, `sync` and rclone with `--metadata` record and restore the same ones, so a script copied into a bucket from your machine is executable over NFS and the other way round; folders keep theirs on the marker object that holds an empty folder. What a client may do is decided by the user `knot nfs-server` acts as, not by the modes: a bucket shared read-only is read-only over NFS whatever its files' modes say.
+Symbolic links are stored as links that `knot file copy` and `sync` copy as links too. Modes and modification times are stored on the files and kept when they move, and `knot file copy`, `sync` and rclone with `--metadata` record and restore the same ones, so a script copied into a bucket from your machine is executable over NFS and the other way round; folders keep theirs on the marker object that holds an empty folder. A symbolic link has no mode of its own and shows as `0777`, as on Linux; on macOS, where links do have one, `rsync -a` sets it again on each run, which changes nothing. What a client may do is decided by the user `knot nfs-server` acts as, not by the modes: a bucket shared read-only is read-only over NFS whatever its files' modes say.
 
 ---
 
@@ -205,7 +205,7 @@ Changes made elsewhere, through the web interface, the `knot file` commands, S3 
 | Mount a single bucket or folder | yes, by path | yes, by path |
 | macOS | preferred | supported |
 
-Use NFSv4 unless a client only speaks NFSv3.
+Use NFSv4 unless a client only speaks NFSv3. On Linux, an `flock` on an NFS mount is taken as an `fcntl` lock on the whole file, so an exclusive one needs the file open for writing.
 
 ---
 

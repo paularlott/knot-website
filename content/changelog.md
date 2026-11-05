@@ -16,23 +16,23 @@ navSection: docs
 {{< changelog-item "changed" >}}
 - **Breaking:** refuse to register a `private` method that lists `groups`, which were ignored; a method that lists `groups` without a `scope` is now `shared` ([docs](../docs/spaces/methods/#visibility))
 - **Breaking:** store file modes in the octal form rclone uses. After upgrading, run `knot admin file fsck --repair` once, on one server, to rewrite the modes stored before ([docs](../docs/file-storage/operations/))
-- Make the user who calls `POST /api/spaces/{id}/emit-event` the event's actor, rather than the space owner ([docs](../reference/events/webhook-sinks/#actor))
+- Make the caller of `POST /api/spaces/{id}/emit-event` the event's actor, not the space owner ([docs](../reference/events/webhook-sinks/#actor))
 {{< /changelog-item >}}
 
 {{< changelog-item "added" >}}
-- Deliver custom events to other users' shared methods that subscribe to them, when the sender may call the method ([docs](../reference/events/json-rpc-sinks/#scope))
-- Keep file modes, symbolic links and folders, empty ones included, through `knot file copy -r` and `sync`, matching what the NFS server and rclone `--metadata` show ([docs](../docs/file-storage/using-files/))
-- Make `knot file sync` fast on large trees: 180,000 files sync in under a minute, an unchanged tree reads no files, and `--watch` on macOS has no limit on folders ([docs](../docs/file-storage/using-files/#large-directories))
-- Add an optional `timeout` to the `knot.apiclient` requests ([docs](../reference/libraries/apiclient/#functions))
-- Document how writes from several places at once behave ([docs](../docs/file-storage/operations/#writing-from-several-places-at-once))
+- Deliver custom events to other users' shared methods that subscribe to them ([docs](../reference/events/json-rpc-sinks/#scope))
+- Keep file modes, symbolic links and empty folders through `knot file copy -r` and `sync` ([docs](../docs/file-storage/using-files/))
+- Make `knot file sync` much faster on large trees, resume interrupted uploads, and add `--hash-file` to choose where checksums are kept ([docs](../docs/file-storage/using-files/#large-directories))
+- Encrypt file content in backups made with `--encrypt-key`, not only the records ([docs](../docs/best-practices/backup-restore/#encrypted-backups))
+- Add an optional `timeout` to `knot.apiclient` requests ([docs](../reference/libraries/apiclient/#functions))
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
-- Fix NFS mounts, especially on macOS, hanging or reporting "stale file handle" when many processes or servers wrote at once, or after `knot nfs-server` restarted
-- Fix file storage failing or stopping under many writes at once
-- Fix file modes being lost or wrong when files were replaced, restored or downloaded, from the web interface, scripts, S3 or `knot admin file restore`
-- Fix commands, file operations, scripts, port forwards and tunnels in a busy space failing after 5 seconds
-- Fix re-registering methods sometimes dropping the methods a space was serving
+- Fix NFS mounts hanging or reporting "stale file handle", especially on macOS
+- Fix file storage failing under heavy concurrent writes, and file modes being lost when files were replaced, restored or downloaded
+- Fix `knot file sync` missing some edits and waiting indefinitely on stalled transfers
+- Fix operations in a busy space failing after 5 seconds
+- Fix re-registering methods sometimes dropping a space's methods
 {{< /changelog-item >}}
 
 ---

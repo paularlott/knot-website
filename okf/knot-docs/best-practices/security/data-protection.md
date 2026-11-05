@@ -93,7 +93,7 @@ knot admin backup --encrypt-key "$KNOT_BACKUP_KEY" /backups/knot-20261007
 
 **Backup best practices**:
 - Always encrypt backups
-- Encryption covers the records (users, password hashes, API tokens and the rest), not file storage content, which is kept as it is: protect the whole folder
+- Encryption covers the records (users, password hashes, API tokens and the rest) and file storage content, under names that don't give away what it is; only sizes and counts show. Without the key nothing can be restored
 - Run backups as a dedicated user holding only the **Backup Server** permission, with an [API token](../../api-tokens.md) scoped to **Backup**
 - Store backups in secure location
 - Restrict access to backup files

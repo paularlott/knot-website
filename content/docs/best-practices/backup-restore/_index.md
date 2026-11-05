@@ -60,7 +60,7 @@ The backup goes into a folder, which must be new, empty or hold an earlier backu
 ├── file-buckets.jsonl
 ├── file-objects.jsonl
 ├── ...
-└── content/aa/bb/<sha256>   file content, by checksum
+└── content/aa/bb/<name>     file content, by checksum (encrypted: by a keyed hash of it)
 ```
 
 The records are JSON lines, streamed from the server and written as they arrive, so a backup of any size needs little memory. File content is stored once however many files share it. A folder without a `manifest.json` is an unfinished backup. The end of each stream carries a count, so a stream cut short, even through a proxy, fails the backup instead of being kept.
@@ -114,13 +114,18 @@ spaces = true
 
 ### Encrypted Backups
 
-The records include password hashes and API tokens. Pass a 32-byte key with `--encrypt-key` (`-e`) or `KNOT_BACKUP_ENCRYPT_KEY` to encrypt them, in blocks so a large backup is still read a block at a time. Store the key securely: it is required to restore, and to list or restore files. `knot admin restore`, `knot admin file ls`, `knot admin file restore` and `knot admin file fsck --from-backup` take the same key with `--encrypt-key` (`-e`) or `KNOT_RESTORE_ENCRYPT_KEY`.
+The records include password hashes and API tokens, and the file content whatever your users store. Pass a 32-byte key with `--encrypt-key` (`-e`) or `KNOT_BACKUP_ENCRYPT_KEY` to encrypt the backup:
+
+- **The records** are encrypted in blocks, so a large backup is still read a block at a time.
+- **File content** is encrypted with AES-256-GCM in 64 KiB chunks, each checked on its own, so a file damaged, cut short or with its chunks reordered fails to restore rather than restoring wrong. Each content file is named by a keyed hash of its checksum rather than the checksum, so the folder doesn't give away whether it holds a file someone already has. The same content encrypts the same way under the same key, so it is still stored once, and a refresh copies only what is new. Encryption adds 16 bytes per 64 KiB.
+
+Store the key securely: without it nothing in the backup can be read, neither to restore nor to list or restore files. `knot admin restore`, `knot admin file ls`, `knot admin file restore` and `knot admin file fsck --from-backup` take the same key with `--encrypt-key` (`-e`) or `KNOT_RESTORE_ENCRYPT_KEY`.
 
 ```shell
 knot admin backup --encrypt-key "$KNOT_BACKUP_KEY" /backups/knot-20261007
 ```
 
-File content is stored as it is, so protect the folder in any case.
+Backups made before knot 0.42 encrypted only the records; they restore as they always did, their content read as it is. Backing up with a key into a folder that holds content from a backup without one, or with another key, copies the content afresh under the new key; add `--prune` to remove the old copies. Protect the folder in any case: file sizes, and how many files there are, still show.
 
 ---
 
