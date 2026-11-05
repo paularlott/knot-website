@@ -181,6 +181,8 @@ Symbolic links are stored as links that `knot file copy` and `sync` copy as link
 
 NFS writes a file a piece at a time; file storage keeps whole files. `knot nfs-server` holds what is written and saves the file when the client closes or syncs it, as clients do at `close()` and `fsync()`. A file written without either is saved once writes to it stop for a moment. A save that fails for a reason that may pass, such as the knot server being unreachable, is retried until it succeeds; one the server refuses, such as over quota, is reported to the client on its next write or sync.
 
+What a client has saved, at `fsync()` or `close()`, is kept if `knot nfs-server` or the knot server then crashes. What it has written and not yet saved can be lost with `knot nfs-server`, as a local file's can in a crash before `fsync()`, and the client's `fsync()` or `close()` then reports an error. A file emptied and not written to, such as with `: > file`, is saved once synced or after 30 seconds, not as soon as writes stop: clients empty a file as they open it to write it afresh, and others would read it empty until the new content arrived. A `knot nfs-server` started while the knot server is unreachable waits for it.
+
 A change to a large file (over 8 MiB) is sent as just the bytes that changed, not the whole file, so appending to a log or editing part of a large file costs what the change does.
 
 With `--cache-dir`, files read or written are kept on local disk by their content's checksum, so reading a file again, or changing it again, needs nothing from the knot server but its description. A kept file is never stale: a file that changes elsewhere has another checksum.

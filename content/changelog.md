@@ -26,11 +26,13 @@ navSection: docs
 - Make `knot file sync` much faster on large trees, resume interrupted uploads, and add `--hash-file` to choose where checksums are kept ([docs](../docs/file-storage/using-files/#large-directories))
 - Encrypt file content in backups made with `--encrypt-key`, not only the records ([docs](../docs/best-practices/backup-restore/#encrypted-backups))
 - Add `server.files.no_sync` to report file storage writes done without forcing them to disk, for drives without power-loss protection ([docs](../docs/file-storage/#enabling-file-storage))
+- Report when each version of a file was saved, as `changed_at` and `X-Knot-Changed`, alongside its own modification time
 - Add an optional `timeout` to `knot.apiclient` requests ([docs](../reference/libraries/apiclient/#functions))
 {{< /changelog-item >}}
 
 {{< changelog-item "fixed" >}}
 - Fix NFS mounts hanging or reporting "stale file handle", especially on macOS
+- Fix `knot nfs-server` exiting when started while the knot server is unreachable, NFS writes failing with "permission denied" while a knot server restarts, and changes to a large file over NFS being dropped when another client had shortened it
 - Fix file storage failing under heavy concurrent writes, and file modes being lost when files were replaced, restored or downloaded
 - Fix `knot file sync` missing some edits and waiting indefinitely on stalled transfers
 - Fix operations in a busy space failing after 5 seconds
