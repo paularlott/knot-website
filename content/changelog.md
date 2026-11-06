@@ -29,6 +29,7 @@ navSection: docs
 - Report when each version of a file was saved, as `changed_at` and `X-Knot-Changed`, alongside its own modification time
 - Add `knot file snapshot` and `POST /api/files/snapshot`, to copy a folder on the server as it was at one moment ([docs](../docs/file-storage/using-files/#working-with-files))
 - Add sync projects, to keep folders in step with file storage from a template, a space or the desktop, so a space's code is still there after the space is deleted ([docs](../docs/file-storage/using-files/#sync-projects))
+- Add `snapshot`, `move`, `stat` and `set_attrs` to the `knot.files` script library, and `knot.files.sync` to run sync projects from scripts in a space ([docs](../reference/libraries/files/))
 - Add an optional `timeout` to `knot.apiclient` requests ([docs](../reference/libraries/apiclient/#functions))
 {{< /changelog-item >}}
 
@@ -37,6 +38,7 @@ navSection: docs
 - Fix `knot nfs-server` exiting when started while the knot server is unreachable, NFS writes failing with "permission denied" while a knot server restarts, and changes to a large file over NFS being dropped when another client had shortened it
 - Fix file storage failing under heavy concurrent writes, and file modes being lost when files were replaced, restored or downloaded
 - Fix `knot file sync` missing some edits and waiting indefinitely on stalled transfers
+- Fix some script errors in MCP tools and event sinks giving only the HTTP status, not the server's reason
 - Fix operations in a busy space failing after 5 seconds
 - Fix re-registering methods sometimes dropping a space's methods
 {{< /changelog-item >}}

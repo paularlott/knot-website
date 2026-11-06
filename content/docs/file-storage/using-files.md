@@ -223,7 +223,7 @@ Each `[[sync]]` table is a job: `local` is the directory (`~` is the home direct
 knot file sync-project run sync.toml
 ```
 
-In a space, `start` hands a project to the space's agent, which runs it in the background, and again whenever the agent starts, until it is stopped. A project of the same name is replaced, so a startup script can start its project on every start; `--wait` returns once every job has made its first pass, so what follows finds the files there:
+In a space, `start` hands a project to the space's agent, which runs it in the background, and again whenever the agent starts, until it is stopped. A project of the same name is replaced, unless it's running unchanged, when it's left running, so a startup script can start its project on every start; `--wait` returns once every job has made its first pass, so what follows finds the files there:
 
 ```shell
 knot file sync-project start --wait ~/sync.toml
@@ -231,6 +231,8 @@ knot file sync-project list              # the projects running, the template's 
 knot file sync-project status [name]     # each job: state, passes, what it moved, its last error
 knot file sync-project stop foo          # stop it and forget it; what it synced stays
 ```
+
+Scripts in a space do the same with [`knot.files.sync`](/reference/libraries/files/#knotfilessync), giving the project as a dict or as TOML.
 
 **Stopping.** Before a space is stopped, restarted or deleted, the server has its agent send the local changes its projects have not sent yet, waiting up to 30 seconds, so an edit saved just before is kept. A project stopped with `stop`, or `run` interrupted with Ctrl+C, sends them too, for up to 5 seconds. If the space's agent or the server goes down, the changes stay where they were made and are sent when both are back; a space whose container is gone loses only what changed in it while its agent was down.
 
