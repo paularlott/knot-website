@@ -62,6 +62,8 @@ knot file move configs:app/old.toml configs:app/new.toml # rename (alias: mv)
 knot file mv configs:app/new.toml configs:archive/       # move into a folder, keeping the name
 knot file mv configs:app configs:app-2026                # a folder, with everything in it
 
+knot file snapshot configs:app/ backups:app/2026-11-06/ # a folder as it is at one moment
+
 knot file cat configs:app/a.toml configs:app/b.toml   # several files to stdout, one after another
 
 knot file rm configs:app/debug.toml            # alias: delete
@@ -82,6 +84,8 @@ knot file usage                                # usage against your quota
 - **Standard input and output.** `copy - bucket:path/file` uploads stdin as one file, and `copy bucket:path/file -` writes one file to stdout.
 
 `move` (`mv`) renames or moves files and folders, with the same `bucket:path` arguments. A destination ending in `/`, or naming an existing folder, takes the sources into it and keeps their names; otherwise it is the new name, which needs a single source. Several sources and quoted wildcards (`'configs:logs/*.log'`) work as with `copy`, and a folder moves with everything below it. Within a bucket the move happens on the server and transfers no content, however large the files. Between buckets the files are copied on the server and then removed from the source, and you need write access to both. A move that would replace an existing file is refused before anything changes, unless `--overwrite` (`-f`) is given.
+
+`snapshot` copies a folder and everything below it to a new folder, in the same bucket or another, as the folder was at one moment: every file is read at once on the server, so however much is being written to the folder, the copy never holds some files older or newer than the rest, as a `copy -r` made a file at a time can. `bucket:` is the whole bucket. Like a copy between buckets it transfers no content, and the destination bucket's owner is charged for every file. The new folder must not exist; its files appear over a moment, and the snapshot is complete once its manifest, `.knot-snapshot.json`, which records where and when it was taken, is there. A snapshot that fails part way takes away what it wrote. It holds what the server holds, so writes still being saved over [NFS](nfs.md) or by a `sync` are not in it until they reach the server.
 
 `rm` takes several paths and wildcards the same way: `knot file rm 'configs:logs/*.tmp' configs:old.txt`. A folder, or `bucket:`, needs `-r`, which deletes every file below it (the bucket itself stays; see `knot file bucket delete`). A path that matches nothing deletes nothing.
 
@@ -192,3 +196,62 @@ A continual (`--watch`) or two-way sync also leaves out version control folders 
 - `--dry-run` shows what a single pass would do; it can't be combined with `--watch`.
 
 **Which server.** Inside a space the commands discover the space's server and credentials through the agent — nothing to configure, so a space startup script can pull its configuration with `knot file copy`. On the desktop they use the connection saved by `knot connect`, choosing the server with `--alias` (default `default`). An explicit `--server`/`--token` pair overrides both, as with other knot commands.
+
+### Sync projects
+
+A sync project is one or more syncs, each keeping a local directory and a bucket folder in step as `knot file sync` does, described in a TOML file and run together. Use one to keep a space's source code in a bucket, so a space can be deleted and a new one made with the code back as it was left:
+
+```toml
+name = "foo"                     # defaults to the file's name
+exclude = ["node_modules/"]      # left out of every job
+no_default_excludes = false      # true: every job syncs .git and editor scratch files too
+
+[[sync]]
+name     = "src"                 # defaults to the directory's name
+local    = "~/src/foo"
+remote   = "src:projects/foo/"
+snapshot = "src:templates/go/"   # the folder starts as a snapshot of this
+mode     = "two-way"             # two-way (default), download or upload
+watch    = true                  # keep syncing changes (default)
+delete   = true                  # pass deletions on (default)
+exclude  = [".cache/"]
+exclude_from = ".gitignore"      # more patterns, from a file in the directory
+no_default_excludes = false      # true syncs .git and editor scratch files too
+allow_mass_delete = false
+```
+
+Each `[[sync]]` table is a job: `local` is the directory (`~` is the home directory of whoever runs it), `remote` the bucket folder. A job is a `knot file sync` of the two: `two-way` as `--two-way`, `download` from the bucket folder and `upload` to it, with `watch` and `delete` on unless set `false`. `exclude` adds to the project's patterns. As with `sync`, watched and two-way jobs also leave out the [default exclusions](#what-is-left-out), version control folders such as `.git` and editor scratch files; `no_default_excludes = true`, for the whole project or one job, syncs everything the `exclude` patterns don't leave out, so a space's repository, history and branches included, comes back with it. `exclude_from` reads more patterns from a file in the directory, such as `.gitignore`, when the job starts, or from the bucket folder when the file has not come down yet; patterns starting `!`, which put files back, are skipped with a warning, and anchored ones (`/build`) match at any depth.
+
+**Starting from a snapshot.** A job with `snapshot` makes its bucket folder a [snapshot](#working-with-files) of that folder when the bucket folder does not exist yet, so each new project starts as a copy of a starter, made on the server without transferring anything. When the folder exists it is synced as it is, so the starter is never copied over work. A folder still being made by a snapshot, by another space starting at the same moment, is waited for until its manifest is there; the manifest itself is never synced into the directory. Snapshots are of a folder, so a job with `snapshot` syncs a folder, not a whole bucket.
+
+**Running a project.** On the desktop, or anywhere, `run` runs a project until Ctrl+C; jobs that don't watch run once, and it ends once they all have:
+
+```shell
+knot file sync-project run sync.toml
+```
+
+In a space, `start` hands a project to the space's agent, which runs it in the background, and again whenever the agent starts, until it is stopped. A project of the same name is replaced, so a startup script can start its project on every start; `--wait` returns once every job has made its first pass, so what follows finds the files there:
+
+```shell
+knot file sync-project start --wait ~/sync.toml
+knot file sync-project list              # the projects running, the template's among them
+knot file sync-project status [name]     # each job: state, passes, what it moved, its last error
+knot file sync-project stop foo          # stop it and forget it; what it synced stays
+```
+
+**Stopping.** Before a space is stopped, restarted or deleted, the server has its agent send the local changes its projects have not sent yet, waiting up to 30 seconds, so an edit saved just before is kept. A project stopped with `stop`, or `run` interrupted with Ctrl+C, sends them too, for up to 5 seconds. If the space's agent or the server goes down, the changes stay where they were made and are sent when both are back; a space whose container is gone loses only what changed in it while its agent was down.
+
+One job failing, its snapshot's source missing for example, leaves the rest running; a watching job that stops is started again, waiting longer each time up to a minute. A project syncing a directory another project syncs, or one inside it, is refused. The agent keeps the projects it was given in `~/.knot/sync-projects`, and syncs as the space's processes do, with the space owner's access.
+
+**In a template.** A template's volumes can hold a `sync` block, a list of jobs as above, which every space made from it runs, on every platform, KVM included. [Template variables](../templates.md) are resolved in it, so each space can have a folder of its own:
+
+```yaml
+sync:
+  - name: src
+    local: ~/src
+    remote: code:projects/${{ .space.name }}/
+    snapshot: code:templates/go/
+    exclude: [node_modules/]
+```
+
+The agent runs it as the project `template`, which runs for as long as the space does and cannot be stopped from inside it. A space deleted and made again with the same name finds its folder and gets its code back. Spaces made from a template whose spaces may not use file storage report the job as failed, saying why, in `knot file sync-project status`. The block is checked when the template is saved; values made from variables are checked when the space's agent starts.

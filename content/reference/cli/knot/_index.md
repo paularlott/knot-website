@@ -436,10 +436,16 @@ Work with [file storage](/docs/file-storage/) buckets. A bucket's files are writ
 knot file ls [bucket:[path]] [-r] [--all] [--json]
 knot file copy [-r] <source>... <destination>
 knot file mv [-f|--overwrite] <source>... <destination>
+knot file snapshot <bucket:folder> <bucket:new-folder>
 knot file cat <bucket:path>...
 knot file rm [-r] <bucket:path>...
 knot file sync <source> <destination> [--delete] [-n|--dry-run] [-w|--watch] [--two-way]
                [-x|--exclude PATTERN] [--no-default-excludes] [--allow-mass-delete] [--state-file PATH]
+knot file sync-project run <project.toml>
+knot file sync-project start [--wait] <project.toml>
+knot file sync-project stop <name>
+knot file sync-project list [--json]
+knot file sync-project status [name] [--json]
 knot file usage [--json]
 
 knot file bucket list [--all] [--json]
@@ -460,6 +466,7 @@ knot file bucket transfer <name> <user> [--force]
 - `sync` makes the destination match the source, either side being a local directory or a bucket folder, so it uploads, downloads or copies between buckets as the paths imply. It transfers only files whose size or SHA-256 differ, keeping modification times and modes, and updates just the mode of a file whose mode alone differs; `--delete` removes destination files missing from the source, `-n`/`--dry-run` shows the changes without making them. `-x`/`--exclude` leaves out paths matching a pattern such as `node_modules/` or `*.log` (a trailing `/` matches folders only; repeatable).
 - `sync -w`/`--watch` keeps running and makes each change as it happens, until interrupted. `--two-way` syncs a local directory and a bucket folder both ways: a file changed on both sides since they last matched is kept both ways, the local copy renamed `name.conflict-<host>-<time>`, and deletions pass to the other side only with `--delete` (without it a deleted file is put back from the other side). The state the two sides last agreed on is kept between runs in the user's configuration directory, or in `--state-file` (two-way only). `--watch` and `--two-way` work between a local directory and a bucket folder, not two bucket folders, and `--dry-run` can't be combined with `--watch`.
 - Watched and two-way syncs leave out version control folders (`.git`, `.hg`, `.svn`) and editor and system scratch files unless `--no-default-excludes` is given. As a guard, a pass that would delete more than half of a side's files (and more than 10), or everything because the other side is empty, is refused unless `--allow-mass-delete` is given; while watching, those deletions are held back and the rest of the changes go ahead.
+- `sync-project run` runs a [sync project](/docs/file-storage/using-files/#sync-projects), one or more syncs described in a TOML file, until interrupted. In a space, `start` hands one to the space's agent to run in the background, and again whenever the agent starts, replacing a project of the same name (`--wait` returns once every job has made its first pass); `stop` stops and forgets one, `list` lists them and `status` shows each job. A template's `sync` block runs as the project `template`, which cannot be stopped.
 - `ls` with no path lists your buckets; `--all` lists every bucket for file storage managers (users with the Manage File Storage permission). A path may be a folder (listed one level, or everything below with `-r`), a file or a wildcard.
 - `rm` takes several paths and wildcards; a folder or `bucket:` needs `-r`. It never deletes the bucket itself.
 - `bucket delete` refuses a bucket that still holds files unless `--force` is given.

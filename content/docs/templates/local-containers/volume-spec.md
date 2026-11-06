@@ -69,6 +69,19 @@ volumes:
 
 `driver` defaults to `local` when `driver_opts` is given.
 
+### **sync**
+
+A template's volumes can hold a `sync` block: a list of sync jobs that every space made from the template runs, keeping folders of the space in step with [file storage](/docs/file-storage/) buckets, so a space can be deleted and made again with its files back. See [sync projects](/docs/file-storage/using-files/#sync-projects).
+
+```yaml
+volumes:
+  cache:
+sync:
+  - local: ~/src
+    remote: code:projects/${{ .space.name }}/
+    snapshot: code:templates/go/
+```
+
 ---
 
 ## NFS Volumes

@@ -27,6 +27,8 @@ navSection: docs
 - Encrypt file content in backups made with `--encrypt-key`, not only the records ([docs](../docs/best-practices/backup-restore/#encrypted-backups))
 - Add `server.files.no_sync` to report file storage writes done without forcing them to disk, for drives without power-loss protection ([docs](../docs/file-storage/#enabling-file-storage))
 - Report when each version of a file was saved, as `changed_at` and `X-Knot-Changed`, alongside its own modification time
+- Add `knot file snapshot` and `POST /api/files/snapshot`, to copy a folder on the server as it was at one moment ([docs](../docs/file-storage/using-files/#working-with-files))
+- Add sync projects, to keep folders in step with file storage from a template, a space or the desktop, so a space's code is still there after the space is deleted ([docs](../docs/file-storage/using-files/#sync-projects))
 - Add an optional `timeout` to `knot.apiclient` requests ([docs](../reference/libraries/apiclient/#functions))
 {{< /changelog-item >}}
 
