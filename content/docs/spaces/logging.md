@@ -19,6 +19,19 @@ Once a space is running, logs can be accessed directly from the **Spaces** page:
 
 {{< zoom-picture src="/docs/quick-start/local-containers/images/logs.webp" caption="Space Log Viewer" >}}
 
+### The Agent's Own Logs
+
+The agent writes its own records to the space's log as well as to its output, which is the container's log (`docker logs`, `podman logs`), so you can see what it's doing without access to the container. Each is shown under the part of the agent it came from:
+
+| Service | What it logs |
+|---------|--------------|
+| `knot_agent` | The agent itself: connecting to the server, failures, script errors |
+| `knot_script` | What startup and shutdown scripts print, a line at a time, and what they log |
+| `knot_sync` | [Sync projects](/docs/file-storage/using-files/#sync-projects) |
+| `knot_jobs` | [Scheduled jobs](../jobs/) |
+
+The agent's [log level](/docs/configuration/logging/) (`--log-level`, `KNOT_LOGLEVEL`) sets which of its records reach the container's log, and which `knot_agent` records reach the space's log. Records the agent writes while it isn't connected to the server are held and sent when it connects again.
+
 ---
 
 ## Sending Logs

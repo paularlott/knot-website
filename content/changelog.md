@@ -41,6 +41,7 @@ navSection: docs
 - Fix `knot file sync` missing some edits and waiting indefinitely on stalled transfers
 - Fix some script errors in MCP tools and event sinks giving only the HTTP status, not the server's reason
 - Refuse a tunnel whose address would be too long for DNS, saying how long its name may be, rather than starting one that can't be reached
+- Fix a space's agent logging only to the container's log, and startup and shutdown scripts' output being lost: both now reach the container's log and the space's log ([docs](../docs/spaces/logging/#the-agents-own-logs))
 - Fix the web ports of spaces with long names not resolving: an address longer than DNS allows now has the space name shortened, with a hash ([docs](../docs/troubleshooting/dns/#a-space-with-a-long-name-doesnt-resolve))
 - Fix operations in a busy space failing after 5 seconds
 - Fix re-registering methods sometimes dropping a space's methods
