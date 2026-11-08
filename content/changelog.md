@@ -45,6 +45,7 @@ navSection: docs
 - Fix the web ports of spaces with long names not resolving: an address longer than DNS allows now has the space name shortened, with a hash ([docs](../docs/troubleshooting/dns/#a-space-with-a-long-name-doesnt-resolve))
 - Fix operations in a busy space failing after 5 seconds
 - Fix re-registering methods sometimes dropping a space's methods
+- Fix shell history being lost when a web terminal is closed or an SSH connection drops
 {{< /changelog-item >}}
 
 ---
