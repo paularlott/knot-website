@@ -13,6 +13,14 @@ navSection: docs
 
 {{< version "v0.42.0" >}}
 
+{{< changelog-item "fixed" >}}
+- Closed dependabot security alerts
+{{< /changelog-item >}}
+
+---
+
+{{< version "v0.42.0" >}}
+
 {{< changelog-item "changed" >}}
 - **Breaking:** refuse to register a `private` method that lists `groups`, which were ignored; a method that lists `groups` without a `scope` is now `shared` ([docs](../docs/spaces/methods/#visibility))
 - **Breaking:** store file modes in the octal form rclone uses. After upgrading, run `knot admin file fsck --repair` once, on one server, to rewrite the modes stored before ([docs](../docs/file-storage/operations/))
