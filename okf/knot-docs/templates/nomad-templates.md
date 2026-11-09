@@ -155,6 +155,8 @@ Templates can define one or more volumes or managed host paths. These storage re
 Deleting a space will destroy its volumes and all data stored on them.
 
 
+To keep a space's files beyond the space, add a `sync` block to the volumes: jobs that sync folders of the space with [file storage](../file-storage.md) buckets, which a new space gets back. See [sync projects](../file-storage/using-files.md#sync-projects).
+
 #### Example CSI Volume Definition
 
 Below is an example YAML configuration for defining CSI volumes:

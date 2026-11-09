@@ -21,7 +21,7 @@ Knot tunnels allow HTTP and HTTPS services running on a local workstation or wit
 
 Tunnels require the server's tunnel listener to be configured — see [Tunnel Server Configuration](configuration/tunnel-server.md) for the `listen_tunnel` and `tunnel_domain` settings and their DNS requirements.
 
-Tunnel addresses are built as `<user>--<tunnel name>.<tunnel domain>`, for example `example--tunnel1.tunnel.knot.internal`.
+Tunnel addresses are built as `<user>--<tunnel name>.<tunnel domain>`, for example `example--tunnel1.tunnel.knot.internal`. DNS allows at most 63 characters before the first dot, so a tunnel whose `<user>--<tunnel name>` would be longer is refused, saying how long its name may be.
 
 ### Prerequisites
 

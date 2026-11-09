@@ -64,6 +64,14 @@ Get-DnsClientNrptPolicy
 
 ---
 
+## A Space With a Long Name Doesn't Resolve
+
+**Symptom**: Other spaces' web ports open, but one whose name is long gives "DNS not found" or "server not found".
+
+DNS refuses any name with more than 63 characters before the first dot, and `<user>--<space>--<port>` can pass that when the space name is long. knot shortens it: the space name is cut and ends with a hyphen and an 8-character hash. Open the port from the web interface, or take its URL from an event or `knot.server.host_label`, rather than typing the full name. A shortened address made by hand must match the name's hash exactly.
+
+---
+
 ## Wildcard Domains Not Working
 
 **Symptom**: Specific domains resolve but wildcard doesn't.

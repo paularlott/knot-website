@@ -173,19 +173,17 @@ A Docker or Podman template can mount a bucket into each space by defining an NF
 
 Files show the owner and group stored on them by a `chown` (for example by `rsync -a` run as root), and otherwise the user and group running `knot nfs-server`, so on your own machine your files are yours. `--uid` and `--gid` make every file show as owned by the user and group given, whatever is stored: use `--uid 0 --gid 0` for containers that run as root, where tools such as git refuse folders owned by another user.
 
-Modes and modification times are stored on the files and kept when they move; folders keep theirs on the marker object that holds an empty folder. What a client may do is decided by the user `knot nfs-server` acts as, not by the modes: a bucket shared read-only is read-only over NFS whatever its files' modes say.
+Modes, modification times and symbolic links are stored with the files and kept by `knot file copy`, `sync` and rclone with `--metadata`, so a script copied into a bucket stays executable over NFS. Access is still decided by the user `knot nfs-server` acts as, not by the modes: a bucket shared read-only is read-only over NFS.
 
 ---
 
 ## How files are saved
 
-NFS writes a file a piece at a time; file storage keeps whole files. `knot nfs-server` holds what is written and saves the file when the client closes or syncs it, as clients do at `close()` and `fsync()`. A file written without either is saved once writes to it stop for a moment. A save that fails for a reason that may pass, such as the knot server being unreachable, is retried until it succeeds; one the server refuses, such as over quota, is reported to the client on its next write or sync.
+NFS writes a file a piece at a time, but file storage keeps whole files. So `knot nfs-server` holds what is written and saves the file when the client closes or syncs it (`close()` or `fsync()`), or shortly after writes stop. As on a local disk, what is saved survives a crash, and what is still being written may not. If the knot server is unreachable, saves are retried until it is back. If the server refuses a save, for example because you are over quota, the client sees an error.
 
-A change to a large file (over 8 MiB) is sent as just the bytes that changed, not the whole file, so appending to a log or editing part of a large file costs what the change does.
+Large files (over 8 MiB) send only the parts that changed, so appending to a log is cheap. With `--cache-dir`, files are kept on local disk so reading them again doesn't fetch them again.
 
-With `--cache-dir`, files read or written are kept on local disk by their content's checksum, so reading a file again, or changing it again, needs nothing from the knot server but its description. A kept file is never stale: a file that changes elsewhere has another checksum.
-
-Changes made elsewhere, through the web interface, the `knot file` commands, S3 or another `knot nfs-server`, reach the server at once through the knot server's change events, and show on the mount within a moment.
+Changes made elsewhere, through the web interface, `knot file`, S3 or another `knot nfs-server`, show on the mount within a moment.
 
 ---
 
@@ -198,14 +196,29 @@ Changes made elsewhere, through the web interface, the `knot file` commands, S3 
 | Mount a single bucket or folder | yes, by path | yes, by path |
 | macOS | preferred | supported |
 
-Use NFSv4 unless a client only speaks NFSv3.
+Use NFSv4 unless a client only speaks NFSv3. On Linux, an `flock` on an NFS mount is taken as an `fcntl` lock on the whole file, so an exclusive one needs the file open for writing.
+
+---
+
+## Speed
+
+Each file written over NFS is saved to the knot server, which makes it durable on disk before answering, so a file costs a few milliseconds where a local disk takes microseconds. Writing files one after another, as `git clone` and `git checkout` do by default, adds that up: a clone of a repository of 1,600 files takes about 9 seconds onto a mount against under half a second onto a local disk. Writing several at once overlaps the waits. For git, let checkout use a worker per CPU:
+
+```shell
+git config --global checkout.workers 0
+```
+
+which brings the same clone to under 4 seconds. Set it in a space's image, or in your own configuration, for repositories worked on over NFS.
+
+On a server whose drive has no power-loss protection, most of each file's cost is the flush to disk; [`no_sync`](/docs/file-storage/#enabling-file-storage) skips it, taking about a fifth off, at the cost of the last writes if the machine loses power.
 
 ---
 
 ## Limits
 
-- **The last save wins.** Two clients of the same `knot nfs-server` share what is being written; through two different `knot nfs-server`s, or with another writer such as the web interface, a file changed in both places keeps whichever was saved last.
-- **Locks are kept by each `knot nfs-server`**, so they don't hold against clients of another, or against other ways of changing files.
+- **The last save wins.** A file changed through two different `knot nfs-server`s, or through NFS and the web interface, keeps whichever version was saved last.
+- **Readers may see a file mid-replacement.** A file replaced while it is being read can read as a mix of the old and new versions. Where readers must see only whole files, write each version under a new name, or read with `knot file` or the API.
+- **Locks are kept by each `knot nfs-server`**, so they don't hold against clients of another one, or against other ways of changing files.
 - **No hard links**, device files or sockets; symbolic links are supported.
-- **Renaming a folder copies each file** to its new name and then removes the old, so it is not atomic, and takes time for a folder with many files.
-- **Storage suits the same files as file storage does**: configuration, scripts, documents and artifacts, not databases or busy git working trees shared between machines.
+- **Renaming a folder copies each file**, so it is not atomic and takes time for large folders.
+- **Best for** configuration, scripts, documents and build artifacts, not databases or busy git working trees shared between machines.

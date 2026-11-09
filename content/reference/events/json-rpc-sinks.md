@@ -16,7 +16,7 @@ A script method subscribes to events by declaring `events` in its method definit
 
 1. **`events`** (required for subscription): declares which event patterns the method subscribes to.
 2. **`event_sinks`** (optional formatters): references named JSON-RPC sinks defined in the UI whose body templates format the event data.
-3. When an event fires, the server delivers it to matching method subscriptions on running sessions owned by the same user.
+3. When an event fires, the server delivers it to matching method subscriptions on running sessions owned by the same user, and custom events also to other users' shared methods the sender may call (see [Scope](#scope)).
 
 ### `events`
 
@@ -115,7 +115,20 @@ In this example:
 
 ## Scope
 
-Events are delivered only to sessions owned by the **same user** as the event source. Events from other users' spaces are never delivered to your methods. This filter is automatic — no configuration needed.
+A method receives every matching event owned by the **same user** as the space it runs in.
+
+A shared method (`scope = "shared"`, or one that lists `groups`) also receives **custom** events (`custom.*`) from other users, when the sender could call the method directly:
+
+- the sender has the **Use Space Methods Shared by Others** permission, and
+- if the method lists `groups`, the sender is in at least one of them.
+
+The sender is the user who raised the event: the API caller, or the space's owner for an event raised inside a space, whose processes act as the owner. Someone a space is shared with who raises an event for it through the API reaches other users' methods on their own permission and groups, not the owner's.
+
+System events (`space.*`) only ever reach their owner's methods, and `private` methods only ever receive their owner's events.
+
+When a method receives another user's event, the payload carries the event (`.event`, including its `data`) and `.actor`, but not the source space's details: `.space.name` is empty, and `.space.urls` and `.custom` are empty maps.
+
+The formatter named in `event_sinks` is always looked up among the **method owner's** JSON-RPC sinks (or global ones), whoever raised the event.
 
 ---
 
@@ -142,6 +155,38 @@ Example formatter that extracts only relevant fields for a deploy notification:
   "commit":  "${{ .event.data.commit }}"
 }
 ```
+
+---
+
+## Example: Redeploy QA Spaces After CI
+
+CI deploys a build, then every running QA space pulls it, whoever owns the space.
+
+In each QA space, typically from its template, register a method subscribed to the CI event and shared with a `CI` group (listing `groups` makes it shared):
+
+```toml
+[server]
+type = "stdio"
+command = "./bin/qa-agent"
+
+[[methods]]
+name = "qa.redeploy"
+local_name = "redeploy"
+description = "Pull and restart the app after CI deploys"
+groups = ["CI"]
+events = ["custom.ci.deployed"]
+```
+
+Create a CI user in the `CI` group with the **Use Spaces** and **Use Space Methods Shared by Others** permissions, give it an API token without scopes, and raise the event at the end of the pipeline:
+
+```bash
+curl -X POST https://knot.example.com/api/events/emit \
+  -H "Authorization: Bearer $KNOT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"type": "ci.deployed", "payload": {"version": "'"$GIT_SHA"'"}}'
+```
+
+Every running QA space's `redeploy` method is called with the version in `params.data.version`. Keep the handler idempotent: delivery is at least once, so compare the version with what is already running. A stopped space misses the event, so have the app check for the latest build when it starts too.
 
 ---
 

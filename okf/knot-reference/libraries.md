@@ -66,10 +66,11 @@ Summary of the embedded execution contexts:
 - **`knot.event`** is context-sensitive: `emit()` runs in space-side scripts, MCP tool execution, plugin handlers, and external standalone scripts; the payload/metadata accessors run only in event sink scripts, where `emit()` is not available.
 - **`knot.healthcheck`** runs in every agent-side (space) script — health check scripts, startup scripts, `knot run-script` — but not in MCP tool execution, event sink scripts or plugin handlers.
 - **`knot.secret`**  runs only inside a space — agent-side scripts, `knot run-script`, and Scriptling using Knot as a plugin in a space — reading the space owner's personal secrets through the space's agent. Everywhere else `get()` raises an error.
+- **`knot.files.sync`** runs only inside a space — startup and shutdown scripts, `knot space run-script` and `knot run-script` — starting and stopping sync projects in the space's agent. Everywhere else its functions raise an error.
 - **`knot.identity`** and **`knot.plugin`** are server-side only: MCP tool execution, event sink scripts and plugin handlers.
 - **Health check scripts** run agent-side in the space and share the full Space environment; they have no `knot.apiclient` transport, so the API libraries are not usable there.
 
-For standalone scripts running outside knot (the scriptling CLI), the Python implementations resolve over HTTP via `knot.apiclient` configuration (`knot.event.emit()` included); `knot.methods`, the `knot.event` sink accessors, `knot.healthcheck`, `knot.identity` and `knot.plugin` have no standalone form.
+For standalone scripts running outside knot (the scriptling CLI), the Python implementations resolve over HTTP via `knot.apiclient` configuration (`knot.event.emit()` included); `knot.methods`, the `knot.event` sink accessors, `knot.healthcheck`, `knot.files.sync`, `knot.identity` and `knot.plugin` have no standalone form.
 
 ---
 

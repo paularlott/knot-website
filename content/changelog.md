@@ -11,6 +11,45 @@ navSection: docs
 
 ## November 2026
 
+{{< version "v0.42.0" >}}
+
+{{< changelog-item "changed" >}}
+- **Breaking:** refuse to register a `private` method that lists `groups`, which were ignored; a method that lists `groups` without a `scope` is now `shared` ([docs](../docs/spaces/methods/#visibility))
+- **Breaking:** store file modes in the octal form rclone uses. After upgrading, run `knot admin file fsck --repair` once, on one server, to rewrite the modes stored before ([docs](../docs/file-storage/operations/))
+- Make the caller of `POST /api/spaces/{id}/emit-event` the event's actor, not the space owner ([docs](../reference/events/webhook-sinks/#actor))
+- Speed up authenticated API requests, and document parallel checkout for faster git over NFS ([docs](../docs/file-storage/nfs/#speed))
+- Limit usernames of new users to 24 characters, so spaces' web addresses and tunnel addresses fit in DNS; existing usernames are kept ([docs](../docs/access-control/users/))
+{{< /changelog-item >}}
+
+{{< changelog-item "added" >}}
+- Deliver custom events to other users' shared methods that subscribe to them ([docs](../reference/events/json-rpc-sinks/#scope))
+- Keep file modes, symbolic links and empty folders through `knot file copy -r` and `sync` ([docs](../docs/file-storage/using-files/))
+- Make `knot file sync` much faster on large trees, resume interrupted uploads, and add `--hash-file` to choose where checksums are kept ([docs](../docs/file-storage/using-files/#large-directories))
+- Encrypt file content in backups made with `--encrypt-key`, not only the records ([docs](../docs/best-practices/backup-restore/#encrypted-backups))
+- Add `server.files.no_sync` to report file storage writes done without forcing them to disk, for drives without power-loss protection ([docs](../docs/file-storage/#enabling-file-storage))
+- Report when each version of a file was saved, as `changed_at` and `X-Knot-Changed`, alongside its own modification time
+- Add `knot file snapshot` and `POST /api/files/snapshot`, to copy a folder on the server as it was at one moment ([docs](../docs/file-storage/using-files/#working-with-files))
+- Add sync projects, to keep folders in step with file storage from a template, a space or the desktop, so a space's code is still there after the space is deleted ([docs](../docs/file-storage/using-files/#sync-projects))
+- Add `snapshot`, `move`, `stat` and `set_attrs` to the `knot.files` script library, and `knot.files.sync` to run sync projects from scripts in a space ([docs](../reference/libraries/files/))
+- Add an optional `timeout` to `knot.apiclient` requests ([docs](../reference/libraries/apiclient/#functions))
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- Fix NFS mounts hanging or reporting "stale file handle", especially on macOS
+- Fix `knot nfs-server` exiting when started while the knot server is unreachable, NFS writes failing with "permission denied" while a knot server restarts, and changes to a large file over NFS being dropped when another client had shortened it
+- Fix file storage failing under heavy concurrent writes, and file modes being lost when files were replaced, restored or downloaded
+- Fix `knot file sync` missing some edits and waiting indefinitely on stalled transfers
+- Fix some script errors in MCP tools and event sinks giving only the HTTP status, not the server's reason
+- Refuse a tunnel whose address would be too long for DNS, saying how long its name may be, rather than starting one that can't be reached
+- Fix a space's agent logging only to the container's log, and startup and shutdown scripts' output being lost: both now reach the container's log and the space's log ([docs](../docs/spaces/logging/#the-agents-own-logs))
+- Fix the web ports of spaces with long names not resolving: an address longer than DNS allows now has the space name shortened, with a hash ([docs](../docs/troubleshooting/dns/#a-space-with-a-long-name-doesnt-resolve))
+- Fix operations in a busy space failing after 5 seconds
+- Fix re-registering methods sometimes dropping a space's methods
+- Fix shell history being lost when a web terminal is closed or an SSH connection drops
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.41.1" >}}
 
 {{< changelog-item "fixed" >}}
@@ -18,6 +57,8 @@ navSection: docs
 {{< /changelog-item >}}
 
 ---
+
+## October 2026
 
 {{< version "v0.41.0" >}}
 

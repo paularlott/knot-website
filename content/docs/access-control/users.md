@@ -23,7 +23,7 @@ To create a new user:
 ### User Details
 
 - **`Username`**:
-  The username to assign to the user: letters, digits, `-` and `.`, starting with a letter and ending with a letter or digit, at most 30 characters, without `--` or `..`. It can't be changed later. File storage buckets are named after it.
+  The username to assign to the user: letters, digits, `-` and `.`, starting with a letter and ending with a letter or digit, at most 24 characters, without `--` or `..`. It can't be changed later. File storage buckets, space web addresses and tunnel addresses start with it, and DNS allows only 63 characters before the first dot, so it's kept short. Users made before the limit keep their usernames.
 
 - **`Email`**:
   The user's email address, which they will use to log in.

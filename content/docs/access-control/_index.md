@@ -26,7 +26,7 @@ This three-tier system provides flexible, fine-grained access control.
 
 Users are created and managed through the web interface. Each user has:
 
-- Username (at most 30 characters, ending in a letter or digit; it can't be changed later) and password
+- Username (at most 24 characters, ending in a letter or digit; it can't be changed later) and password
 - Email address
 - SSH public key (optional)
 - SSH private key in their own profile (optional)

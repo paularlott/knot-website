@@ -134,7 +134,7 @@ See [Scripting](../../scripting/) for complete library availability.
 
 1. **Keep scripts idempotent**: Scripts should handle being run multiple times safely. Use `scriptling.provision.file` for file operations -- see [Provisioning](../provisioning/) for the recommended pattern
 2. **Handle errors gracefully**: Use try/except to catch and log errors
-3. **Log progress**: Print statements are captured in space logs
+3. **Log progress**: What a startup or shutdown script prints appears in the space's log, under `knot_script`, and in the container's log as it was printed
 4. **Use variables**: Store configuration in variables rather than hardcoding
 5. **Test thoroughly**: Test scripts manually before configuring them as startup/shutdown scripts
 

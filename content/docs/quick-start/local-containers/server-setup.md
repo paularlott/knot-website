@@ -118,7 +118,7 @@ level = "info"
 
 #### DNS Resolution
 
-To allow access to websites hosted within spaces, Knot uses a wildcard DNS. Spaces are created with URLs in the format `<user>--<space>--<port>.<wildcard_domain>`.
+To allow access to websites hosted within spaces, Knot uses a wildcard DNS. Spaces are created with URLs in the format `<user>--<space>--<port>.<wildcard_domain>`. DNS allows at most 63 characters before the first dot, so when a long space name would make it longer, knot keeps as much of the name as fits and ends it with a hyphen and an 8-character hash of the full name: the web interface, events and scripts all give that shorter address.
 
 Depending on your network setup, you may be able to point the domain names (`knot.internal` and `*.knot.internal`) to your computer's IP address. If not, you can enable the internal DNS server by adding the following to `knot.toml` and forwarding DNS requests to knot for resolution:
 

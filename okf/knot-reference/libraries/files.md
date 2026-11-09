@@ -1,5 +1,5 @@
 ---
-description: File storage from scripts — read, write, list, copy and delete files in buckets, and manage the buckets.
+description: File storage from scripts — read, write, list, copy, move and delete files in buckets, snapshot folders, manage the buckets, and run sync projects in a space.
 generated:
     by: knot-website/okf.py
 resource: https://getknot.dev/reference/libraries/files/
@@ -15,7 +15,7 @@ type: API Reference
 ---
 # knot.files
 
-The `knot.files` library works with [file storage](../../knot-docs/file-storage.md): buckets of files replicated across the cluster. Scripts can read and write files, list and copy them, and create, share and delete buckets, as the user the script runs as, with the same permissions, sharing rules and quotas as the web interface and the `knot file` commands.
+The `knot.files` library works with [file storage](../../knot-docs/file-storage.md): buckets of files replicated across the cluster. Scripts can read and write files, list and copy them, and create, share and delete buckets, as the user the script runs as, with the same permissions, sharing rules and quotas as the web interface and the `knot file` commands. In a space, [`knot.files.sync`](#knotfilessync) runs [sync projects](../../knot-docs/file-storage/using-files.md#sync-projects).
 
 Buckets are named `<owner>--<name>`. Give your own buckets by their short name; buckets shared with you need the full name. File keys use `/` to organise files into folders, and may contain spaces and any other characters — the library encodes them.
 
@@ -44,6 +44,10 @@ A script holds a file's content in memory, so one read or write is limited to 64
 | `write_file(bucket, key, data, content_type="")` | Write a file, replacing any file with that key |
 | `delete_file(bucket, key, if_match="")` | Delete a file, optionally only if unchanged |
 | `copy_file(source_bucket, source_key, dest_bucket, dest_key)` | Copy a file on the server, within or between buckets |
+| `move(bucket, source, dest, overwrite=False)` | Rename a file or folder on the server |
+| `snapshot(source_bucket, source, dest_bucket, dest)` | Copy a folder as it was at one moment |
+| `stat(bucket, key)` | Say what a path is: a file, a folder or nothing |
+| `set_attrs(bucket, key, mode=None, mtime=None)` | Change a file's permission bits or modification time |
 | `file_exists(bucket, key)` | Check whether a file exists |
 | `list_buckets(all=False)` | List the buckets you own or that are shared with you |
 | `get_bucket(name)` | Get one bucket |
@@ -66,7 +70,7 @@ List the files in a bucket.
 - `recursive` (bool, optional): If `False`, files below the next `/` after the prefix are rolled up into folders; if `True`, every file below the prefix is listed
 
 **Returns:** `dict` containing:
-- `files` (list): Dicts with `key`, `size`, `etag`, `sha256`, `content_type` and `modified_at`
+- `files` (list): [File dicts](#stat)
 - `folders` (list): Folder prefixes, each ending in `/` (empty when `recursive`)
 
 Every page of a large bucket is fetched.
@@ -83,7 +87,7 @@ List what changed in a bucket since a cursor, to follow a bucket without listing
 - `cursor` (string, optional): The cursor from the last call. Without one every file is returned; `"now"` returns no files, only a cursor to follow the bucket from now on.
 
 **Returns:** `dict` containing:
-- `changes` (list): Dicts with `key`, `size`, `etag`, `sha256`, `content_type`, `modified_at` and `deleted`. Each file changed since the cursor appears once, as it is now; a deleted file has `deleted` set and only its `key` and `modified_at`.
+- `changes` (list): [File dicts](#stat), each with `deleted` too. Each file changed since the cursor appears once, as it is now; a deleted file has `deleted` set and only its `key` and `modified_at`.
 - `cursor` (string): Pass it next time
 - `reset` (bool): `True` when the cursor couldn't be followed — the server's index was rebuilt, or the cursor came from another server. `changes` is then empty and `cursor` is `""`: start again without a cursor.
 
@@ -120,7 +124,7 @@ Write a file, replacing any file with that key. Folders need no creating.
 - `data` (string or bytes): The content; a string is written as UTF-8
 - `content_type` (string, optional): Defaults to `text/plain; charset=utf-8` for a string and `application/octet-stream` for bytes
 
-**Returns:** `dict` - The file's `key`, `size`, `etag`, `sha256`, `content_type` and `modified_at`
+**Returns:** `dict` - The [file dict](#stat)
 
 Raises if you may not write to the bucket, the owner's quota would be exceeded, or the key is invalid (empty, or with empty, `.` or `..` segments, or not valid UTF-8).
 
@@ -150,6 +154,81 @@ files.delete_file("work", "job.lock", if_match=info["etag"])
 Copy a file within a bucket or to another, on the server: its content is not transferred, so the size makes no difference. Its content type, metadata and modification time are kept, and any file at the destination is replaced. You need read access to the source and write access to the destination, and the destination bucket's owner is charged for the new file.
 
 **Returns:** `dict` - The copy's file dict. Raises if the file does not exist, access is lacking, the quota would be exceeded, or source and destination are the same file.
+
+---
+
+### move(bucket, source, dest, overwrite=False)
+
+Rename a file, or a folder and everything in it, within a bucket, on the server: no content is transferred. Every file is copied before any is deleted, so a failure part way leaves files in both places, never in neither.
+
+**Parameters:**
+- `bucket` (string): Bucket name
+- `source` (string): The file's or folder's key
+- `dest` (string): The new key
+- `overwrite` (bool, optional): Replace files already at the destination; otherwise a destination holding a file refuses the move
+
+**Returns:** `int` - The number of files moved. Raises if there's nothing at `source`, the destination holds a file, a folder would move into itself, or you may not write to the bucket.
+
+---
+
+### snapshot(source_bucket, source, dest_bucket, dest)
+
+Copy a folder, as it was at one moment, to a new folder, on the server, as [`knot file snapshot`](../../knot-docs/file-storage/using-files.md#working-with-files) does. No content is transferred, and the copy takes no more storage until it changes. Files written into the folder while the snapshot is made aren't in it. The snapshot ends with a manifest, `.knot-snapshot.json`, written last, so a folder holding it is a complete snapshot.
+
+**Parameters:**
+- `source_bucket` (string): Bucket holding the folder (read access)
+- `source` (string): The folder; `""` for the whole bucket
+- `dest_bucket` (string): Bucket to make the snapshot in (write access)
+- `dest` (string): The new folder, which must not exist
+
+**Returns:** `dict` containing `files`, `folders` (empty folders kept) and `bytes`, `taken_at` (the moment it shows), `source_bucket` (its full name), `source` and `manifest` (the manifest's key). Raises if the source doesn't exist, the destination does, access is lacking, or the owner's quota would be exceeded.
+
+```python
+import knot.files as files
+
+# A dated copy of the build output, before it is replaced
+snap = files.snapshot("builds", "latest", "builds", "archive/2026-11-06")
+print(snap["files"], "files kept")
+```
+
+---
+
+### stat(bucket, key)
+
+Say what a path is, without reading any content.
+
+**Parameters:**
+- `bucket` (string): Bucket name
+- `key` (string): The file's or folder's key; `""` for the top of the bucket
+
+**Returns:** `None` when there's nothing there, or a `dict` with `type` `"file"` or `"folder"`. A file's is the file dict the other functions return too:
+- `key`, `size`, `etag`, `sha256`, `content_type`
+- `modified_at` (string): The modification time its writer gave it
+- `changed_at` (string): When this version was saved
+- `mode` (int or None): Permission bits, such as `0o755`, or `None` when none were kept
+- `link` (bool): `True` for a symbolic link, whose content is its target
+- `meta` (dict): Its metadata, as strings
+
+A folder's has `key`, ending in `/`, and `marker`: `True` when an empty-folder marker keeps it. Raises if the bucket doesn't exist or isn't visible to you.
+
+---
+
+### set_attrs(bucket, key, mode=None, mtime=None)
+
+Change a file's permission bits or modification time, keeping its content and other metadata. These are what `knot file sync`, NFS mounts and rclone give the file when they make it locally.
+
+**Parameters:**
+- `bucket` (string): Bucket name
+- `key` (string): The file's key
+- `mode` (int, optional): Permission bits, `0` to `0o777`, such as `0o755`; a link stays a link
+- `mtime` (number or string, optional): Unix seconds, or an RFC 3339 time
+
+**Returns:** `dict` - The [file dict](#stat). Raises if the file doesn't exist, neither `mode` nor `mtime` is given, or the file changed while it was being changed (HTTP 412: try again).
+
+```python
+files.write_file("tools", "bin/deploy.sh", script)
+files.set_attrs("tools", "bin/deploy.sh", mode=0o755)
+```
 
 ---
 
@@ -214,6 +293,61 @@ Give a bucket to another user, who must be allowed to own buckets. It is renamed
 ### usage()
 
 **Returns:** `dict` containing `used_bytes`, `files` and `buckets` (what you own), and `quota_bytes` and `max_buckets` (your limits, `0` for none).
+
+---
+
+## knot.files.sync
+
+`knot.files.sync` runs [sync projects](../../knot-docs/file-storage/using-files.md#sync-projects) in the space's agent, as `knot file sync-project start` does, so a script can keep folders in step with file storage. It works in scripts that run in a space: startup and shutdown scripts, `knot space run-script` and `knot run-script`. Elsewhere every function raises. A startup script that runs as the space starts waits for the agent's sync projects to be ready.
+
+Projects started this way are kept by the agent and started again when the space restarts. Starting a project that's already running unchanged leaves it running, so a startup script can start it on every boot.
+
+| Function | Description |
+|----------|-------------|
+| `start(project, name="", wait=False, timeout=600)` | Start a sync project, or replace one of the same name |
+| `stop(name)` | Stop a sync project after sending its last local changes |
+| `list()` | The sync projects running, the template's included |
+| `status(name)` | How one sync project is doing, or `None` |
+
+### start(project, name="", wait=False, timeout=600)
+
+**Parameters:**
+- `project` (dict or string): A dict like a project file, or a project file's TOML. The dict has `name`, optionally `exclude` and `no_default_excludes`, and `sync`, a list of jobs with the keys a project file's `[[sync]]` tables take: `local`, `remote` (`bucket:folder/`), and optionally `name`, `snapshot`, `mode`, `watch`, `delete`, `exclude`, `exclude_from`, `no_default_excludes` and `allow_mass_delete`.
+- `name` (string, optional): The name of a project that gives none
+- `wait` (bool, optional): Wait for every job's first pass, raising if a job fails
+- `timeout` (number, optional): How many seconds to wait, 600 by default. The project carries on after a timeout.
+
+**Returns:** `dict` - The project's status, as `status` gives it. Raises if the project isn't valid, a job's folder overlaps another project's, or the name is `template`.
+
+### stop(name)
+
+Stop a sync project, sending its last local changes first, and forget it. The template's project can't be stopped.
+
+**Returns:** `bool` - `True`. Raises if no project of that name runs.
+
+### list()
+
+**Returns:** `list` of dicts, each as `status` gives it.
+
+### status(name)
+
+**Returns:** `None` when no project of that name runs, else a `dict` containing `name`, `template` (`True` for the template's) and `jobs`, a list of dicts with `name`, `local`, `remote`, `mode`, `state` (`starting`, `snapshotting`, `syncing`, `watching`, `done`, `failed` or `stopped`), `passes`, `last_pass`, `error`, `uploaded`, `downloaded`, `deleted` and `conflicts`.
+
+```python
+import knot.files.sync as sync
+
+# In a startup script: bring the project's code down, then keep it in step
+sync.start({
+    "name": "code",
+    "sync": [
+        {"local": "~/src", "remote": "code:projects/api/", "snapshot": "code:templates/go/", "exclude": ["node_modules/"]},
+        {"local": "~/repo", "remote": "code:repos/api/", "no_default_excludes": True},
+    ],
+}, wait=True)
+
+for job in sync.status("code")["jobs"]:
+    print(job["name"], job["state"], job["uploaded"], "up")
+```
 
 ---
 

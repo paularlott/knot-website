@@ -36,6 +36,8 @@ devices:
   - <hostdev spec>
 ```
 
+A KVM template's volumes hold no volumes, but may hold a `sync` block, which the VM's agent runs to keep folders in step with [file storage](../../file-storage.md) buckets; see [sync projects](../../file-storage/using-files.md#sync-projects).
+
 ---
 
 ## Fields

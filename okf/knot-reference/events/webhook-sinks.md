@@ -93,7 +93,7 @@ The source space.
 | `${{ .space.name }}` | Space name |
 | `${{ json .space.urls }}` | All port URLs as a JSON object, keyed by port name |
 
-Each entry in `.space.urls` is built from the template's port definitions: `https://<username>--<spacename>--<port>.<domain>`. For example, if the template defines ports `web` (80) and `web2` (8080):
+Each entry in `.space.urls` is built from the template's port definitions: `https://<username>--<spacename>--<port>.<domain>`, lowercased. A pool member's URLs use the pool's name. When the part before the first dot would pass the 63 characters DNS allows, the space name is cut short and ends with a hyphen and an 8-character hash of the full name, which knot routes by. For example, if the template defines ports `web` (80) and `web2` (8080):
 
 ```json
 "urls": {
@@ -104,7 +104,7 @@ Each entry in `.space.urls` is built from the template's port definitions: `http
 
 ### `.actor`
 
-Who or what triggered the event.
+Who or what triggered the event. For a custom event raised through the API, that is the caller, even when the space belongs to someone else.
 
 | Variable | Description |
 |----------|-------------|
