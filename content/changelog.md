@@ -11,6 +11,14 @@ navSection: docs
 
 ## November 2026
 
+{{< version "v0.43.1" >}}
+
+{{< changelog-item "changed" >}}
+- Dependency updates
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.43.0" >}}
 
 {{< changelog-item "added" >}}
