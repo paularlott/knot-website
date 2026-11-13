@@ -20,6 +20,31 @@ navSection: docs
 
 ---
 
+{{< version "v0.43.1" >}}
+
+{{< changelog-item "changed" >}}
+- Dependency updates
+{{< /changelog-item >}}
+
+---
+
+{{< version "v0.43.0" >}}
+
+{{< changelog-item "added" >}}
+- Run provisioning steps in a space as root with `become=True`, through sudo, and install packages and run commands with `scriptling.provision.package` and `scriptling.provision.command` ([docs](../docs/spaces/provisioning/#running-as-root))
+- Add `scriptling.mercure` to every scripting environment, to publish to and subscribe at Mercure hubs; subscriptions a script leaves open close when it ends ([docs](../docs/scripting/#library-availability))
+{{< /changelog-item >}}
+
+---
+
+{{< version "v0.42.0" >}}
+
+{{< changelog-item "fixed" >}}
+- Closed dependabot security alerts
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.42.0" >}}
 
 {{< changelog-item "changed" >}}

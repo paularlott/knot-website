@@ -205,6 +205,7 @@ See [Using knot.\* Libraries](scripting/using-libraries.md#the-knot-plugin-recom
 | scriptling.toon                      | ✓                   | ✓                   | ✓        |
 | scriptling.messaging (telegram / discord / slack) | ✓       | ✓                   | ✓        |
 | scriptling.oauth                     | ✗                   | ✓                   | ✓        |
+| scriptling.mercure                   | ✓ ¹                 | ✓                   | ✓        |
 | scriptling.grep                      | ✗                   | ✓                   | ✓        |
 | scriptling.find                      | ✗                   | ✓                   | ✓        |
 | scriptling.csv                       | ✓                   | ✓                   | ✓        |
@@ -216,10 +217,14 @@ See [Using knot.\* Libraries](scripting/using-libraries.md#the-knot-plugin-recom
 | scriptling.template.text             | ✓                   | ✓                   | ✓        |
 | scriptling.provision.file            | ✗                   | ✓                   | ✓        |
 | scriptling.provision.fetch           | ✗                   | ✓                   | ✓        |
+| scriptling.provision.command         | ✗                   | ✓ ³                 | ✓        |
+| scriptling.provision.package         | ✗                   | ✓ ³                 | ✓        |
 
 \* Requires a Pro license for secret provider access (Vault, 1Password). Standalone scriptling has built-in secret support.
 
 ¹ On the knot server (MCP tool execution and event sink scripts), outbound connections can be restricted via a [network policy](scripting/network-policy.md), same as `requests` above; left unconfigured, they're unrestricted.
+
+³ In a space the provisioning libraries can run steps as root with `become=True`, through `sudo`; see [Provisioning](spaces/provisioning.md#running-as-root). The scriptling CLI (External) allows it unless run with `--deny-become`.
 
 ### knot.\* Libraries
 

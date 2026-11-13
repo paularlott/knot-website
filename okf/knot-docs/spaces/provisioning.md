@@ -68,6 +68,27 @@ elif status == file.UPDATED:
 
 See the [scriptling.provision.file reference](https://scriptling.dev/reference/libraries/scriptling/provisioning/provision-file/) for the full API including `absent`, `ensure_directory`, and `absent_directory`.
 
+### Running as Root
+
+Installing packages and writing outside your home need root. Pass `become=True` to those steps and they run as root, through `sudo`; everything else runs as the space's user:
+
+```python
+import scriptling.provision.command as command
+import scriptling.provision.file as file
+import scriptling.provision.package as package
+
+package.ensure(["nginx", "jq"])   # installs as root by itself; skipped when already installed
+
+if file.ensure("/etc/nginx/conf.d/app.conf", NGINX_CONF, become=True) != file.UNCHANGED:
+    command.run(["nginx", "-t"], become=True)   # a bad config stops here, with nginx's reason
+```
+
+- sudo is asked once per script, and not at all when the space's user has passwordless sudo, as in knot's base images.
+- With a password and no terminal (a startup script, say), the step fails at once with an error saying so.
+- A new file written as root belongs to root unless you pass `owner=` and `group=`.
+
+See the [provisioning libraries](https://scriptling.dev/reference/libraries/provisioning/) for `scriptling.provision.command` and `scriptling.provision.package`.
+
 ---
 
 ## Running a Provisioning Script

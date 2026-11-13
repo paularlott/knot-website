@@ -33,6 +33,9 @@ The full `scriptling.*` library set is documented on the [Scriptling website](ht
 - [`scriptling.net.resolve`](https://scriptling.dev/reference/libraries/scriptling/networking/resolve/) — DNS resolution for IP, SRV, and srv+http URLs
 - [`scriptling.provision.file`](https://scriptling.dev/reference/libraries/scriptling/provisioning/provision-file/) — idempotent file provisioning
 - [`scriptling.provision.fetch`](https://scriptling.dev/reference/libraries/scriptling/provisioning/provision-fetch/) — download files and unpack zip archives over HTTP/HTTPS
+- [`scriptling.provision.command`](https://scriptling.dev/reference/libraries/provisioning/provision-command/) — run commands, as the space's user or as root
+- [`scriptling.provision.package`](https://scriptling.dev/reference/libraries/provisioning/provision-package/) — install packages with apt, dnf, yum, apk or Homebrew
+- [`scriptling.mercure`](https://scriptling.dev/reference/libraries/networking/mercure/) — publish to and subscribe at Mercure hubs
 
 Standard Python-compatible libraries (`os`, `pathlib`, `glob`, `tempfile`, `shutil`, `shlex`, `subprocess`, `re`, `json`, `time`, etc.) are also available — see the [Scriptling library reference](https://scriptling.dev/reference/libraries/) for the full list. Availability varies by execution environment; see [Library Availability](../knot-docs/scripting.md#library-availability) for details.
 
