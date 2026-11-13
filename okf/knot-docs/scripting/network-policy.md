@@ -14,7 +14,7 @@ type: Guide
 ---
 # Network Policy
 
-By default, MCP tool and event sink scripts (the [Server environment](../scripting.md#server-environment)) can reach the network without restriction via `requests`, `scriptling.wait_for`, `scriptling.ai` and `scriptling.mcp`. To lock that down, point `server.script_net_policy` (flag `--script-net-policy`, env `KNOT_SCRIPT_NET_POLICY`) at a TOML policy file.
+By default, MCP tool and event sink scripts (the [Server environment](../scripting.md#server-environment)) can reach the network without restriction via `requests`, `scriptling.ai` and `scriptling.mcp`. To lock that down, point `server.script_net_policy` (flag `--script-net-policy`, env `KNOT_SCRIPT_NET_POLICY`) at a TOML policy file.
 
 This is the network equivalent of [`server.script_fs_allowed_paths`](../scripting.md#server-environment), which restricts filesystem access for the same scripts.
 

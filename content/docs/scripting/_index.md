@@ -160,7 +160,7 @@ See [Using knot.\* Libraries](using-libraries/#the-knot-plugin-recommended) for 
 
 ## Library Availability
 
-### Standard & Extended Libraries
+### Standard & Extension Libraries
 
 | Library            | MCP | Remote | External |
 | ------------------ | --- | ------ | -------- |
@@ -204,7 +204,7 @@ See [Using knot.\* Libraries](using-libraries/#the-knot-plugin-recommended) for 
 | scriptling.xml                       | ✓                   | ✓                   | ✓        |
 | scriptling.sed                       | ✗                   | ✓                   | ✓        |
 | scriptling.similarity                | ✓                   | ✓                   | ✓        |
-| scriptling.wait_for                  | ✓ ¹                 | ✓                   | ✓        |
+| scriptling.wait_for                  | ✗                   | ✓                   | ✓        |
 | scriptling.template.html             | ✓                   | ✓                   | ✓        |
 | scriptling.template.text             | ✓                   | ✓                   | ✓        |
 | scriptling.provision.file            | ✗                   | ✓                   | ✓        |
