@@ -18,6 +18,10 @@ navSection: docs
 - Build with Go 1.27.4
 {{< /changelog-item >}}
 
+{{< changelog-item "fixed" >}}
+- Fix a `scriptling.mercure` subscription ending early when its client was not kept in a variable, as in `mercure.Client(...).subscribe(...)`
+{{< /changelog-item >}}
+
 ---
 
 {{< version "v0.43.1" >}}
