@@ -124,7 +124,7 @@ Startup and shutdown scripts run in the **Remote** environment with access to:
 
 - All `knot.*` libraries (space, ai, mcp, methods, healthcheck, etc.)
 - Standard scriptling libraries
-- Extended libraries (os, pathlib, subprocess, etc.)
+- Extension libraries (os, pathlib, subprocess, etc.)
 
 See [Scripting](../../scripting/) for complete library availability.
 

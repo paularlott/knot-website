@@ -11,6 +11,19 @@ navSection: docs
 
 ## November 2026
 
+{{< version "v0.44.0" >}}
+
+{{< changelog-item "changed" >}}
+- Update the embedded scriptling to [v0.40.0](https://scriptling.dev/docs/changelog/). The script libraries available in each environment are unchanged, so existing scripts and plugins import what they did before. Scripts now run under scriptling's stricter parser (two statements on one line without `;` and a line indented where no block starts are refused) and `json.loads()` raises `JSONDecodeError` when text follows the JSON value, as Python does
+- Build with Go 1.27.4
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- Fix a `scriptling.mercure` subscription ending early when its client was not kept in a variable, as in `mercure.Client(...).subscribe(...)`
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.43.1" >}}
 
 {{< changelog-item "changed" >}}
@@ -28,7 +41,7 @@ navSection: docs
 
 ---
 
-{{< version "v0.42.0" >}}
+{{< version "v0.42.1" >}}
 
 {{< changelog-item "fixed" >}}
 - Closed dependabot security alerts
