@@ -8,6 +8,8 @@ weight: 200
 
 The `knot.space` library provides space management functions for scripts.
 
+Inside AI scripts (`run_script`) the port forward functions (`port_forward`, `port_apply`, `port_list`, `port_stop`, `port_throttle`) and the tunnel functions (`tunnel_start`, `tunnel_list`, `tunnel_stop`) are refused: they call `/space-io/` endpoints, and an AI script may only call `/api/` endpoints.
+
 ---
 
 ## Execution Environment
@@ -15,7 +17,7 @@ The `knot.space` library provides space management functions for scripts.
 | Environment | Behaviour |
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
-| Health check scripts | Not available. |
+| Health check scripts | Only when the space's environment sets `KNOT_API_PORT` or `KNOT_URL`/`KNOT_TOKEN`: there is no built-in transport, so the Python `knot.apiclient` configures itself from the agent (as the space owner) or those variables, and calls raise otherwise. See [Environment Compatibility](/reference/libraries/#environment-compatibility). |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
 ---
@@ -31,7 +33,8 @@ The `knot.space` library provides space management functions for scripts.
 | `start(name)` | Start a space |
 | `stop(name)` | Stop a space |
 | `restart(name)` | Restart a space |
-| `list(all_zones=False)` | List all spaces for the current user |
+| `stop_for_user(user)` | Stop every running space a user owns in this zone |
+| `list(all_zones=False, user_id=None)` | List all spaces for the current user, or another user's |
 | `is_running(name)` | Check if a space is running (the container is up — its agent may still be connecting; see `is_ready`) |
 | `is_ready(name)` | Check if a space is running with its agent connected — the state required by `run()`, file operations, and other agent-backed calls |
 | `wait_for_start(name, timeout=30, interval=2)` | Wait for a space to be running with its agent connected; returns `False` on timeout, never stops an already-running space |
@@ -55,7 +58,7 @@ The `knot.space` library provides space management functions for scripts.
 | `unshare(name, user_id=None)` | Remove space share, optionally for a specific user |
 | `run_script(name, script_name, args=None)` | Execute a script in a space |
 | `eval(name, code, args=None)` | Execute inline Scriptling code in a space |
-| `run(name, command, args=None, timeout=30, workdir='')` | Execute a command in a space |
+| `run(name, command, args=None, timeout=30, workdir='', check=True)` | Execute a command in a space; raises if it fails unless `check=False` |
 | `read_file(name, file_path, offset=0, limit=0)` | Read file contents (or a 1-based line range) from a space |
 | `write_file(name, file_path, content, mode='overwrite', ...)` | Write content to a file (overwrite/append/prepend; optional mtime + perm) |
 | `grep(name, pattern, path, ...)` | Search file contents (regex or literal) |
@@ -74,6 +77,9 @@ The `knot.space` library provides space management functions for scripts.
 | `tunnel_start(space, protocol, port, name, server="", token="")` | Start an agent-owned web tunnel in a space, optionally on another knot server |
 | `tunnel_list(space)` | List agent-owned web tunnels in a space |
 | `tunnel_stop(space, name)` | Stop an agent-owned web tunnel in a space |
+| `emit_event(name, event_type, payload=None)` | Raise a custom event for a space |
+| `list_methods()` | List the space methods you may call |
+| `call_method(method, params=None, space=None, timeout=420)` | Call a space method over JSON-RPC and return its result |
 
 ---
 
@@ -239,7 +245,7 @@ Delete a space and its data.
 
 ---
 
-### run(name, command, args=None, timeout=30, workdir='')
+### run(name, command, args=None, timeout=30, workdir='', check=True)
 
 Execute a command in a running space.
 
@@ -249,8 +255,23 @@ Execute a command in a running space.
 - `args` (list, optional): Arguments for the command (default: `None`, no arguments)
 - `timeout` (int, optional): Timeout in seconds (default: 30)
 - `workdir` (string, optional): Working directory
+- `check` (bool, optional): When `True` (the default), a failed command raises. When `False`, nothing is raised for a failed command and a dict is returned instead
 
-**Returns:** `string` - Command output
+**Returns:** with `check=True`, `string` - the command output. With `check=False`, a `dict` with `output` (given for a failed command too), `exit_code` (`124` when the command timed out), `success` (`True` when the command exited with code 0) and `error` (empty string on success).
+
+**Raises:** on API error, and with `check=True` when the command fails — a non-zero exit, a timeout or no usable shell. The exception message holds the error, the exit code and the command's output.
+
+```python
+import knot.space as space
+
+# Raises if the build fails
+print(space.run("my-space", "make", args=["build"]))
+
+# Inspect the exit code yourself
+result = space.run("my-space", "test", args=["-f", "/tmp/ready"], check=False)
+if result["exit_code"] != 0:
+    print("not ready yet")
+```
 
 ---
 
@@ -261,7 +282,7 @@ Get the current resource usage point for a space.
 **Parameters:**
 - `name` (string): Name or ID of the space
 
-**Returns:** `dict` containing the current usage point, including `bucket_start`, `bucket_kind`, `is_live`, and `resource_usage`.
+**Returns:** `dict` containing the current usage point: `bucket_start` and `bucket_kind` (`"minute"`), plus `is_live` (only present when `True`, i.e. a fresh reading from the running agent) and `resource_usage` (only present when the space is running in this zone with its agent connected). Read the optional keys with `.get()`. `resource_usage` has `cpu_percent`, `memory_used_bytes`, `memory_limit_bytes`, `disk_used_bytes`, `disk_limit_bytes` and, for live readings, `cpu_cores`.
 
 ---
 
@@ -329,6 +350,8 @@ the client only receives the requested lines.
 
 **Returns:** `string` - File contents (or the requested line range)
 
+**Raises:** on API error, and when the agent cannot read the file — for example when it does not exist.
+
 ```python
 import knot.space as space
 # Read lines 100-119 of a large file
@@ -352,6 +375,8 @@ beginning of an existing file.
 - `file_perm` (int, optional): Permission bits as an int (e.g. `0o644`, `0o755`). When set, the agent applies them via `os.Chmod` after the write. Pass the raw int, not a string.
 
 **Returns:** `bool` - True on success
+
+**Raises:** on API error, and when the agent cannot write the file (for example a missing directory or no permission).
 
 ---
 
@@ -413,7 +438,7 @@ changed without re-reading the bytes (e.g. for differential sync). If you only
 need paths, prefer `find()`.
 
 **Parameters:** Same as `find()`, plus:
-- `include_hash` (bool): When `True`, each file is crc64-hashed and the hex checksum is returned in `hash`. Use for definitive change detection — two entries with matching `hash` have identical bytes.
+- `include_hash` (bool): When `True`, each file is crc64-hashed and the checksum is returned in `hash`. Use for definitive change detection — two entries with matching `hash` have identical bytes.
 - `include_symlinks` (bool): When `True`, symlink entries are yielded with their `link_target` instead of being followed.
 
 **Returns:** `list` of entry dicts (arbitrary order), each containing:
@@ -421,8 +446,8 @@ need paths, prefer `find()`.
 - `size` (int): Size in bytes (`0` for directories)
 - `mtime` (float): Modification time, epoch seconds
 - `is_dir` (bool): `True` if the entry is a directory
-- `file_perm` (int): File permission bits (e.g. `420` for `0o644`).
-- `hash` (str, optional): Hex-encoded crc64 checksum (only with `include_hash=True`)
+- `file_perm` (int, optional): File permission bits (e.g. `420` for `0o644`); omitted when zero
+- `hash` (int, optional): crc64 (ISO) checksum as an unsigned integer (only with `include_hash=True`; omitted for directories and empty files)
 - `link_target` (str, optional): Symlink target path (only with `include_symlinks=True`)
 
 ---
@@ -485,7 +510,7 @@ Extract regex capture groups from a file (or files under a directory). Read-only
 - `max_size` (int, optional): Skip files larger than this many bytes
 - `workdir` (string, optional): Resolve relative `path` against this directory
 
-**Returns:** `list` of match dicts `{"file": str, "line": int, "text": str, "groups": [str, ...]}`
+**Returns:** `list` of match dicts `{"file": str, "line": int, "text": str, "groups": [str, ...]}`. `groups` is absent when the pattern has no capture groups, so read it with `.get("groups", [])`.
 
 ---
 
@@ -537,6 +562,31 @@ slightly stale remote snapshot without race-condition errors.
 
 ---
 
+### get_description(name) / set_description(name, description)
+
+Get or set a space's description. `set_description` reads the space and writes it back with only the description changed.
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+- `description` (string): New description (`set_description` only)
+
+**Returns:** `get_description`: `string` - the description (empty if none). `set_description`: `bool` - True on success
+
+---
+
+### get_field(name, field) / set_field(name, field, value)
+
+Get or set one of the space's custom field values (fields are declared by the space's template).
+
+**Parameters:**
+- `name` (string): Name or ID of the space
+- `field` (string): Custom field name
+- `value` (string): New value (`set_field` only); select/autocomplete fields only accept one of the field's options
+
+**Returns:** `get_field`: `string` - the field's value (empty if unset). `set_field`: `bool` - True on success
+
+---
+
 ### get_ip_address(name)
 
 Get the static IP address of a bridged KVM space.
@@ -583,14 +633,15 @@ Set the dependency spaces for a space. Dependencies are required to be started b
 
 ---
 
-### list(all_zones=False)
+### list(all_zones=False, user_id=None)
 
 List all spaces for the current user.
 
 **Parameters:**
 - `all_zones` (bool, optional): If True, include spaces from all zones. Default is False (only spaces in the current server's zone).
+- `user_id` (string, optional): List another user's spaces instead. Needs the **Manage Spaces** permission; without it the list is empty.
 
-**Returns:** `list` of dicts with the same keys as [`get()`](#getname).
+**Returns:** `list` of dicts with the same keys as [`get()`](#getname), except that `shell`, `created_at`, `node_id` and `startup_script_id` are always `""` in list results — call `get()` for a space when you need them.
 
 ---
 
@@ -692,7 +743,7 @@ Restrict what a space's own credential can reach, until lifted from outside the 
 - `name` (string): Name or ID of the space; default the space the script runs in
 - `buckets` (list): Bucket names to keep, each `"name"` or `"name:ro"` for read-only; every other bucket is dropped. `None` keeps them all
 - `files` (string): `"ro"` to make every bucket read-only, `"none"` to switch file storage off
-- `no_secrets` (bool): Switch personal secrets off
+- `no_secrets` (bool): Switch personal secrets off {{< pro-badge >}} (ignored on servers without personal secrets)
 - `lock` (bool): Lock the space's processes out of everything but file storage and personal secrets, which their own restrictions govern, apart from restarting or shutting it down; scripts started from outside the space, such as startup scripts, keep working
 - `secrets_allow` (list): Prefixes, such as `"op://Dev/"`, under which alone personal secrets can be read {{< pro-badge >}}
 - `secrets_deny` (list): Prefixes under which personal secrets are refused {{< pro-badge >}}
@@ -712,7 +763,7 @@ Get a space's restrictions, including what its template switches off.
 **Parameters:**
 - `name` (string): Name or ID of the space; default the space the script runs in
 
-**Returns:** `dict` - `restricted`, `no_secrets`, `locked`, `files` (`""`, `"ro"` or `"none"`), `limit_buckets`, `buckets` (list of `{name, read_only}`), `limit_secrets`, `secrets_allow` and `secrets_deny` (lists of prefixes), `template_no_files` and `template_no_secrets`
+**Returns:** `dict` - `space_id`, `space_name`, `restricted`, `no_secrets`, `locked`, `files` (`""`, `"ro"` or `"none"`), `limit_buckets`, `buckets` (list of `{name, read_only}`), `limit_secrets`, `secrets_allow` and `secrets_deny` (lists of prefixes), `template_no_files` and `template_no_secrets`
 
 ---
 
@@ -749,7 +800,7 @@ Forward a local port in one space to a port in another space (or pool).
 - `remote_space` (string): Target — a space or pool name you own, another user's space or pool as `user--space` (only ports its template declares shared), or a space ID
 - `remote_port` (int): Port number on the target
 - `persistent` (bool, optional): Persist the forward across agent restarts (default: False)
-- `force` (bool, optional): Skip the up-front target checks — that the target space is running with its agent connected, is in the same zone, and that you may reach the port — so a forward can be created before its target is started (default: False). Access is still enforced when connections are made.
+- `force` (bool, optional): Skip the up-front check that the target space is running, so a forward can be created before its target is started (default: False). It does not skip authorization: the target must still resolve and you must be allowed to reach the port, and access is enforced again when connections are made.
 
 **Returns:** `bool` - True on success
 
@@ -766,12 +817,43 @@ Replace all port forwards for a space with the given list. Any existing forwards
   - `space` (string): Remote space name or ID
   - `remote_port` (int): Remote port number
   - `persistent` (bool, optional): Persist the forward across restarts (default: False)
-  - `force` (bool, optional): Skip the up-front target checks, as for `port_forward` (default: False)
+  - `force` (bool, optional): Skip the target-running check, as for `port_forward` (default: False)
 
 **Returns:** `dict` containing:
-- `applied` (list): List of forwards that were started
-- `stopped` (list): List of forwards that were stopped
-- `errors` (list): List of error messages (if any)
+- `applied` (list or `None`): Forwards that were started, each a dict shaped like a `port_list()` entry; `None` when none were
+- `stopped` (list or `None`): Forwards that were stopped; `None` when none were
+- `errors` (list, optional): Error messages; the key is absent when there were none, so read it with `.get("errors")`
+
+On a running space a stopped entry carries the forward's last `mode` and throttle settings, and an applied entry has `mode` `"—"` (no connection yet) and no throttle. When the space is not running only its saved forwards change, and every entry has `mode` `""` and zero throttle settings.
+
+---
+
+### port_list(name)
+
+List the port forwards of a space. For a running space the agent reports its live forwards; for a stopped space the persistent forwards saved for it are listed, with `mode` `""` and zero throttle settings.
+
+**Parameters:**
+- `name` (string): Space name or ID
+
+**Returns:** `list` of dicts, each containing:
+- `local_port` (int): Local port in the space
+- `space` (string): Target space or pool, as given when the forward was created
+- `remote_port` (int): Port on the target
+- `persistent` (bool): Whether the forward survives agent restarts
+- `mode` (string): `"direct"`, `"relay"`, or `"—"` before the first connection
+- `latency_ms`, `jitter_ms`, `bandwidth_kb`, `timeout_ms` (int), `down` (bool): The forward's throttle settings (see `port_throttle`)
+
+---
+
+### port_stop(name, local_port)
+
+Stop a port forward.
+
+**Parameters:**
+- `name` (string): Space name or ID
+- `local_port` (int): Local port of the forward to stop
+
+**Returns:** `bool` - True on success
 
 ---
 
@@ -788,6 +870,8 @@ Apply network simulation to an existing port forward in a space. All values are 
 - `timeout_ms` (int): Connection timeout in milliseconds — kills the connection after this duration (default: 0, none)
 - `down` (bool): Block all traffic on this forward; the port definition stays (default: False)
 - `reset` (bool): Clear all throttle settings (default: False)
+
+**Returns:** `bool` - True on success
 
 ```python
 import knot.space as space
@@ -824,7 +908,7 @@ List the agent-owned web tunnels active in a space.
 **Parameters:**
 - `space` (string): Space name or ID
 
-**Returns:** `list` of dicts, each containing:
+**Returns:** `list` of dicts, or `None` when the space is not running (tunnels are not persisted, so a stopped space has none). Each dict contains:
 - `port` (int): Port within the space
 - `protocol` (string): `"http"` or `"https"`
 - `name` (string): Tunnel name
@@ -841,3 +925,73 @@ Stop an agent-owned web tunnel in a space by name.
 - `name` (string): The tunnel name
 
 **Returns:** `bool` - True on success
+
+---
+
+### stop_for_user(user)
+
+Stop every running space a user owns in this server's zone. Spaces shared with the user are left alone.
+
+**Parameters:**
+- `user` (string): User ID or username. Stopping another user's spaces needs the **Manage Users** permission.
+
+**Returns:** `bool` - True on success. On an error, spaces already stopped stay stopped.
+
+---
+
+### emit_event(name, event_type, payload=None)
+
+Raise a [custom event](/reference/events/#custom-events) for a space, as if the space raised it. The event belongs to the space's owner and carries the space's ID and name, so sinks and methods filtering on the space see it; the caller may be someone the space is shared with. `custom.` is prepended to the type automatically. For an event with no space, use [`knot.event.emit`](../event/).
+
+**Parameters:**
+- `name` (string): Space name or ID
+- `event_type` (string): Event type without the `custom.` prefix, e.g. `"myapp.deployed"`
+- `payload` (dict, optional): Data sent with the event
+
+**Returns:** `bool` - True when the event was accepted
+
+---
+
+### list_methods()
+
+List the JSON-RPC methods running spaces offer that the current user may call — those registered with [`knot.methods`](../methods/).
+
+**Returns:** `list` of dicts, each containing:
+- `name` (string): Method name to call
+- `local_name` (string): Name inside the providing space
+- `description` (string): Description
+- `keywords` (list): Search keywords
+- `scope` (string): `"private"` (owner only) or `"shared"` (members of `groups`)
+- `groups` (list): Groups a shared method is offered to
+- `mcp_tool` (bool): Whether the method is also an MCP tool
+- `events` (list): Event patterns the method subscribes to
+- `event_sinks` (list): JSON-RPC sinks formatting those events
+- `params_schema` (dict or None): JSON Schema of the params
+- `result_schema` (dict or None): JSON Schema of the result
+- `owner_id` (string), `owner` (string): The method's owner
+- `provider_count` (int): Number of spaces currently serving the method
+
+---
+
+### call_method(method, params=None, space=None, timeout=420)
+
+Call a space method over JSON-RPC and return its result. The server routes the call to a running space providing the method, spreading load when several do, or to one space when `space` is given — for example the pool member held through [`knot.pool.acquire`](../pool/).
+
+**Parameters:**
+- `method` (string): Method name, as `list_methods()` gives it
+- `params` (dict or list, optional): Named or positional params
+- `space` (string, optional): Space name or ID to pin the call to
+- `timeout` (number, optional): Seconds to wait for the answer (default 420)
+
+**Returns:** The method's result (any JSON value)
+
+**Raises:** An exception carrying the JSON-RPC error message when the method fails, no space provides it, or you may not call it.
+
+```python
+import knot.space as space
+
+for m in space.list_methods():
+    print(m["name"], m["provider_count"])
+
+greeting = space.call_method("greet", {"name": "Ada"})
+```

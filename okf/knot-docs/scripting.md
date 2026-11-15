@@ -102,12 +102,13 @@ echo "data" | knot space run-script <space-name> <script-name>
 
 ## Execution Environments
 
-Knot has two embedded execution environments — one per execution location — plus standalone scriptling:
+Knot has two embedded execution environments — one per execution location — plus a sandbox for AI-written scripts and standalone scriptling:
 
 | Environment  | Runs                | Used By                                                                    | System Access         |
 | ------------ | ------------------- | -------------------------------------------------------------------------- | --------------------- |
 | **Server**   | In the knot server  | MCP tool scripts, event sink scripts                                       | None                  |
 | **Space**    | In the space (agent)| Startup/shutdown scripts, user scripts, `knot run-script`, health checks, `knot methods register` | Full (container) |
+| **AI script** | In the knot server (sandboxed) | Scripts the AI assistant writes and runs with the `run_script` tool | None (no network, no filesystem) |
 | **External** | Host (scriptling-cli) | Scripts outside knot using `knot.zip`                                   | Host                  |
 
 ```
@@ -145,6 +146,12 @@ knot space run-script myspace myscript arg1 arg2
 
 **Note:** Requires an active agent connection. `scriptling.console` and `scriptling.ai.agent.interact` are available for interactive sessions.
 
+### AI Script Environment
+
+**Used by:** scripts the AI assistant writes and runs through the `run_script` tool (needs the **Run AI Scripts** permission).
+
+The most restricted environment: the standard modules (less `secrets` and `html.parser`), `yaml`, `toml`, `scriptling.similarity` and `scriptling.template.text`, plus the `knot.*` API libraries listed in the AI column below. There is no network (`requests`), filesystem, system or AI access, no `logging`, and no user `lib` scripts. `datetime`, `json`, `math`, `re`, `statistics`, `defaultdict` and the allowed `knot.*` libraries are pre-imported, the knot libraries under their short names (`knot.space` as `space`, and `knot.vars` as `variables`); everything else, such as `yaml`, `toml`, `scriptling.similarity`, `scriptling.template.text` and the other standard modules, needs an `import`. All API calls go through a guarded `knot.apiclient`: only `/api/` endpoints are allowed (so space port forwards, tunnels and `knot.jobs.run` are refused), a read-mode script may only read, and a deny list refuses credentials, user, group and role changes, stored script changes and more — see the full list in [AI-Written Scripts](ai/mcp-tools.md#ai-written-scripts).
+
 ### External Environment
 
 **Used by:** Standalone [scriptling](https://scriptling.dev/) scripts using the `knot.zip` package
@@ -169,24 +176,24 @@ See [Using knot.\* Libraries](scripting/using-libraries.md#the-knot-plugin-recom
 
 ### Standard & Extension Libraries
 
-| Library            | MCP | Remote | External |
-| ------------------ | --- | ------ | -------- |
-| Standard Libraries | ✓   | ✓      | ✓        |
-| requests           | ✓ ² | ✓      | ✓        |
-| secrets            | ✓   | ✓      | ✓        |
-| yaml / toml        | ✓   | ✓      | ✓        |
-| shlex              | ✓   | ✓      | ✓        |
-| fs                 | ✓ ¹ | ✓      | ✓        |
-| html.parser        | ✓   | ✓      | ✓        |
-| logging            | ✓   | ✓      | ✓        |
-| subprocess         | ✗   | ✓      | ✓        |
-| os / pathlib       | ✗   | ✓      | ✓        |
-| glob               | ✗   | ✓      | ✓        |
-| tempfile           | ✗   | ✓      | ✓        |
-| shutil             | ✗   | ✓      | ✓        |
-| zipfile            | ✗   | ✓      | ✓        |
-| tarfile            | ✗   | ✓      | ✓        |
-| sys                | ✗   | ✓      | ✓        |
+| Library            | MCP | Remote | AI script | External |
+| ------------------ | --- | ------ | --------- | -------- |
+| Standard Libraries | ✓   | ✓      | ✓         | ✓        |
+| requests           | ✓ ² | ✓      | ✗         | ✓        |
+| secrets            | ✓   | ✓      | ✗         | ✓        |
+| yaml / toml        | ✓   | ✓      | ✓         | ✓        |
+| shlex              | ✓   | ✓      | ✓         | ✓        |
+| fs                 | ✓ ¹ | ✓      | ✗         | ✓        |
+| html.parser        | ✓   | ✓      | ✗         | ✓        |
+| logging            | ✓   | ✓      | ✗         | ✓        |
+| subprocess         | ✗   | ✓      | ✗         | ✓        |
+| os / pathlib       | ✗   | ✓      | ✗         | ✓        |
+| glob               | ✗   | ✓      | ✗         | ✓        |
+| tempfile           | ✗   | ✓      | ✗         | ✓        |
+| shutil             | ✗   | ✓      | ✗         | ✓        |
+| zipfile            | ✗   | ✓      | ✗         | ✓        |
+| tarfile            | ✗   | ✓      | ✗         | ✓        |
+| sys                | ✗   | ✓      | ✗         | ✓        |
 
 ¹ On the knot server (MCP tool execution and event sink scripts) `fs` is only registered when the admin configures `server.script_fs_allowed_paths` (flag `--script-fs-allowed-paths`, env `KNOT_SCRIPT_FS_ALLOWED_PATHS`); without it, server-side scripts have no local filesystem access. In spaces (Remote) `fs` is always available, scoped to the container.
 
@@ -194,31 +201,31 @@ See [Using knot.\* Libraries](scripting/using-libraries.md#the-knot-plugin-recom
 
 ### scriptling.\* Libraries
 
-| Library                              | MCP                 | Remote              | External |
-| ------------------------------------ | ------------------- | ------------------- | -------- |
-| scriptling.secret                    | \* | ✗                   | ✓        |
-| scriptling.ai                        | ✓ ¹                 | ✓                   | ✓        |
-| scriptling.ai.agent                  | ✓                   | ✓                   | ✓        |
-| scriptling.ai.tools                  | ✓                   | ✓                   | ✓        |
-| scriptling.ai.memory                 | ✗                   | ✓                   | ✓        |
-| scriptling.mcp / scriptling.mcp.tool | ✓ ¹                 | ✓                   | ✓        |
-| scriptling.toon                      | ✓                   | ✓                   | ✓        |
-| scriptling.messaging (telegram / discord / slack) | ✓       | ✓                   | ✓        |
-| scriptling.oauth                     | ✗                   | ✓                   | ✓        |
-| scriptling.mercure                   | ✓ ¹                 | ✓                   | ✓        |
-| scriptling.grep                      | ✗                   | ✓                   | ✓        |
-| scriptling.find                      | ✗                   | ✓                   | ✓        |
-| scriptling.csv                       | ✓                   | ✓                   | ✓        |
-| scriptling.xml                       | ✓                   | ✓                   | ✓        |
-| scriptling.sed                       | ✗                   | ✓                   | ✓        |
-| scriptling.similarity                | ✓                   | ✓                   | ✓        |
-| scriptling.wait_for                  | ✗                   | ✓                   | ✓        |
-| scriptling.template.html             | ✓                   | ✓                   | ✓        |
-| scriptling.template.text             | ✓                   | ✓                   | ✓        |
-| scriptling.provision.file            | ✗                   | ✓                   | ✓        |
-| scriptling.provision.fetch           | ✗                   | ✓                   | ✓        |
-| scriptling.provision.command         | ✗                   | ✓ ³                 | ✓        |
-| scriptling.provision.package         | ✗                   | ✓ ³                 | ✓        |
+| Library                              | MCP                 | Remote              | AI script | External |
+| ------------------------------------ | ------------------- | ------------------- | --------- | -------- |
+| scriptling.secret                    | \* | ✗                   | ✗         | ✓        |
+| scriptling.ai                        | ✓ ¹                 | ✓                   | ✗         | ✓        |
+| scriptling.ai.agent                  | ✓                   | ✓                   | ✗         | ✓        |
+| scriptling.ai.tools                  | ✓                   | ✓                   | ✗         | ✓        |
+| scriptling.ai.memory                 | ✗                   | ✓                   | ✗         | ✓        |
+| scriptling.mcp / scriptling.mcp.tool | ✓ ¹                 | ✓                   | ✗         | ✓        |
+| scriptling.toon                      | ✓                   | ✓                   | ✗         | ✓        |
+| scriptling.messaging (telegram / discord / slack) | ✓                   | ✓                   | ✗         | ✓        |
+| scriptling.oauth                     | ✗                   | ✓                   | ✗         | ✓        |
+| scriptling.mercure                   | ✓ ¹                 | ✓                   | ✗         | ✓        |
+| scriptling.grep                      | ✗                   | ✓                   | ✗         | ✓        |
+| scriptling.find                      | ✗                   | ✓                   | ✗         | ✓        |
+| scriptling.csv                       | ✓                   | ✓                   | ✓         | ✓        |
+| scriptling.xml                       | ✓                   | ✓                   | ✓         | ✓        |
+| scriptling.sed                       | ✗                   | ✓                   | ✗         | ✓        |
+| scriptling.similarity                | ✓                   | ✓                   | ✓         | ✓        |
+| scriptling.wait_for                  | ✗                   | ✓                   | ✗         | ✓        |
+| scriptling.template.html             | ✓                   | ✓                   | ✗         | ✓        |
+| scriptling.template.text             | ✓                   | ✓                   | ✓         | ✓        |
+| scriptling.provision.file            | ✗                   | ✓                   | ✗         | ✓        |
+| scriptling.provision.fetch           | ✗                   | ✓                   | ✗         | ✓        |
+| scriptling.provision.command         | ✗                   | ✓ ³                 | ✗         | ✓        |
+| scriptling.provision.package         | ✗                   | ✓ ³                 | ✗         | ✓        |
 
 \* Requires a Pro license for secret provider access (Vault, 1Password). Standalone scriptling has built-in secret support.
 
@@ -230,39 +237,50 @@ See [Using knot.\* Libraries](scripting/using-libraries.md#the-knot-plugin-recom
 
 In MCP and Remote contexts the Go runtime provides the transport automatically — no configuration needed. In External contexts `knot.apiclient` must be configured, except when using the knot plugin where it is automatic. Most `knot.*` libraries are available everywhere, but a few are context-restricted — the [library reference](../knot-reference/libraries.md) documents the exact Execution Environment for each.
 
-| Library                 | MCP           | Remote        | External          |
-| ----------------------- | ------------- | ------------- | ----------------- |
-| knot.space              | ✓             | ✓             | ✓                 |
-| knot.user               | ✓             | ✓             | ✓                 |
-| knot.group              | ✓             | ✓             | ✓                 |
-| knot.role               | ✓             | ✓             | ✓                 |
-| knot.template           | ✓             | ✓             | ✓                 |
-| knot.vars               | ✓             | ✓             | ✓                 |
-| knot.volume             | ✓             | ✓             | ✓                 |
-| knot.permission         | ✓             | ✓             | ✓                 |
-| knot.stack              | ✓             | ✓             | ✓                 |
-| knot.pool               | ✓             | ✓             | ✓                 |
-| knot.script             | ✓             | ✓             | ✓                 |
-| knot.skill              | ✓             | ✓             | ✓                 |
-| knot.slash_command      | ✓             | ✓             | ✓                 |
-| knot.server             | ✓             | ✓             | ✓                 |
-| knot.audit              | ✓             | ✓             | ✓                 |
-| knot.files              | ✓             | ✓             | ✓                 |
-| knot.jobs               | ✓             | ✓             | ✓                 |
-| knot.token              | ✓             | ✓             | ✓                 |
-| knot.ai                 | ✓             | ✓             | ✓                 |
-| knot.mcp                | ✓             | ✓             | ✓                 |
-| knot.apiclient          | ✓ (automatic) | ✓ (automatic) | ✓ (configure first) |
-| knot.event              | emit only †   | emit only †   | emit only †       |
-| knot.methods            | ✗             | ✓             | ✗                 |
-| knot.methods.schema     | ✗             | ✓             | ✗                 |
-| knot.healthcheck        | ✗             | ✓             | ✗                 |
-| knot.identity           | ✓             | ✗             | ✗                 |
-| knot.plugin             | ✓             | ✗             | ✗                 |
+| Library                 | MCP           | Remote        | AI script         | External          |
+| ----------------------- | ------------- | ------------- | ----------------- | ----------------- |
+| knot.space              | ✓             | ✓             | ✓ ‡               | ✓                 |
+| knot.user               | ✓             | ✓             | ✓                 | ✓                 |
+| knot.group              | ✓             | ✓             | ✓                 | ✓                 |
+| knot.role               | ✓             | ✓             | ✓                 | ✓                 |
+| knot.template           | ✓             | ✓             | ✓                 | ✓                 |
+| knot.vars               | ✓             | ✓             | ✓ (as `variables`) | ✓                 |
+| knot.volume             | ✓             | ✓             | ✓                 | ✓                 |
+| knot.permission         | ✓             | ✓             | ✓                 | ✓                 |
+| knot.stack              | ✓             | ✓             | ✓ ‡               | ✓                 |
+| knot.pool               | ✓             | ✓             | ✓                 | ✓                 |
+| knot.script             | ✓             | ✓             | ✓ §               | ✓                 |
+| knot.skill              | ✓             | ✓             | ✓                 | ✓                 |
+| knot.slash_command      | ✓             | ✓             | ✓                 | ✓                 |
+| knot.server             | ✓             | ✓             | ✓                 | ✓                 |
+| knot.audit              | ✓             | ✓             | ✓                 | ✓                 |
+| knot.files              | ✓             | ✓             | ✓                 | ✓                 |
+| knot.files.sync         | ✗ ⁴           | ✓             | ✗                 | ✗                 |
+| knot.jobs               | ✓             | ✓             | ✓ ‡               | ✓                 |
+| knot.token              | ✓             | ✓             | ✗                 | ✓                 |
+| knot.tunnel             | ✓             | ✓             | ✓                 | ✓                 |
+| knot.event_sink         | ✓             | ✓             | ✓                 | ✓                 |
+| knot.mcp_server         | ✓             | ✓             | ✗                 | ✓                 |
+| knot.ai                 | ✓             | ✓             | ✗                 | ✓                 |
+| knot.mcp                | ✓             | ✓             | ✗                 | ✓                 |
+| knot.apiclient          | ✓ (automatic) | ✓ (automatic) | ✓ (guarded)       | ✓ (configure first) |
+| knot.event              | emit only †   | emit only †   | ✗                 | emit only †       |
+| knot.methods            | ✗             | ✓             | ✗                 | ✗                 |
+| knot.methods.schema     | ✗             | ✓             | ✗                 | ✗                 |
+| knot.healthcheck        | ✗             | ✓             | ✗                 | ✗                 |
+| knot.identity           | ✓             | ✗             | ✓                 | ✗                 |
+| knot.secret  | ✗ ⁴     | ✓             | ✗                 | in a space only ⁴ |
+| knot.plugin             | ✓             | ✗             | ✗                 | ✗                 |
+
+‡ In AI scripts the functions that call `/space-io/` endpoints are refused: `knot.space`'s port forward and tunnel functions, `knot.jobs.run`, and the port forwards `knot.stack.create` applies. `knot.stack.create` is not undone when that happens: for a definition with port forwards it creates the spaces and then fails.
+
+§ In AI scripts `knot.script` can read and run existing scripts only: `create()`, `update()` and `delete()` are refused, as the policy denies writes to `/api/scripts`, and so is running inline code (`execute(content=...)`, `execute_content()`).
+
+⁴ `knot.secret` and `knot.files.sync` work only inside a space, through the space's agent; elsewhere they can be imported but their functions raise an error. `knot.secret` also works for Scriptling run with knot as a plugin inside a space.
 
 † `knot.event` is context-sensitive: `emit()` is available in space scripts, MCP tool scripts, and external scripts. The payload/metadata accessors (`get_string()`, `type()`, `space()`, …) are only available in event sink scripts — see [Events](../knot-reference/events.md).
 
-Event sink scripts follow the MCP column, except `knot.event` exposes the sink accessors instead of `emit()`. Plugin handlers also have the MCP column's `knot.*` libraries (with `emit()`, `knot.identity` and `knot.plugin`), plus system access libraries — see [Writing Plugins](plugins/writing-plugins.md). Health check scripts run agent-side in the space and share the full Space environment, including `knot.healthcheck`.
+Event sink scripts follow the MCP column, except `knot.event` exposes the sink accessors instead of `emit()`. Plugin handlers also have the MCP column's `knot.*` libraries (with `emit()`, `knot.identity` and `knot.plugin`), plus system access libraries — see [Writing Plugins](plugins/writing-plugins.md). Health check scripts run agent-side in the space and share the full Space environment, including `knot.healthcheck`, but without the Go `knot.apiclient` transport: the API libraries, `knot.mcp` and `knot.event.emit()` work there only when the space's environment sets `KNOT_API_PORT` (or `KNOT_URL`/`KNOT_TOKEN`) for the Python `knot.apiclient` to configure itself from — see [Environment Compatibility](../knot-reference/libraries.md#environment-compatibility).
 
 ---
 
@@ -284,7 +302,9 @@ description = "Name of the space"
 required = true
 ```
 
-Set `requires_approval = true` for tools that write, mutate, delete, start, stop, or execute commands. When such a tool is called from the web assistant, Knot asks the browser user to approve it before execution. External MCP clients connected to `/mcp` are not prompted by the browser approval UI.
+Set `requires_approval = true` for tools that write, mutate, delete, start, stop, or execute commands. Knot publishes the tool as destructive (the MCP `destructiveHint`), so MCP clients connected to `/mcp`, such as Claude Desktop and Claude Code, ask before calling it. The web assistant asks before every tool call, and the user can choose **Always Allow** for the tool.
+
+Set `always_confirm` when the user must be asked every time, with no **Always Allow** in the web assistant: `always_confirm = true` for every call, or a table of argument values for only the calls that match, such as `always_confirm = { mode = "write" }`. It also publishes the tool as destructive.
 
 ### Parameter Types
 

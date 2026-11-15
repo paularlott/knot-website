@@ -8,7 +8,7 @@ weight: 20
 
 In Knot, roles are used to control access to features. Each role is assigned one or more permissions, which define what a user can do within the system. When a user is assigned multiple roles, the permissions from all roles are combined, granting the user access to all associated features.
 
-The built-in **Admin** role holds every permission except **Backup Server**; it can't be edited or deleted. An OIDC provider can assign it through the provider's `admin_name` setting instead of an Identity Provider Name. A new server also creates a **Backup User** role holding **Backup Server** and gives it to the first user. Backup User is an ordinary role — it can be edited, assigned, or deleted like any role you create.
+The built-in **Admin** role holds every permission except **Backup Server**, **Link Users** and **Run AI Scripts**; it can't be edited or deleted. An OIDC provider can assign it through the provider's `admin_name` setting instead of an Identity Provider Name. A new server also creates a **Backup User** role holding **Backup Server** and gives it to the first user. Backup User is an ordinary role — it can be edited, assigned, or deleted like any role you create.
 
 ---
 
@@ -61,7 +61,7 @@ Roles grant the permissions below; when a user holds multiple roles, the permiss
 | Manage Groups | Create, edit, and delete user groups. |
 | Manage Roles | Create, edit, and delete roles and their permissions. |
 | Manage Users | Create, edit, and delete user accounts. |
-| Link Users | Grant one user the ability to switch into another account from the profile menu. Treat as impersonation-grade: the holder can link to any account, administrators included. |
+| Link Users | Grant one user the ability to switch into another account from the profile menu. Treat as impersonation-grade: the holder can link to any account, administrators included. Not part of the Admin role: give it through a role you create. |
 
 ### Resource Management
 
@@ -88,6 +88,7 @@ Roles grant the permissions below; when a user holds multiple roles, the permiss
 | Use MCP Server | Connect to the knot MCP server. |
 | Use Web Assistant | Use the built-in web AI assistant. |
 | Manage MCP Servers | Register and configure MCP servers. |
+| Run AI Scripts | Let the AI assistant write and run scripts against the API as you. Scripts that make changes need your approval. Not part of the Admin role: give it through a role you create. See [MCP Tools](/docs/ai/mcp-tools/#ai-written-scripts). |
 
 ### Scripting
 
@@ -117,19 +118,19 @@ Roles grant the permissions below; when a user holds multiple roles, the permiss
 | Manage Own Stack Definitions | Create, edit, and delete personal stack definitions. |
 | Use Stack Definitions | Create spaces from stack definitions. |
 
-### Methods, Tunnels & Pools
+### Methods & Tunnels
 
 | Permission | Description |
 |---|---|
 | Use Space Methods Shared by Others | Call space methods shared by other users. |
 | Use Tunnels | Expose a local or space port as a public URL via a knot tunnel. |
-| Use Space Pools | Create and run space pools. |
 
 ### Space Operations
 
 | Permission | Description |
 |---|---|
 | Use Spaces | Create and run spaces. |
+| Use Space Pools | Create and run space pools. |
 | Set Space Dependencies | Configure dependencies between spaces. |
 | Edit Space Jobs | Edit the scheduled jobs of your own spaces. |
 | Use User Startup Script | Set a user startup script that runs when a space starts. |
@@ -145,7 +146,7 @@ Roles grant the permissions below; when a user holds multiple roles, the permiss
 | Copy Files | Copy files to and from a space. |
 
 {{< tip >}}
-Knot Pro adds one further permission — **Use Log Sinks**, running a space that receives the logs of your other spaces. {{< pro-badge >}}
+Knot Pro adds two further Space Operations permissions {{< pro-badge >}}: **Use Log Sinks** (permission ID `42`), running a space that receives the logs of your other spaces, and **Use Personal Secrets** (permission ID `51`), storing a 1Password service account token and reading your own secrets from spaces, scripts and the CLI.
 {{< /tip >}}
 
 ---

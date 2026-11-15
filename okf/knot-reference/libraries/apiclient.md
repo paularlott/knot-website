@@ -26,7 +26,8 @@ For standalone use outside knot, configure it explicitly or set environment vari
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Go runtime provides the transport. `configure()` is a no-op and tokens are never exposed to scripts. |
 | Real Scriptling in a space (via `knot.zip`) | Auto-configured: `knot.apiclient` fetches the server URL and token from the agent's `/connect` endpoint on `127.0.0.1:$KNOT_API_PORT` and talks to the server directly as the space owner. No `configure()` needed. |
-| Health check scripts | Not available. |
+| AI scripts (`run_script`) | Go runtime provides the transport, imported as `apiclient`, guarded by the AI script policy: only `/api/` paths are allowed, a read-mode script may only make reads, a call budget applies, and a deny list refuses credentials, sign-in, backups, secrets, user, group and role changes, stored script changes and more in either mode — see the full list in [AI-Written Scripts](../../knot-docs/ai/mcp-tools.md#ai-written-scripts). |
+| Health check scripts | No Go transport. The Python implementation is used: it configures itself from the agent's `/connect` endpoint when the space's environment sets `KNOT_API_PORT` (talking to the server as the space owner), else from `KNOT_URL`/`KNOT_TOKEN`; with neither, calls raise "not configured". |
 | External (standalone scripts) | Python implementation. Call `configure()` or set the `KNOT_*` environment variables. |
 
 ---
@@ -37,14 +38,21 @@ For standalone use outside knot, configure it explicitly or set environment vari
 |----------|-------------|
 | `configure(url, token, ...)` | Configure the client (no-op in embedded contexts) |
 | `is_configured()` | Returns True if configured |
-| `get(path, params=None, timeout=None)` | Make a GET request |
-| `post(path, body=None, timeout=None)` | Make a POST request |
-| `put(path, body=None, timeout=None)` | Make a PUT request |
-| `delete(path, headers=None, timeout=None)` | Make a DELETE request, with any extra request headers (such as `If-Match`) |
-| `get_bytes(path, timeout=None)` | Make a GET request, returning the response body as bytes (file content) |
-| `put_bytes(path, data, content_type="", timeout=None)` | Make a PUT request with a string or bytes body (file content) |
+| `get(path, params=None, timeout=DEFAULT_TIMEOUT)` | Make a GET request |
+| `post(path, body=None, timeout=DEFAULT_TIMEOUT, headers=None)` | Make a POST request, with any extra request headers (a `Content-Type` given replaces `application/json`) |
+| `put(path, body=None, timeout=DEFAULT_TIMEOUT)` | Make a PUT request |
+| `delete(path, headers=None, timeout=DEFAULT_TIMEOUT)` | Make a DELETE request, with any extra request headers (such as `If-Match`) |
+| `get_bytes(path, timeout=CONTENT_TIMEOUT)` | Make a GET request, returning the response body as bytes (file content) |
+| `put_bytes(path, data, content_type="", timeout=CONTENT_TIMEOUT)` | Make a PUT request with a string or bytes body (file content) |
 
-`timeout` is how many seconds a request waits for the server's answer. Without one, embedded scripts keep the limit of the client they run with, and standalone scripts wait 30 seconds, or 600 for `get_bytes` and `put_bytes`. The `knot.*` libraries give their own timeouts to calls that wait on a space: `knot.space.run` waits for the command's timeout plus a minute, running a script in a space waits up to 7 minutes, and reading, writing and searching files in a space up to 11 minutes. Pass a `timeout` to your own calls that do the same.
+`get`, `post`, `put`, `delete` and `put_bytes` return the decoded JSON response — a dict or a list — or `None` when the response has no body.
+
+| Constant | Value | Description |
+|----------|-------|-------------|
+| `DEFAULT_TIMEOUT` | `30` | Default seconds `get`, `post`, `put` and `delete` wait in the standalone Python implementation |
+| `CONTENT_TIMEOUT` | `600` | Default seconds `get_bytes` and `put_bytes` wait in the standalone Python implementation |
+
+`timeout` is how many seconds a request waits for the server's answer. Standalone scripts default to `DEFAULT_TIMEOUT` (30 seconds), or `CONTENT_TIMEOUT` (600) for `get_bytes` and `put_bytes`; `timeout=None` there means no limit. Embedded scripts given no timeout (or `None`) keep the limit of the client they run with: none in the server, six minutes in a space. The `knot.*` libraries give their own timeouts to calls that wait on a space: `knot.space.run` waits for the command's timeout plus a minute, running a script in a space waits up to 7 minutes, and reading, writing and searching files in a space up to 11 minutes. Pass a `timeout` to your own calls that do the same.
 
 ---
 
@@ -68,7 +76,7 @@ knot.apiclient.configure(
 
 ### Environment Variables
 
-Read on first use if `configure()` has not been called:
+Read on first use if `configure()` has not been called. Inside a space, the agent's `/connect` endpoint (on `127.0.0.1:$KNOT_API_PORT`) is tried first; the environment variables are used only when that is unavailable:
 
 | Variable | Description | Default |
 |----------|-------------|---------|

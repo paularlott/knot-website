@@ -15,7 +15,7 @@ The `knot.token` library manages the current user's API tokens: mint keys for ma
 | Environment | Behaviour |
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
-| Health check scripts | Not available. |
+| Health check scripts | Only when the space's environment sets `KNOT_API_PORT` or `KNOT_URL`/`KNOT_TOKEN`: there is no built-in transport, so the Python `knot.apiclient` configures itself from the agent (as the space owner) or those variables, and calls raise otherwise. See [Environment Compatibility](/reference/libraries/#environment-compatibility). |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
 ---
@@ -26,6 +26,7 @@ The `knot.token` library manages the current user's API tokens: mint keys for ma
 |----------|-------------|
 | `list()` | List the current user's API tokens |
 | `create(name, scopes=None)` | Create an API token and return its value |
+| `update(token_id, name=None, scopes=None)` | Rename a token or change its scopes |
 | `delete(token_id)` | Delete a token by id (its value), revoking it immediately |
 
 ---
@@ -51,6 +52,19 @@ Create an API token for the current user.
 - `scopes` (list, optional): Narrows the token to endpoint groups — `"methods"` (`/api/methods*`), `"mcp"` (`/mcp`) and `"tunnels"` (`/tunnel/*` and `/api/tunnels*`: create, list and delete tunnels only), `"files"` (`/api/files*`, and on Knot Pro the S3 endpoint with the token as the secret key) and `"backup"` (`/api/backup*` and `/api/restore*` only, for a token left in a backup job). Every scoped token can also read its own identity at `/api/users/whoami`. Empty or omitted means full access.
 
 **Returns:** `string` - The new token's value (the bearer key) — pass it to clients, e.g. [`space.tunnel_start(..., token=...)`](../space/#tunnel_startspace-protocol-port-name-server-token) or a pipeline's `knot tunnel --token`.
+
+---
+
+### update(token_id, name=None, scopes=None)
+
+Rename an API token or change its scopes; only the arguments given change.
+
+**Parameters:**
+- `token_id` (string): The token's value, from `create` or `list`
+- `name` (string, optional): New name for the token
+- `scopes` (list, optional): New scope list, as for `create`; `[]` clears the scopes, giving the token full access
+
+**Returns:** `bool` - `True` on success
 
 ---
 

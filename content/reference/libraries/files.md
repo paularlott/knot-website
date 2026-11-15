@@ -17,10 +17,10 @@ Buckets are named `<owner>--<name>`. Give your own buckets by their short name; 
 | Environment | Behaviour |
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
-| Health check scripts | Not available. |
+| Health check scripts | Only when the space's environment sets `KNOT_API_PORT` or `KNOT_URL`/`KNOT_TOKEN`: there is no built-in transport, so the Python `knot.apiclient` configures itself from the agent (as the space owner) or those variables, and calls raise otherwise. See [Environment Compatibility](/reference/libraries/#environment-compatibility). |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
-A script holds a file's content in memory, so one read or write is limited to 64 MB; use `knot file copy` for larger files. File storage must be enabled on the server (`server.files.path`), or calls fail with `file storage is not enabled on this server`.
+A script holds a file's content in memory, so one read or write is limited to 64 MB; write a larger file [in parts](#uploads-in-parts), or use `knot file copy`. File storage must be enabled on the server (`server.files.path`), or calls fail with `file storage is not enabled on this server`.
 
 ---
 
@@ -48,6 +48,13 @@ A script holds a file's content in memory, so one read or write is limited to 64
 | `unshare_bucket(name, user=None, group=None, everyone=False)` | Stop sharing a bucket |
 | `transfer_bucket(name, user, force=False)` | Give a bucket to another user |
 | `usage()` | Your file storage usage and limits |
+| `share_targets()` | The users and groups your buckets can be shared with or transferred to |
+| `fsck(repair=False, deep=False, timeout=3600)` | Check file storage, and with `repair` fix what can be fixed (administrators) |
+| `start_upload(bucket, key, content_type="application/octet-stream")` | Start an upload in parts; returns its ID |
+| `upload_part(bucket, key, upload_id, number, data)` | Send one part of an upload |
+| `list_upload_parts(bucket, key, upload_id)` | The parts of an upload the server holds |
+| `complete_upload(bucket, key, upload_id, parts=None, timeout=3600)` | Make the parts the file |
+| `abort_upload(bucket, key, upload_id)` | Discard an upload and its parts |
 
 ---
 
@@ -285,6 +292,70 @@ Give a bucket to another user, who must be allowed to own buckets. It is renamed
 
 **Returns:** `dict` containing `used_bytes`, `files` and `buckets` (what you own), and `quota_bytes` and `max_buckets` (your limits, `0` for none).
 
+### share_targets()
+
+The users and groups your buckets can be shared with or transferred to — the choices of the web UI's share and transfer dialogs, without the user management permission listing users needs. Needs the Share Buckets or Transfer Buckets permission.
+
+**Returns:** `dict` containing `users` (dicts with `id`, `username`, `can_own` — may own buckets, so may receive a transfer — and `self`, `True` for you) and `groups` (dicts with `id` and `name`).
+
+### fsck(repair=False, deep=False, timeout=3600)
+
+Check file storage, as `knot admin file fsck` does. Only file storage administrators may run it.
+
+**Parameters:**
+- `repair` (bool, optional): Fix what can be fixed: fetch missing content from the cluster, rebuild counts and indexes, remove buckets of deleted users, rewrite modes in octal
+- `deep` (bool, optional): Also read every stored content and verify its checksum (slow)
+- `timeout` (number, optional): Seconds to wait for the check (default 3600)
+
+**Returns:** `dict` containing `buckets` and `files` (how many were checked), `found` and `repaired` (dicts of issue kind to count), `issues` (dicts with `kind`, `bucket`, `key` and `detail`; capped) and `notes` (strings).
+
+---
+
+## Uploads in parts
+
+A file larger than one write (64 MB) is sent a part at a time: `start_upload`, then `upload_part` for each part in order from 1, then `complete_upload`. The parts are held on the server until the upload completes, so an upload stopped part way carries on from the parts already sent — `list_upload_parts` says which — and `abort_upload` discards them.
+
+### start_upload(bucket, key, content_type="application/octet-stream")
+
+**Returns:** `string` - The upload ID. Raises if you may not write there.
+
+### upload_part(bucket, key, upload_id, number, data)
+
+Send part `number` (from 1, in file order) of an upload; `data` is a string (sent as UTF-8) or bytes, at most 64 MB. Sending a number again replaces that part.
+
+**Returns:** `dict` with `number`, `etag` and `size` of the part held.
+
+### list_upload_parts(bucket, key, upload_id)
+
+**Returns:** `list` of dicts with `number`, `etag` and `size`, in part order. Raises if the upload is not found.
+
+### complete_upload(bucket, key, upload_id, parts=None, timeout=3600)
+
+Make the parts the file, replacing any file with that key. `parts` lists the parts in order as `upload_part` returned them; by default every part the server holds is used.
+
+**Returns:** `dict` - The [file](#stat).
+
+### abort_upload(bucket, key, upload_id)
+
+Discard an upload and the parts held.
+
+**Returns:** `bool` - `True`
+
+```python
+import knot.files as files
+
+upload_id = files.start_upload("backups", "db/dump.sql.gz", "application/gzip")
+with open("/tmp/dump.sql.gz", "rb") as f:
+    number = 1
+    while True:
+        chunk = f.read(32 << 20)
+        if not chunk:
+            break
+        files.upload_part("backups", "db/dump.sql.gz", upload_id, number, chunk)
+        number += 1
+files.complete_upload("backups", "db/dump.sql.gz", upload_id)
+```
+
 ---
 
 ## knot.files.sync
@@ -295,10 +366,10 @@ Projects started this way are kept by the agent and started again when the space
 
 | Function | Description |
 |----------|-------------|
-| `start(project, name="", wait=False, timeout=600)` | Start a sync project, or replace one of the same name |
-| `stop(name)` | Stop a sync project after sending its last local changes |
+| `start(project, name="", wait=False, timeout=600)` | Start a sync project, or replace one of the same name; `name`, `wait` and `timeout` may be positional or keywords |
+| `stop(name)` | Stop a sync project after sending its last local changes (`name` positional or `name=`) |
 | `list()` | The sync projects running, the template's included |
-| `status(name)` | How one sync project is doing, or `None` |
+| `status(name)` | How one sync project is doing, or `None` (`name` positional or `name=`) |
 
 ### start(project, name="", wait=False, timeout=600)
 

@@ -69,15 +69,18 @@ Types map to JSON schema types (`int` → `integer`, `float` → `number`, `list
 
 ## The identity surface
 
-Handlers can self-check who is calling. `request["user"]` carries the caller as inert data (`name`, `id`, `is_admin`, `groups`, `permissions`, `plugin_permissions`) - use it to branch on who is asking. Any permission **check** uses [`knot.identity`](../scriptling/#identity), a real `User` object with `has_permission`/`in_group` where the admin role passes everything. The metadata gates remain the enforcement boundary (knot refuses before plugin code runs); these are for the in-code decisions the declarations can't express — adapting output, refusing edge cases:
+Handlers can self-check who is calling. `request["user"]` carries the caller as inert data (`name`, `id`, `is_admin`, `groups`, `permissions`, `plugin_permissions`) - use it to branch on who is asking. Any permission **check** uses [`knot.identity`](../scriptling/#identity), a real `User` object with `has_permission`/`in_group` where the admin role passes everything (`in_group` takes a group ID; `groups` lists IDs, not names). The metadata gates remain the enforcement boundary (knot refuses before plugin code runs); these are for the in-code decisions the declarations can't express — adapting output, refusing edge cases:
 
 ```python
 def export_metrics(request):
     import scriptling.mcp.tool as tool
     import knot.identity
 
+    # groups and in_group() use group IDs, not names
+    PLATFORM_GROUP_ID = "0b6c2d9e-..."  # the platform group's ID
+
     user = knot.identity.user()
-    if not user.is_admin and not user.in_group("platform"):
+    if not user.is_admin and not user.in_group(PLATFORM_GROUP_ID):
         tool.return_error("platform group only")
     ...
 ```

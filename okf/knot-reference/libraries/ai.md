@@ -24,7 +24,7 @@ The `knot.ai` library provides access to an AI client for scripts. In embedded c
 | Environment | Behaviour |
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Go library returns a pre-configured client connected to the server's AI provider. `get_default_model()` returns `""`; passing `""` to any method makes the server use its configured default model. |
-| Health check scripts | Not available. |
+| Health check scripts | Importable (health checks share the agent environment), but there is no API client there, so `Client()` raises an error. |
 | External (standalone scripts) | Python implementation wrapping `scriptling.ai`. Configure AI details via `knot.apiclient` (`ai_url`, `ai_token`, `ai_model`, `ai_provider`) or the `KNOT_AI_*` environment variables. |
 
 ---

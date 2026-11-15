@@ -29,6 +29,7 @@ def export_report():
 |-------------|-----------|
 | Plugin handler environments | Available; re-registered per lease, so pooled environments carry the current requesting user. Handlers also get `request["user"]` data; `knot.identity` is the authority for checks. |
 | MCP server (user-created tools, event sinks) | Available; bound per execution. |
+| AI scripts (`run_script`) | Available, imported as `identity`; the user the script runs as. |
 | Agent / spaces | Not available — the agent environment binds no user identity. |
 
 ---
@@ -37,7 +38,7 @@ def export_report():
 
 | Function | Description |
 |----------|-------------|
-| `user()` | The requesting `User`: `id`, `name`, `is_admin`, `groups`, `permissions` (stable keys), `plugin_permissions` (qualified grants), with `has_permission(key)` and `in_group(name)` methods. `has_permission`'s argument picks the check: an integer is a built-in permission id (the `knot.permission` constants), a `"plugin."`-prefixed string a qualified grant, any other string a built-in's stable key; the admin role passes every check. |
+| `user()` | The requesting `User`: `id`, `name`, `is_admin`, `groups`, `permissions` (stable keys), `plugin_permissions` (qualified grants), with `has_permission(key)` and `in_group(group_id)` methods. `groups` holds group **IDs**, and `in_group` compares its argument against them — pass a group ID, not a group name. `has_permission`'s argument picks the check: an integer is a built-in permission id (the `knot.permission` constants), a `"plugin."`-prefixed string a qualified grant, any other string a built-in's stable key; the admin role passes every check. |
 
 ---
 

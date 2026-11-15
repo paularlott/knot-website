@@ -11,6 +11,31 @@ navSection: docs
 
 ## November 2026
 
+{{< version "v0.45.0" >}}
+
+{{< changelog-item "added" >}}
+- Let the AI assistant write and run its own scripts against the knot API with the new `run_script` MCP tool, and read the scripting guide with `script_docs`. Scripts run as the user and only read unless the user approves a change. They cannot touch credentials, secrets or accounts, are limited in time, API calls, memory and output, and are recorded in the audit log ([docs](../docs/ai/mcp-tools/#ai-written-scripts))
+- Add the Run AI Scripts permission to control who may use `run_script`. It is not part of the Admin role, so grant it through a role you create ([docs](../docs/access-control/roles/))
+- Cover the whole API in the script libraries, including the new `knot.event_sink`, `knot.mcp_server` and `knot.tunnel` libraries ([docs](../reference/libraries/))
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- **Breaking:** rename the MCP tool that runs a named script in a space from `run_script` to `run_space_script`. Update any skills or prompts that call it by name ([docs](../docs/ai/mcp-tools/#commands))
+- **Breaking:** remove the Link Users permission from the Admin role, as it lets its holder act as any account. Admins who switch between linked users need a role you create with Link Users; existing links keep working ([docs](../docs/access-control/users/#linked-users-fast-user-switching))
+- **Breaking:** `knot.space.run()` raises when the command fails or times out, instead of returning as if it succeeded. Pass `check=False` to get the result instead ([docs](../reference/libraries/space/#runname-command-argsnone-timeout30-workdir-checktrue))
+- MCP clients such as Claude Desktop and Claude Code now ask before calling tools that set `requires_approval = true`, and the new `always_confirm` setting makes the web assistant ask before every call, with no **Always Allow** ([docs](../docs/scripting/#parameter-schema))
+{{< /changelog-item >}}
+
+{{< changelog-item "fixed" >}}
+- Fix looking up the built-in Admin role by its ID, which returned not found
+- Fix updating a template variable without a value clearing the value
+- Fix updating a remote MCP server without a namespace
+- Fix space method calls waiting forever; they now stop after at most 300 seconds, or when the caller goes away
+- Fix many `knot.*` script library functions that failed, ignored arguments or returned wrong values, among them `knot.skill`, the `knot.space` file, port and tunnel functions, and `knot.user` and `knot.group` updates resetting storage quotas ([docs](../reference/libraries/))
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.44.0" >}}
 
 {{< changelog-item "changed" >}}

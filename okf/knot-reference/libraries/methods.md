@@ -14,7 +14,7 @@ type: API Reference
 ---
 # knot.methods
 
-Register JSON-RPC methods for the current space from startup scripts or `knot methods register file.py`. Available in agent-side and `knot run-script` contexts only — not in MCP tool execution environments.
+Register JSON-RPC methods for the current space from startup scripts or `knot methods register file.py`. Available in agent-side contexts (startup scripts, `knot methods register`, `knot run-script`, and — though not a supported use — health checks) only; not in MCP tool execution environments.
 
 ---
 
@@ -94,10 +94,10 @@ server.register()
 - A space can only have one active registration at a time.
 - `register()` replaces the space's previous registration entirely.
 - `unregister()` with no arguments removes all methods and stops the method server process.
-- `unregister("search")` removes just that method and re-publishes the reduced set.
+- `unregister("search")` (or `unregister(name="search")`) removes just that method and re-publishes the reduced set. Any other keyword argument raises an error.
 
 ---
 
 ## Environment Compatibility
 
-Available in startup scripts, `knot methods register file.py`, and `knot run-script`. Not available in MCP tool execution or health check scripts.
+Available in startup scripts, `knot methods register file.py`, and `knot run-script`. Health check scripts can import it (they share the agent environment) but should not register methods. Not available in MCP tool execution, event sinks or plugin handlers.

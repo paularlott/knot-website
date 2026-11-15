@@ -15,7 +15,7 @@ The `knot.template` library provides template management functions. Templates de
 | Environment | Behaviour |
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
-| Health check scripts | Not available. |
+| Health check scripts | Only when the space's environment sets `KNOT_API_PORT` or `KNOT_URL`/`KNOT_TOKEN`: there is no built-in transport, so the Python `knot.apiclient` configures itself from the agent (as the space owner) or those variables, and calls raise otherwise. See [Environment Compatibility](/reference/libraries/#environment-compatibility). |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
 ---
@@ -26,14 +26,21 @@ The `knot.template` library provides template management functions. Templates de
 |----------|-------------|
 | `list(include_inactive=False, resolve_options=False)` | List templates visible to the current user; with `resolve_options`, handler-backed custom fields have their options resolved as the requesting user |
 | `get(template_id, resolve_options=False)` | Get template by ID or name; with `resolve_options`, handler-backed custom fields have their options resolved as the requesting user |
-| `field_options(handler_id)` | Resolve a plugin field handler's option keys as the requesting user — the values the space form offers and the API accepts — or `None` when the handler cannot be reached |
-| `validate(platform, job='', volumes='')` | Validate template job and volume specs without saving |
-| `build_spec(platform, spec, original_job='', original_volumes='')` | Build native job/volume text from a unified spec (image, env, ports, storage, resources). The same conversion the [UI spec wizard](/docs/configuration/spec-wizard/) uses. |
-| `nodes(template_id)` | List available nodes for a local-container template |
+| `field_options(handler_id, query='')` | Resolve a plugin field handler's option keys as the requesting user — the values the space form offers and the API accepts — or `None` when the handler cannot be reached. `query` is passed to the handler as the text typed so far (autocomplete fields) |
+| `field_handlers()` | List the field handlers loaded plugins declare (`id`, `label`, `plugin`) |
+| `validate(platform, job='', volumes='')` | Validate template job and volume specs without saving. Needs **Manage Templates** |
+| `build_spec(platform, spec, original_job='', original_volumes='')` | Build native job/volume text from a unified spec (image, env, ports, storage, resources). The same conversion the [UI spec wizard](/docs/configuration/spec-wizard/) uses. Needs **Manage Templates** |
+| `nodes(template_id)` | List available nodes for a local-container or KVM template |
 | `create(name, job='', description='', platform='', ...)` | Create a new template; returns its ID |
 | `update(template_id, ...)` | Update template properties; omitted arguments keep their current values |
 | `delete(template_id)` | Delete a template |
-| `get_icons()` | Get list of available icons |
+| `get_icons()` | Get list of available icons, each with `description`, `source` and `url` |
+| `export(template_id)` | Export a template as portable YAML |
+| `import_yaml(yaml_text)` | Create or update a template from exported YAML; returns its ID |
+| `parse_spec(platform, job, volumes='')` | Convert native job/volume text into a unified spec, as the spec wizard does |
+| `base_images()` | Get the spec wizard's base image catalog |
+| `refresh_base_images()` | Fetch the base image catalog from its update URL now |
+| `capabilities()` | List the Linux capabilities the spec wizard offers |
 
 ---
 
@@ -53,7 +60,8 @@ print(t['description'])
 
 # Get available icons
 icons = template.get_icons()
-print(icons)
+for icon in icons:
+    print(icon["description"], icon["source"], icon["url"])
 
 # Validate a template spec before saving
 result = template.validate("docker", job="image: ubuntu:24.04")
@@ -185,7 +193,7 @@ For `health_check_type="agent"`, no `health_check_config` value is required.
 
 `validate(platform, job='', volumes='')` returns:
 - `valid` - Whether the specification is valid
-- `errors` - List of validation errors with `field` and `message`
+- `errors` - List of validation errors with `field` and `message`, plus `line` (the 1-based line in the job or volume text) when the problem can be placed. The key is absent when the specification is valid, so read it with `.get("errors", [])`
 
 ## Building Specs
 
@@ -219,9 +227,35 @@ When `original_job` / `original_volumes` are provided, the server patches the un
 - `job` - Native job definition text (HCL for Nomad, YAML for container platforms)
 - `volumes` - Volume definition text (YAML)
 
+## Parsing Specs
+
+`parse_spec(platform, job, volumes='')` is the reverse of `build_spec()`: it converts a template's native job and volume text into the unified spec, as the spec wizard does when it opens. Needs the **Manage Templates** permission. It returns:
+- `wizardable` - Whether the text could be converted
+- `reason` - Why not, when `wizardable` is `False`
+- `spec` - The unified spec dict, or `None`
+- `fully_representable` - Whether the unified spec holds everything in the native text; when `False`, pass the original text to `build_spec()` so what the spec cannot represent is kept
+- `advanced_reason` - What the unified spec cannot represent
+
+`base_images()` returns the catalog the wizard's image picker offers: `version`, `manifest_version` (catalog revision, `yyyymmddbb`), `description`, `registry_auth` (whether base image registry credentials are configured) and `images`, each with `name`, `display_name`, `description`, `image`, `icon`, `category`, `tags`, `default_memory`, `default_cpus`, `default_cores`, `recommended` and optional `default_env`, `default_port` and `volumes`.
+
+`refresh_base_images()` fetches the catalog from its update URL now (needs **Manage Templates**, and base image updates enabled with an update URL in the server configuration) and returns `updated`, `active_version` and `update_url`.
+
+`capabilities()` returns the Linux capabilities offered for `cap_add` / `cap_drop`, each with `name` (e.g. `CAP_NET_ADMIN`), `description` and `common`.
+
+## Export and Import
+
+`export(template_id)` returns a template (by name or ID) as portable YAML, with startup and shutdown script IDs replaced by script names. `import_yaml(yaml_text)` takes that YAML on this or another server: a template with the same name is updated in place, otherwise a new one is created; scripts are looked up by name and dropped when missing. Both need the **Manage Templates** permission.
+
+```python
+import knot.template as template
+
+yaml_text = template.export("ubuntu-dev")
+template_id = template.import_yaml(yaml_text.replace("name: ubuntu-dev", "name: ubuntu-dev-copy"))
+```
+
 ## Nodes
 
-`nodes(template_id)` returns available placement nodes for local-container templates. Non-local-container templates return an empty list.
+`nodes(template_id)` returns available placement nodes for node-local templates: local containers (`docker`, `podman`, `apple`, `container`) and KVM. Other templates (Nomad, manual) return an empty list.
 
 Node entries contain:
 - `node_id` - Node ID

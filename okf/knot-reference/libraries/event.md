@@ -29,7 +29,7 @@ The `knot.event` library provides event emission and access functions. The modul
 | MCP tool execution, plugin handlers | `emit()` only. Raises user-scoped custom events (as the requesting user) through the server's loopback API. There is no space context, so events use the nil space id and are not space-associated. |
 | External (standalone scripts) | `emit()` only. With no local agent present, falls back to `knot.apiclient` and the server's `/api/events/emit` endpoint. User-scoped (nil space id). |
 | Event sink scripts (server-side) | Payload and metadata accessors only (`get_string()`, `get_int()`, `get_bool()`, `get_list()`, `get_dict()`, `type()`, `id()`, `ts()`, `space()`, `space_urls()`, `actor()`, `custom()`). `emit()` is not available. |
-| Health check scripts | Not available. |
+| Health check scripts | `emit()` only. When the space's environment sets `KNOT_API_PORT` the event goes through the local agent and is space-associated; otherwise it falls back to `knot.apiclient`, which needs `KNOT_URL`/`KNOT_TOKEN` there, and raises without them. |
 
 ---
 

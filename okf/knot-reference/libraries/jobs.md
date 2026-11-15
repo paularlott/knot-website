@@ -18,7 +18,9 @@ type: API Reference
 
 The `knot.jobs` library manages the scheduled jobs of a space. Job definitions are stored on the space and pushed to its agent, so they survive restarts and can be changed while the space is stopped.
 
-Functions that change definitions (`add`, `update`, `remove`, `enable`, `disable`, `enable_runner`, `disable_runner`) require the **Edit Space Jobs** permission; `list` and `run` are available to the space owner regardless.
+Functions that change definitions (`add`, `update`, `remove`, `enable`, `disable`, `enable_runner`, `disable_runner`) require the **Edit Space Jobs** permission; `list` needs only **Use Spaces**, and `run` requires the **Run Commands** permission. All of them work on spaces you own or that are shared with you.
+
+`run` is not available inside AI scripts (`run_script`), which may only call `/api/` endpoints; it raises an error there.
 
 ---
 
@@ -27,7 +29,7 @@ Functions that change definitions (`add`, `update`, `remove`, `enable`, `disable
 | Environment | Behaviour |
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
-| Health check scripts | Not available. |
+| Health check scripts | Only when the space's environment sets `KNOT_API_PORT` or `KNOT_URL`/`KNOT_TOKEN`: there is no built-in transport, so the Python `knot.apiclient` configures itself from the agent (as the space owner) or those variables, and calls raise otherwise. See [Environment Compatibility](../libraries.md#environment-compatibility). |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
 ---
@@ -60,7 +62,7 @@ knot.apiclient.configure("https://knot.example.com", "your-token")
 jobs = knot.jobs.list("my-space")
 print(jobs["enabled"])
 for job in jobs["jobs"]:
-    print(job["name"], job["schedule"] or "(manual only)", job["enabled"])
+    print(job["name"], job.get("schedule") or "(manual only)", job["enabled"])
 
 # Add a scheduled job (daily at 02:00)
 knot.jobs.add("my-space", "backup", command="./backup.sh", schedule="0 2 * * *")
@@ -107,7 +109,7 @@ List a space's job definitions and runner state. Works while the space is stoppe
 run(space, name)
 ```
 
-Trigger a job immediately by name. Works for disabled and manual-only jobs; the space must be running. Raises `RuntimeError` if the job could not be started.
+Trigger a job immediately by name. Works for disabled and manual-only jobs; the space must be running. Requires the **Run Commands** permission. Raises an `Exception` (carrying the server's error, e.g. when the space is not running or the job does not exist) if the job could not be started.
 
 **Parameters:**
 - `space` - Space name or ID
@@ -182,7 +184,7 @@ Start or stop the space's job runner and return `True`. A stopped runner suspend
 Each job definition contains:
 - `name` - The job name, unique within the space
 - `command` - The shell command the job runs in the space's home directory
-- `schedule` - 5-field cron expression; empty for a manual-only job
+- `schedule` - 5-field cron expression; **omitted** for a manual-only job, so read it with `job.get("schedule")`
 - `enabled` - Whether the job fires automatically
 
 ---

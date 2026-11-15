@@ -15,7 +15,7 @@ The `knot.pool` library manages space pools. A pool keeps a desired count of ide
 | Environment | Behaviour |
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
-| Health check scripts | Not available. |
+| Health check scripts | Only when the space's environment sets `KNOT_API_PORT` or `KNOT_URL`/`KNOT_TOKEN`: there is no built-in transport, so the Python `knot.apiclient` configures itself from the agent (as the space owner) or those variables, and calls raise otherwise. See [Environment Compatibility](/reference/libraries/#environment-compatibility). |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
 ---
@@ -129,7 +129,7 @@ Each member in `members` contains:
 
 - `id` - Space ID
 - `name` - Space name
-- `state` - Member state
+- `state` - Member state: `"alive"` (agent connected and healthy, receiving traffic), `"starting"` (pending), `"stopping"` (being deleted) or `"dead"` (not running, or unhealthy)
 - `combined_rps`, `method_rps`, `http_rps`, `tcp_rps` - Per-member request rates
 - `method_inflight` - In-flight method requests
 - `cpu_percent` - CPU usage

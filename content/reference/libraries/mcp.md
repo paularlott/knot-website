@@ -15,7 +15,7 @@ The `knot.mcp` library provides MCP (Model Context Protocol) tool discovery and 
 | Environment | Behaviour |
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Go library routes tool discovery and execution through the server's internal MCP endpoint, with per-user tool scoping applied automatically. |
-| Health check scripts | Not available. |
+| Health check scripts | Python implementation, as for external scripts: it connects to the server's `/mcp` endpoint once `knot.apiclient` has configured itself, which needs `KNOT_API_PORT` (or `KNOT_URL`/`KNOT_TOKEN`) in the space's environment; otherwise calls raise. |
 | External (standalone scripts) | Python implementation. Connects to the server's `/mcp` endpoint using the `knot.apiclient` configuration. |
 
 ---
@@ -25,9 +25,9 @@ The `knot.mcp` library provides MCP (Model Context Protocol) tool discovery and 
 | Function | Description |
 |----------|-------------|
 | `list_tools()` | Get all available MCP tools |
-| `call_tool(name, arguments)` | Call an MCP tool directly |
-| `tool_search(query, max_results=10)` | Search for tools by keyword |
-| `execute_tool(name, arguments)` | Execute a discovered tool |
+| `call_tool(name, arguments)` | Call an MCP tool directly (`name=` and `arguments=` may be given by keyword) |
+| `tool_search(query, max_results=10)` | Search for tools by keyword; `max_results` may be positional or a keyword |
+| `execute_tool(name, arguments)` | Execute a discovered tool (`name=` and `arguments=` may be given by keyword) |
 
 ---
 
@@ -59,7 +59,7 @@ response = mcp.call_tool("my_tool", {"param": "value"})
 
 Get a list of all available MCP tools, including tools from remote MCP servers if configured.
 
-**Returns:** `list` - List of tool dicts with `name`, `description`, and `parameters` (JSON Schema)
+**Returns:** `list` - List of tool dicts with `name` and `description`. The input JSON Schema key differs by environment: embedded scripts get it as `parameters`; the external Python implementation returns the MCP tool definitions as the server sends them, with the schema under `inputSchema`. Use `tool.get("parameters") or tool.get("inputSchema")` in code meant for both.
 
 ---
 

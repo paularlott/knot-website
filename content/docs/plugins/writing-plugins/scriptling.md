@@ -332,11 +332,11 @@ The `demo-scriptling` plugin shows the whole loop: its showcase page has a **Plu
 | `.id` | field | the user's id |
 | `.name` | field | the user's login name |
 | `.is_admin` | field | whether the user holds the fixed admin role |
-| `.groups` | field | the groups the user belongs to |
+| `.groups` | field | the IDs (not names) of the groups the user belongs to |
 | `.permissions` | field | stable snake_case keys of the built-in permissions the user holds |
 | `.plugin_permissions` | field | qualified plugin grants (`"plugin.metrics.read"`) the user holds |
 | `.has_permission(key)` | method | permission check — the argument picks: an integer is a built-in permission id (the `knot.permission` constants), a `"plugin."`-prefixed string a qualified grant, any other string a built-in's stable key; admins pass every check |
-| `.in_group(name)` | method | membership of one group |
+| `.in_group(group_id)` | method | membership of one group, by group ID (not name) |
 
 Permission keys are stable identifiers — display names are for the role editor and may be reworded, keys never change. One method answers all of it because the forms can't collide: an integer names a built-in by id (`knot.permission.MANAGE_SPACES`), and among strings qualified grants always start with `plugin.`, which no built-in key contains. See [the identity library](/reference/libraries/identity/) for the full surface.
 

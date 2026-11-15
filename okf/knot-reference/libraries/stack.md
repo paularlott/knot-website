@@ -27,7 +27,7 @@ The `knot.stack` library provides stack template (definition) management and sta
 | Environment | Behaviour |
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
-| Health check scripts | Not available. |
+| Health check scripts | Only when the space's environment sets `KNOT_API_PORT` or `KNOT_URL`/`KNOT_TOKEN`: there is no built-in transport, so the Python `knot.apiclient` configures itself from the agent (as the space owner) or those variables, and calls raise otherwise. See [Environment Compatibility](../libraries.md#environment-compatibility). |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
 ---
@@ -38,25 +38,37 @@ The `knot.stack` library provides stack template (definition) management and sta
 
 | Function | Description |
 |----------|-------------|
-| `list_defs()` | List all stack templates visible to the current user |
+| `list_defs(include_inactive=False)` | List all stack templates visible to the current user (active ones unless `include_inactive=True`) |
 | `get_def(name)` | Get a template by name or ID |
-| `create_def(name, ...)` | Create a new stack template |
-| `update_def(name, **fields)` | Update an existing template |
-| `delete_def(name)` | Delete a template |
-| `validate_def(spaces, ...)` | Validate a template without creating it |
-| `add_component(stack_definition, template, name, ...)` | Add a component (template binding) to an existing template |
-| `remove_component(stack_definition, name)` | Remove a component from a template by name |
+| `create_def(name, description="", icon_url="", scope="user", active=True, groups=None, zones=None, spaces=None)` | Create a new stack template; returns its ID |
+| `update_def(name, **fields)` | Update an existing template (by name or ID); returns `True`. Only the keys you pass change: `name`, `description`, `icon_url`, `scope`, `active`, `groups`, `zones`, `spaces` |
+| `delete_def(name)` | Delete a template; returns `True` |
+| `validate_def(spaces, name="", description="", icon_url="", scope="user", active=True, groups=None, zones=None)` | Validate a template without creating it |
+| `add_component(stack_definition, template, name, description="", shell="", startup_script="", depends_on=None)` | Add a component (template binding) to an existing template; returns `True` |
+| `remove_component(stack_definition, name)` | Remove a component from a template by name (also dropping it from other components' `depends_on` and port forwards); returns `True` |
+
+`create_def` arguments:
+- `scope` - `"user"` for a personal template, or `"global"` for a system template (needs **Manage Stack Definitions**)
+- `active` - Whether the template is offered for creating stacks
+- `groups` - Group **IDs** allowed to create stacks from a global template (empty = everyone)
+- `zones` - Zone restrictions; a `!` prefix excludes a zone
+- `spaces` - Component dicts, as described in [Creating Templates](#creating-templates)
+
+`add_component` arguments: `stack_definition` is the template's name or ID; `template` is the space template's name or ID (resolved for you); `name` must be unique within the template; `startup_script` must be a startup script **ID** (not a name — look it up with `knot.script.get_by_name()`); `depends_on` lists other component names.
 
 ### Stack Operations
 
 | Function | Description |
 |----------|-------------|
-| `create(definition_name, prefix, stack_name=None)` | Create spaces from a stack template (by name or ID) |
-| `delete(stack_name)` | Delete all spaces in a stack |
-| `start(stack_name)` | Start all spaces in a stack in dependency order |
-| `stop(stack_name)` | Stop all spaces in reverse dependency order |
-| `restart(stack_name)` | Restart all spaces in a stack |
+| `create(definition_name, prefix, stack_name=None)` | Create spaces from a stack template (by name or ID); returns `{"spaces": {component_name: space_id, ...}}` |
+| `delete(stack_name, user_id=None)` | Delete all spaces in a stack |
+| `start(stack_name, user_id=None)` | Start all spaces in a stack in dependency order |
+| `stop(stack_name, user_id=None)` | Stop all spaces in reverse dependency order |
+| `restart(stack_name, user_id=None)` | Restart all spaces in a stack |
+| `exists(stack_name, user_id=None)` | `True` if at least one space belongs to the stack |
 | `list()` | List stacks by grouping spaces by stack name |
+
+The stack operations act on the current user's stack; `user_id` names another user's stack instead, which needs the **Manage Spaces** permission.
 
 ---
 
@@ -204,6 +216,8 @@ result = stack.create("lamp", "webapp")
 # Or use a different stack name from the prefix
 result = stack.create("lamp", "webapp", stack_name="my-lamp-stack")
 ```
+
+`create` returns `{"spaces": {component_name: space_id, ...}}`. It applies each component's port forwards through the space's `/space-io/` endpoint, so inside AI scripts (`run_script`), which may only call `/api/` endpoints, creating a stack whose definition gives a component port forwards fails at that step, after the spaces are created (they are not removed).
 
 ---
 

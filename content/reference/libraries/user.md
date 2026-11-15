@@ -15,7 +15,7 @@ The `knot.user` library provides user management functions.
 | Environment | Behaviour |
 |-------------|-----------|
 | Embedded (MCP tool execution, event sinks, plugin handlers, remote/space scripts, `knot run-script`) | Available; authenticated automatically via the Go-provided `knot.apiclient` transport. |
-| Health check scripts | Not available. |
+| Health check scripts | Only when the space's environment sets `KNOT_API_PORT` or `KNOT_URL`/`KNOT_TOKEN`: there is no built-in transport, so the Python `knot.apiclient` configures itself from the agent (as the space owner) or those variables, and calls raise otherwise. See [Environment Compatibility](/reference/libraries/#environment-compatibility). |
 | External (standalone scripts) | Python implementation; configure `knot.apiclient` first (or set the `KNOT_*` environment variables). |
 
 ---
@@ -27,8 +27,8 @@ The `knot.user` library provides user management functions.
 | `list(state='', zone='')` | List users; `state` is `all` (default), `active` or `inactive`, and `zone` defaults to the server's zone. Each entry has `id`, `username`, `email`, `active` and `number_spaces` |
 | `get(user_id)` | Get user by ID or username |
 | `get_me()` | Get the current user |
-| `create(username, email, password, active=True, max_spaces=0, compute_units=0, storage_units=0, max_tunnels=0, ssh_public_key='', github_username='')` | Create a new user and return its ID |
-| `update(user_id, username=None, email=None, password=None, active=None, max_spaces=None, ssh_public_key=None, github_username=None)` | Update user properties; omitted arguments (and roles, groups and other quotas) keep their current values. Returns `True` |
+| `create(username, email, password, active=True, max_spaces=0, compute_units=0, storage_units=0, max_tunnels=0, ssh_public_key='', github_username='', file_storage_mb=0, max_buckets=0)` | Create a new user and return its ID |
+| `update(user_id, username=None, email=None, password=None, active=None, max_spaces=None, ssh_public_key=None, github_username=None, compute_units=None, storage_units=None, max_tunnels=None, file_storage_mb=None, max_buckets=None)` | Update user properties; omitted arguments (and roles, groups, shell and timezone) keep their current values, including `file_storage_mb` and `max_buckets`. Returns `True` |
 | `set_ssh_public_key(ssh_public_key, github_username=None)` | Set the current user's SSH public keys |
 | `set_ssh_private_key(ssh_private_key)` | Set the current user's SSH private key |
 | `delete(user_id)` | Delete a user; returns `True` |
@@ -91,20 +91,26 @@ user.set_ssh_private_key("-----BEGIN OPENSSH PRIVATE KEY-----\n...")
 - `compute_units` - Compute units quota
 - `storage_units` - Storage units quota
 - `max_tunnels` - Maximum tunnels allowed
+- `file_storage_mb` - File storage quota in MB
+- `max_buckets` - Maximum file storage buckets
 - `preferred_shell` - Preferred shell
 - `timezone` - User timezone
 - `github_username` - GitHub username
 - `ssh_public_key` - SSH public keys, one key per line
 - `ssh_private_key` - SSH private key, only populated for the current user
-- `number_spaces` - Current number of spaces
-- `number_spaces_deployed` - Number of running spaces
-- `used_compute_units` - Used compute units
-- `used_storage_units` - Used storage units
-- `used_tunnels` - Used tunnels
+- `number_spaces` - Current number of spaces (`get()` only)
+- `number_spaces_deployed` - Number of running spaces (`get()` only)
+- `used_compute_units` - Used compute units (`get()` only)
+- `used_storage_units` - Used storage units (`get()` only)
+- `used_tunnels` - Used tunnels (`get()` only)
 - `current` - Whether this is the current user
 - `roles` - List of role IDs
 - `groups` - List of group IDs
-- `linked_users` - The accounts this user may become, each with `user_id` and `username`
+- `linked_users` - The accounts this user may become, each with `user_id` and `username` (`get()` only)
+
+`get_me()` reads the lighter `whoami` endpoint, which does not fill the usage fields: `number_spaces`, `number_spaces_deployed`, `used_compute_units`, `used_storage_units` and `used_tunnels` are always `0` and `linked_users` is `None`. Call `get(get_me()["id"])` when you need them.
+
+`get_me()` also withholds credentials in two cases: with a scoped API token, `ssh_public_key` and `ssh_private_key` are empty, and in a space with restrictions active, `ssh_private_key` is empty.
 
 ---
 
@@ -115,8 +121,12 @@ user.set_ssh_private_key("-----BEGIN OPENSSH PRIVATE KEY-----\n...")
 - `compute_units` - Compute units quota
 - `storage_units` - Storage units quota
 - `max_tunnels` - Maximum tunnels allowed
+- `file_storage_mb` - File storage quota in MB
+- `max_buckets` - Maximum file storage buckets
 - `number_spaces` - Current number of spaces
 - `number_spaces_deployed` - Number of running spaces
 - `used_compute_units` - Used compute units
 - `used_storage_units` - Used storage units
 - `used_tunnels` - Used tunnels
+- `used_file_storage_mb` - File storage used, in MB
+- `used_buckets` - Buckets owned
