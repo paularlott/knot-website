@@ -11,6 +11,14 @@ navSection: docs
 
 ## November 2026
 
+{{< version "v0.45.1" >}}
+
+{{< changelog-item "fixed" >}}
+- Fix `knot admin template import` leaving a template deleted when it matched a deleted template of the same name; the import now overwrites and restores it
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.45.0" >}}
 
 {{< changelog-item "added" >}}
