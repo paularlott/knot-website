@@ -11,6 +11,14 @@ navSection: docs
 
 ## November 2026
 
+{{< version "v0.46.0" >}}
+
+{{< changelog-item "changed" >}}
+- Update the embedded scriptling to [v0.43.0](https://scriptling.dev/docs/changelog/). Scripts and plugins run faster, use less memory and behave more like Python, which changes some results: errors raise Python's exception types, so `except ValueError` catches what it does in Python; a misspelt keyword argument raises `TypeError` instead of being ignored; a date parsed without an offset is local time rather than UTC; `json.dumps()` raises `TypeError` for a value it cannot encode, so pass `default=str` for the old output; and `type(x)` returns the type rather than its name, so compare with `type(x) is int` or `type(x).__name__ == "int"`. The scriptling changelog lists every change
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.45.1" >}}
 
 {{< changelog-item "fixed" >}}
