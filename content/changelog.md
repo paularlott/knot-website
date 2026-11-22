@@ -11,6 +11,14 @@ navSection: docs
 
 ## November 2026
 
+{{< version "v0.46.2" >}}
+
+{{< changelog-item "changed" >}}
+- Update packages
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.46.1" >}}
 
 {{< changelog-item "added" >}}
