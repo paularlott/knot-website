@@ -11,6 +11,19 @@ navSection: docs
 
 ## November 2026
 
+{{< version "v0.46.1" >}}
+
+{{< changelog-item "added" >}}
+- Add PHP 8.6 base images to the template spec wizard: PHP 8.6, FrankenPHP 8.6, FrankenScriptling 8.6 and FrankenScriptling Runtime 8.6. PHP 8.5 stays the recommended version, and the FrankenPHP and FrankenScriptling 8.6 images go without the redis, spx and xdebug extensions until those support PHP 8.6 ([docs](../docs/templates/base-images/))
+- Add Valkey 9.2 to the template spec wizard
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- Update the template spec wizard's base images to Adminer 6.3, Mailpit 1.34 and VictoriaLogs 1.54
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.46.0" >}}
 
 {{< changelog-item "changed" >}}

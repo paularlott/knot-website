@@ -54,6 +54,7 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="flex flex-wrap justify-center gap-1">
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.4</span>
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.5</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.6</span>
     </div>
   </div>
 
@@ -63,6 +64,7 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Caddy + PHP in a single FrankenPHP process.</div>
     <div class="flex flex-wrap justify-center gap-1">
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.5</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.6</span>
     </div>
   </div>
 
@@ -72,6 +74,7 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">FrankenPHP with the Scriptling scripting/agent extension.</div>
     <div class="flex flex-wrap justify-center gap-1">
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.5</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">8.6</span>
     </div>
   </div>
 
@@ -108,7 +111,7 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="font-semibold text-gray-900 dark:text-gray-100">Scriptling</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Ubuntu + the Scriptling interpreter and CLI. Pure runtime image.</div>
     <div class="flex flex-wrap justify-center gap-1">
-      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">0.30</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">0.43.0</span>
     </div>
   </div>
 
@@ -149,6 +152,7 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="flex flex-wrap justify-center gap-1">
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">9.0</span>
       <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">9.1</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">9.2</span>
     </div>
   </div>
 
@@ -166,7 +170,7 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="font-semibold text-gray-900 dark:text-gray-100">Adminer</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Database management UI for MySQL, MariaDB, PostgreSQL, Redis and SQLite.</div>
     <div class="flex flex-wrap justify-center gap-1">
-      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">6.0</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">6.3</span>
     </div>
   </div>
 
@@ -175,7 +179,7 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="font-semibold text-gray-900 dark:text-gray-100">Mailpit</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">SMTP mail catcher with a web UI for inspecting captured mail.</div>
     <div class="flex flex-wrap justify-center gap-1">
-      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">1.30</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">1.34</span>
     </div>
   </div>
 
@@ -184,7 +188,7 @@ The catalog is versioned (`manifest_version`, format `yyyymmddbb`). Servers can 
     <div class="font-semibold text-gray-900 dark:text-gray-100">VictoriaLogs</div>
     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3 flex-1">Cost-efficient log database with JSON / Loki / Elasticsearch / syslog ingest and LogsQL.</div>
     <div class="flex flex-wrap justify-center gap-1">
-      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">1.52</span>
+      <span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">1.54</span>
     </div>
   </div>
 
