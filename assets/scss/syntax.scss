@@ -1,5 +1,7 @@
-@import "syntax-light";
+@use "sass:meta";
+
+@include meta.load-css("syntax-light");
 
 .dark {
-  @import "syntax-dark";
+  @include meta.load-css("syntax-dark");
 }

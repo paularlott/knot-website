@@ -11,6 +11,24 @@ navSection: docs
 
 ## November 2026
 
+{{< version "v0.47.0" >}}
+
+{{< changelog-item "fixed" >}}
+- **Data loss:** fix `knot nfs-server` losing writes when it was stopped or killed. The macOS NFS client could treat writes as saved that the server had not yet saved, so a file synced without error could lose data. The server now keeps those writes on disk and saves them when it starts again ([docs](../docs/file-storage/nfs/#how-files-are-saved)) {{< experimental-badge >}}
+- Fix `knot nfs-server` waiting on clients when stopped; it now closes connections and saves what was written {{< experimental-badge >}}
+- Fix file storage occasionally failing to save a file on macOS with `invalid argument` {{< experimental-badge >}}
+- Make `knot space mirror` safer: an interrupted upload no longer leaves a part-written file in the space, a file is no longer written through an old symlink, and a path that changed between file, folder and symlink now mirrors correctly
+- Make `knot space mirror --watch` dependable on large, busy trees: it no longer runs out of open files on macOS, retries failed uploads without holding up other changes, and no longer misses changes made during the initial mirror or while events are lost. A second Ctrl+C now exits straight away
+{{< /changelog-item >}}
+
+{{< changelog-item "added" >}}
+- `knot space mirror` now mirrors empty folders and permissions in both directions, and sends a permission change alone, such as `chmod +x`, without sending the file again ([docs](../reference/cli/knot/#mirroring-a-directory-tree))
+- `knot nfs-server --staging-dir` chooses where writes wait until they are saved ([docs](../docs/file-storage/nfs/)) {{< experimental-badge >}}
+- `mkdir`, `chmod` and `rename` modes for the space file write API
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.46.2" >}}
 
 {{< changelog-item "changed" >}}

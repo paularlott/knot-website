@@ -48,11 +48,12 @@ Create a token with the **Files** scope for `knot nfs-server`, so it can reach f
 | `--nfs-allow` | loopback | An address or CIDR allowed to connect, e.g. `192.168.1.0/24`. Repeat the flag for more than one. |
 | `--uid`, `--gid` | the stored owner, else the user running it | Show every file as owned by this user and group. See [ownership](#ownership-and-permissions). |
 | `--cache-dir` | none | Keep files read and written in this directory, so they need not be fetched again. |
+| `--staging-dir` | a folder in the cache | Where written files wait to be saved. Writes not yet saved when the nfs-server stops or is killed are saved from here when it starts again. Defaults to a folder for the server, user and address in `--cache-dir`, else in your user cache folder. |
 | `--cache-size` | `1GB` | The most the cache may hold, e.g. `512MB` or `10GB`. |
 | `--server`, `--token`, `--alias` | the `default` alias | The knot server and token to act as, as for other `knot` commands; also `KNOT_SERVER` and `KNOT_TOKEN`. |
 | `--tls-skip-verify` | `true` | Skip verifying the knot server's TLS certificate. |
 
-The listen address, allowed addresses and cache can also be set with `KNOT_NFS_LISTEN`, `KNOT_NFS_ALLOW` (a comma-separated list), `KNOT_NFS_CACHE_DIR` and `KNOT_NFS_CACHE_SIZE`.
+The listen address, allowed addresses, cache and staging folder can also be set with `KNOT_NFS_LISTEN`, `KNOT_NFS_ALLOW` (a comma-separated list), `KNOT_NFS_CACHE_DIR`, `KNOT_NFS_CACHE_SIZE` and `KNOT_NFS_STAGING_DIR`.
 
 Several servers can run side by side on different ports, for example one for your Mac and one for containers that shows files as owned by root:
 
@@ -186,7 +187,7 @@ Modes, modification times and symbolic links are stored with the files and kept 
 
 ## How files are saved
 
-NFS writes a file a piece at a time, but file storage keeps whole files. So `knot nfs-server` holds what is written and saves the file when the client closes or syncs it (`close()` or `fsync()`), or shortly after writes stop. As on a local disk, what is saved survives a crash, and what is still being written may not. If the knot server is unreachable, saves are retried until it is back. If the server refuses a save, for example because you are over quota, the client sees an error.
+NFS writes a file a piece at a time, but file storage keeps whole files. So `knot nfs-server` holds what is written and saves the file when the client closes or syncs it (`close()` or `fsync()`), or shortly after writes stop. What it holds is kept on local disk (see `--staging-dir`), so writes it has taken survive the nfs-server being stopped or killed: it saves them when it starts again. As on a local disk, what the computer itself loses in a crash or power cut may be lost. If the knot server is unreachable, saves are retried until it is back. If the server refuses a save, for example because you are over quota, the client sees an error.
 
 Large files (over 8 MiB) send only the parts that changed, so appending to a log is cheap. With `--cache-dir`, files are kept on local disk so reading them again doesn't fetch them again.
 

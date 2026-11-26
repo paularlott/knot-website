@@ -252,7 +252,7 @@ knot space mirror --verbose ./src <space>:/var/www/html
 knot space mirror --watch --exclude node_modules ./src <space>:/var/www/html
 ```
 
-`knot space mirror` copies a directory tree between this machine and a space in parallel (default 8 workers, configurable via `--parallel N`). The side written `<space>:<path>` is the space, so the order of the arguments sets the direction: local first uploads, the space first downloads. Each file's mtime and permission bits are preserved on the destination. A space path without a leading `/` is relative to the space user's home directory. If any file can't be copied, mirror exits with an error once it has done the rest. After the copies complete, any file at the destination that the source doesn't have is removed (subject to `--exclude`) — the destination ends up as a one-way mirror of the source.
+`knot space mirror` copies a directory tree between this machine and a space in parallel (default 8 workers, configurable via `--parallel N`). The side written `<space>:<path>` is the space, so the order of the arguments sets the direction: local first uploads, the space first downloads. Each file's mtime and permission bits are preserved on the destination, a change of permission bits alone included (sent without sending the file again), and so are folders: empty ones are created, and folder permission bits are copied (on Windows, which has no Unix permissions, folders are created but their permissions aren't). A folder that is read-only to its owner is opened while files are added to or removed from it, then given back its mode. A local folder given as a symlink is mirrored as the folder it leads to. Large files are written to a hidden temporary file beside the destination and renamed into place, so an interrupted copy never leaves a part-written file. A space path without a leading `/` is relative to the space user's home directory. If any file can't be copied, mirror exits with an error once it has done the rest. After the copies complete, any file at the destination that the source doesn't have is removed (subject to `--exclude`) — the destination ends up as a one-way mirror of the source.
 
 Downloads come down in 4 MB pieces into a temporary file beside the destination, which is renamed into place once complete, so an interrupted run never leaves a partial file under its real name. The local folder is created if it doesn't exist.
 
@@ -260,11 +260,11 @@ As a guard against a mistyped path or swapped arguments, mirror refuses to run w
 
 `--dry-run` lists every intended copy and delete without changing anything.
 
-By default mirror decides whether a file needs uploading by comparing mtime and size (fast, uses stat only). To force content-based comparison, pass `--hash`: each file is crc64-hashed locally before upload and remotely during the walk — only truly different bytes are transferred. Pass `--verify` for a read-only check: every file is hashed on both sides and mismatches are reported without uploading.
+By default mirror decides whether a file needs uploading by comparing mtime and size (fast, uses stat only). To force content-based comparison, pass `--hash`: each file is crc64-hashed locally before upload and remotely during the walk — only truly different bytes are transferred. Pass `--verify` for a read-only check: every file is hashed on both sides and mismatches are reported without uploading. It can't be combined with `--watch`.
 
 `--verbose` prints every file action (upload, skip, delete, hash, verify) to stderr as the mirror progresses. `--debug` logs why each file was uploaded (new, size differs, mtime drift), for diagnosing a mirror that keeps re-uploading.
 
-`--watch` works when uploading, and keeps mirror running after the initial sync. It watches the local tree for file creations, modifications, and deletions, and syncs each change to the space in real time (one-way: local → space). Excludes are honoured — excluded paths are never watched or uploaded. New directories are picked up automatically, including their contents. Vim swap files (`.*.swp`) are excluded by default. Events are debounced (300ms) so editors that save atomically (write temp → rename) produce a single upload, not a burst. Press Ctrl+C to stop.
+`--watch` works when uploading, and keeps mirror running after the initial sync. It watches the local tree for file creations, modifications, and deletions, and syncs each change to the space in real time (one-way: local → space). On macOS it uses FSEvents, so trees of any size can be watched without running out of open files. Excludes are honoured — excluded paths are never watched or uploaded. New directories are picked up automatically, including their contents, and a path that changes kind (a file replaced by a folder or a symlink) is removed from the space before it is replaced. Vim swap files (`.*.swp`) are excluded by default. Changes are sent once they settle, 300ms after the last event (at most 2s into a burst that keeps going), so editors that save atomically (write temp → rename) produce a single upload, not a burst. Uploads and deletes that fail, such as while the space restarts, are retried with backoff, without holding up other changes. If the system drops events, mirror compares the whole tree again; if some folders can't be watched because of the system's watch limit, it says how to raise the limit and compares the whole tree every 5 minutes. Press Ctrl+C to stop; mirror sends any changes still waiting before it exits, and a second Ctrl+C exits at once.
 
 Each run is one-directional and always performs deletes — that's what "mirror" means. For continuous two-way sync with a space, mutagen against the space's SSH endpoint is the recommendation. To keep a local directory and a [file storage](#knot-file) bucket folder in step both ways, use `knot file sync --two-way --watch`.
 
@@ -430,7 +430,7 @@ lease (or lease list) for piping into other tools.
 
 ### `knot file`
 
-Work with [file storage](/docs/file-storage/) buckets. A bucket's files are written `bucket:path` (`bucket:` is the whole bucket); any other path is local. Buckets are named `<username>--<name>`: use the short name for your own buckets and the full name for buckets shared with you.
+Work with [file storage](/docs/file-storage/) buckets. A bucket's files are written `bucket:path` (`bucket:` is the whole bucket); any other path is local. Buckets are named `<username>--<name>`: use the short name for your own buckets and the full name for buckets shared with you. {{< experimental-badge >}}
 
 ```shell
 knot file ls [bucket:[path]] [-r] [--all] [--json]
@@ -483,14 +483,16 @@ Serve file storage over NFS (NFSv4.0 and NFSv3 on one port), acting as the user 
 
 ```shell
 knot nfs-server [--nfs-listen ADDR|PORT] [--nfs-allow CIDR]... [--uid N] [--gid N]
-                [--cache-dir PATH] [--cache-size SIZE] [--alias NAME | --server URL --token TOKEN]
+                [--cache-dir PATH] [--cache-size SIZE] [--staging-dir PATH]
+                [--alias NAME | --server URL --token TOKEN]
 ```
 
 - `--nfs-listen` defaults to `127.0.0.1:2049`; just a port listens on loopback.
 - Only loopback clients are accepted unless `--nfs-allow` allows other addresses or CIDRs, one per flag: NFS has no authentication.
 - `--uid` and `--gid` show every file as owned by that user and group, e.g. `--uid 0 --gid 0` for containers that run as root.
 - `--cache-dir` keeps files read and written on local disk, up to `--cache-size` (default `1GB`).
-- `KNOT_NFS_LISTEN`, `KNOT_NFS_ALLOW`, `KNOT_NFS_CACHE_DIR` and `KNOT_NFS_CACHE_SIZE` set the same options; `KNOT_NFS_ALLOW` takes a comma-separated list.
+- `--staging-dir` is where written files wait to be saved; writes not yet saved when the nfs-server stops or is killed are saved from there when it starts again. It defaults to a folder for the server, user and address in `--cache-dir`, else in your user cache folder.
+- `KNOT_NFS_LISTEN`, `KNOT_NFS_ALLOW`, `KNOT_NFS_CACHE_DIR`, `KNOT_NFS_CACHE_SIZE` and `KNOT_NFS_STAGING_DIR` set the same options; `KNOT_NFS_ALLOW` takes a comma-separated list.
 
 ---
 
