@@ -11,6 +11,18 @@ navSection: docs
 
 ## November 2026
 
+{{< version "v0.48.1" >}}
+
+{{< changelog-item "fixed" >}}
+- A script tool's `tool.recall()` returns a kept whole number as an `int`, also inside lists and dicts, instead of a `float`: a kept `3` used to come back as `3.0`, so `range()` and indexing failed on it
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- Update to scriptling v0.45.3 and mcp v0.41.0
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.48.0" >}}
 
 {{< changelog-item "added" >}}
