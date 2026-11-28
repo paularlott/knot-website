@@ -11,6 +11,19 @@ navSection: docs
 
 ## November 2026
 
+{{< version "v0.48.0" >}}
+
+{{< changelog-item "added" >}}
+- Tools can ask you a question while they run (MCP elicitation): in the web chat the question appears as a form on the tool call, and the tool carries on with your answer. Script tools ask with `tool.confirm()` and `tool.ask()`, and MCP clients that support elicitation are asked the same way through `/mcp`
+- A tool's question can be answered through any server in a cluster, and after a restart: the key that signs it is generated once, stored in the database and shared across the cluster automatically
+{{< /changelog-item >}}
+
+{{< changelog-item "changed" >}}
+- Update to scriptling v0.45.1 and mcp v0.39.0: idle MCP session state is cleaned up automatically, and gorilla/websocket is past GO-2026-6278
+{{< /changelog-item >}}
+
+---
+
 {{< version "v0.47.0" >}}
 
 {{< changelog-item "fixed" >}}
